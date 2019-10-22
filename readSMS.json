@@ -1,0 +1,11 @@
+{
+    "rulenumber": 2,
+    "checkItem": "Read SMS",
+    "class": "Uri",
+    "x1_permission": "android.permission.READ_SMS",
+    "x2_method": "parse",
+    "x3_combination": [],
+    "x4_order": [],
+    "x5_variable": ["content://sms"," content://sms/sent", "content://sms/inbox"],
+    "yscore": 1
+}
