@@ -4,7 +4,7 @@
     "x1_permission": ["android.permission.SEND_SMS",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"],
-    "x2n3n4_comb": [{"class": "TelephonyManager", "method": "getCellLocation"},
+    "x2n3n4_comb": [{"class": "Landroid/telephony/TelephonyManager", "method": "getCellLocation"},
                 {"class":" SmsManager", "method": "sendTextMessage"}],
     "x5_variable": [],
     "yscore": 1
