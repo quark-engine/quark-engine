@@ -6,8 +6,6 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-androguard = "*"
-black = "*"
 
 [requires]
 python_version = "3.7"
