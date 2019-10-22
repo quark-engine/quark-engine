@@ -4,7 +4,7 @@
     "x1_permission": ["android.permission.SEND_SMS",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"],
-    "x2_method":        ["TelephonyManager~getCellLocation"],
+    "x2_method":   ["TelephonyManager~getCellLocation"],
     "x3n4_comb":   ["TelephonyManager~getCellLocation",
         "SmsManager~sendTextMessage"],
     "x5_variable": [],
