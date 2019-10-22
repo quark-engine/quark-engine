@@ -6,5 +6,6 @@
     "x2_method": "sendTextMessage",
     "x3_combination": ["getDefault", "sendTextMessage"],
     "x4_order": ["getDefault", "sendTextMessage"],
+    "x5_variable": [],
     "yscore": 1
 }
