@@ -19,37 +19,46 @@ class x_rule:
 
         self.dx.create_xref()
 
-        result = self.dx.find_methods(classname=class_name, methodname=method_name)
+        result = self.dx.find_methods(class_name, method_name)
 
         if len(list(result)) > 0:
-            return self.dx.find_methods(classname=class_name, methodname=method_name)
+            return self.dx.find_methods(class_name, method_name)
 
         else:
             return None
 
     def upperFunc(self, class_name, method_name):
-        result = []
+        result = None
         method_set = self.methods(class_name, method_name)
         xref = list(method_set)[0]
 
         for _, call, _ in xref.get_xref_from():
-            result.append(call.name)
+            result = call.name
         return result
 
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-with open("sendSMS.json", "r") as f:
+with open("sendLocation.json", "r") as f:
     jl = json.loads(f.read())
 
-    if jl["x1_permission"] in data.permissions:
-        print("[O]有使用權限:" + jl["x1_permission"])
+    if set(jl["x1_permission"]).issubset(set(data.permissions)):
+        print("[O]有使用權限:" + ",".join(jl["x1_permission"]))
 
-    if data.methods(method_name=jl["x2_method"]) is not None:
-        print("[O]有使用權限:" + jl["x2_method"])
+    test_md0 = jl["x2n3n4_comb"][0]["method"]
+    test_cls0 = jl["x2n3n4_comb"][0]["class"]
+    if data.methods(test_cls0, test_md0) is not None:
+        print("[O]有使用method: " + test_md0)
 
-    up1 = data.upperFunc(".*", jl["x2_method"])
-    up2 = data.upperFunc("Landroid/telephony/SmsManager", jl["x3_combination"][0])
+    upperfunc0 = data.upperFunc(test_cls0, test_md0)
 
-    if up1 == up2:
-        print("[O]有組合出現:" + jl["x2_method"] + " " + jl["x3_combination"][0])
+    test_md1 = jl["x2n3n4_comb"][1]["method"]
+    test_cls1 = jl["x2n3n4_comb"][1]["class"]
+
+    upperfunc1 = data.upperFunc(test_cls1, test_md1)
+
+    if data.methods(test_cls1, test_md1) is not None:
+        print("[O]有使用method: " + test_md1)
+
+    print(upperfunc0, upperfunc1)
+
