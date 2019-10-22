@@ -3,11 +3,7 @@ from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
 
-
-
-
 class x_rule:
-
     def __init__(self, apk):
         self.a, self.d, self.dx = AnalyzeAPK(apk)
 
@@ -21,13 +17,12 @@ class x_rule:
         if len(list(result)) > 0:
             return result
         else:
-            raise ValueError('No Method Name Found:'+method_name)
+            raise ValueError("No Method Name Found:" + method_name)
 
 
+data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-data = x_rule('14d9f1a92dd984d6040cc41ed06e273e.apk')
 
-
-#print(data.permissions)
-for i in data.methods('sendTextMessge'):
+# print(data.permissions)
+for i in data.methods("sendTextMessge"):
     print(i)
