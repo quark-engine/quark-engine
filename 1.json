@@ -1,0 +1,10 @@
+{
+    "rulenumber": 1,
+    "checkItem": "Send SMS",
+    "class": "SmsManager",
+    "x1_permission": "android.permission.SEND_SMS",
+    "x2_method": "getDefault",
+    "x3_combination": ["getDefault", "sendTextMessage"],
+    "x4_order": ["getDefault", "sendTextMessage"],
+    "yscore": 1
+}
