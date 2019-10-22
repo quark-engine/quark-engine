@@ -28,13 +28,17 @@ class x_rule:
             return None
 
     def upperFunc(self, class_name, method_name):
-        result = None
+        result = []
         method_set = self.methods(class_name, method_name)
-        xref = list(method_set)[0]
 
-        for _, call, _ in xref.get_xref_from():
-            result = call.name
-        return result
+        for md in method_set:
+            for _, call, _ in md.get_xref_from():
+                result.append(call.name)
+
+        return self._remove_dup(result)
+
+    def _remove_dup(self, element):
+        return list(set(element))
 
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
@@ -61,4 +65,16 @@ with open("sendLocation.json", "r") as f:
         print("[O]有使用method: " + test_md1)
 
     print(upperfunc0, upperfunc1)
+
+    # print(data.methods(method_name="getLocation"))
+
+    # print(data.upperFunc(class_name=".*", method_name="getLocation"))
+    print("#####################")
+    print("usage:" + test_md0)
+    first_layer = data.upperFunc(".*", test_md0)
+    print("layer 1 -->" + repr(first_layer))
+
+    for item in first_layer:
+        sec = data.upperFunc(".*", item)
+        print("layer 2 : " + item + "-->" + ",".join(sec))
 
