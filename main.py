@@ -17,7 +17,7 @@ class x_rule:
 
     def methods(self, class_name=".*", method_name=".*"):
 
-        self.dx.create_xref()
+        # self.dx.create_xref()
 
         result = self.dx.find_methods(class_name, method_name)
 
@@ -40,6 +40,35 @@ class x_rule:
     def _remove_dup(self, element):
         return list(set(element))
 
+    def find_intersection(self, list1, list2, depth=1):
+        # TODO tail call optimization
+
+        # Limit up to three layers of recursions
+        if depth == 3:
+            return None
+
+        result = set(list1).intersection(list2)
+        if len(result) > 0:
+            return result
+        else:
+            # Not found same method usage, try to find next layer.
+
+            sec_list1 = []
+            sec_list2 = []
+            for item in list1:
+                sec_list1 = self.upperFunc(".*", item)
+            for item in list2:
+                sec_list2 = self.upperFunc(".*", item)
+            # Append first layer into next layer
+            for pre_list in list1:
+                sec_list1.append(pre_list)
+            for pre_list in list2:
+                sec_list2.append(pre_list)
+
+            depth += 1
+
+            return self.find_intersection(sec_list1, sec_list2, depth)
+
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
@@ -54,27 +83,15 @@ with open("sendLocation.json", "r") as f:
     if data.methods(test_cls0, test_md0) is not None:
         print("[O]有使用method: " + test_md0)
 
-    upperfunc0 = data.upperFunc(test_cls0, test_md0)
-
     test_md1 = jl["x2n3n4_comb"][1]["method"]
     test_cls1 = jl["x2n3n4_comb"][1]["class"]
-
-    upperfunc1 = data.upperFunc(test_cls1, test_md1)
 
     if data.methods(test_cls1, test_md1) is not None:
         print("[O]有使用method: " + test_md1)
 
-    print(upperfunc0, upperfunc1)
+    upperfunc0 = data.upperFunc(test_cls0, test_md0)
+    upperfunc1 = data.upperFunc(test_cls1, test_md1)
 
-    # print(data.methods(method_name="getLocation"))
-
-    # print(data.upperFunc(class_name=".*", method_name="getLocation"))
-    print("#####################")
-    print("usage:" + test_md0)
-    first_layer = data.upperFunc(".*", test_md0)
-    print("layer 1 -->" + repr(first_layer))
-
-    for item in first_layer:
-        sec = data.upperFunc(".*", item)
-        print("layer 2 : " + item + "-->" + ",".join(sec))
-
+    same = data.find_intersection(upperfunc0, upperfunc1)
+    if same is not None:
+        print("[O]共同出現於:" + repr(same))
