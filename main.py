@@ -167,4 +167,3 @@ if data.find_method(test_cls0, test_md0) is not None:
 
         if data.check_sequence(".*", "sendMessage", pre_0, pre_1):
             print("4==> [O]")
-
