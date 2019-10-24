@@ -99,6 +99,9 @@ class x_rule:
             raise ValueError("List is Null")
 
     def check_sequence(self, class_name, method_name, first_func, second_func):
+        """
+        Check if the first function appeared before the second function.
+        """
         method_set = self.find_method(class_name, method_name)
         seq_table = []
 
@@ -130,40 +133,43 @@ class x_rule:
             else:
                 return False
 
+    def run(self, rule_obj):
+        """
+        Run five levels check to get the y_score.
+        """
+        # Level 1
+        if set(rule_obj.x1_permission).issubset(set(self.permissions)):
+            print("1==> [O]")
+
+        # Level 2
+        test_md0 = rule_obj.x2n3n4_comb[0]["method"]
+        test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
+        if self.find_method(test_cls0, test_md0) is not None:
+            print("2==> [O]")
+
+            # Level 3
+            test_md1 = rule_checker.x2n3n4_comb[1]["method"]
+            test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
+            if data.find_method(test_cls1, test_md1) is not None:
+                print("3==> [O]")
+
+                # Level 4
+                upperfunc0 = data.upperFunc(test_cls0, test_md0)
+                upperfunc1 = data.upperFunc(test_cls1, test_md1)
+
+                same = data.find_intersection(upperfunc0, upperfunc1)
+                if same is not None:
+
+                    # print("[O]共同出現於:\n" + repr(same))
+                    pre_0 = data.pre_method0.pop()[0]
+                    pre_1 = data.pre_method1.pop()[0]
+
+                    if data.check_sequence(".*", "sendMessage", pre_0, pre_1):
+                        print("4==> [O]")
+
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-
 rule_checker = RuleObject("sendLocation.json")
 
-
-# Level 1
-if set(rule_checker.x1_permission).issubset(set(data.permissions)):
-    print("1==> [O]")
-
-# Level 2
-test_md0 = rule_checker.x2n3n4_comb[0]["method"]
-test_cls0 = rule_checker.x2n3n4_comb[0]["class"]
-if data.find_method(test_cls0, test_md0) is not None:
-    print("2==> [O]")
-
-    test_md1 = rule_checker.x2n3n4_comb[1]["method"]
-    test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
-
-    # Level 3
-    if data.find_method(test_cls1, test_md1) is not None:
-        print("3==> [O]")
-
-    # Level 4
-    upperfunc0 = data.upperFunc(test_cls0, test_md0)
-    upperfunc1 = data.upperFunc(test_cls1, test_md1)
-
-    same = data.find_intersection(upperfunc0, upperfunc1)
-    if same is not None:
-
-        # print("[O]共同出現於:\n" + repr(same))
-        pre_0 = data.pre_method0.pop()[0]
-        pre_1 = data.pre_method1.pop()[0]
-
-        if data.check_sequence(".*", "sendMessage", pre_0, pre_1):
-            print("4==> [O]")
+data.run(rule_checker)
