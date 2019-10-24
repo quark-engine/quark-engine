@@ -110,7 +110,11 @@ class x_rule:
                 for _, call, number in md.get_xref_to():
                     if call.name == first_func or call.name == second_func:
                         seq_table.append((call.name, number))
+
             # sorting based on the value of the number
+            if len(seq_table) < 2:
+                print("Not Found sequence in " + method_name)
+                return False
             seq_table.sort(key=operator.itemgetter(1))
 
             idx = 0
@@ -129,6 +133,7 @@ class x_rule:
                 length -= 1
 
             if first_secondfunc_val > first_firstfunc_val:
+                print("Found sequence in :" + method_name)
                 return True
             else:
                 return False
@@ -165,12 +170,9 @@ class x_rule:
                     pre_1 = self.pre_method1.pop()[0]
 
                     for same_method in same:
-                        if same_method == "onReceive":
-                            continue
 
                         if self.check_sequence(".*", same_method, pre_0, pre_1):
                             print("4==> [O]")
-                            print(same_method)
 
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
