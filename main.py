@@ -150,22 +150,27 @@ class x_rule:
             # Level 3
             test_md1 = rule_checker.x2n3n4_comb[1]["method"]
             test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
-            if data.find_method(test_cls1, test_md1) is not None:
+            if self.find_method(test_cls1, test_md1) is not None:
                 print("3==> [O]")
 
                 # Level 4
-                upperfunc0 = data.upperFunc(test_cls0, test_md0)
-                upperfunc1 = data.upperFunc(test_cls1, test_md1)
+                upperfunc0 = self.upperFunc(test_cls0, test_md0)
+                upperfunc1 = self.upperFunc(test_cls1, test_md1)
 
-                same = data.find_intersection(upperfunc0, upperfunc1)
+                same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
 
                     # print("[O]共同出現於:\n" + repr(same))
-                    pre_0 = data.pre_method0.pop()[0]
-                    pre_1 = data.pre_method1.pop()[0]
+                    pre_0 = self.pre_method0.pop()[0]
+                    pre_1 = self.pre_method1.pop()[0]
 
-                    if data.check_sequence(".*", "sendMessage", pre_0, pre_1):
-                        print("4==> [O]")
+                    for same_method in same:
+                        if same_method == "onReceive":
+                            continue
+
+                        if self.check_sequence(".*", same_method, pre_0, pre_1):
+                            print("4==> [O]")
+                            print(same_method)
 
 
 data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
