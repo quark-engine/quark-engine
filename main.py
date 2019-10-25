@@ -3,6 +3,7 @@ from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
+from utils.tools import *
 
 
 class x_rule:
@@ -27,6 +28,12 @@ class x_rule:
         return self.a.get_permissions()
 
     def find_method(self, class_name=".*", method_name=".*"):
+        """
+        Find method from given class_name and method_name,
+        default is return all.
+
+        rtype: Iterator[MethodAnalysis]
+        """
 
         result = self.dx.find_methods(class_name, method_name)
 
@@ -39,7 +46,10 @@ class x_rule:
 
     def upperFunc(self, class_name, method_name):
         """
-        Find the upper level method from given method.
+        Find the upper level method from given class name and
+        method name.
+
+        rtype: list
         """
 
         result = []
@@ -48,17 +58,13 @@ class x_rule:
         if method_set is not None:
             for md in method_set:
                 for _, call, _ in md.get_xref_from():
+                    # Get class name and method name:
+                    # call.class_name, call.name
                     result.append(call.name)
 
-            return self._remove_dup(result)
+            return remove_dup_list(result)
         else:
             return None
-
-    def _remove_dup(self, element):
-        """
-        Remove the duplicate elements in  given list.
-        """
-        return list(set(element))
 
     def find_intersection(self, list1, list2, depth=1):
         """
