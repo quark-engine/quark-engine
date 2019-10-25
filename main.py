@@ -82,6 +82,7 @@ class x_rule:
             # find ∩
             result = set(list1).intersection(list2)
             if len(result) > 0:
+
                 return result
             else:
                 # Not found same method usage, try to find the next layer.
