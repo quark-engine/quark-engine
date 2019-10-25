@@ -4,11 +4,12 @@ from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
 
-# TODO  whenever use the list(), need to check it is NoneType or not
-
 
 class x_rule:
     def __init__(self, apk):
+        """
+        apk: apk filename
+        """
         self.a, self.d, self.dx = AnalyzeAPK(apk)
 
         # Create Class, Method, String and Field
@@ -20,7 +21,9 @@ class x_rule:
 
     @property
     def permissions(self):
-
+        """
+        rtype: list
+        """
         return self.a.get_permissions()
 
     def find_method(self, class_name=".*", method_name=".*"):
@@ -31,6 +34,7 @@ class x_rule:
             return self.dx.find_methods(class_name, method_name)
 
         else:
+            # Method Not Found
             return None
 
     def upperFunc(self, class_name, method_name):
