@@ -60,7 +60,7 @@ class x_rule:
                 for _, call, _ in md.get_xref_from():
                     # Get class name and method name:
                     # call.class_name, call.name
-                    result.append(call.name)
+                    result.append((call.class_name, call.name))
 
             return remove_dup_list(result)
         else:
@@ -69,6 +69,9 @@ class x_rule:
     def find_intersection(self, list1, list2, depth=1):
         """
         Find the list1 ∩ list2.
+
+        list1 & list2 are  list withing tuple, like
+        [("class_name","method_name"),...]
         """
         # Check the list is not null
         if len(list1) > 0 and len(list2) > 0:
@@ -76,10 +79,9 @@ class x_rule:
             # Limit up to three layers of the recursions.
             if depth == 3:
                 return None
-
+            # find ∩
             result = set(list1).intersection(list2)
             if len(result) > 0:
-
                 return result
             else:
                 # Not found same method usage, try to find the next layer.
@@ -87,9 +89,9 @@ class x_rule:
                 next_list1 = []
                 next_list2 = []
                 for item in list1:
-                    next_list1 = self.upperFunc(".*", item)
+                    next_list1 = self.upperFunc(item[0], item[1])
                 for item in list2:
-                    next_list2 = self.upperFunc(".*", item)
+                    next_list2 = self.upperFunc(item[0], item[1])
                 # Append first layer into next layer
                 for pre_list in list1:
                     next_list1.append(pre_list)
@@ -108,17 +110,23 @@ class x_rule:
         else:
             raise ValueError("List is Null")
 
-    def check_sequence(self, class_name, method_name, first_func, second_func):
+    def check_sequence(self, same_method, first_func, second_func):
         """
         Check if the first function appeared before the second function.
         """
-        method_set = self.find_method(class_name, method_name)
+        method_set = self.find_method(same_method[0], same_method[1])
         seq_table = []
 
         if method_set is not None:
             for md in method_set:
                 for _, call, number in md.get_xref_to():
-                    if call.name == first_func or call.name == second_func:
+
+                    if (
+                        call.class_name == first_func[0] and call.name == first_func[1]
+                    ) or (
+                        call.class_name == second_func[0]
+                        and call.name == second_func[1]
+                    ):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -132,18 +140,18 @@ class x_rule:
             first_firstfunc_val = None
             first_secondfunc_val = None
             while idx < length:
-                if seq_table[idx][0] == first_func:
+                if seq_table[idx][0] == first_func[1]:
                     first_firstfunc_val = idx
                     break
                 idx += 1
             while length > 0:
-                if seq_table[length - 1][0] == second_func:
+                if seq_table[length - 1][0] == second_func[1]:
                     first_secondfunc_val = length - 1
                     break
                 length -= 1
 
             if first_secondfunc_val > first_firstfunc_val:
-                print("Found sequence in :" + method_name)
+                print("Found sequence in :" + repr(same_method))
                 return True
             else:
                 return False
@@ -169,6 +177,8 @@ class x_rule:
                 print("3==> [O]")
 
                 # Level 4
+                # [('class_a','method_a'),('class_b','method_b')]
+                # Looking for the first layer of the upperfunction
                 upperfunc0 = self.upperFunc(test_cls0, test_md0)
                 upperfunc1 = self.upperFunc(test_cls1, test_md1)
 
@@ -176,12 +186,13 @@ class x_rule:
                 if same is not None:
 
                     # print("[O]共同出現於:\n" + repr(same))
+
                     pre_0 = self.pre_method0.pop()[0]
                     pre_1 = self.pre_method1.pop()[0]
 
                     for same_method in same:
 
-                        if self.check_sequence(".*", same_method, pre_0, pre_1):
+                        if self.check_sequence(same_method, pre_0, pre_1):
                             print("4==> [O]")
 
 
