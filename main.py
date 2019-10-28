@@ -1,16 +1,18 @@
-from RuleObject import RuleObject
+from Objects.RuleObject import RuleObject
 from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
 from utils.tools import *
+from pyeval import PyEval
+from parser import parse
+
+MAX_SEARCH_LAYER = 3
 
 
-class x_rule:
+class XRule:
     def __init__(self, apk):
-        """
-        apk: apk filename
-        """
+
         self.a, self.d, self.dx = AnalyzeAPK(apk)
 
         # Create Class, Method, String and Field
@@ -23,16 +25,18 @@ class x_rule:
     @property
     def permissions(self):
         """
-        rtype: list
+        :returns: A list of permissions
+        :rtype: list
         """
         return self.a.get_permissions()
 
     def find_method(self, class_name=".*", method_name=".*"):
         """
         Find method from given class_name and method_name,
-        default is return all.
+        default is find all.
 
-        rtype: Iterator[MethodAnalysis]
+        :returns: an generator of MethodClassAnalysis
+        :rtype: generator
         """
 
         result = self.dx.find_methods(class_name, method_name)
@@ -70,14 +74,16 @@ class x_rule:
         """
         Find the list1 ∩ list2.
 
-        list1 & list2 are  list withing tuple, like
+        list1 & list2 are  list withing tuple, for example,
         [("class_name","method_name"),...]
+
+        :rtype:
         """
-        # Check the list is not null
+        # Check both lists are not null
         if len(list1) > 0 and len(list2) > 0:
 
             # Limit up to three layers of the recursions.
-            if depth == 3:
+            if depth == MAX_SEARCH_LAYER:
                 return None
             # find ∩
             result = set(list1).intersection(list2)
@@ -111,9 +117,12 @@ class x_rule:
         else:
             raise ValueError("List is Null")
 
-    def check_sequence(self, same_method, first_func, second_func):
+    def check_sequence(self, same_method, f_func, s_func):
         """
         Check if the first function appeared before the second function.
+        same_method: the tuple with (class_name, method_name)
+        f_func: the first show up function, which is (class_name, method_name)
+        s_func: the tuple with (class_name, method_name)
         """
         method_set = self.find_method(same_method[0], same_method[1])
         seq_table = []
@@ -122,40 +131,63 @@ class x_rule:
             for md in method_set:
                 for _, call, number in md.get_xref_to():
 
-                    if (
-                        call.class_name == first_func[0] and call.name == first_func[1]
-                    ) or (
-                        call.class_name == second_func[0]
-                        and call.name == second_func[1]
+                    if (call.class_name == f_func[0] and call.name == f_func[1]) or (
+                        call.class_name == s_func[0] and call.name == s_func[1]
                     ):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
             if len(seq_table) < 2:
-                print("Not Found sequence in " + method_name)
+                print("Not Found sequence in " + same_method)
                 return False
             seq_table.sort(key=operator.itemgetter(1))
 
             idx = 0
             length = len(seq_table)
-            first_firstfunc_val = None
-            first_secondfunc_val = None
+            f_func_val = None
+            s_func_val = None
             while idx < length:
-                if seq_table[idx][0] == first_func[1]:
-                    first_firstfunc_val = idx
+                if seq_table[idx][0] == f_func[1]:
+                    f_func_val = idx
                     break
                 idx += 1
             while length > 0:
-                if seq_table[length - 1][0] == second_func[1]:
-                    first_secondfunc_val = length - 1
+                if seq_table[length - 1][0] == s_func[1]:
+                    s_func_val = length - 1
                     break
                 length -= 1
 
-            if first_secondfunc_val > first_firstfunc_val:
+            if s_func_val > f_func_val:
                 print("Found sequence in :" + repr(same_method))
                 return True
             else:
                 return False
+
+    def check_parameter(self, fist_method_name, second_method_name):
+        """
+        check the usage of the same parameter between
+        two method.
+        """
+
+        pyeval = PyEval()
+        # Check if there is an operation of the same register
+        state = False
+
+        # TODO replace it to get_output(),get_name()
+        for bytecode in parse("ag_file/target.ag"):
+            if bytecode[0] in pyeval.eval.keys():
+                pyeval.eval[bytecode[0]](bytecode)
+
+        for table in pyeval.show_table():
+            for val_obj in table:
+                matchers = [fist_method_name, second_method_name]
+                matching = [
+                    s for s in val_obj.called_by_func if all(xs in s for xs in matchers)
+                ]
+                if len(matching) > 0:
+                    state = True
+                    break
+        return state
 
     def run(self, rule_obj):
         """
@@ -196,9 +228,12 @@ class x_rule:
                         if self.check_sequence(same_method, pre_0, pre_1):
                             print("4==> [O]")
 
+                            if self.check_parameter(pre_0[1], pre_1[1]):
+                                print("5==> [O]")
 
-data = x_rule("14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-rule_checker = RuleObject("sendLocation.json")
+data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
+
+rule_checker = RuleObject("rules/sendLocation.json")
 
 data.run(rule_checker)

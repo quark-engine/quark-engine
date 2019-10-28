@@ -6,6 +6,10 @@
     "x2_method": "parse",
     "x3_combination": [],
     "x4_order": [],
-    "x5_variable": ["content://sms"," content://sms/sent", "content://sms/inbox"],
+    "x5_variable": [
+        "content://sms",
+        " content://sms/sent",
+        "content://sms/inbox"
+    ],
     "yscore": 1
 }

@@ -6,8 +6,15 @@ verify_ssl = true
 [dev-packages]
 pycodestyle = "*"
 rope = "*"
+black = "*"
 
 [packages]
+androguard = "*"
+black = "*"
+prettytable = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true
