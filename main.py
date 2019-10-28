@@ -17,7 +17,7 @@ class XRule:
 
         # Create Class, Method, String and Field
         # crossreferences for all classes in the Analysis.
-        self.dx.create_xref()
+        # self.dx.create_xref()
 
         self.pre_method0 = []
         self.pre_method1 = []
@@ -189,6 +189,17 @@ class XRule:
                     break
         return state
 
+    def get_method_bytecode(self, class_name, method_name):
+
+        result = self.dx.find_methods(class_name, method_name)
+
+        if result is not None:
+            for m in self.dx.find_methods(class_name, method_name):
+                for idx, ins in m.get_method().get_instructions_idx():
+                    yield (ins.get_name(), ins.get_output())
+        else:
+            raise ValueError("Method Not Found")
+
     def run(self, rule_obj):
         """
         Run five levels check to get the y_score.
@@ -228,7 +239,7 @@ class XRule:
                         if self.check_sequence(same_method, pre_0, pre_1):
                             print("4==> [O]")
 
-                            if self.check_parameter(pre_0[1], pre_1[1]):
+                            if self.check_parameter(str(pre_0[1]), str(pre_1[1])):
                                 print("5==> [O]")
 
 
@@ -237,3 +248,9 @@ data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
 rule_checker = RuleObject("rules/sendLocation.json")
 
 data.run(rule_checker)
+
+
+for i in data.get_method_bytecode(
+    "Lcom/google/progress/AndroidClientService;", "sendMessage"
+):
+    print(i)

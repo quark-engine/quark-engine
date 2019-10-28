@@ -9,12 +9,12 @@ rope = "*"
 black = "*"
 
 [packages]
-androguard = "*"
 black = "*"
 prettytable = "*"
+androguard = {editable = true,git = "https://github.com/androguard/androguard"}
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true

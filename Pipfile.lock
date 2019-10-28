@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a87217d0c1fcc94e1d1cd5ede9c6d5ed334b47bf756939206070e098833d63a2"
+            "sha256": "9efae8e72ffdbaa5ad279749fd4a4dcf867cc58084a77a5e7b0055bc08c16b32"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.6"
+            "python_version": "3.7"
         },
         "sources": [
             {
@@ -17,13 +17,9 @@
     },
     "default": {
         "androguard": {
-            "hashes": [
-                "sha256:38ade525fc3c5cb466535f8e2c79e0578bbcc360846f029704b5c7b0cdabddd9",
-                "sha256:e2d87b7952ccc61d541e8a86b1e5a5eea8a28d90037afe9ab4406cae3e69e115",
-                "sha256:f0655ca3a5add74c550951e79bd0bebbd1c5b239178393d30d8db0bd3202cda2"
-            ],
-            "index": "pypi",
-            "version": "==3.3.5"
+            "editable": true,
+            "git": "https://github.com/androguard/androguard",
+            "ref": "dbfa523bc0211fca9ed626ddceb02ff4b18f46f6"
         },
         "appdirs": {
             "hashes": [
@@ -31,6 +27,14 @@
                 "sha256:d8b24664561d0d34ddfaec54636d502d7cea6e29c3eaf68f3df6180863e2166e"
             ],
             "version": "==1.4.3"
+        },
+        "appnope": {
+            "hashes": [
+                "sha256:5b26757dc6f79a3b7dc9fab95359328d5747fcb2409d331ea66d0272b90ab2a0",
+                "sha256:8b995ffe925347a2138d7ac0fe77155e4311a0ea6d6da4f5128fe4b3cbe5ed71"
+            ],
+            "markers": "sys_platform == 'darwin'",
+            "version": "==0.1.0"
         },
         "asn1crypto": {
             "hashes": [
@@ -88,12 +92,6 @@
                 "sha256:5d19b92a3c8f7f101c8dd86afd86b0f061a8ce4540ab8cd401fa2542756bce6d"
             ],
             "version": "==4.4.1"
-        },
-        "future": {
-            "hashes": [
-                "sha256:858e38522e8fd0d3ce8f0c1feaf0603358e366d5403209674c7b617fa0c24093"
-            ],
-            "version": "==0.18.1"
         },
         "ipython": {
             "hashes": [
