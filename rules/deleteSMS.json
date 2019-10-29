@@ -1,0 +1,20 @@
+{
+    "rulenumber": 2,
+    "crime": "Delete SMS",
+    "x1_permission": [
+        "android.permission.READ_SMS",
+        "android.permission.WRITE_SMS"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/net/Uri",
+            "method": "parse"
+        },
+        {
+            "class": "Landroid/content/ContentResolver",
+            "method": "delete"
+        }
+    ],
+    "x5_variable": [],
+    "yscore": 1
+}
