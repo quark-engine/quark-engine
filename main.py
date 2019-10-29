@@ -1,4 +1,5 @@
 from Objects.RuleObject import RuleObject
+from Objects.BytecodeObject import BytecodeObject
 from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
@@ -69,6 +70,48 @@ class XRule:
             return remove_dup_list(result)
         else:
             return None
+
+    def get_method_bytecode(self, class_name, method_name):
+
+        result = self.dx.find_methods(class_name, method_name)
+
+        if result is not None:
+            for m in self.dx.find_methods(class_name, method_name):
+                for idx, ins in m.get_method().get_instructions_idx():
+                    bytecode_obj = None
+
+                    # count the number of the registers.
+                    length_operands = len(ins.get_operands())
+                    if length_operands == 0:
+                        # No register, no parm
+                        bytecode_obj = BytecodeObject(ins.get_name(), None, None)
+                    elif length_operands == 1:
+                        # Only one register
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(),
+                            ins.get_operands()[length_operands - 1][1],
+                            None,
+                        )
+                    elif length_operands >= 2:
+                        # the last one is parm, the other are registers.
+                        reg_list = []
+                        parameter = ins.get_operands()[length_operands - 1]
+                        for i in range(0, length_operands - 1):
+                            reg_list.append(ins.get_operands()[i][1])
+                        if len(parameter) == 3:
+                            # method or value
+                            parameter = parameter[2]
+                        else:
+                            # Operand.OFFSET
+                            parameter = parameter[1]
+
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, parameter,
+                        )
+
+                    yield bytecode_obj
+        else:
+            raise ValueError("Method Not Found")
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -189,17 +232,6 @@ class XRule:
                     break
         return state
 
-    def get_method_bytecode(self, class_name, method_name):
-
-        result = self.dx.find_methods(class_name, method_name)
-
-        if result is not None:
-            for m in self.dx.find_methods(class_name, method_name):
-                for idx, ins in m.get_method().get_instructions_idx():
-                    yield (ins.get_name(), ins.get_output())
-        else:
-            raise ValueError("Method Not Found")
-
     def run(self, rule_obj):
         """
         Run five levels check to get the y_score.
@@ -229,8 +261,6 @@ class XRule:
                 same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
 
-                    # print("[O]共同出現於:\n" + repr(same))
-
                     pre_0 = self.pre_method0.pop()[0]
                     pre_1 = self.pre_method1.pop()[0]
 
@@ -250,7 +280,12 @@ rule_checker = RuleObject("rules/sendLocation.json")
 data.run(rule_checker)
 
 
-for i in data.get_method_bytecode(
+for obj in data.get_method_bytecode(
     "Lcom/google/progress/AndroidClientService;", "sendMessage"
 ):
-    print(i)
+    print("------------------")
+    print(obj.mnemonic)
+    print(obj.registers)
+    print(obj.parameter)
+    print("------------------")
+

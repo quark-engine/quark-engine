@@ -14,7 +14,7 @@ prettytable = "*"
 androguard = {editable = true,git = "https://github.com/androguard/androguard"}
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
 
 [pipenv]
 allow_prereleases = true
