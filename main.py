@@ -288,4 +288,3 @@ for obj in data.get_method_bytecode(
     print(obj.registers)
     print(obj.parameter)
     print("------------------")
-

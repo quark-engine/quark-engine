@@ -79,13 +79,13 @@ class VarabileObject:
         :return:
         """
         return (
-                self._register_name
-                + " ,"
-                + self._value
-                + " ,"
-                + "["
-                + ",".join(self._called_by_func)
-                + "]"
+            self._register_name
+            + " ,"
+            + self._value
+            + " ,"
+            + "["
+            + ",".join(self._called_by_func)
+            + "]"
         )
 
     @property
