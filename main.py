@@ -4,6 +4,11 @@ from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
+from tqdm import tqdm
+from time import sleep
+from colorama import init
+from colorama import Fore, Back, Style
+from pyfiglet import Figlet, print_figlet
 from utils.tools import *
 
 
@@ -204,7 +209,7 @@ class XRule:
                 length -= 1
 
             if s_func_val > f_func_val:
-                print("Found sequence in :" + repr(same_method))
+                # print("Found sequence in :" + repr(same_method))
                 return True
             else:
                 return False
@@ -217,7 +222,7 @@ class XRule:
         common_method: ("class_name", "method_name")
         """
 
-        print("Searching...:" + repr(common_method))
+        # print("Searching...:" + repr(common_method))
 
         pyeval = PyEval()
         # Check if there is an operation of the same register
@@ -256,21 +261,24 @@ class XRule:
         """
         Run five levels check to get the y_score.
         """
+        same_sequence_show_up = []
+        same_operation = []
+        print(Fore.LIGHTYELLOW_EX, "Crime: " + rule_obj.crime, Style.RESET_ALL)
+        check_item = [False, False, False, False, False]
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
-            print("1==> [O]")
+            check_item[0] = True
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
         if self.find_method(test_cls0, test_md0) is not None:
-            print("2==> [O]")
-
+            check_item[1] = True
             # Level 3
             test_md1 = rule_checker.x2n3n4_comb[1]["method"]
             test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
             if self.find_method(test_cls1, test_md1) is not None:
-                print("3==> [O]")
+                check_item[2] = True
 
                 # Level 4
                 # [('class_a','method_a'),('class_b','method_b')]
@@ -287,18 +295,102 @@ class XRule:
                     for common_method in same:
 
                         if self.check_sequence(common_method, pre_0, pre_1):
-                            print("4==> [O]")
+                            check_item[3] = True
+                            same_sequence_show_up.append(common_method)
 
                             if common_method[1] == "sendMessage":
                                 # Level 5
                                 if self.check_parameter(
                                     common_method, str(pre_0[1]), str(pre_1[1])
                                 ):
-                                    print("5==> [O]")
+                                    check_item[4] = True
+                                    same_operation.append(common_method)
+
+            # Count the confidence
+            print("")
+            print("Confidence:" + str(check_item.count(True) * 20) + "%")
+            print("")
+
+            if check_item[0]:
+                print(
+                    "\t[",
+                    Fore.LIGHTRED_EX,
+                    u"\u2713",
+                    Style.RESET_ALL,
+                    "]",
+                    Fore.LIGHTGREEN_EX,
+                    "1.Permission Request",
+                    Style.RESET_ALL,
+                )
+
+                for permission in rule_obj.x1_permission:
+                    print("\t\t" + permission)
+                print("")
+            if check_item[1]:
+                print(
+                    "\t[",
+                    Fore.LIGHTRED_EX,
+                    u"\u2713",
+                    Style.RESET_ALL,
+                    "]",
+                    Fore.LIGHTGREEN_EX,
+                    "2.Native API Usage",
+                    Style.RESET_ALL,
+                )
+                print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+                print("")
+            if check_item[2]:
+                print(
+                    "\t[",
+                    Fore.LIGHTRED_EX,
+                    u"\u2713",
+                    Style.RESET_ALL,
+                    "]",
+                    Fore.LIGHTGREEN_EX,
+                    "3.Native API Combination",
+                    Style.RESET_ALL,
+                )
+                print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+                print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
+                print("")
+            if check_item[3]:
+                print(
+                    "\t[",
+                    Fore.LIGHTRED_EX,
+                    u"\u2713",
+                    Style.RESET_ALL,
+                    "]",
+                    Fore.LIGHTGREEN_EX,
+                    "4.Native API Sequence",
+                    Style.RESET_ALL,
+                )
+                print("\t\t" + "Sequence show up in:")
+                for seq_methon in same_sequence_show_up:
+                    print("\t\t" + repr(seq_methon))
+                print("")
+            if check_item[4]:
+                print(
+                    "\t[",
+                    Fore.LIGHTRED_EX,
+                    u"\u2713",
+                    Style.RESET_ALL,
+                    "]",
+                    Fore.LIGHTGREEN_EX,
+                    "5.Native API Use Same Parameter",
+                    Style.RESET_ALL,
+                )
+                for seq_operation in same_operation:
+                    print("\t\t" + repr(seq_operation))
+                print("")
 
 
 if __name__ == "__main__":
 
+    print("-" * 105)
+    print_figlet("Q u a r k", font="slant", colors="LIGHT_BLUE")
+    print("-" * 105)
+    for i in tqdm(range(10)):
+        sleep(0.05)
     # Load APK
     data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
 
