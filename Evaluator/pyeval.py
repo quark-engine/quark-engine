@@ -2,9 +2,9 @@ import sys
 from prettytable import PrettyTable
 from Objects.TableObject import TableObject
 from Objects.VarabileObject import VarabileObject
-from parser import parse
 
-MAX_REG_COUNT = 10
+
+MAX_REG_COUNT = 40
 
 
 class PyEval:
@@ -163,26 +163,4 @@ class PyEval:
 
 
 if __name__ == "__main__":
-
-    pyeval = PyEval()
-
-    for bytecode in parse(sys.argv[1]):
-        if bytecode[0] in pyeval.eval.keys():
-            pyeval.eval[bytecode[0]](bytecode)
-
-    x = PrettyTable()
-    x.field_names = ["Variable", "called_by_function"]
-    for i in pyeval.show_table():
-        for j in i:
-            matchers = ["getLocation", "sendSms"]
-            matching = [s for s in j.called_by_func if all(xs in s for xs in matchers)]
-            if len(matching) > 0:
-                # print(matching)
-
-                x.add_row([j.value, j.called_by_func])
-                x.add_row(["", ""])
-                x.add_row(["", ""])
-                x.add_row(["---------------------", "---------------------"])
-
-    x.align = "c"
-    print(x.get_html_string())
+    pass

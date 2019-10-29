@@ -8,7 +8,7 @@ from utils.tools import *
 
 
 from Evaluator.pyeval import PyEval
-from parser import parse
+
 
 MAX_SEARCH_LAYER = 3
 
@@ -81,6 +81,7 @@ class XRule:
             for m in self.dx.find_methods(class_name, method_name):
                 for idx, ins in m.get_method().get_instructions_idx():
                     bytecode_obj = None
+                    reg_list = []
 
                     # count the number of the registers.
                     length_operands = len(ins.get_operands())
@@ -89,17 +90,17 @@ class XRule:
                         bytecode_obj = BytecodeObject(ins.get_name(), None, None)
                     elif length_operands == 1:
                         # Only one register
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(),
-                            ins.get_operands()[length_operands - 1][1],
-                            None,
+
+                        reg_list.append(
+                            "v" + str(ins.get_operands()[length_operands - 1][1])
                         )
+                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None,)
                     elif length_operands >= 2:
                         # the last one is parm, the other are registers.
-                        reg_list = []
+
                         parameter = ins.get_operands()[length_operands - 1]
                         for i in range(0, length_operands - 1):
-                            reg_list.append(ins.get_operands()[i][1])
+                            reg_list.append("v" + str(ins.get_operands()[i][1]))
                         if len(parameter) == 3:
                             # method or value
                             parameter = parameter[2]
@@ -208,20 +209,37 @@ class XRule:
             else:
                 return False
 
-    def check_parameter(self, fist_method_name, second_method_name):
+    def check_parameter(self, common_method, fist_method_name, second_method_name):
         """
         check the usage of the same parameter between
         two method.
+
+        common_method: ("class_name", "method_name")
         """
+
+        print("Searching...:" + repr(common_method))
 
         pyeval = PyEval()
         # Check if there is an operation of the same register
         state = False
 
-        # TODO replace it to get_output(),get_name()
-        for bytecode in parse("ag_file/target.ag"):
-            if bytecode[0] in pyeval.eval.keys():
-                pyeval.eval[bytecode[0]](bytecode)
+        for bytecode_obj in self.get_method_bytecode(
+            common_method[0], common_method[1]
+        ):
+            # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
+            instruction = []
+            instruction.append(bytecode_obj.mnemonic)
+            if bytecode_obj.registers is not None:
+                instruction.extend(bytecode_obj.registers)
+            if bytecode_obj.parameter is not None:
+                instruction.append(bytecode_obj.parameter)
+
+            # for the case of MUTF8String
+            instruction = [str(x) for x in instruction]
+
+            if instruction[0] in pyeval.eval.keys():
+
+                pyeval.eval[instruction[0]](instruction)
 
         for table in pyeval.show_table():
             for val_obj in table:
@@ -266,13 +284,17 @@ class XRule:
                     pre_0 = self.pre_method0.pop()[0]
                     pre_1 = self.pre_method1.pop()[0]
 
-                    for same_method in same:
+                    for common_method in same:
 
-                        if self.check_sequence(same_method, pre_0, pre_1):
+                        if self.check_sequence(common_method, pre_0, pre_1):
                             print("4==> [O]")
 
-                            if self.check_parameter(str(pre_0[1]), str(pre_1[1])):
-                                print("5==> [O]")
+                            if common_method[1] == "sendMessage":
+                                # Level 5
+                                if self.check_parameter(
+                                    common_method, str(pre_0[1]), str(pre_1[1])
+                                ):
+                                    print("5==> [O]")
 
 
 if __name__ == "__main__":
@@ -285,12 +307,3 @@ if __name__ == "__main__":
 
     # Run the checker
     data.run(rule_checker)
-
-    # for obj in data.get_method_bytecode(
-    #     "Lcom/google/progress/AndroidClientService;", "sendMessage"
-    # ):
-    #     print("------------------")
-    #     print(obj.mnemonic)
-    #     print(obj.registers)
-    #     print(obj.parameter)
-    #     print("------------------")
