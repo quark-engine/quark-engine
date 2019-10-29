@@ -5,7 +5,9 @@ from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
 from utils.tools import *
-from pyeval import PyEval
+
+
+from Evaluator.pyeval import PyEval
 from parser import parse
 
 MAX_SEARCH_LAYER = 3
@@ -273,18 +275,22 @@ class XRule:
                                 print("5==> [O]")
 
 
-data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
+if __name__ == "__main__":
 
-rule_checker = RuleObject("rules/sendLocation.json")
+    # Load APK
+    data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
 
-data.run(rule_checker)
+    # Load rules
+    rule_checker = RuleObject("rules/sendLocation.json")
 
+    # Run the checker
+    data.run(rule_checker)
 
-for obj in data.get_method_bytecode(
-    "Lcom/google/progress/AndroidClientService;", "sendMessage"
-):
-    print("------------------")
-    print(obj.mnemonic)
-    print(obj.registers)
-    print(obj.parameter)
-    print("------------------")
+    # for obj in data.get_method_bytecode(
+    #     "Lcom/google/progress/AndroidClientService;", "sendMessage"
+    # ):
+    #     print("------------------")
+    #     print(obj.mnemonic)
+    #     print(obj.registers)
+    #     print(obj.parameter)
+    #     print("------------------")
