@@ -17,12 +17,8 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 ### Installation
 
 ```bash=
-$ git clone https://github.com/18z/quark-rules
-
-$ cd quark-rules
-
+$ git clone https://github.com/18z/quark-rules; cd quark-rules
 $ pipenv install
-
 $ pipenv shell
 ```
 
@@ -48,13 +44,15 @@ optional arguments:
 
 ### Example (Easy report)
 ```
-python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -e
+python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+               -r rules/sendLocation.json -e
 ```
 ![](https://i.imgur.com/cNOsyO9.png)
 
 ### Example (Detail report)
 ```
-python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -d
+python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+               -r rules/sendLocation.json -d
 ```
 
 ![](https://i.imgur.com/DK8c3cL.png)
