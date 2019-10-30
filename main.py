@@ -372,4 +372,3 @@ if __name__ == "__main__":
     data.run(rule_checker)
 
     print_success("OK")
-
