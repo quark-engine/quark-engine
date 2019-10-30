@@ -14,16 +14,18 @@ Malware evolved with new techniques to gain difficulties for reverse engineering
 Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross reference and calling sequence of the native API. 2. Tracing the bytecode register. The combination of these functionalities (yes, the order theory) not only can neglect obfuscation but also match perfectly to the design of our malware scoring system.
 
 ### Detailed Report
-```
-python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-               -r rules/sendLocation.json -d
+This is a how we examine a real android malware with one single rule (crime).
+
+```bash
+$ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+                 -r rules/sendLocation.json -d
 ```
 
 ![](https://i.imgur.com/DK8c3cL.png)
 
 ### Installation
 
-```bash=
+```bash
 $ git clone https://github.com/18z/quark-rules; cd quark-rules
 $ pipenv install
 $ pipenv shell
@@ -34,7 +36,7 @@ Make sure your python version is `3.7`, or you could change it from `Pipfile` to
 ### Usage
 
 ```bash
-python main.py --help
+$ python main.py --help
 ```
 
 
