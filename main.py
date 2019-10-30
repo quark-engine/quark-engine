@@ -98,20 +98,24 @@ class XRule:
                     length_operands = len(ins.get_operands())
                     if length_operands == 0:
                         # No register, no parm
-                        bytecode_obj = BytecodeObject(ins.get_name(), None, None)
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), None, None)
                     elif length_operands == 1:
                         # Only one register
 
                         reg_list.append(
-                            "v" + str(ins.get_operands()[length_operands - 1][1])
+                            "v" + str(ins.get_operands()
+                                      [length_operands - 1][1])
                         )
-                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None,)
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, None,)
                     elif length_operands >= 2:
                         # the last one is parm, the other are registers.
 
                         parameter = ins.get_operands()[length_operands - 1]
                         for i in range(0, length_operands - 1):
-                            reg_list.append("v" + str(ins.get_operands()[i][1]))
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]))
                         if len(parameter) == 3:
                             # method or value
                             parameter = parameter[2]
@@ -126,6 +130,34 @@ class XRule:
                     yield bytecode_obj
         else:
             raise ValueError("Method Not Found")
+
+    def find_f_previous_method(self, base, top):
+        """
+        Find the previous method based on base before top
+        """
+        method_set = self.upperFunc(base[0], base[1])
+
+        if method_set is not None:
+
+            if top in method_set:
+                self.pre_method0.append(base)
+            else:
+                for item in method_set:
+                    self.find_f_previous_method(item, top)
+
+    def find_s_previous_method(self, base, top):
+        """
+        Find the previous method based on base before top
+        """
+
+        method_set = self.upperFunc(base[0], base[1])
+
+        if method_set is not None:
+            if top in method_set:
+                self.pre_method1.append(base)
+            else:
+                for item in method_set:
+                    self.find_s_previous_method(item, top)
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -190,14 +222,15 @@ class XRule:
             for md in method_set:
                 for _, call, number in md.get_xref_to():
 
-                    if (call.class_name == f_func[0] and call.name == f_func[1]) or (
-                        call.class_name == s_func[0] and call.name == s_func[1]
-                    ):
+                    to_md_name = str(call.name)
+
+                    if (to_md_name == f_func[1]) or (to_md_name == s_func[1]):
+
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
             if len(seq_table) < 2:
-                print("Not Found sequence in " + repr(same_method))
+                # Not Found sequence in same_method
                 return False
             seq_table.sort(key=operator.itemgetter(1))
 
@@ -229,8 +262,6 @@ class XRule:
 
         common_method: ("class_name", "method_name")
         """
-
-        # print("Searching...:" + repr(common_method))
 
         pyeval = PyEval()
         # Check if there is an operation of the same register
@@ -294,10 +325,19 @@ class XRule:
                 same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
 
-                    pre_0 = self.pre_method0.pop()[0]
-                    pre_1 = self.pre_method1.pop()[0]
-
                     for common_method in same:
+
+                        base_method_0 = (test_cls0, test_md0)
+                        base_method_1 = (test_cls1, test_md1)
+                        self.pre_method0.clear()
+                        self.pre_method1.clear()
+                        self.find_f_previous_method(
+                            base_method_0, common_method)
+                        self.find_s_previous_method(
+                            base_method_1, common_method)
+                        # TODO It may have many previous method in self.pre_method
+                        pre_0 = self.pre_method0[0]
+                        pre_1 = self.pre_method1[0]
 
                         if self.check_sequence(common_method, pre_0, pre_1):
                             self.check_item[3] = True
@@ -373,7 +413,8 @@ if __name__ == "__main__":
     logo()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--easy", action="store_true", help="show easy report")
+    parser.add_argument("-e", "--easy", action="store_true",
+                        help="show easy report")
     parser.add_argument(
         "-d", "--detail", action="store_true", help="show detail report"
     )
