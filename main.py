@@ -6,9 +6,10 @@ from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
 from tqdm import tqdm
 from time import sleep
-from colorama import init
-from colorama import Fore, Back, Style
-from pyfiglet import Figlet, print_figlet
+
+from utils.colors import *
+from utils.logo import *
+from utils.out import *
 from utils.tools import *
 
 
@@ -312,83 +313,53 @@ class XRule:
             print("")
 
             if check_item[0]:
-                print(
-                    "\t[",
-                    Fore.LIGHTRED_EX,
-                    u"\u2713",
-                    Style.RESET_ALL,
-                    "]",
-                    Fore.LIGHTGREEN_EX,
-                    "1.Permission Request",
-                    Style.RESET_ALL,
-                )
+
+                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+                COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
+                print("")
 
                 for permission in rule_obj.x1_permission:
                     print("\t\t" + permission)
                 print("")
             if check_item[1]:
-                print(
-                    "\t[",
-                    Fore.LIGHTRED_EX,
-                    u"\u2713",
-                    Style.RESET_ALL,
-                    "]",
-                    Fore.LIGHTGREEN_EX,
-                    "2.Native API Usage",
-                    Style.RESET_ALL,
-                )
+
+                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+                COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
+                print("")
                 print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
                 print("")
             if check_item[2]:
-                print(
-                    "\t[",
-                    Fore.LIGHTRED_EX,
-                    u"\u2713",
-                    Style.RESET_ALL,
-                    "]",
-                    Fore.LIGHTGREEN_EX,
-                    "3.Native API Combination",
-                    Style.RESET_ALL,
-                )
+
+                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+                COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
+                print("")
+
                 print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
                 print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
                 print("")
             if check_item[3]:
-                print(
-                    "\t[",
-                    Fore.LIGHTRED_EX,
-                    u"\u2713",
-                    Style.RESET_ALL,
-                    "]",
-                    Fore.LIGHTGREEN_EX,
-                    "4.Native API Sequence",
-                    Style.RESET_ALL,
-                )
+
+                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+                COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
+                print("")
+
                 print("\t\t" + "Sequence show up in:")
                 for seq_methon in same_sequence_show_up:
                     print("\t\t" + repr(seq_methon))
                 print("")
             if check_item[4]:
-                print(
-                    "\t[",
-                    Fore.LIGHTRED_EX,
-                    u"\u2713",
-                    Style.RESET_ALL,
-                    "]",
-                    Fore.LIGHTGREEN_EX,
-                    "5.Native API Use Same Parameter",
-                    Style.RESET_ALL,
-                )
+
+                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+                COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
+                print("")
                 for seq_operation in same_operation:
                     print("\t\t" + repr(seq_operation))
-                print("")
 
 
 if __name__ == "__main__":
 
-    print("-" * 105)
-    print_figlet("Q u a r k", font="slant", colors="LIGHT_BLUE")
-    print("-" * 105)
+    LOGO()
+
     for i in tqdm(range(10)):
         sleep(0.05)
     # Load APK
@@ -399,3 +370,6 @@ if __name__ == "__main__":
 
     # Run the checker
     data.run(rule_checker)
+
+    print_success("OK")
+
