@@ -18,7 +18,8 @@ This is a how we examine a real android malware with one single rule (crime).
 
 ```bash
 $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-                 -r rules/sendLocation.json -d
+                 -r rules/sendLocation.json \
+                 -d
 ```
 
 ![](https://i.imgur.com/DK8c3cL.png)
