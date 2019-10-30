@@ -268,8 +268,6 @@ class XRule:
         Run five levels check to get the y_score.
         """
 
-        print(yellow("Crime: " + rule_obj.crime))
-
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
             self.check_item[0] = True
@@ -314,38 +312,9 @@ class XRule:
     def show_easy_report(self, rule_obj):
         # Count the confidence
         print("")
+        print(yellow(bold(rule_obj.crime)))
         print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
         print("")
-
-        if self.check_item[0]:
-
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-            COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
-            print("")
-
-        if self.check_item[1]:
-
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-            COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
-            print("")
-
-        if self.check_item[2]:
-
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-            COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
-            print("")
-
-        if self.check_item[3]:
-
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-            COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
-            print("")
-
-        if self.check_item[4]:
-
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-            COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
-            print("")
 
     def show_detail_report(self, rule_obj):
         # Count the confidence
@@ -399,38 +368,47 @@ class XRule:
 
 if __name__ == "__main__":
 
+    logo()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--easy", action="store_true", help="show easy report")
     parser.add_argument(
         "-d", "--detail", action="store_true", help="show detail report"
     )
+    parser.add_argument("-a", "--apk", help="APK file", required=True)
+    parser.add_argument("-r", "--rule", help="Rules need to be checked", required=True)
 
     ans = parser.parse_args()
 
+    if ans.easy:
 
-logo()
+        # Load APK
+        data = XRule(ans.apk)
 
-# Load APK
-data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
+        # Load rules
+        rule_checker = RuleObject(ans.rule)
 
-# Load rules
-rule_checker = RuleObject("rules/sendLocation.json")
+        for i in tqdm(range(10)):
+            sleep(0.05)
 
+        # Run the checker
+        data.run(rule_checker)
+        data.show_easy_report(rule_checker)
+        print_success("OK")
+    elif ans.detail:
 
-if ans.easy:
-    for i in tqdm(range(10)):
-        sleep(0.05)
-    # Run the checker
-    data.run(rule_checker)
-    data.show_easy_report(rule_checker)
-    print_success("OK")
-elif ans.detail:
+        # Load APK
+        data = XRule(ans.apk)
 
-    for i in tqdm(range(10)):
-        sleep(0.05)
-    # Run the checker
-    data.run(rule_checker)
-    data.show_detail_report(rule_checker)
-    print_success("OK")
-else:
-    print("python3 main.py --help")
+        # Load rules
+        rule_checker = RuleObject(ans.rule)
+
+        for i in tqdm(range(10)):
+            sleep(0.05)
+
+        # Run the checker
+        data.run(rule_checker)
+        data.show_detail_report(rule_checker)
+        print_success("OK")
+    else:
+        print("python3 main.py --help")
