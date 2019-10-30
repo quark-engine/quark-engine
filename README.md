@@ -1,4 +1,4 @@
-# Quark
+# Quark Engine - An Obfuscation-Neglect Android Malware Scoring System
 
 ![](https://i.imgur.com/eaz7Tfe.png)
 
