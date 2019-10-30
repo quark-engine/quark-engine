@@ -1,6 +1,5 @@
-### Quark Engine - An Obfuscation-Neglect Android Malware Scoring System
-
-![](https://i.imgur.com/eaz7Tfe.png)
+# Quark Engine [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square)
+An Obfuscation-Neglect Android Malware Scoring System
 
 
 #### Installation
