@@ -343,13 +343,12 @@ class XRule:
                             self.check_item[3] = True
                             self.same_sequence_show_up.append(common_method)
 
-                            if common_method[1] == "sendMessage":
-                                # Level 5
-                                if self.check_parameter(
-                                    common_method, str(pre_0[1]), str(pre_1[1])
-                                ):
-                                    self.check_item[4] = True
-                                    self.same_operation.append(common_method)
+                            # Level 5
+                            if self.check_parameter(
+                                common_method, str(pre_0[1]), str(pre_1[1])
+                            ):
+                                self.check_item[4] = True
+                                self.same_operation.append(common_method)
 
     def show_easy_report(self, rule_obj):
         # Count the confidence
