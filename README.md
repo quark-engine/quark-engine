@@ -25,12 +25,14 @@ python main.py --help
 
 
 ```
-usage: main.py [-h] [-e] [-d]
+usage: main.py [-h] [-e] [-d] -a APK -r RULE
 
 optional arguments:
-  -h, --help    show this help message and exit
-  -e, --easy    show easy report
-  -d, --detail  show detail report
+  -h, --help            show this help message and exit
+  -e, --easy            show easy report
+  -d, --detail          show detail report
+  -a APK, --apk APK     APK file
+  -r RULE, --rule RULE  Rules need to be checked
 ```
 
 ## Example (Easy report)
