@@ -1,9 +1,9 @@
-# Quark Engine - An Obfuscation-Neglect Android Malware Scoring System
+### Quark Engine - An Obfuscation-Neglect Android Malware Scoring System
 
 ![](https://i.imgur.com/eaz7Tfe.png)
 
 
-## Installation
+#### Installation
 
 ```bash=
 $ git clone https://github.com/18z/quark-rules
@@ -17,7 +17,7 @@ $ pipenv shell
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
 
-## Usage
+#### Usage
 
 ```bash
 python main.py --help
@@ -35,13 +35,13 @@ optional arguments:
   -r RULE, --rule RULE  Rules need to be checked
 ```
 
-## Example (Easy report)
+#### Example (Easy report)
 ```
 python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -e
 ```
 ![](https://i.imgur.com/cNOsyO9.png)
 
-## Example (Detail report)
+#### Example (Detail report)
 ```
 python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -d
 ```
