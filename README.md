@@ -35,14 +35,14 @@ optional arguments:
 
 ## Example (Easy report)
 ```
-python main.py -e
+python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -e
 ```
 
 ![](https://i.imgur.com/OXYnR0r.png)
 
 ## Example (Detail report)
 ```
-python main.py -d
+python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -d
 ```
 
 ![](https://i.imgur.com/DK8c3cL.png)
