@@ -39,8 +39,7 @@ optional arguments:
 ```
 python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/sendLocation.json -e
 ```
-
-![](https://i.imgur.com/OXYnR0r.png)
+![](https://i.imgur.com/cNOsyO9.png)
 
 ## Example (Detail report)
 ```
