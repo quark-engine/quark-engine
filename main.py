@@ -153,9 +153,11 @@ class XRule:
                 next_list1 = []
                 next_list2 = []
                 for item in list1:
-                    next_list1 = self.upperFunc(item[0], item[1])
+                    if self.upperFunc(item[0], item[1]) is not None:
+                        next_list1 = self.upperFunc(item[0], item[1])
                 for item in list2:
-                    next_list2 = self.upperFunc(item[0], item[1])
+                    if self.upperFunc(item[0], item[1]) is not None:
+                        next_list2.extend(self.upperFunc(item[0], item[1]))
                 # Append first layer into next layer
                 for pre_list in list1:
                     next_list1.append(pre_list)
