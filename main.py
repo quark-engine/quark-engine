@@ -4,11 +4,12 @@ from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
+import argparse
 from tqdm import tqdm
 from time import sleep
 
 from utils.colors import *
-from utils.logo import *
+from logo import logo
 from utils.out import *
 from utils.tools import *
 
@@ -30,6 +31,10 @@ class XRule:
 
         self.pre_method0 = []
         self.pre_method1 = []
+
+        self.same_sequence_show_up = []
+        self.same_operation = []
+        self.check_item = [False, False, False, False, False]
 
     @property
     def permissions(self):
@@ -262,24 +267,23 @@ class XRule:
         """
         Run five levels check to get the y_score.
         """
-        same_sequence_show_up = []
-        same_operation = []
-        print(Fore.LIGHTYELLOW_EX, "Crime: " + rule_obj.crime, Style.RESET_ALL)
-        check_item = [False, False, False, False, False]
+
+        print(yellow("Crime: " + rule_obj.crime))
+
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
-            check_item[0] = True
+            self.check_item[0] = True
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
         if self.find_method(test_cls0, test_md0) is not None:
-            check_item[1] = True
+            self.check_item[1] = True
             # Level 3
             test_md1 = rule_checker.x2n3n4_comb[1]["method"]
             test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
             if self.find_method(test_cls1, test_md1) is not None:
-                check_item[2] = True
+                self.check_item[2] = True
 
                 # Level 4
                 # [('class_a','method_a'),('class_b','method_b')]
@@ -296,79 +300,137 @@ class XRule:
                     for common_method in same:
 
                         if self.check_sequence(common_method, pre_0, pre_1):
-                            check_item[3] = True
-                            same_sequence_show_up.append(common_method)
+                            self.check_item[3] = True
+                            self.same_sequence_show_up.append(common_method)
 
                             if common_method[1] == "sendMessage":
                                 # Level 5
                                 if self.check_parameter(
                                     common_method, str(pre_0[1]), str(pre_1[1])
                                 ):
-                                    check_item[4] = True
-                                    same_operation.append(common_method)
+                                    self.check_item[4] = True
+                                    self.same_operation.append(common_method)
 
-            # Count the confidence
+    def show_easy_report(self, rule_obj):
+        # Count the confidence
+        print("")
+        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
+        print("")
+
+        if self.check_item[0]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
             print("")
-            print("Confidence:" + str(check_item.count(True) * 20) + "%")
+
+        if self.check_item[1]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
             print("")
 
-            if check_item[0]:
+        if self.check_item[2]:
 
-                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-                COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
-                print("")
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
+            print("")
 
-                for permission in rule_obj.x1_permission:
-                    print("\t\t" + permission)
-                print("")
-            if check_item[1]:
+        if self.check_item[3]:
 
-                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-                COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
-                print("")
-                print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-                print("")
-            if check_item[2]:
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
+            print("")
 
-                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-                COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
-                print("")
+        if self.check_item[4]:
 
-                print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-                print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
-                print("")
-            if check_item[3]:
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
+            print("")
 
-                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-                COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
-                print("")
+    def show_detail_report(self, rule_obj):
+        # Count the confidence
+        print("")
+        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
+        print("")
 
-                print("\t\t" + "Sequence show up in:")
-                for seq_methon in same_sequence_show_up:
-                    print("\t\t" + repr(seq_methon))
-                print("")
-            if check_item[4]:
+        if self.check_item[0]:
 
-                COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
-                COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
-                print("")
-                for seq_operation in same_operation:
-                    print("\t\t" + repr(seq_operation))
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
+            print("")
+
+            for permission in rule_obj.x1_permission:
+                print("\t\t" + permission)
+            print("")
+        if self.check_item[1]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
+            print("")
+            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+            print("")
+        if self.check_item[2]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
+            print("")
+
+            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+            print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
+            print("")
+        if self.check_item[3]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
+            print("")
+
+            print("\t\t" + "Sequence show up in:")
+            for seq_methon in self.same_sequence_show_up:
+                print("\t\t" + repr(seq_methon))
+            print("")
+        if self.check_item[4]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
+            print("")
+            for seq_operation in self.same_operation:
+                print("\t\t" + repr(seq_operation))
 
 
 if __name__ == "__main__":
 
-    LOGO()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--easy", action="store_true", help="show easy report")
+    parser.add_argument(
+        "-d", "--detail", action="store_true", help="show detail report"
+    )
+
+    ans = parser.parse_args()
+
+
+logo()
+
+# Load APK
+data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
+
+# Load rules
+rule_checker = RuleObject("rules/sendLocation.json")
+
+
+if ans.easy:
+    for i in tqdm(range(10)):
+        sleep(0.05)
+    # Run the checker
+    data.run(rule_checker)
+    data.show_easy_report(rule_checker)
+    print_success("OK")
+elif ans.detail:
 
     for i in tqdm(range(10)):
         sleep(0.05)
-    # Load APK
-    data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
-
-    # Load rules
-    rule_checker = RuleObject("rules/sendLocation.json")
-
     # Run the checker
     data.run(rule_checker)
-
+    data.show_detail_report(rule_checker)
     print_success("OK")
+else:
+    print("python3 main.py --help")
