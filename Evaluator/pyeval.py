@@ -86,10 +86,13 @@ class PyEval:
 
         reg = instruction[1]
         index = int(reg[1])
-        pre_ret = self.ret_stack.pop()
-
-        variable_object = VarabileObject(reg, pre_ret)
-        self.table_obj.insert(index, variable_object)
+        try:
+            pre_ret = self.ret_stack.pop()
+            variable_object = VarabileObject(reg, pre_ret)
+            self.table_obj.insert(index, variable_object)
+        except:
+            # No element in pop
+            pass
 
     def NEW_INSTANCE(self, instruction):
         """
@@ -150,13 +153,18 @@ class PyEval:
         reg = instruction[1]
         index = int(reg[1])
 
-        array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
-        array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
+        try:
 
-        variable_object = VarabileObject(
-            reg, array_obj.value + "[" + array_index.value + "]"
-        )
-        self.table_obj.insert(index, variable_object)
+            array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
+            array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
+
+            variable_object = VarabileObject(
+                reg, array_obj.value + "[" + array_index.value + "]"
+            )
+            self.table_obj.insert(index, variable_object)
+        except:
+            # No element in pop
+            pass
 
     def show_table(self):
         return self.table_obj.get_table()
