@@ -24,6 +24,17 @@ $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 
 ![](https://i.imgur.com/DK8c3cL.png)
 
+### Summary Report
+Examine with rules.
+
+```bash
+python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+               -r rules/sendLocation.json \
+               -e
+```
+![](https://i.imgur.com/cNOsyO9.png)
+
+
 ### Installation
 
 ```bash
@@ -38,10 +49,6 @@ Make sure your python version is `3.7`, or you could change it from `Pipfile` to
 
 ```bash
 $ python main.py --help
-```
-
-
-```
 usage: main.py [-h] [-e] [-d] -a APK -r RULE
 
 optional arguments:
@@ -52,10 +59,4 @@ optional arguments:
   -r RULE, --rule RULE  Rules need to be checked
 ```
 
-### Example (Easy report)
-```
-python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-               -r rules/sendLocation.json -e
-```
-![](https://i.imgur.com/cNOsyO9.png)
 
