@@ -195,7 +195,7 @@ class XRule:
 
             # sorting based on the value of the number
             if len(seq_table) < 2:
-                print("Not Found sequence in " + same_method)
+                print("Not Found sequence in " + repr(same_method))
                 return False
             seq_table.sort(key=operator.itemgetter(1))
 
@@ -376,7 +376,9 @@ if __name__ == "__main__":
         "-d", "--detail", action="store_true", help="show detail report"
     )
     parser.add_argument("-a", "--apk", help="APK file", required=True)
-    parser.add_argument("-r", "--rule", help="Rules need to be checked", required=True)
+    parser.add_argument(
+        "-r", "--rule", help="Rules folder need to be checked", required=True
+    )
 
     ans = parser.parse_args()
 
@@ -386,29 +388,34 @@ if __name__ == "__main__":
         data = XRule(ans.apk)
 
         # Load rules
-        rule_checker = RuleObject(ans.rule)
+        rules_list = os.listdir(ans.rule)
 
-        for i in tqdm(range(10)):
-            sleep(0.05)
+        for rule in tqdm(rules_list):
+            rulepath = os.path.join(ans.rule, rule)
+            print(rulepath)
+            rule_checker = RuleObject(rulepath)
 
-        # Run the checker
-        data.run(rule_checker)
-        data.show_easy_report(rule_checker)
-        print_success("OK")
+            # Run the checker
+            data.run(rule_checker)
+
+            data.show_easy_report(rule_checker)
+            print_success("OK")
     elif ans.detail:
 
         # Load APK
         data = XRule(ans.apk)
 
         # Load rules
-        rule_checker = RuleObject(ans.rule)
+        rules_list = os.listdir(ans.rule)
 
-        for i in tqdm(range(10)):
-            sleep(0.05)
+        for rule in tqdm(rules_list):
+            rule = os.path.join(ans.rule, rule)
+            rule_checker = RuleObject(rule)
 
-        # Run the checker
-        data.run(rule_checker)
-        data.show_detail_report(rule_checker)
-        print_success("OK")
+            # Run the checker
+            data.run(rule_checker)
+
+            data.show_detail_report(rule_checker)
+            print_success("OK")
     else:
         print("python3 main.py --help")
