@@ -411,8 +411,9 @@ if __name__ == "__main__":
         rules_list = os.listdir(ans.rule)
 
         for rule in tqdm(rules_list):
-            rule = os.path.join(ans.rule, rule)
-            rule_checker = RuleObject(rule)
+            rulepath = os.path.join(ans.rule, rule)
+            print(rulepath)
+            rule_checker = RuleObject(rulepath)
 
             # Run the checker
             data.run(rule_checker)
