@@ -33,7 +33,7 @@ class PyEval:
         """
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1 : len(instruction) - 1]
+        reg_list = instruction[1: len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -55,7 +55,8 @@ class PyEval:
                     executed_fuc + "(" + ",".join(value_of_reg_list) + ")"
                 )
         # push the return value into ret_stack
-        self.ret_stack.append(executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
+        self.ret_stack.append(
+            executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
 
     def INVOKE_VIRTUAL(self, instruction):
         """
@@ -123,7 +124,6 @@ class PyEval:
         self.table_obj.insert(index, variable_object)
 
     def CONST_FOUR(self, instruction):
-
         """
         const/4 vx,lit4
 
