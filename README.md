@@ -32,7 +32,7 @@ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/sendLocation.json \
                --easy
 ```
-<img src="https://i.imgur.com/cNOsyO9.png" data-canonical-src="https://i.imgur.com/cNOsyO9.png" width="650" height="200" />
+<img src="https://i.imgur.com/KpRjsr6.png"/>
 
 ### Installation
 
