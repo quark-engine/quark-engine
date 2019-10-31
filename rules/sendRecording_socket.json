@@ -1,0 +1,20 @@
+{
+    "rulenumber": 1,
+    "crime": "Send recording via socket",
+    "x1_permission": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.INTERNET"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/media/AudioRecord",
+            "method": "startRecording"
+        },
+        {
+            "class": "Ljava/net/Socket",
+            "method": "connect"
+        }
+    ],
+    "x5_variable": [],
+    "yscore": 1
+}

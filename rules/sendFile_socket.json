@@ -1,0 +1,20 @@
+{
+    "rulenumber": 1,
+    "crime": "Send file via socket",
+    "x1_permission": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.INTERNET"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Ljava/io/File",
+            "method": "init"
+        },
+        {
+            "class": "Ljava/net/Socket",
+            "method": "connect"
+        }
+    ],
+    "x5_variable": [],
+    "yscore": 1
+}
