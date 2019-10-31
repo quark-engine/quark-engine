@@ -1,5 +1,4 @@
 {
-    "rulenumber": 1,
     "crime": "Send Location via SMS",
     "x1_permission": [
         "android.permission.SEND_SMS",
@@ -16,6 +15,5 @@
             "method": "sendTextMessage"
         }
     ],
-    "x5_variable": [],
     "yscore": 4
 }

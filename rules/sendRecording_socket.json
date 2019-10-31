@@ -1,5 +1,4 @@
 {
-    "rulenumber": 1,
     "crime": "Send recording via socket",
     "x1_permission": [
         "android.permission.RECORD_AUDIO",
@@ -15,6 +14,5 @@
             "method": "connect"
         }
     ],
-    "x5_variable": [],
     "yscore": 5
 }

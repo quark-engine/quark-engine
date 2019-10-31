@@ -1,5 +1,4 @@
 {
-    "rulenumber": 2,
     "crime": "Delete SMS",
     "x1_permission": [
         "android.permission.READ_SMS",
@@ -15,6 +14,5 @@
             "method": "delete"
         }
     ],
-    "x5_variable": [],
     "yscore": 1
 }
