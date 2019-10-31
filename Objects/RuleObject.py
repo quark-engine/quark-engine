@@ -32,3 +32,7 @@ class RuleObject:
     @property
     def yscore(self):
         return self._yscore
+
+
+if __name__ == "__main__":
+    pass

@@ -2,9 +2,9 @@ import sys
 from prettytable import PrettyTable
 from Objects.TableObject import TableObject
 from Objects.VarabileObject import VarabileObject
-from parser import parse
 
-MAX_REG_COUNT = 10
+
+MAX_REG_COUNT = 40
 
 
 class PyEval:
@@ -33,7 +33,7 @@ class PyEval:
         """
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1 : len(instruction) - 1]
+        reg_list = instruction[1: len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -55,7 +55,8 @@ class PyEval:
                     executed_fuc + "(" + ",".join(value_of_reg_list) + ")"
                 )
         # push the return value into ret_stack
-        self.ret_stack.append(executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
+        self.ret_stack.append(
+            executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
 
     def INVOKE_VIRTUAL(self, instruction):
         """
@@ -85,10 +86,13 @@ class PyEval:
 
         reg = instruction[1]
         index = int(reg[1])
-        pre_ret = self.ret_stack.pop()
-
-        variable_object = VarabileObject(reg, pre_ret)
-        self.table_obj.insert(index, variable_object)
+        try:
+            pre_ret = self.ret_stack.pop()
+            variable_object = VarabileObject(reg, pre_ret)
+            self.table_obj.insert(index, variable_object)
+        except:
+            # No element in pop
+            pass
 
     def NEW_INSTANCE(self, instruction):
         """
@@ -123,7 +127,6 @@ class PyEval:
         self.table_obj.insert(index, variable_object)
 
     def CONST_FOUR(self, instruction):
-
         """
         const/4 vx,lit4
 
@@ -150,39 +153,22 @@ class PyEval:
         reg = instruction[1]
         index = int(reg[1])
 
-        array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
-        array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
+        try:
 
-        variable_object = VarabileObject(
-            reg, array_obj.value + "[" + array_index.value + "]"
-        )
-        self.table_obj.insert(index, variable_object)
+            array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
+            array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
+
+            variable_object = VarabileObject(
+                reg, array_obj.value + "[" + array_index.value + "]"
+            )
+            self.table_obj.insert(index, variable_object)
+        except:
+            # No element in pop
+            pass
 
     def show_table(self):
         return self.table_obj.get_table()
 
 
 if __name__ == "__main__":
-
-    pyeval = PyEval()
-
-    for bytecode in parse(sys.argv[1]):
-        if bytecode[0] in pyeval.eval.keys():
-            pyeval.eval[bytecode[0]](bytecode)
-
-    x = PrettyTable()
-    x.field_names = ["Variable", "called_by_function"]
-    for i in pyeval.show_table():
-        for j in i:
-            matchers = ["getLocation", "sendSms"]
-            matching = [s for s in j.called_by_func if all(xs in s for xs in matchers)]
-            if len(matching) > 0:
-                # print(matching)
-
-                x.add_row([j.value, j.called_by_func])
-                x.add_row(["", ""])
-                x.add_row(["", ""])
-                x.add_row(["---------------------", "---------------------"])
-
-    x.align = "c"
-    print(x.get_html_string())
+    pass

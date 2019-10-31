@@ -12,6 +12,10 @@ black = "*"
 black = "*"
 prettytable = "*"
 androguard = {editable = true,git = "https://github.com/androguard/androguard"}
+tqdm = "*"
+pyfiglet = "*"
+colorama = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.7"

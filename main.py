@@ -1,11 +1,21 @@
 from Objects.RuleObject import RuleObject
+from Objects.BytecodeObject import BytecodeObject
 from androguard.core.bytecodes import dvm
 from androguard.core.analysis import analysis
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 import operator
+import argparse
+from tqdm import tqdm
+from time import sleep
+
+from utils.colors import *
+from logo import logo
+from utils.out import *
 from utils.tools import *
-from pyeval import PyEval
-from parser import parse
+
+
+from Evaluator.pyeval import PyEval
+
 
 MAX_SEARCH_LAYER = 3
 
@@ -21,6 +31,10 @@ class XRule:
 
         self.pre_method0 = []
         self.pre_method1 = []
+
+        self.same_sequence_show_up = []
+        self.same_operation = []
+        self.check_item = [False, False, False, False, False]
 
     @property
     def permissions(self):
@@ -70,6 +84,81 @@ class XRule:
         else:
             return None
 
+    def get_method_bytecode(self, class_name, method_name):
+
+        result = self.dx.find_methods(class_name, method_name)
+
+        if result is not None:
+            for m in self.dx.find_methods(class_name, method_name):
+                for idx, ins in m.get_method().get_instructions_idx():
+                    bytecode_obj = None
+                    reg_list = []
+
+                    # count the number of the registers.
+                    length_operands = len(ins.get_operands())
+                    if length_operands == 0:
+                        # No register, no parm
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), None, None)
+                    elif length_operands == 1:
+                        # Only one register
+
+                        reg_list.append(
+                            "v" + str(ins.get_operands()
+                                      [length_operands - 1][1])
+                        )
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, None,)
+                    elif length_operands >= 2:
+                        # the last one is parm, the other are registers.
+
+                        parameter = ins.get_operands()[length_operands - 1]
+                        for i in range(0, length_operands - 1):
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]))
+                        if len(parameter) == 3:
+                            # method or value
+                            parameter = parameter[2]
+                        else:
+                            # Operand.OFFSET
+                            parameter = parameter[1]
+
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, parameter,
+                        )
+
+                    yield bytecode_obj
+        else:
+            raise ValueError("Method Not Found")
+
+    def find_f_previous_method(self, base, top):
+        """
+        Find the previous method based on base before top
+        """
+        method_set = self.upperFunc(base[0], base[1])
+
+        if method_set is not None:
+
+            if top in method_set:
+                self.pre_method0.append(base)
+            else:
+                for item in method_set:
+                    self.find_f_previous_method(item, top)
+
+    def find_s_previous_method(self, base, top):
+        """
+        Find the previous method based on base before top
+        """
+
+        method_set = self.upperFunc(base[0], base[1])
+
+        if method_set is not None:
+            if top in method_set:
+                self.pre_method1.append(base)
+            else:
+                for item in method_set:
+                    self.find_s_previous_method(item, top)
+
     def find_intersection(self, list1, list2, depth=1):
         """
         Find the list1 ∩ list2.
@@ -96,9 +185,11 @@ class XRule:
                 next_list1 = []
                 next_list2 = []
                 for item in list1:
-                    next_list1 = self.upperFunc(item[0], item[1])
+                    if self.upperFunc(item[0], item[1]) is not None:
+                        next_list1 = self.upperFunc(item[0], item[1])
                 for item in list2:
-                    next_list2 = self.upperFunc(item[0], item[1])
+                    if self.upperFunc(item[0], item[1]) is not None:
+                        next_list2.extend(self.upperFunc(item[0], item[1]))
                 # Append first layer into next layer
                 for pre_list in list1:
                     next_list1.append(pre_list)
@@ -131,14 +222,15 @@ class XRule:
             for md in method_set:
                 for _, call, number in md.get_xref_to():
 
-                    if (call.class_name == f_func[0] and call.name == f_func[1]) or (
-                        call.class_name == s_func[0] and call.name == s_func[1]
-                    ):
+                    to_md_name = str(call.name)
+
+                    if (to_md_name == f_func[1]) or (to_md_name == s_func[1]):
+
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
             if len(seq_table) < 2:
-                print("Not Found sequence in " + same_method)
+                # Not Found sequence in same_method
                 return False
             seq_table.sort(key=operator.itemgetter(1))
 
@@ -158,25 +250,40 @@ class XRule:
                 length -= 1
 
             if s_func_val > f_func_val:
-                print("Found sequence in :" + repr(same_method))
+                # print("Found sequence in :" + repr(same_method))
                 return True
             else:
                 return False
 
-    def check_parameter(self, fist_method_name, second_method_name):
+    def check_parameter(self, common_method, fist_method_name, second_method_name):
         """
         check the usage of the same parameter between
         two method.
+
+        common_method: ("class_name", "method_name")
         """
 
         pyeval = PyEval()
         # Check if there is an operation of the same register
         state = False
 
-        # TODO replace it to get_output(),get_name()
-        for bytecode in parse("ag_file/target.ag"):
-            if bytecode[0] in pyeval.eval.keys():
-                pyeval.eval[bytecode[0]](bytecode)
+        for bytecode_obj in self.get_method_bytecode(
+            common_method[0], common_method[1]
+        ):
+            # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
+            instruction = []
+            instruction.append(bytecode_obj.mnemonic)
+            if bytecode_obj.registers is not None:
+                instruction.extend(bytecode_obj.registers)
+            if bytecode_obj.parameter is not None:
+                instruction.append(bytecode_obj.parameter)
+
+            # for the case of MUTF8String
+            instruction = [str(x) for x in instruction]
+
+            if instruction[0] in pyeval.eval.keys():
+
+                pyeval.eval[instruction[0]](instruction)
 
         for table in pyeval.show_table():
             for val_obj in table:
@@ -189,36 +296,25 @@ class XRule:
                     break
         return state
 
-    def get_method_bytecode(self, class_name, method_name):
-
-        result = self.dx.find_methods(class_name, method_name)
-
-        if result is not None:
-            for m in self.dx.find_methods(class_name, method_name):
-                for idx, ins in m.get_method().get_instructions_idx():
-                    yield (ins.get_name(), ins.get_output())
-        else:
-            raise ValueError("Method Not Found")
-
     def run(self, rule_obj):
         """
         Run five levels check to get the y_score.
         """
+
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
-            print("1==> [O]")
+            self.check_item[0] = True
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
         if self.find_method(test_cls0, test_md0) is not None:
-            print("2==> [O]")
-
+            self.check_item[1] = True
             # Level 3
             test_md1 = rule_checker.x2n3n4_comb[1]["method"]
             test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
             if self.find_method(test_cls1, test_md1) is not None:
-                print("3==> [O]")
+                self.check_item[2] = True
 
                 # Level 4
                 # [('class_a','method_a'),('class_b','method_b')]
@@ -229,28 +325,140 @@ class XRule:
                 same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
 
-                    # print("[O]共同出現於:\n" + repr(same))
+                    for common_method in same:
 
-                    pre_0 = self.pre_method0.pop()[0]
-                    pre_1 = self.pre_method1.pop()[0]
+                        base_method_0 = (test_cls0, test_md0)
+                        base_method_1 = (test_cls1, test_md1)
+                        self.pre_method0.clear()
+                        self.pre_method1.clear()
+                        self.find_f_previous_method(
+                            base_method_0, common_method)
+                        self.find_s_previous_method(
+                            base_method_1, common_method)
+                        # TODO It may have many previous method in self.pre_method
+                        pre_0 = self.pre_method0[0]
+                        pre_1 = self.pre_method1[0]
 
-                    for same_method in same:
+                        if self.check_sequence(common_method, pre_0, pre_1):
+                            self.check_item[3] = True
+                            self.same_sequence_show_up.append(common_method)
 
-                        if self.check_sequence(same_method, pre_0, pre_1):
-                            print("4==> [O]")
+                            # Level 5
+                            if self.check_parameter(
+                                common_method, str(pre_0[1]), str(pre_1[1])
+                            ):
+                                self.check_item[4] = True
+                                self.same_operation.append(common_method)
 
-                            if self.check_parameter(str(pre_0[1]), str(pre_1[1])):
-                                print("5==> [O]")
+    def show_easy_report(self, rule_obj):
+        # Count the confidence
+        print("")
+        print(yellow(bold(rule_obj.crime)))
+        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
+        print("")
+
+    def show_detail_report(self, rule_obj):
+        # Count the confidence
+        print("")
+        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
+        print("")
+
+        if self.check_item[0]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
+            print("")
+
+            for permission in rule_obj.x1_permission:
+                print("\t\t" + permission)
+            print("")
+        if self.check_item[1]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
+            print("")
+            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+            print("")
+        if self.check_item[2]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
+            print("")
+
+            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+            print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
+            print("")
+        if self.check_item[3]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
+            print("")
+
+            print("\t\t" + "Sequence show up in:")
+            for seq_methon in self.same_sequence_show_up:
+                print("\t\t" + repr(seq_methon))
+            print("")
+        if self.check_item[4]:
+
+            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
+            print("")
+            for seq_operation in self.same_operation:
+                print("\t\t" + repr(seq_operation))
 
 
-data = XRule("sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
+if __name__ == "__main__":
 
-rule_checker = RuleObject("rules/sendLocation.json")
+    logo()
 
-data.run(rule_checker)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-e", "--easy", action="store_true",
+                        help="show easy report")
+    parser.add_argument(
+        "-d", "--detail", action="store_true", help="show detail report"
+    )
+    parser.add_argument("-a", "--apk", help="APK file", required=True)
+    parser.add_argument(
+        "-r", "--rule", help="Rules folder need to be checked", required=True
+    )
 
+    ans = parser.parse_args()
 
-for i in data.get_method_bytecode(
-    "Lcom/google/progress/AndroidClientService;", "sendMessage"
-):
-    print(i)
+    if ans.easy:
+
+        # Load APK
+        data = XRule(ans.apk)
+
+        # Load rules
+        rules_list = os.listdir(ans.rule)
+
+        for rule in tqdm(rules_list):
+            rulepath = os.path.join(ans.rule, rule)
+            print(rulepath)
+            rule_checker = RuleObject(rulepath)
+
+            # Run the checker
+            data.run(rule_checker)
+
+            data.show_easy_report(rule_checker)
+            print_success("OK")
+    elif ans.detail:
+
+        # Load APK
+        data = XRule(ans.apk)
+
+        # Load rules
+        rules_list = os.listdir(ans.rule)
+
+        for rule in tqdm(rules_list):
+            rulepath = os.path.join(ans.rule, rule)
+            print(rulepath)
+            rule_checker = RuleObject(rulepath)
+
+            # Run the checker
+            data.run(rule_checker)
+
+            data.show_detail_report(rule_checker)
+            print_success("OK")
+    else:
+        print("python3 main.py --help")
