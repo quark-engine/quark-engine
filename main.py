@@ -1,22 +1,15 @@
-from Objects.RuleObject import RuleObject
-from Objects.BytecodeObject import BytecodeObject
-from androguard.core.bytecodes import dvm
-from androguard.core.analysis import analysis
-from androguard.misc import AnalyzeAPK, AnalyzeDex
-import operator
 import argparse
+import operator
+
+from androguard.misc import AnalyzeAPK
 from tqdm import tqdm
-from time import sleep
 
-
-from utils.colors import *
+from Evaluator.pyeval import PyEval
+from Objects.BytecodeObject import BytecodeObject
+from Objects.RuleObject import RuleObject
 from logo import logo
 from utils.out import *
 from utils.tools import *
-
-
-from Evaluator.pyeval import PyEval
-
 
 MAX_SEARCH_LAYER = 3
 
