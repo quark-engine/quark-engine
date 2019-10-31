@@ -1,6 +1,8 @@
 # Quark Engine [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
+[![asciicast](https://asciinema.org/a/AOjAJ7JdBinyVO84HvvSxBwVB.svg)](https://asciinema.org/a/AOjAJ7JdBinyVO84HvvSxBwVB)
+
 ### Concepts
 
 Android malware analysis engine is not a new story. Every antivirus company has their own secrets to build it. With curiosity, we develop a malware scoring system from the perspective of Taiwan Criminal Law in an easy but solid way. 
