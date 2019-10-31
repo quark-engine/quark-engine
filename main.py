@@ -8,6 +8,7 @@ import argparse
 from tqdm import tqdm
 from time import sleep
 
+
 from utils.colors import *
 from logo import logo
 from utils.out import *
@@ -35,6 +36,11 @@ class XRule:
         self.same_sequence_show_up = []
         self.same_operation = []
         self.check_item = [False, False, False, False, False]
+
+        # Pretty Table Output
+        self.tb = PrettyTable()
+        self.tb.field_names = ["Rule", "Confidence"]
+        self.tb.align = "l"
 
     @property
     def permissions(self):
@@ -98,24 +104,20 @@ class XRule:
                     length_operands = len(ins.get_operands())
                     if length_operands == 0:
                         # No register, no parm
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), None, None)
+                        bytecode_obj = BytecodeObject(ins.get_name(), None, None)
                     elif length_operands == 1:
                         # Only one register
 
                         reg_list.append(
-                            "v" + str(ins.get_operands()
-                                      [length_operands - 1][1])
+                            "v" + str(ins.get_operands()[length_operands - 1][1])
                         )
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), reg_list, None,)
+                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None,)
                     elif length_operands >= 2:
                         # the last one is parm, the other are registers.
 
                         parameter = ins.get_operands()[length_operands - 1]
                         for i in range(0, length_operands - 1):
-                            reg_list.append(
-                                "v" + str(ins.get_operands()[i][1]))
+                            reg_list.append("v" + str(ins.get_operands()[i][1]))
                         if len(parameter) == 3:
                             # method or value
                             parameter = parameter[2]
@@ -331,10 +333,8 @@ class XRule:
                         base_method_1 = (test_cls1, test_md1)
                         self.pre_method0.clear()
                         self.pre_method1.clear()
-                        self.find_f_previous_method(
-                            base_method_0, common_method)
-                        self.find_s_previous_method(
-                            base_method_1, common_method)
+                        self.find_f_previous_method(base_method_0, common_method)
+                        self.find_s_previous_method(base_method_1, common_method)
                         # TODO It may have many previous method in self.pre_method
                         pre_0 = self.pre_method0[0]
                         pre_1 = self.pre_method1[0]
@@ -352,10 +352,9 @@ class XRule:
 
     def show_easy_report(self, rule_obj):
         # Count the confidence
-        print("")
-        print(yellow(bold(rule_obj.crime)))
-        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
-        print("")
+        confidence = str(self.check_item.count(True) * 20) + "%"
+
+        self.tb.add_row([green(rule_obj.crime), yellow(confidence)])
 
     def show_detail_report(self, rule_obj):
         # Count the confidence
@@ -412,8 +411,7 @@ if __name__ == "__main__":
     logo()
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--easy", action="store_true",
-                        help="show easy report")
+    parser.add_argument("-e", "--easy", action="store_true", help="show easy report")
     parser.add_argument(
         "-d", "--detail", action="store_true", help="show detail report"
     )
@@ -434,14 +432,14 @@ if __name__ == "__main__":
 
         for rule in tqdm(rules_list):
             rulepath = os.path.join(ans.rule, rule)
-            print(rulepath)
             rule_checker = RuleObject(rulepath)
 
             # Run the checker
             data.run(rule_checker)
 
             data.show_easy_report(rule_checker)
-            print_success("OK")
+        print(data.tb)
+
     elif ans.detail:
 
         # Load APK
