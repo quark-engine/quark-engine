@@ -433,6 +433,7 @@ class XRule:
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
 
+            print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
             print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
         if self.check_item[3]:
@@ -440,6 +441,7 @@ class XRule:
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
 
+            print("")
             print("\t\t" + "Sequence show up in:")
             for seq_methon in self.same_sequence_show_up:
                 print("\t\t" + repr(seq_methon))
