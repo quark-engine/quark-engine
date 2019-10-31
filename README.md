@@ -18,7 +18,7 @@ This is a how we examine a real android malware (candy corn) with one single rul
 
 ```bash
 $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-                 -r rules/sendLocation.json \
+                 -r rules/ \
                  --detail
 ```
 
@@ -29,7 +29,7 @@ Examine with rules.
 
 ```bash
 python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-               -r rules/sendLocation.json \
+               -r rules/ \
                --easy
 ```
 <img src="https://i.imgur.com/KpRjsr6.png"/>
