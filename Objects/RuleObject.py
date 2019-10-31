@@ -29,6 +29,15 @@ class RuleObject:
     def yscore(self):
         return self._yscore
 
+    def get_score(self, confidence):
+        """
+        the number of confidence will turn
+        into the threshold.
+
+        2^(confidence - 1)
+        """
+        return (2**(confidence - 1) * self._yscore) / 2**4
+
 
 if __name__ == "__main__":
     pass
