@@ -10,6 +10,7 @@ from Objects.RuleObject import RuleObject
 from logo import logo
 from utils.out import *
 from utils.tools import *
+from utils.Weight import Weight
 
 MAX_SEARCH_LAYER = 3
 
@@ -32,8 +33,13 @@ class XRule:
 
         # Pretty Table Output
         self.tb = PrettyTable()
-        self.tb.field_names = ["Rule", "Confidence"]
+        self.tb.field_names = ["Rule", "Confidence", "Score", "Weight"]
         self.tb.align = "l"
+
+        # Sum of the each weight
+        self.weight_sum = 0
+        # Sum of the each rule
+        self.score_sum = 0
 
     @property
     def permissions(self):
@@ -328,7 +334,6 @@ class XRule:
         :return:
         """
 
-
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
             self.check_item[0] = True
@@ -385,8 +390,16 @@ class XRule:
         """
         # Count the confidence
         confidence = str(self.check_item.count(True) * 20) + "%"
+        conf = self.check_item.count(True)
+        weight = rule_obj.get_score(conf)
+        score = rule_obj.yscore
 
-        self.tb.add_row([green(rule_obj.crime), yellow(confidence)])
+        self.tb.add_row([green(rule_obj.crime), yellow(confidence), score, red(weight)])
+
+        # add the weight
+        self.weight_sum += weight
+        # add the score
+        self.score_sum += score
 
     def show_detail_report(self, rule_obj):
         """
@@ -395,7 +408,6 @@ class XRule:
         :param rule_obj:
         :return:
         """
-
 
         # Count the confidence
         print("")
@@ -410,33 +422,27 @@ class XRule:
 
             for permission in rule_obj.x1_permission:
                 print("\t\t" + permission)
-            print("")
         if self.check_item[1]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-            print("")
         if self.check_item[2]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
-            print("")
 
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
             print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
-            print("")
         if self.check_item[3]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
-            print("")
 
             print("\t\t" + "Sequence show up in:")
             for seq_methon in self.same_sequence_show_up:
                 print("\t\t" + repr(seq_methon))
-            print("")
         if self.check_item[4]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
@@ -478,7 +484,14 @@ if __name__ == "__main__":
             data.run(rule_checker)
 
             data.show_easy_report(rule_checker)
+
+        w = Weight(data.score_sum, data.weight_sum)
+        print_warning(w.calculate())
+        print_info("Total Score: "+ str(data.score_sum))
         print(data.tb)
+
+
+
 
     elif ans.detail:
 

@@ -1,4 +1,5 @@
 from enum import Enum
+from .colors import *
 
 class LEVEL_INFO(Enum):
     LOW = "Low Risk"
@@ -27,26 +28,27 @@ class Weight:
 
 
         total_weight = self.weight_sum
-        print(total_weight)
 
         if total_weight > 0 and total_weight <= level_one_threshold:
-            return LEVEL_INFO.LOW.value
+            return green(LEVEL_INFO.LOW.value)
 
         elif total_weight > level_one_threshold and total_weight <= level_two_threshold:
-            return LEVEL_INFO.LOW.value
+            return green(LEVEL_INFO.LOW.value)
 
         elif total_weight > level_two_threshold and total_weight <= level_three_threshold:
-            return LEVEL_INFO.Moderate.value
+            return yellow(LEVEL_INFO.Moderate.value)
 
         elif total_weight > level_three_threshold and total_weight <= level_four_threshold:
-            return LEVEL_INFO.Moderate.value
+            return yel(LEVEL_INFO.Moderate.value)
 
         elif total_weight > level_four_threshold and total_weight <= level_five_threshold:
-            return LEVEL_INFO.High.value
+            return red(LEVEL_INFO.High.value)
 
         else:
             raise ValueError("Weight calculate failed")
-        
+
 if __name__ == '__main__':
-    pass
+
+    w = Weight(29,19)
+    print(w.calculate())
 
