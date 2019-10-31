@@ -63,10 +63,11 @@ class XRule:
 
     def upperFunc(self, class_name, method_name):
         """
-        Find the upper level method from given class name and
+        Return the upper level method from given class name and
         method name.
-
-        rtype: list
+        :param class_name:
+        :param method_name:
+        :return: list
         """
 
         result = []
@@ -84,6 +85,13 @@ class XRule:
             return None
 
     def get_method_bytecode(self, class_name, method_name):
+        """
+        Return the corresponding bytecode according to the
+        given class name and method name.
+        :param class_name:
+        :param method_name:
+        :return: generator
+        """
 
         result = self.dx.find_methods(class_name, method_name)
 
@@ -128,8 +136,15 @@ class XRule:
 
     def find_f_previous_method(self, base, top):
         """
-        Find the previous method based on base before top
+        Find the previous method based on base method
+        before top method.
+
+        This will append the method into self.pre_method0
+        :param base:
+        :param top:
+        :return: None
         """
+
         method_set = self.upperFunc(base[0], base[1])
 
         if method_set is not None:
@@ -142,7 +157,13 @@ class XRule:
 
     def find_s_previous_method(self, base, top):
         """
-        Find the previous method based on base before top
+        Find the previous method based on base method
+        before top method.
+
+        This will append the method into self.pre_method1
+        :param base:
+        :param top:
+        :return: None
         """
 
         method_set = self.upperFunc(base[0], base[1])
@@ -158,10 +179,13 @@ class XRule:
         """
         Find the list1 ∩ list2.
 
-        list1 & list2 are  list withing tuple, for example,
+        list1 & list2 are list within tuple, for example,
         [("class_name","method_name"),...]
 
-        :rtype:
+        :param list1:
+        :param list2:
+        :param depth: MAX recursion
+        :return:
         """
         # Check both lists are not null
         if len(list1) > 0 and len(list2) > 0:
@@ -206,10 +230,13 @@ class XRule:
     def check_sequence(self, same_method, f_func, s_func):
         """
         Check if the first function appeared before the second function.
-        same_method: the tuple with (class_name, method_name)
-        f_func: the first show up function, which is (class_name, method_name)
-        s_func: the tuple with (class_name, method_name)
+
+        :param same_method: the tuple with (class_name, method_name)
+        :param f_func: the first show up function, which is (class_name, method_name)
+        :param s_func: the tuple with (class_name, method_name)
+        :return: boolean
         """
+
         method_set = self.find_method(same_method[0], same_method[1])
         seq_table = []
 
@@ -255,7 +282,10 @@ class XRule:
         check the usage of the same parameter between
         two method.
 
-        common_method: ("class_name", "method_name")
+        :param common_method: ("class_name", "method_name")
+        :param fist_method_name:
+        :param second_method_name:
+        :return:
         """
 
         pyeval = PyEval()
@@ -293,8 +323,11 @@ class XRule:
 
     def run(self, rule_obj):
         """
-        Run five levels check to get the y_score.
+        Run the five levels check to get the y_score.
+        :param rule_obj:
+        :return:
         """
+
 
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
@@ -344,12 +377,26 @@ class XRule:
                                 self.same_operation.append(common_method)
 
     def show_easy_report(self, rule_obj):
+        """
+        Show the summary report.
+
+        :param rule_obj:
+        :return:
+        """
         # Count the confidence
         confidence = str(self.check_item.count(True) * 20) + "%"
 
         self.tb.add_row([green(rule_obj.crime), yellow(confidence)])
 
     def show_detail_report(self, rule_obj):
+        """
+        Show the detail report
+
+        :param rule_obj:
+        :return:
+        """
+
+
         # Count the confidence
         print("")
         print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
