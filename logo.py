@@ -12,7 +12,8 @@ def logo():
     /   \_/.  \  |  // __ \|  | \/    <
     \_____\ \_/____/(____  /__|  |__|_ \\
            \__>          \/           \/ v{}
+    An Obfuscation-Neglect Android Malware Scoring System
     """
             )
-        ).format("0.0.0" + "-dev")
+        ).format("19.0")
     )
