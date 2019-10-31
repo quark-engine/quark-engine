@@ -1,7 +1,7 @@
 # Quark Engine [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
-[![asciicast](https://asciinema.org/a/AOjAJ7JdBinyVO84HvvSxBwVB.svg)](https://asciinema.org/a/AOjAJ7JdBinyVO84HvvSxBwVB)
+[![asciicast](https://asciinema.org/a/278088.svg)](https://asciinema.org/a/278088)
 
 ### Concepts
 
