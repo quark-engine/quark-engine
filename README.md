@@ -24,7 +24,7 @@ $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
-<img src="https://i.imgur.com/jSeS0bA.png"/>
+<img src="https://i.imgur.com/kP71xrB.png"/>
 
 ### Summary Report
 Examine with rules.
@@ -34,7 +34,7 @@ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/ \
                --easy
 ```
-<img src="https://i.imgur.com/KpRjsr6.png"/>
+<img src="https://i.imgur.com/OXliayz.png"/>
 
 ### Installation
 
