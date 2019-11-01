@@ -24,7 +24,7 @@ $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
-<img src="https://i.imgur.com/kP71xrB.png"/>
+<img src="https://i.imgur.com/uyIIUkI.png"/>
 
 ### Summary Report
 Examine with rules.
