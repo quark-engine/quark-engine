@@ -73,3 +73,9 @@ def white(text):
 
 def bold(text):
     return color(text, 1)
+
+def lightyellow(text):
+    return color(text, 93)
+
+def lightblue(text):
+    return color(text, 94)

@@ -1,10 +1,10 @@
-from utils.colors import red, yel, cyan, bold, blue
+from utils.colors import red, yel, cyan, bold, blue, lightyellow, lightblue
 
 
 def logo():
     print(
         bold(
-            yel(
+            lightyellow(
                 """
     ________                      __
     \_____  \  __ _______ _______|  | __
@@ -15,7 +15,7 @@ def logo():
     """
             )
         ).format("19.10")
-        +bold(blue(
+        +bold(lightblue(
 
 
             """
