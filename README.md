@@ -15,7 +15,7 @@ Malware evolved with new techniques to gain difficulties for reverse engineering
 
 Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross reference and calling sequence of the native API. 2. Tracing the bytecode register. The combination of these functionalities (yes, the order theory) not only can neglect obfuscation but also match perfectly to the design of our malware scoring system.
 
-### Detailed Report
+### Detail Report
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
