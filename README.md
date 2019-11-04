@@ -39,7 +39,7 @@ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 ### Installation
 
 ```bash
-$ git clone https://github.com/18z/quark-rules; cd quark-rules
+$ git clone https://github.com/quark-engine/quark-engine.git; cd quark-engine/quark
 $ pipenv install
 $ pipenv shell
 ```
