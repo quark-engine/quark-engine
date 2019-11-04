@@ -1,5 +1,5 @@
 from enum import Enum
-from .colors import *
+from quark.utils.colors import *
 
 class LEVEL_INFO(Enum):
     LOW = "Low Risk"

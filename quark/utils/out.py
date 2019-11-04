@@ -1,5 +1,5 @@
 from prettytable import PrettyTable
-from .colors import *
+from quark.utils.colors import *
 
 
 def print_info(message):

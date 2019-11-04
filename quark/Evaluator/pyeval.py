@@ -1,7 +1,7 @@
 import sys
 from prettytable import PrettyTable
-from Objects.TableObject import TableObject
-from Objects.VarabileObject import VarabileObject
+from quark.Objects.TableObject import TableObject
+from quark.Objects.VarabileObject import VarabileObject
 
 
 MAX_REG_COUNT = 40

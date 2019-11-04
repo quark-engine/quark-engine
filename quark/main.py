@@ -3,14 +3,13 @@ import operator
 
 from androguard.misc import AnalyzeAPK
 from tqdm import tqdm
-
-from Evaluator.pyeval import PyEval
-from Objects.BytecodeObject import BytecodeObject
-from Objects.RuleObject import RuleObject
-from logo import logo
-from utils.out import *
-from utils.tools import *
-from utils.Weight import Weight
+from quark.Evaluator.pyeval import PyEval
+from quark.Objects.BytecodeObject import BytecodeObject
+from quark.Objects.RuleObject import RuleObject
+from quark.logo import logo
+from quark.utils.out import *
+from quark.utils.tools import *
+from quark.utils.Weight import Weight
 
 MAX_SEARCH_LAYER = 3
 

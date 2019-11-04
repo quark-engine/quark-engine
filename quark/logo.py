@@ -1,4 +1,4 @@
-from utils.colors import red, yel, cyan, bold, blue, lightyellow, lightblue
+from quark.utils.colors import red, yel, cyan, bold, blue, lightyellow, lightblue
 
 
 def logo():
