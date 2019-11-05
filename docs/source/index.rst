@@ -18,7 +18,7 @@ This guide will expalin how to set up Quark, use it, and customize it.
    :maxdepth: 2
    :caption: Contents:
 
-   welcome
+   addRules
 
 Indices and tables
 ==================

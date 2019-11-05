@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Add Rules &mdash; quick-engine v19.10 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome" href="welcome.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> quick-engine
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="welcome.html">Welcome</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Add Rules</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quick-engine</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Add Rules</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/addRules.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="add-rules">
+<h1>Add Rules<a class="headerlink" href="#add-rules" title="Permalink to this headline">¶</a></h1>
+<p>Android malware analysis engine is not a new story. Every antivirus company has
+their own secrets to build it. With curiosity, we develop a malware scoring
+system from the perspective of Taiwan Criminal Law in an easy but solid way.</p>
+<p>We have an order theory of criminal which explains stages of committing a crime.
+For example, crime of murder consists of five stages, they are determined,
+conspiracy, preparation, start and practice. The latter the stage the more
+we’re sure that the crime is practiced.</p>
+<p>According to the above principle, we developed our order theory of android
+malware. We develop five stages to see if the malicious activity is being
+practiced. They are</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><p>Permission requested.</p></li>
+<li><p>Native API call.</p></li>
+<li><p>Certain combination of native API.</p></li>
+<li><p>Calling sequence of native API.</p></li>
+<li><p>APIs that handle the same register.</p></li>
+</ol>
+</div></blockquote>
+<p>We not only define malicious activities and their stages but also develop
+weights and thresholds for calculating the threat level of a malware.</p>
+<p>But before we explain how to set weights and thresholds, we need to define
+crimes and corresponding five stages.</p>
+<p>An example of defining crime “Send Location via SMS” is shown below. We use
+json format to construct the rule of the crime.</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+     <span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span><span class="p">,</span>
+
+     <span class="s2">&quot;x1_permission&quot;</span><span class="p">:</span> <span class="p">[</span>
+         <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
+         <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
+     <span class="p">],</span>
+
+     <span class="s2">&quot;x2n3n4_comb&quot;</span><span class="p">:</span> <span class="p">[</span>
+         <span class="p">{</span>
+             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
+         <span class="p">},</span>
+         <span class="p">{</span>
+             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
+             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span>
+         <span class="p">}</span>
+     <span class="p">],</span>
+
+     <span class="s2">&quot;yscore&quot;</span><span class="p">:</span> <span class="mi">4</span>
+<span class="p">}</span>
+</pre></div>
+</td></tr></table></div>
+<p>So let me walk you through the json file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span>
+</pre></div>
+</div>
+<p>First, we define the crime. Our principle of constructing a crime is
+<code class="docutils literal notranslate"><span class="pre">Action</span> <span class="pre">+</span> <span class="pre">Target</span></code>. In this example, the action is “Send SMS” and the target
+is Location info. Therefore, the crime of our first rule is defined as:
+“Send Location via SMS”.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;x1_permission&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
+      <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">x1_permission</span></code> is where we fill in permission requested by the apk to
+practice the crime. For instance, we need permission
+<code class="docutils literal notranslate"><span class="pre">android.permission.SEND_SMS</span></code> to send infomation through SMS. We also need
+permission <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_COARSE_LOCATION</span></code> and
+<code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_FINE_LOCATION</span></code> to practice the crime.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;x2n3n4_comb&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span>
+      <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">x2n3n4_comb</span></code> means this field can be used to practice analysis from
+stage 2 to stage 4.</p>
+<p>In stage 2, we need to find key native APIs that do
+the <code class="docutils literal notranslate"><span class="pre">Action</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span></code>. And since the API method name can be used by
+self-defined class. We need to fill in infomation of both the native
+API class name and method name.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We like to keep our crime/rule simple. So do not fill in more than 2 native APIs.</p>
+</div>
+<p>In stage 3, we will find the combination of the native APIs we define
+in stage 2. Further, we will check wether they’re called in the same method.
+If so, we will say that the combination of crime is caught!
+And we don’t need to do anything to adjust the <code class="docutils literal notranslate"><span class="pre">x2n3n4_comb</span></code> field.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We know that the native API might be wrapped in other methods. We use XREF to solve this problem.</p>
+</div>
+<p>In stage 4, we will find whether the native APIs are called in a right sequence.
+If so, we have more confidence that the crime is practiced.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please place the APIs in the order as the crime is being committed.</p>
+</div>
+<p>In stage 5, we will check whether the native APIs are operating the same parameter.
+If so, we are 100% sure that the crime is practiced.</p>
+<p>As for the field <code class="docutils literal notranslate"><span class="pre">yscore</span></code>, we will be updating our principles of weight defining.
+please check that part later.</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="welcome.html" class="btn btn-neutral float-left" title="Welcome" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, KunYu Chen, JunWei Song
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
