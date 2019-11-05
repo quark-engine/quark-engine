@@ -79,7 +79,7 @@ is Location info. Therefore, the crime of our first rule is defined as:
 
 ``x1_permission`` is where we fill in permission requested by the apk to
 practice the crime. For instance, we need permission
-``android.permission.SEND_SMS`` to send infomation through SMS. We also need
+``android.permission.SEND_SMS`` to send information through SMS. We also need
 permission ``android.permission.ACCESS_COARSE_LOCATION`` and
 ``android.permission.ACCESS_FINE_LOCATION`` to practice the crime.
 
@@ -101,13 +101,13 @@ stage 2 to stage 4.
 
 In stage 2, we need to find key native APIs that do
 the ``Action`` and ``Target``. And since the API method name can be used by
-self-defined class. We need to fill in infomation of both the native
+self-defined class. We need to fill in information of both the native
 API class name and method name.
 
 .. note:: We like to keep our crime/rule simple. So do not fill in more than 2 native APIs.
 
 In stage 3, we will find the combination of the native APIs we define
-in stage 2. Further, we will check wether they're called in the same method.
+in stage 2. Further, we will check whether they're called in the same method.
 If so, we will say that the combination of crime is caught!
 And we don't need to do anything to adjust the ``x2n3n4_comb`` field.
 
