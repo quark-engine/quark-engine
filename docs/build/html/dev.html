@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Quark-Engine Book &mdash; quick-engine v19.10 documentation</title>
+  <title>Development Notes &mdash; quick-engine v19.10 documentation</title>
   
 
   
@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Add Rules" href="addRules.html" /> 
+    <link rel="next" title="Contribution" href="contribution.html" />
+    <link rel="prev" title="Add Rules" href="addRules.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> quick-engine
+            <a href="index.html" class="icon icon-home"> quick-engine
           
 
           
@@ -80,9 +81,12 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Development Notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Development Notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#git-branching-model">Git Branching Model</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
 </ul>
 
@@ -98,7 +102,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">quick-engine</a>
+          <a href="index.html">quick-engine</a>
         
       </nav>
 
@@ -127,15 +131,15 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Quark-Engine Book</li>
+      <li>Development Notes</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/dev.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,34 +152,63 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="quark-engine-book">
-<h1>Quark-Engine Book<a class="headerlink" href="#quark-engine-book" title="Permalink to this headline">¶</a></h1>
-<p>Quark Engine is an <em>open source</em> software for automating analysis of suspicious
-Android application. To do so it makes use of custom Dalvik Bytecode Loader and
-unique scoring system that detect malicious behaviors and calculate threat
-level within seconds.</p>
-<p>This guide will expalin how to set up Quark, use it, and customize it.</p>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dev.html">Development Notes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="dev.html#git-branching-model">Git Branching Model</a></li>
+  <div class="section" id="development-notes">
+<h1>Development Notes<a class="headerlink" href="#development-notes" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="git-branching-model">
+<h2>Git Branching Model<a class="headerlink" href="#git-branching-model" title="Permalink to this headline">¶</a></h2>
+<p>Quark-engine source code is available in our <a class="reference external" href="https://github.com/quark-engine/quark-engine">official Git repository</a>.</p>
+<p>We have 6 branches.</p>
+<blockquote>
+<div><ul>
+<li><p><strong>master</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is the stable and releasing branch.</p></li>
 </ul>
+</div></blockquote>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="contribution.html#people">People</a></li>
+<li><p><strong>dev</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is where we commit our beta version.</p></li>
+<li><p>When all the features are fully tested, it will be merged to <code class="docutils literal notranslate"><span class="pre">master</span></code> branch.</p></li>
 </ul>
+</div></blockquote>
+</li>
+<li><p><strong>feature</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is where we develop new features for the project.</p></li>
+<li><p>Once it’s done, it will be merged to <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>testing</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is where we write tests for the codebase and new feature.</p></li>
+<li><p>When it’s done, it will be merged to <code class="docutils literal notranslate"><span class="pre">dev</span></code> branch.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>hotfix</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This branch is used to fix bugs.</p></li>
+<li><p>Will be merged to <code class="docutils literal notranslate"><span class="pre">dev</span></code> and <code class="docutils literal notranslate"><span class="pre">master</span></code></p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p><strong>doc</strong>:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>This is where we update our documentation.</p></li>
+<li><p>Just like hotfix branch, will be merged to <code class="docutils literal notranslate"><span class="pre">dev</span></code> and <code class="docutils literal notranslate"><span class="pre">master</span></code>.</p></li>
+</ul>
+</div></blockquote>
 </li>
 </ul>
-</div>
-<div class="section" id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+</div></blockquote>
 </div>
 </div>
 
@@ -187,8 +220,10 @@ level within seconds.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="addRules.html" class="btn btn-neutral float-right" title="Add Rules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="contribution.html" class="btn btn-neutral float-right" title="Contribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
+      
+        <a href="addRules.html" class="btn btn-neutral float-left" title="Add Rules" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
