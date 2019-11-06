@@ -35,7 +35,8 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Welcome" href="welcome.html" /> 
+    <link rel="next" title="Contribution" href="contribution.html" />
+    <link rel="prev" title="Quark-Engine Book" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,8 +82,8 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="welcome.html">Welcome</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
 </ul>
 
             
@@ -236,7 +237,7 @@ is Location info. Therefore, the crime of our first rule is defined as:
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">x1_permission</span></code> is where we fill in permission requested by the apk to
 practice the crime. For instance, we need permission
-<code class="docutils literal notranslate"><span class="pre">android.permission.SEND_SMS</span></code> to send infomation through SMS. We also need
+<code class="docutils literal notranslate"><span class="pre">android.permission.SEND_SMS</span></code> to send information through SMS. We also need
 permission <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_COARSE_LOCATION</span></code> and
 <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_FINE_LOCATION</span></code> to practice the crime.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;x2n3n4_comb&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -255,14 +256,14 @@ permission <code class="docutils literal notranslate"><span class="pre">android.
 stage 2 to stage 4.</p>
 <p>In stage 2, we need to find key native APIs that do
 the <code class="docutils literal notranslate"><span class="pre">Action</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span></code>. And since the API method name can be used by
-self-defined class. We need to fill in infomation of both the native
+self-defined class. We need to fill in information of both the native
 API class name and method name.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We like to keep our crime/rule simple. So do not fill in more than 2 native APIs.</p>
 </div>
 <p>In stage 3, we will find the combination of the native APIs we define
-in stage 2. Further, we will check wether they’re called in the same method.
+in stage 2. Further, we will check whether they’re called in the same method.
 If so, we will say that the combination of crime is caught!
 And we don’t need to do anything to adjust the <code class="docutils literal notranslate"><span class="pre">x2n3n4_comb</span></code> field.</p>
 <div class="admonition note">
@@ -289,8 +290,10 @@ please check that part later.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="contribution.html" class="btn btn-neutral float-right" title="Contribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="welcome.html" class="btn btn-neutral float-left" title="Welcome" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Quark-Engine Book" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

@@ -19,6 +19,7 @@ This guide will expalin how to set up Quark, use it, and customize it.
    :caption: Contents:
 
    addRules
+   contribution
 
 Indices and tables
 ==================
