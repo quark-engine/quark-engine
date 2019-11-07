@@ -40,3 +40,24 @@ We have 6 branches.
 
         - This is where we update our documentation.
         - Just like hotfix branch, will be merged to ``dev`` and ``master``.
+
+Release Versioning
+==================
+
+Our versioning logic is quite simple. We use the year and month of the release
+as a version number. ``v19.10`` means we release this version in Oct. 2019.
+
+Ticketing System
+================
+
+To submit reports or feature requests, please use GitHub's `Issue`_ tracking system.
+
+.. _`Issue`: https://github.com/quark-engine/quark-engine/issues
+
+Contribute
+==========
+
+To submit your patch, just create a Pull Request from your GitHub fork.
+If you don't know how to create a Pull Request take a look to `GitHub help`_.
+
+.. _`GitHub help`: https://help.github.com/articles/using-pull-requests/

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Welcome &mdash; quick-engine v19.10 documentation</title>
+  <title>Installing Quark-Engine &mdash; quick-engine v19.10 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Welcome" href="addRules.html" />
+    <link rel="next" title="Add Rules" href="addRules.html" />
     <link rel="prev" title="Quark-Engine Book" href="index.html" /> 
 </head>
 
@@ -82,8 +82,10 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Welcome</a></li>
-<li class="toctree-l1"><a class="reference internal" href="addRules.html">Welcome</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing Quark-Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dev.html">Development Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
 </ul>
 
             
@@ -129,13 +131,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Welcome</li>
+      <li>Installing Quark-Engine</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/welcome.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/install.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,8 +150,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="welcome">
-<h1>Welcome<a class="headerlink" href="#welcome" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="installing-quark-engine">
+<h1>Installing Quark-Engine<a class="headerlink" href="#installing-quark-engine" title="Permalink to this headline">¶</a></h1>
+<p>Clone the project from Gitub:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/quark-engine/quark-engine.git
+</pre></div>
+</div>
+<p>Change directory to quark:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ cd quark-engine/quark
+</pre></div>
+</div>
+<p>Install engine with pipenv:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pipenv install
+</pre></div>
+</div>
+<p>Launching subshell in virtual env:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pipenv shell
+</pre></div>
+</div>
+<p>Run the help cmd of quark:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python main.py --help
+</pre></div>
+</div>
+<p>Once you see the following msg, then you’re all set:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">main</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">e</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span><span class="p">]</span> <span class="o">-</span><span class="n">a</span> <span class="n">APK</span> <span class="o">-</span><span class="n">r</span> <span class="n">RULE</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">e</span><span class="p">,</span> <span class="o">--</span><span class="n">easy</span>            <span class="n">show</span> <span class="n">easy</span> <span class="n">report</span>
+  <span class="o">-</span><span class="n">d</span><span class="p">,</span> <span class="o">--</span><span class="n">detail</span>          <span class="n">show</span> <span class="n">detail</span> <span class="n">report</span>
+  <span class="o">-</span><span class="n">a</span> <span class="n">APK</span><span class="p">,</span> <span class="o">--</span><span class="n">apk</span> <span class="n">APK</span>     <span class="n">APK</span> <span class="n">file</span>
+  <span class="o">-</span><span class="n">r</span> <span class="n">RULE</span><span class="p">,</span> <span class="o">--</span><span class="n">rule</span> <span class="n">RULE</span>  <span class="n">Rules</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">checked</span>
+</pre></div>
+</div>
 </div>
 
 
@@ -160,7 +193,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="addRules.html" class="btn btn-neutral float-right" title="Welcome" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="addRules.html" class="btn btn-neutral float-right" title="Add Rules" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Quark-Engine Book" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
