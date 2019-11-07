@@ -12,7 +12,7 @@ Android application. To do so it makes use of custom Dalvik Bytecode Loader and
 unique scoring system that detect malicious behaviors and calculate threat
 level within seconds.
 
-This guide will explain how to set up Quark, use it, and customize it.
+This guide will expalin how to set up Quark, use it, and customize it.
 
 .. toctree::
    :maxdepth: 2
