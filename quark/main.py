@@ -343,8 +343,8 @@ class XRule:
         if self.find_method(test_cls0, test_md0) is not None:
             self.check_item[1] = True
             # Level 3
-            test_md1 = rule_checker.x2n3n4_comb[1]["method"]
-            test_cls1 = rule_checker.x2n3n4_comb[1]["class"]
+            test_md1 = rule_obj.x2n3n4_comb[1]["method"]
+            test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
             if self.find_method(test_cls1, test_md1) is not None:
                 self.check_item[2] = True
 
@@ -453,7 +453,7 @@ class XRule:
                 print("\t\t" + repr(seq_operation))
 
 
-if __name__ == "__main__":
+def main():
 
     logo()
 
@@ -488,11 +488,8 @@ if __name__ == "__main__":
 
         w = Weight(data.score_sum, data.weight_sum)
         print_warning(w.calculate())
-        print_info("Total Score: "+ str(data.score_sum))
+        print_info("Total Score: " + str(data.score_sum))
         print(data.tb)
-
-
-
 
     elif ans.detail:
 
@@ -514,3 +511,7 @@ if __name__ == "__main__":
             print_success("OK")
     else:
         print("python3 main.py --help")
+
+
+if __name__ == "__main__":
+    main()
