@@ -1,4 +1,4 @@
-# Quark Engine [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
+# Quark Engine [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
 [![asciicast](https://asciinema.org/a/278088.svg)](https://asciinema.org/a/278088)
@@ -19,7 +19,7 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
-$ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+$ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  -r rules/ \
                  --detail
 ```
@@ -30,7 +30,7 @@ $ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 Examine with rules.
 
 ```bash
-python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
+quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/ \
                --easy
 ```
@@ -42,6 +42,7 @@ python main.py -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 $ git clone https://github.com/quark-engine/quark-engine.git; cd quark-engine/quark
 $ pipenv install
 $ pipenv shell
+$ python setup.py install
 ```
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
@@ -49,8 +50,8 @@ Make sure your python version is `3.7`, or you could change it from `Pipfile` to
 ### Usage
 
 ```bash
-$ python main.py --help
-usage: main.py [-h] [-e] [-d] -a APK -r RULE
+$ quark --help
+usage: quark [-h] [-e] [-d] -a APK -r RULE
 
 optional arguments:
   -h, --help            show this help message and exit

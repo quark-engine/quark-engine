@@ -1,0 +1,11 @@
+# Set the build language to Python
+language: python
+
+python: 3.7
+
+# Installation
+install:
+  - pipenv install -e . --skip-lock
+
+script:
+  - python -m unittest
