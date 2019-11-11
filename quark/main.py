@@ -59,7 +59,7 @@ class XRule:
 
         result = self.dx.find_methods(class_name, method_name)
 
-        if (result is not None) and len(list(result)) > 0:
+        if len(list(result)) > 0:
             return self.dx.find_methods(class_name, method_name)
 
         else:
@@ -100,7 +100,7 @@ class XRule:
 
         result = self.dx.find_methods(class_name, method_name)
 
-        if result is not None:
+        if len(list(result)) > 0:
             for m in self.dx.find_methods(class_name, method_name):
                 for idx, ins in m.get_method().get_instructions_idx():
                     bytecode_obj = None
