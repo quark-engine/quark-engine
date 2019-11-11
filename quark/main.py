@@ -28,7 +28,6 @@ class XRule:
 
         self.same_sequence_show_up = []
         self.same_operation = []
-        self.check_item = [False, False, False, False, False]
 
         # Pretty Table Output
         self.tb = PrettyTable()
@@ -335,18 +334,18 @@ class XRule:
 
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.permissions)):
-            self.check_item[0] = True
+            rule_obj.check_item[0] = True
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
         if self.find_method(test_cls0, test_md0) is not None:
-            self.check_item[1] = True
+            rule_obj.check_item[1] = True
             # Level 3
             test_md1 = rule_obj.x2n3n4_comb[1]["method"]
             test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
             if self.find_method(test_cls1, test_md1) is not None:
-                self.check_item[2] = True
+                rule_obj.check_item[2] = True
 
                 # Level 4
                 # [('class_a','method_a'),('class_b','method_b')]
@@ -370,14 +369,14 @@ class XRule:
                         pre_1 = self.pre_method1[0]
 
                         if self.check_sequence(common_method, pre_0, pre_1):
-                            self.check_item[3] = True
+                            rule_obj.check_item[3] = True
                             self.same_sequence_show_up.append(common_method)
 
                             # Level 5
                             if self.check_parameter(
                                 common_method, str(pre_0[1]), str(pre_1[1])
                             ):
-                                self.check_item[4] = True
+                                rule_obj.check_item[4] = True
                                 self.same_operation.append(common_method)
 
     def show_easy_report(self, rule_obj):
@@ -388,8 +387,8 @@ class XRule:
         :return:
         """
         # Count the confidence
-        confidence = str(self.check_item.count(True) * 20) + "%"
-        conf = self.check_item.count(True)
+        confidence = str(rule_obj.check_item.count(True) * 20) + "%"
+        conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
@@ -410,10 +409,10 @@ class XRule:
 
         # Count the confidence
         print("")
-        print("Confidence:" + str(self.check_item.count(True) * 20) + "%")
+        print("Confidence:" + str(rule_obj.check_item.count(True) * 20) + "%")
         print("")
 
-        if self.check_item[0]:
+        if rule_obj.check_item[0]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
@@ -421,13 +420,13 @@ class XRule:
 
             for permission in rule_obj.x1_permission:
                 print("\t\t" + permission)
-        if self.check_item[1]:
+        if rule_obj.check_item[1]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-        if self.check_item[2]:
+        if rule_obj.check_item[2]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
@@ -435,7 +434,7 @@ class XRule:
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
             print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
-        if self.check_item[3]:
+        if rule_obj.check_item[3]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
@@ -444,7 +443,7 @@ class XRule:
             print("\t\t" + "Sequence show up in:")
             for seq_methon in self.same_sequence_show_up:
                 print("\t\t" + repr(seq_methon))
-        if self.check_item[4]:
+        if rule_obj.check_item[4]:
 
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))

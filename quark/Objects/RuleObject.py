@@ -4,6 +4,8 @@ import json
 class RuleObject:
     def __init__(self, json_filename):
 
+        self.check_item = [False, False, False, False, False]
+
         with open(json_filename, "r") as f:
             self._json_obj = json.loads(f.read())
 
