@@ -136,7 +136,8 @@ class XRule:
 
                     yield bytecode_obj
         else:
-            raise ValueError("Method Not Found")
+            return None
+            # TODO add logging
 
     def find_f_previous_method(self, base, top):
         """
