@@ -3,7 +3,7 @@ from quark.utils.colors import *
 
 class LEVEL_INFO(Enum):
     LOW = "Low Risk"
-    Moderate = "Moderate Rist"
+    Moderate = "Moderate Risk"
     High = "High Risk"
 
 
