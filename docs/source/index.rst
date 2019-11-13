@@ -20,7 +20,7 @@ This guide will explain how to set up Quark, use it, and customize it.
 
    install
    addRules
-   dev
+   dev_index
    contribution
 
 Indices and tables
