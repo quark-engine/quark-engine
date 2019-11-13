@@ -7,7 +7,7 @@ development of this project.
 `Cuckoo Sandbox <https://cuckoo.sh/docs/index.html>`_ is a good example.
 So we follow most of their style for maintaing the code base.
 
-We do help out with coderefactoring where required, but please try to do
+We do help out with code refactoring where required, but please try to do
 as much as possible on your own.
 
 Essentially Quark's code style is based on `PEP 8 - Style Guide for Python Code
@@ -144,6 +144,10 @@ Documentation
 All code must be documented in docstring format, see `PEP 257 -- Docstring
 Conventions <http://www.python.org/dev/peps/pep-0257/>`_.
 Additional comments may be added in logical blocks to make the code easier to understand.
+
+As for the contribution to `quark rtdf <https://quark-engine.rtfd.io>`_. Please use
+```make html``` to build the html files. And commit with rst files altogether.
+So that users can read docs when offline.
 
 Automated testing
 =================
