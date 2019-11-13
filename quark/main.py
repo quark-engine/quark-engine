@@ -9,7 +9,7 @@ from quark.Objects.RuleObject import RuleObject
 from quark.logo import logo
 from quark.utils.out import *
 from quark.utils.tools import *
-from quark.utils.Weight import Weight
+from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
 
