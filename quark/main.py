@@ -1,14 +1,25 @@
 import argparse
 import operator
+import os
 
 from androguard.misc import AnalyzeAPK
+from prettytable import PrettyTable
 from tqdm import tqdm
+
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.BytecodeObject import BytecodeObject
 from quark.Objects.RuleObject import RuleObject
 from quark.logo import logo
-from quark.utils.out import *
-from quark.utils.tools import *
+from quark.utils.colors import (
+    red,
+    bold,
+    yellow,
+    green,
+    COLOR_OUTPUT_RED,
+    COLOR_OUTPUT_GREEN,
+)
+from quark.utils.out import print_success, print_info, print_warning
+from quark.utils.tools import remove_dup_list
 from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
@@ -252,7 +263,6 @@ class XRule:
                     to_md_name = str(call.name)
 
                     if (to_md_name == f_func[1]) or (to_md_name == s_func[1]):
-
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -312,7 +322,6 @@ class XRule:
             instruction = [str(x) for x in instruction]
 
             if instruction[0] in pyeval.eval.keys():
-
                 pyeval.eval[instruction[0]](instruction)
 
         for table in pyeval.show_table():
@@ -422,13 +431,11 @@ class XRule:
             for permission in rule_obj.x1_permission:
                 print("\t\t" + permission)
         if rule_obj.check_item[1]:
-
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
         if rule_obj.check_item[2]:
-
             COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
             COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
 
@@ -454,7 +461,6 @@ class XRule:
 
 
 def main():
-
     logo()
 
     parser = argparse.ArgumentParser()

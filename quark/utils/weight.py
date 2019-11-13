@@ -1,6 +1,6 @@
 from enum import Enum
 
-from quark.utils.colors import green,yellow,yel,red
+from quark.utils.colors import green, yellow, yel, red
 
 
 class LEVEL_INFO(Enum):
@@ -10,7 +10,6 @@ class LEVEL_INFO(Enum):
 
 
 class Weight:
-
     def __init__(self, score_sum, weight_sum):
         self.score_sum = score_sum
         self.weight_sum = weight_sum
@@ -49,6 +48,6 @@ class Weight:
             raise ValueError("Weight calculate failed")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     w = Weight(29, 19)
     print(w.calculate())

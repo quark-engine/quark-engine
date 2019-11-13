@@ -14,7 +14,6 @@ class RuleObject:
             self._x2n3n4_comb = self._json_obj["x2n3n4_comb"]
             self._yscore = self._json_obj["yscore"]
 
-
     @property
     def crime(self):
         return self._crime
@@ -38,7 +37,7 @@ class RuleObject:
 
         2^(confidence - 1)
         """
-        return (2**(confidence - 1) * self._yscore) / 2**4
+        return (2 ** (confidence - 1) * self._yscore) / 2 ** 4
 
 
 if __name__ == "__main__":
