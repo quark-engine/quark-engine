@@ -1,5 +1,7 @@
 from enum import Enum
-from quark.utils.colors import *
+
+from quark.utils.colors import green,yellow,yel,red
+
 
 class LEVEL_INFO(Enum):
     LOW = "Low Risk"
@@ -16,39 +18,37 @@ class Weight:
     def calculate(self):
 
         # Level 1 threshold
-        level_one_threshold = self.score_sum / 2**4
+        level_one_threshold = self.score_sum / 2 ** 4
         # Level 2 threshold
-        level_two_threshold = self.score_sum / 2**3
+        level_two_threshold = self.score_sum / 2 ** 3
         # Level 3 threshold
-        level_three_threshold = self.score_sum / 2**2
+        level_three_threshold = self.score_sum / 2 ** 2
         # Level 4 threshold
-        level_four_threshold = self.score_sum / 2**1
+        level_four_threshold = self.score_sum / 2 ** 1
         # Level 5 threshold
-        level_five_threshold = self.score_sum / 2**0
-
+        level_five_threshold = self.score_sum / 2 ** 0
 
         total_weight = self.weight_sum
 
-        if total_weight > 0 and total_weight <= level_one_threshold:
+        if 0 < total_weight <= level_one_threshold:
             return green(LEVEL_INFO.LOW.value)
 
-        elif total_weight > level_one_threshold and total_weight <= level_two_threshold:
+        elif level_one_threshold < total_weight <= level_two_threshold:
             return green(LEVEL_INFO.LOW.value)
 
-        elif total_weight > level_two_threshold and total_weight <= level_three_threshold:
+        elif level_two_threshold < total_weight <= level_three_threshold:
             return yellow(LEVEL_INFO.Moderate.value)
 
-        elif total_weight > level_three_threshold and total_weight <= level_four_threshold:
+        elif level_three_threshold < total_weight <= level_four_threshold:
             return yel(LEVEL_INFO.Moderate.value)
 
-        elif total_weight > level_four_threshold and total_weight <= level_five_threshold:
+        elif level_four_threshold < total_weight <= level_five_threshold:
             return red(LEVEL_INFO.High.value)
 
         else:
             raise ValueError("Weight calculate failed")
 
+
 if __name__ == '__main__':
-
-    w = Weight(29,19)
+    w = Weight(29, 19)
     print(w.calculate())
-
