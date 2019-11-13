@@ -5,7 +5,7 @@ Coding Style
 Having a clean and structured code is very important for the sustainable
 development of this project.
 `Cuckoo Sandbox <https://cuckoo.sh/docs/index.html>`_ is a good example.
-So we follow most of their style for maintaing the code base.
+So we follow most of their style for maintaining the code base.
 
 We do help out with coderefactoring where required, but please try to do
 as much as possible on your own.
