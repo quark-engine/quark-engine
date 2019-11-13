@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Coding Style &mdash; quick-engine v19.10 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contribution" href="contribution.html" />
+    <link rel="prev" title="Development Notes" href="dev.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> quick-engine
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing Quark-Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="dev_index.html">Development</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dev.html">Development Notes</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Coding Style</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#formatting">Formatting</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#file-naming">File naming</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copyright-header">Copyright header</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#indentation">Indentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#maximum-line-length">Maximum Line Length</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#blank-lines">Blank Lines</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#imports">Imports</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#strings">Strings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#printing-and-logging">Printing and Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#exceptions">Exceptions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#naming">Naming</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exception-handling">Exception handling</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#automated-testing">Automated testing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">quick-engine</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="dev_index.html">Development</a> &raquo;</li>
+        
+      <li>Coding Style</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/coding_style.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="coding-style">
+<h1>Coding Style<a class="headerlink" href="#coding-style" title="Permalink to this headline">¶</a></h1>
+<p>Having a clean and structured code is very important for the sustainable
+development of this project.
+<a class="reference external" href="https://cuckoo.sh/docs/index.html">Cuckoo Sandbox</a> is a good example.
+So we follow most of their style for maintaing the code base.</p>
+<p>We do help out with coderefactoring where required, but please try to do
+as much as possible on your own.</p>
+<p>Essentially Quark’s code style is based on <a class="reference external" href="http://www.python.org/dev/peps/pep-0008/">PEP 8 - Style Guide for Python Code</a> and <a class="reference external" href="http://www.python.org/dev/peps/pep-0257/">PEP 257 – Docstring
+Conventions</a>.</p>
+<div class="section" id="formatting">
+<h2>Formatting<a class="headerlink" href="#formatting" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="file-naming">
+<h3>File naming<a class="headerlink" href="#file-naming" title="Permalink to this headline">¶</a></h3>
+<p>All characters in the filenames should be lowercase letters.</p>
+</div>
+<div class="section" id="copyright-header">
+<h3>Copyright header<a class="headerlink" href="#copyright-header" title="Permalink to this headline">¶</a></h3>
+<p>All existing source code files start with the following copyright header:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># This file is part of Quark Engine - https://quark-engine.rtfd.io</span>
+<span class="c1"># See GPLv3 for copying permission.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="indentation">
+<h3>Indentation<a class="headerlink" href="#indentation" title="Permalink to this headline">¶</a></h3>
+<p>The code must have a 4-spaces-tabs indentation. Since Python enforce the
+indentation, make sure to configure your editor properly or your code might
+cause malfunctioning.</p>
+</div>
+<div class="section" id="maximum-line-length">
+<h3>Maximum Line Length<a class="headerlink" href="#maximum-line-length" title="Permalink to this headline">¶</a></h3>
+<p>Limit all lines to a maximum of 79 characters.</p>
+</div>
+<div class="section" id="blank-lines">
+<h3>Blank Lines<a class="headerlink" href="#blank-lines" title="Permalink to this headline">¶</a></h3>
+<p>Separate the class definition and the top level function with one blank line.
+Methods definitions inside a class are separated by a single blank line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Doing something.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">do_it</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Do it.</span>
+<span class="sd">        @param what: do what.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<p>Use blank lines in functions, sparingly, to isolate logic sections.
+Import blocks are separated by a single blank line, import blocks are separated
+from classes by one blank line.</p>
+</div>
+<div class="section" id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>Imports must be on separate lines. If you’re importing multiple objects from a
+package, use a single line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p><strong>NOT</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">b</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>Always specify explicitly the objects to import:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p><strong>NOT</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="strings">
+<h3>Strings<a class="headerlink" href="#strings" title="Permalink to this headline">¶</a></h3>
+<p>Strings must be delimited by double quotes (“).</p>
+</div>
+<div class="section" id="printing-and-logging">
+<h3>Printing and Logging<a class="headerlink" href="#printing-and-logging" title="Permalink to this headline">¶</a></h3>
+<p>We discourage the use of <code class="docutils literal notranslate"><span class="pre">print()</span></code>: if you need to log an event please use
+Python’s <code class="docutils literal notranslate"><span class="pre">logging</span></code> which is already initialized by Quark.</p>
+<p>In your module add:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And use the <code class="docutils literal notranslate"><span class="pre">log</span></code> handle. More details can be found in the Python
+documentation, but as follows is an example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Log message&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Custom exceptions will be defined in the <code class="docutils literal notranslate"><span class="pre">quark/utils/exceptions.py</span></code> file.</p>
+<div class="section" id="naming">
+<h3>Naming<a class="headerlink" href="#naming" title="Permalink to this headline">¶</a></h3>
+<p>Custom exception names must start with “Quark” and end with “Error” if it
+represents an unexpected malfunction.</p>
+</div>
+<div class="section" id="exception-handling">
+<h3>Exception handling<a class="headerlink" href="#exception-handling" title="Permalink to this headline">¶</a></h3>
+<p>When catching an exception and accessing its handle, use <code class="docutils literal notranslate"><span class="pre">as</span> <span class="pre">e</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">foo</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="n">bar</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>NOT</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+    <span class="n">foo</span><span class="p">()</span>
+<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">something</span><span class="p">:</span>
+    <span class="n">bar</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It’s a good practice use “e” instead of “e.message”.</p>
+</div>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>All code must be documented in docstring format, see <a class="reference external" href="http://www.python.org/dev/peps/pep-0257/">PEP 257 – Docstring
+Conventions</a>.
+Additional comments may be added in logical blocks to make the code easier to understand.</p>
+</div>
+<div class="section" id="automated-testing">
+<h2>Automated testing<a class="headerlink" href="#automated-testing" title="Permalink to this headline">¶</a></h2>
+<p>We believe in automated testing to provide high quality code and avoid easily
+overlooked mistakes.</p>
+<p>When possible, all code must be committed with proper unit tests. Particular
+attention must be placed when fixing bugs: it’s good practice to write unit
+tests to reproduce the bug.
+All unit tests and fixtures are placed in the tests folder in the
+quark-engine/tests.</p>
+<p>We have adopted <a class="reference external" href="http://doc.pytest.org/en/latest/">Pytest</a> as unit testing framework.
+Also we adopted <a class="reference external" href="https://travis-ci.org/">travis ci</a> for the continuous integration.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contribution.html" class="btn btn-neutral float-right" title="Contribution" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="dev.html" class="btn btn-neutral float-left" title="Development Notes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, KunYu Chen, JunWei Song
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
