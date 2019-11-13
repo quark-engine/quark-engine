@@ -5,7 +5,7 @@ Coding Style
 Having a clean and structured code is very important for the sustainable
 development of this project.
 `Cuckoo Sandbox <https://cuckoo.sh/docs/index.html>`_ is a good example.
-So we follow most of their style for maintaining the code base.
+So we follow most of their style for maintaing the code base.
 
 We do help out with code refactoring where required, but please try to do
 as much as possible on your own.
@@ -146,7 +146,7 @@ Conventions <http://www.python.org/dev/peps/pep-0257/>`_.
 Additional comments may be added in logical blocks to make the code easier to understand.
 
 As for the contribution to `quark rtdf <https://quark-engine.rtfd.io>`_. Please use
-```make html``` to build the html files. And commit with rst files altogether.
+``make html`` to build the html files. And commit with rst files altogether.
 So that users can read docs when offline.
 
 Automated testing
