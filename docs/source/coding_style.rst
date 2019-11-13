@@ -17,10 +17,10 @@ Conventions <http://www.python.org/dev/peps/pep-0257/>`_.
 Formatting
 ==========
 
-File naming
------------
+File and folder naming
+----------------------
 
-All characters in the filenames should be lowercase letters.
+All characters in the filenames or folder names should be lowercase letters.
 
 Copyright header
 ----------------
