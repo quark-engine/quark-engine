@@ -146,7 +146,7 @@ Conventions <http://www.python.org/dev/peps/pep-0257/>`_.
 Additional comments may be added in logical blocks to make the code easier to understand.
 
 As for the contribution to `quark rtdf <https://quark-engine.rtfd.io>`_. Please use
-```make html``` to build the html files. And commit with rst files altogether.
+``make html`` to build the html files. And commit with rst files altogether.
 So that users can read docs when offline.
 
 Automated testing
