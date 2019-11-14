@@ -86,7 +86,7 @@ class PyEval:
             pre_ret = self.ret_stack.pop()
             variable_object = VarabileObject(reg, pre_ret)
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 
@@ -158,7 +158,7 @@ class PyEval:
                 reg, array_obj.value + "[" + array_index.value + "]"
             )
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 
