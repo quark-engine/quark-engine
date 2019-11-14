@@ -23,7 +23,7 @@ from quark.utils.tools import remove_dup_list
 from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
-
+CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
 
 class XRule:
     def __init__(self, apk):
@@ -423,19 +423,19 @@ class XRule:
 
         if rule_obj.check_item[0]:
 
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_RED(CHECK_LIST)
             COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
             print("")
 
             for permission in rule_obj.x1_permission:
                 print("\t\t" + permission)
         if rule_obj.check_item[1]:
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_RED(CHECK_LIST)
             COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
         if rule_obj.check_item[2]:
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_RED(CHECK_LIST)
             COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
 
             print("")
@@ -443,7 +443,7 @@ class XRule:
             print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
         if rule_obj.check_item[3]:
 
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_RED(CHECK_LIST)
             COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
 
             print("")
@@ -452,7 +452,7 @@ class XRule:
                 print("\t\t" + repr(seq_methon))
         if rule_obj.check_item[4]:
 
-            COLOR_OUTPUT_RED("\t[" + u"\u2713" + "]")
+            COLOR_OUTPUT_RED(CHECK_LIST)
             COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
             print("")
             for seq_operation in self.same_operation:
