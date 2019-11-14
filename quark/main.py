@@ -418,7 +418,7 @@ class XRule:
 
         # Count the confidence
         print("")
-        print("Confidence:" + str(rule_obj.check_item.count(True) * 20) + "%")
+        print(f"Confidence: {rule_obj.check_item.count(True) * 20}%")
         print("")
 
         if rule_obj.check_item[0]:
