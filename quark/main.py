@@ -311,8 +311,7 @@ class XRule:
             common_method[0], common_method[1]
         ):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
-            instruction = []
-            instruction.append(bytecode_obj.mnemonic)
+            instruction = [bytecode_obj.mnemonic]
             if bytecode_obj.registers is not None:
                 instruction.extend(bytecode_obj.registers)
             if bytecode_obj.parameter is not None:
