@@ -17,9 +17,8 @@ class VarabileObject:
         """
         self._register_name = register_name
         self._value = value
-        if called_by_func is None:
-            self._called_by_func = []
-        else:
+        self._called_by_func =[]
+        if called_by_func is not None:
             self._called_by_func.append(called_by_func)
 
     @property

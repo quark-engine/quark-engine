@@ -1,5 +1,5 @@
 from prettytable import PrettyTable
-from quark.utils.colors import *
+from quark.utils.colors import bold, cyan, yellow, red, green
 
 
 def print_info(message):
@@ -19,11 +19,11 @@ def print_success(message):
 
 
 def table(header, rows):
-    table = PrettyTable(header)
-    table.align = "l"
-    table.padding_width = 1
+    tb = PrettyTable(header)
+    tb.align = "l"
+    tb.padding_width = 1
 
     for row in rows:
-        table.add_row(row)
+        tb.add_row(row)
 
-    return table
+    return tb

@@ -11,6 +11,7 @@ install:
 # Run the unit test
 script:
   - coverage run -m unittest discover
+  - pytest -s -v
 
 after_success:
   - coveralls

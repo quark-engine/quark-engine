@@ -1,8 +1,5 @@
-import sys
-from prettytable import PrettyTable
 from quark.Objects.TableObject import TableObject
 from quark.Objects.VarabileObject import VarabileObject
-
 
 MAX_REG_COUNT = 40
 
@@ -33,7 +30,7 @@ class PyEval:
         """
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1: len(instruction) - 1]
+        reg_list = instruction[1 : len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -55,8 +52,7 @@ class PyEval:
                     executed_fuc + "(" + ",".join(value_of_reg_list) + ")"
                 )
         # push the return value into ret_stack
-        self.ret_stack.append(
-            executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
+        self.ret_stack.append(executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
 
     def INVOKE_VIRTUAL(self, instruction):
         """
@@ -90,7 +86,7 @@ class PyEval:
             pre_ret = self.ret_stack.pop()
             variable_object = VarabileObject(reg, pre_ret)
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 
@@ -162,7 +158,7 @@ class PyEval:
                 reg, array_obj.value + "[" + array_index.value + "]"
             )
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 

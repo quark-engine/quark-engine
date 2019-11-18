@@ -1,4 +1,4 @@
-from quark.utils.colors import red, yel, cyan, bold, blue, lightyellow, lightblue
+from quark.utils.colors import bold, lightyellow, lightblue
 
 
 def logo():
@@ -15,12 +15,11 @@ def logo():
     """
             )
         ).format("19.10")
-        +bold(lightblue(
-
-
-            """
+        + bold(
+            lightblue(
+                """
             An Obfuscation-Neglect Android Malware Scoring System
             """
-        )
+            )
         )
     )
