@@ -48,11 +48,10 @@ class PyEval:
             if len(obj_stack) > 0:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
-                var_obj.called_by_func = (
-                    executed_fuc + "(" + ",".join(value_of_reg_list) + ")"
-                )
+                var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"
+
         # push the return value into ret_stack
-        self.ret_stack.append(executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
+        self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
     def INVOKE_VIRTUAL(self, instruction):
         """
@@ -155,7 +154,7 @@ class PyEval:
             array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
 
             variable_object = VarabileObject(
-                reg, array_obj.value + "[" + array_index.value + "]"
+                reg, f"{array_obj.value}[{array_index.value}]"
             )
             self.table_obj.insert(index, variable_object)
         except Exception as e:
