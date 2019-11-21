@@ -30,7 +30,7 @@ class PyEval:
         """
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1 : len(instruction) - 1]
+        reg_list = instruction[1: len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
