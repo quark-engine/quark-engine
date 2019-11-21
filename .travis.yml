@@ -6,7 +6,12 @@ python: 3.7
 # Installation
 install:
   - pipenv install -e . --skip-lock
+  - pipenv install coveralls codecov pytest-cov --skip-lock
 
+# Run the unit test
 script:
-  - python -m unittest
-  - pytest -s -v
+  - pytest --cov=./
+
+after_success:
+  - coveralls
+  - codecov
