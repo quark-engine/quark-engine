@@ -17,8 +17,8 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'quick-engine'
-copyright = '2019, KunYu Chen, JunWei Song'
+project = 'quark-engine'
+copyright = '2019, quark-engine team'
 author = 'KunYu Chen, JunWei Song'
 
 # The full version, including alpha/beta/rc tags

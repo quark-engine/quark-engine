@@ -2,29 +2,59 @@
 Contribution
 ++++++++++++
 
-People
-======
+Different stages of core members
+================================
 
-+------------------+---------------------+
-| Name             | Role                |
-+==================+=====================+
-| KunYu Chen       | ``Project Founder`` |
-+------------------+---------------------+
-| JunWei Song      | ``Lead Developer``  |
-+------------------+---------------------+
-| AnWei Kung       | ``Core Developer``  |
-+------------------+---------------------+
-| Sin              | ``Malware Analyst`` |
-+------------------+---------------------+
-| IokJin Sih       | ``Malware Analyst`` |
-+------------------+---------------------+
-| Chun-I Fan       | ``Consultant``      |
-+------------------+---------------------+
-| HY Lin           | ``Consultant``      |
-+------------------+---------------------+
-| Jheng-Jia Huang  | ``Consultant``      |
-+------------------+---------------------+
-| Pippen Wang      | ``Consultant``      |
-+------------------+---------------------+
-| ChaoWen Li       | ``Consultant``      |
-+------------------+---------------------+
+* ``Contributor``:
+  As soon as you post a comment, fix a typo, ask a question or report a bug etc.
+  , you become an active contributor.
+
+
+
+* ``Contributor followed by a mentor``:
+  Spotted active contributors can be asked to get a mentor to speedup their
+  learning of this project.
+
+
+* ``Core member``:
+  Once other core members consider that a contributor is ready to be promoted,
+  a core member opens a private vote for the candidate.
+
+
+Core members
+============
+
++-------------+---------------------------------------------------------------------------------------+
+| Name        | Contribution                                                                          |
++=============+=======================================================================================+
+| KunYu Chen  | ``Project Founder``                                                                   |
++-------------+---------------------------------------------------------------------------------------+
+| JunWei Song | ``Lead Developer, Engine Implementation (Malware Scoring System), Frontend, Testing`` |
++-------------+---------------------------------------------------------------------------------------+
+| AnWei Kung  | ``Core Developer, Backend (database, downloader, API), Testing``                      |
++-------------+---------------------------------------------------------------------------------------+
+| Sin         | ``Malware Analyst, Detection Rules, Engine Implementation (Malware Anti-Detection)``  |
++-------------+---------------------------------------------------------------------------------------+
+| IokJin Sih  | ``Malware Analyst``                                                                   |
++-------------+---------------------------------------------------------------------------------------+
+
+
+Consultants
+===========
+
+Consultant is the one who is important to this project and
+shows great support to our engine.
+
++-----------------+
+| Consultant      |
++=================+
+| Chun-I Fan      |
++-----------------+
+| HY Lin          |
++-----------------+
+| Jheng-Jia Huang |
++-----------------+
+| Pippen Wang     |
++-----------------+
+| ChaoWen Li      |
++-----------------+
