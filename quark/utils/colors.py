@@ -1,7 +1,7 @@
-from colorama import init
-from colorama import Fore, Back, Style
 import os
 import sys
+
+from colorama import Fore, Style
 
 
 def COLOR_OUTPUT_RED(output):
@@ -74,8 +74,10 @@ def white(text):
 def bold(text):
     return color(text, 1)
 
+
 def lightyellow(text):
     return color(text, 93)
+
 
 def lightblue(text):
     return color(text, 94)

@@ -4,6 +4,8 @@ import json
 class RuleObject:
     def __init__(self, json_filename):
 
+        self.check_item = [False, False, False, False, False]
+
         with open(json_filename, "r") as f:
             self._json_obj = json.loads(f.read())
 
@@ -11,7 +13,6 @@ class RuleObject:
             self._x1_permission = self._json_obj["x1_permission"]
             self._x2n3n4_comb = self._json_obj["x2n3n4_comb"]
             self._yscore = self._json_obj["yscore"]
-
 
     @property
     def crime(self):
@@ -36,7 +37,7 @@ class RuleObject:
 
         2^(confidence - 1)
         """
-        return (2**(confidence - 1) * self._yscore) / 2**4
+        return (2 ** (confidence - 1) * self._yscore) / 2 ** 4
 
 
 if __name__ == "__main__":

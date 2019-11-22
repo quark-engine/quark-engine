@@ -1,8 +1,5 @@
-import sys
-from prettytable import PrettyTable
 from quark.Objects.TableObject import TableObject
 from quark.Objects.VarabileObject import VarabileObject
-
 
 MAX_REG_COUNT = 40
 
@@ -38,7 +35,7 @@ class PyEval:
 
         # query the value from hash table based on register index.
         for reg in reg_list:
-            index = int(reg[1])
+            index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
             if len(obj_stack) > 0:
                 var_obj = self.table_obj.pop(index)
@@ -46,17 +43,15 @@ class PyEval:
 
         # insert the function and the parameter into called_by_func
         for reg in reg_list:
-            index = int(reg[1])
+            index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
             if len(obj_stack) > 0:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
-                var_obj.called_by_func = (
-                    executed_fuc + "(" + ",".join(value_of_reg_list) + ")"
-                )
+                var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"
+
         # push the return value into ret_stack
-        self.ret_stack.append(
-            executed_fuc + "(" + ",".join(value_of_reg_list) + ")")
+        self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
     def INVOKE_VIRTUAL(self, instruction):
         """
@@ -85,12 +80,12 @@ class PyEval:
         # print("[Exec]:move-result-object")
 
         reg = instruction[1]
-        index = int(reg[1])
+        index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
             variable_object = VarabileObject(reg, pre_ret)
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 
@@ -105,7 +100,7 @@ class PyEval:
 
         reg = instruction[1]
         value = instruction[2]
-        index = int(reg[1])
+        index = int(reg[1:])
 
         variable_object = VarabileObject(reg, value)
         self.table_obj.insert(index, variable_object)
@@ -121,7 +116,7 @@ class PyEval:
 
         reg = instruction[1]
         value = instruction[2]
-        index = int(reg[1])
+        index = int(reg[1:])
 
         variable_object = VarabileObject(reg, value)
         self.table_obj.insert(index, variable_object)
@@ -137,7 +132,7 @@ class PyEval:
 
         reg = instruction[1]
         value = instruction[2]
-        index = int(reg[1])
+        index = int(reg[1:])
 
         variable_object = VarabileObject(reg, value)
         self.table_obj.insert(index, variable_object)
@@ -151,7 +146,7 @@ class PyEval:
         # print("[Exec]: aget-object vx,vy,vz")
 
         reg = instruction[1]
-        index = int(reg[1])
+        index = int(reg[1:])
 
         try:
 
@@ -159,10 +154,10 @@ class PyEval:
             array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
 
             variable_object = VarabileObject(
-                reg, array_obj.value + "[" + array_index.value + "]"
+                reg, f"{array_obj.value}[{array_index.value}]"
             )
             self.table_obj.insert(index, variable_object)
-        except:
+        except Exception as e:
             # No element in pop
             pass
 
