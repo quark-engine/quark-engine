@@ -221,7 +221,7 @@ class XRule:
                 next_list2 = []
                 for item in list1:
                     if self.upperFunc(item[0], item[1]) is not None:
-                        next_list1 = self.upperFunc(item[0], item[1])
+                        next_list1.extend(self.upperFunc(item[0], item[1]))
                 for item in list2:
                     if self.upperFunc(item[0], item[1]) is not None:
                         next_list2.extend(self.upperFunc(item[0], item[1]))
