@@ -207,7 +207,7 @@ class XRule:
         if len(list1) > 0 and len(list2) > 0:
 
             # Limit up to three layers of the recursions.
-            if depth == MAX_SEARCH_LAYER:
+            if depth > MAX_SEARCH_LAYER:
                 return None
             # find ∩
             result = set(list1).intersection(list2)
