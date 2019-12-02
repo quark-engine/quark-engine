@@ -1,0 +1,18 @@
+{
+    "crime": "Steal history for browser bookmarks",
+    "x1_permission": [
+        "com.android.browser.permission.READ_HISTORY_BOOKMARKS"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/content/ContentResolver",
+            "method": "query"
+        },
+		{
+			"class": "Landroid/content/ContentValues",
+			"method": "put"
+		}
+    ],
+    "yscore": 1
+    "families": "DroidJack"
+}
