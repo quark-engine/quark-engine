@@ -206,9 +206,6 @@ class XRule:
         # Check both lists are not null
         if len(list1) > 0 and len(list2) > 0:
 
-            # Limit up to three layers of the recursions.
-            if depth > MAX_SEARCH_LAYER:
-                return None
             # find ∩
             result = set(list1).intersection(list2)
             if len(result) > 0:
@@ -216,6 +213,9 @@ class XRule:
                 return result
             else:
                 # Not found same method usage, try to find the next layer.
+                depth += 1
+                if depth > MAX_SEARCH_LAYER:
+                    return None
 
                 next_list1 = []
                 next_list2 = []
@@ -231,7 +231,6 @@ class XRule:
                 for pre_list in list2:
                     next_list2.append(pre_list)
 
-                depth += 1
 
                 # To find the same method, push the previous two
                 # methods into the stack here. Once it found there
