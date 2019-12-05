@@ -22,7 +22,7 @@ from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.tools import remove_dup_list
 from quark.utils.weight import Weight
 
-MAX_SEARCH_LAYER = 3
+MAX_SEARCH_LAYER = 2
 CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
 
 class XRule:
