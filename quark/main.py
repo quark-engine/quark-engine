@@ -49,6 +49,8 @@ class XRule:
         self.weight_sum = 0
         # Sum of the each rule
         self.score_sum = 0
+        # Prevent infinite recursion
+        self.prevent_infinite_recursion = []
 
     @property
     def permissions(self):
@@ -169,6 +171,11 @@ class XRule:
                 self.pre_method0.append(base)
             else:
                 for item in method_set:
+                    # prevent some functions from looking for themselves.
+                    if len(self.prevent_infinite_recursion) > 0:
+                        if item == self.prevent_infinite_recursion.pop():
+                            continue
+                    self.prevent_infinite_recursion.append(item)
                     self.find_f_previous_method(item, top)
 
     def find_s_previous_method(self, base, top):
@@ -189,6 +196,11 @@ class XRule:
                 self.pre_method1.append(base)
             else:
                 for item in method_set:
+                    # prevent some functions from looking for themselves.
+                    if len(self.prevent_infinite_recursion) > 0:
+                        if item == self.prevent_infinite_recursion.pop():
+                            continue
+                    self.prevent_infinite_recursion.append(item)
                     self.find_s_previous_method(item, top)
 
     def find_intersection(self, list1, list2, depth=1):
