@@ -169,6 +169,9 @@ class XRule:
                 self.pre_method0.append(base)
             else:
                 for item in method_set:
+                    # prevent some functions from looking for themselves.
+                    if item == base:
+                        continue
                     self.find_f_previous_method(item, top)
 
     def find_s_previous_method(self, base, top):
@@ -189,6 +192,9 @@ class XRule:
                 self.pre_method1.append(base)
             else:
                 for item in method_set:
+                    # prevent some functions from looking for themselves.
+                    if item == base:
+                        continue
                     self.find_s_previous_method(item, top)
 
     def find_intersection(self, list1, list2, depth=1):
