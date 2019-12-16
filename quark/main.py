@@ -44,7 +44,7 @@ class XRule:
         # Sum of the each rule
         self.score_sum = 0
 
-    def find_f_previous_method(self, base, top):
+    def find_previous_method(self, base, top, pre_method_list):
         """
         Find the previous method based on base method
         before top method.
@@ -59,36 +59,13 @@ class XRule:
         if method_set is not None:
 
             if top in method_set:
-                self.pre_method0.append(base)
+                pre_method_list.append(base)
             else:
                 for item in method_set:
                     # prevent some functions from looking for themselves.
                     if item == base:
                         continue
-                    self.find_f_previous_method(item, top)
-
-    def find_s_previous_method(self, base, top):
-        """
-        Find the previous method based on base method
-        before top method.
-
-        This will append the method into self.pre_method1
-        :param base:
-        :param top:
-        :return: None
-        """
-
-        method_set = self.apkinfo.upperfunc(base[0], base[1])
-
-        if method_set is not None:
-            if top in method_set:
-                self.pre_method1.append(base)
-            else:
-                for item in method_set:
-                    # prevent some functions from looking for themselves.
-                    if item == base:
-                        continue
-                    self.find_s_previous_method(item, top)
+                    self.find_previous_method(item, top, pre_method_list)
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -260,8 +237,8 @@ class XRule:
                         base_method_1 = (test_cls1, test_md1)
                         self.pre_method0.clear()
                         self.pre_method1.clear()
-                        self.find_f_previous_method(base_method_0, common_method)
-                        self.find_s_previous_method(base_method_1, common_method)
+                        self.find_previous_method(base_method_0, common_method, self.pre_method0)
+                        self.find_previous_method(base_method_1, common_method, self.pre_method1)
                         # TODO It may have many previous method in self.pre_method
                         pre_0 = self.pre_method0[0]
                         pre_1 = self.pre_method1[0]
