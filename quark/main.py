@@ -1,4 +1,5 @@
 import argparse
+import copy
 import operator
 import os
 
@@ -117,25 +118,17 @@ class XRule:
                 if depth > MAX_SEARCH_LAYER:
                     return None
 
-                next_list1 = []
-                next_list2 = []
+                # Append first layer into next layer.
+                next_list1 = copy.deepcopy(list1)
+                next_list2 = copy.deepcopy(list2)
+
+                # Extend the upper function into next layer.
                 for item in list1:
                     if self.apkinfo.upperFunc(item[0], item[1]) is not None:
                         next_list1.extend(self.apkinfo.upperFunc(item[0], item[1]))
                 for item in list2:
                     if self.apkinfo.upperFunc(item[0], item[1]) is not None:
                         next_list2.extend(self.apkinfo.upperFunc(item[0], item[1]))
-                # Append first layer into next layer
-                for pre_list in list1:
-                    next_list1.append(pre_list)
-                for pre_list in list2:
-                    next_list2.append(pre_list)
-
-                # To find the same method, push the previous two
-                # methods into the stack here. Once it found there
-                # is same method, pop the previous method from stack.
-                self.pre_method0.append(list1)
-                self.pre_method1.append(list2)
 
                 return self.find_intersection(next_list1, next_list2, depth)
         else:
