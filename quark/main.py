@@ -1,23 +1,16 @@
-import argparse
 import copy
 import operator
-import os
 
 from prettytable import PrettyTable
-from tqdm import tqdm
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.Apkinfo import Apkinfo
-from quark.Objects.RuleObject import RuleObject
-from quark.logo import logo
 from quark.utils.colors import (
     red,
     bold,
     yellow,
     green
 )
-from quark.utils.out import print_success, print_info, print_warning
-from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
@@ -333,64 +326,5 @@ class XRule:
                 print("\t\t" + repr(seq_operation))
 
 
-def main():
-    logo()
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--easy", action="store_true", help="show easy report")
-    parser.add_argument(
-        "-d", "--detail", action="store_true", help="show detail report"
-    )
-    parser.add_argument("-a", "--apk", help="APK file", required=True)
-    parser.add_argument(
-        "-r", "--rule", help="Rules folder need to be checked", required=True
-    )
-
-    ans = parser.parse_args()
-
-    if ans.easy:
-
-        # Load APK
-        data = XRule(ans.apk)
-
-        # Load rules
-        rules_list = os.listdir(ans.rule)
-
-        for rule in tqdm(rules_list):
-            rulepath = os.path.join(ans.rule, rule)
-            rule_checker = RuleObject(rulepath)
-
-            # Run the checker
-            data.run(rule_checker)
-
-            data.show_summary_report(rule_checker)
-
-        w = Weight(data.score_sum, data.weight_sum)
-        print_warning(w.calculate())
-        print_info("Total Score: " + str(data.score_sum))
-        print(data.tb)
-
-    elif ans.detail:
-
-        # Load APK
-        data = XRule(ans.apk)
-
-        # Load rules
-        rules_list = os.listdir(ans.rule)
-
-        for rule in tqdm(rules_list):
-            rulepath = os.path.join(ans.rule, rule)
-            print(rulepath)
-            rule_checker = RuleObject(rulepath)
-
-            # Run the checker
-            data.run(rule_checker)
-
-            data.show_detail_report(rule_checker)
-            print_success("OK")
-    else:
-        print("python3 main.py --help")
-
-
 if __name__ == "__main__":
-    main()
+    pass
