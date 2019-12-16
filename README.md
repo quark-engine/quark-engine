@@ -1,7 +1,7 @@
 # Quark Engine [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![codecov](https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg)](https://codecov.io/gh/quark-engine/quark-engine) [![Coverage Status](https://coveralls.io/repos/github/quark-engine/quark-engine/badge.svg?branch=master)](https://coveralls.io/github/quark-engine/quark-engine?branch=master) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2019.svg?style=flat-square) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
-[![asciicast](https://asciinema.org/a/278088.svg)](https://asciinema.org/a/278088)
+[![asciicast](https://asciinema.org/a/278088.svg)](https://asciinema.org/a/288450)
 
 ### Concepts
 
@@ -24,7 +24,7 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
-<img src="https://i.imgur.com/uyIIUkI.png"/>
+<img src="https://i.imgur.com/mvUzma4.png"/>
 
 ### Summary Report
 Examine with rules.
@@ -32,17 +32,16 @@ Examine with rules.
 ```bash
 quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/ \
-               --easy
+               --summary
 ```
-<img src="https://i.imgur.com/OXliayz.png"/>
+<img src="https://i.imgur.com/NtLiBST.png"/>
 
 ### Installation
 
 ```bash
 $ git clone https://github.com/quark-engine/quark-engine.git; cd quark-engine/quark
-$ pipenv install
+$ pipenv install --skip-lock
 $ pipenv shell
-$ python setup.py install
 ```
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
@@ -51,14 +50,16 @@ Make sure your python version is `3.7`, or you could change it from `Pipfile` to
 
 ```bash
 $ quark --help
-usage: quark [-h] [-e] [-d] -a APK -r RULE
+Usage: quark [OPTIONS]
 
-optional arguments:
-  -h, --help            show this help message and exit
-  -e, --easy            show easy report
+  Quark is an Obfuscation-Neglect Android Malware Scoring System
+
+Options:
+  -s, --summary         show summary report
   -d, --detail          show detail report
-  -a APK, --apk APK     APK file
-  -r RULE, --rule RULE  Rules need to be checked
+  -a, --apk FILE        APK file  [required]
+  -r, --rule DIRECTORY  Rules folder need to be checked  [required]
+  --help                Show this message and exit.
 ```
 
 
