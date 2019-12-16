@@ -27,7 +27,7 @@ class XRule:
     def __init__(self, apk):
         """
 
-        @param apk: the filename of the apk
+        :param apk: the filename of the apk.
         """
 
         self.apkinfo = Apkinfo(apk)
@@ -53,10 +53,10 @@ class XRule:
         Find the previous method based on base method before top method.
         This will append the method into pre_method_list.
 
-        @param base_method: the base function which needs to be searched.
-        @param top_method: the top-level function which calls the basic function.
-        @param pre_method_list: list is used to track each function.
-        @return: None
+        :param base_method: the base function which needs to be searched.
+        :param top_method: the top-level function which calls the basic function.
+        :param pre_method_list: list is used to track each function.
+        :return: None
         """
         class_name, method_name = base_method
         method_set = self.apkinfo.upperfunc(class_name, method_name)
@@ -77,10 +77,10 @@ class XRule:
         Find the list1 ∩ list2. list1 & list2 are list within tuple, for example,
         [("class_name","method_name"),...]
 
-        @param list1: first list that contains each method.
-        @param list2: second list that contains each method.
-        @param depth: maximum number of recursive search functions.
-        @return: a set of list1 ∩ list2 or None.
+        :param list1: first list that contains each method.
+        :param list2: second list that contains each method.
+        :param depth: maximum number of recursive search functions.
+        :return: a set of list1 ∩ list2 or None.
         """
         # Check both lists are not null
         if len(list1) > 0 and len(list2) > 0:
@@ -116,10 +116,10 @@ class XRule:
         """
         Check if the first function appeared before the second function.
 
-        @param same_method: the tuple with (class_name, method_name).
-        @param first_func: the first show up function, which is (class_name, method_name)
-        @param second_func: the second show up function, which is (class_name, method_name)
-        @return: True or False
+        :param same_method: function that call the first function and second functions at the same time.
+        :param first_func: the first show up function, which is (class_name, method_name)
+        :param second_func: the second show up function, which is (class_name, method_name)
+        :return: True or False
         """
         same_class_name, same_method_name = same_method
         first_class_name, first_method_name = first_func
@@ -168,10 +168,10 @@ class XRule:
         """
         check the usage of the same parameter between two method.
 
-        @param common_method: function that call the first function and second functions at the same time.
-        @param first_method_name: function which calls before the second method.
-        @param second_method_name: function which calls after the first method.
-        @return: True or False
+        :param common_method: function that call the first function and second functions at the same time.
+        :param first_method_name: function which calls before the second method.
+        :param second_method_name: function which calls after the first method.
+        :return: True or False
         """
 
         pyeval = PyEval()
@@ -211,8 +211,8 @@ class XRule:
         """
         Run the five levels check to get the y_score.
 
-        @param rule_obj: the instance of the RuleObject.
-        @return: None
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
         """
 
         # Level 1
@@ -262,12 +262,12 @@ class XRule:
                                 rule_obj.check_item[4] = True
                                 self.same_operation.append(common_method)
 
-    def show_easy_report(self, rule_obj):
+    def show_summary_report(self, rule_obj):
         """
         Show the summary report.
 
-        @param rule_obj: the instance of the RuleObject.
-        @return: None
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
         """
         # Count the confidence
         confidence = str(rule_obj.check_item.count(True) * 20) + "%"
@@ -286,8 +286,8 @@ class XRule:
         """
         Show the detail report.
 
-        @param rule_obj: the instance of the RuleObject.
-        @return: None
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
         """
 
         # Count the confidence
@@ -363,7 +363,7 @@ def main():
             # Run the checker
             data.run(rule_checker)
 
-            data.show_easy_report(rule_checker)
+            data.show_summary_report(rule_checker)
 
         w = Weight(data.score_sum, data.weight_sum)
         print_warning(w.calculate())
