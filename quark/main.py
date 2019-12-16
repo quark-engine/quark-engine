@@ -56,7 +56,7 @@ class XRule:
         :param top:
         :return: None
         """
-        method_set = self.apkinfo.upperFunc(base[0], base[1])
+        method_set = self.apkinfo.upperfunc(base[0], base[1])
 
         if method_set is not None:
 
@@ -80,7 +80,7 @@ class XRule:
         :return: None
         """
 
-        method_set = self.apkinfo.upperFunc(base[0], base[1])
+        method_set = self.apkinfo.upperfunc(base[0], base[1])
 
         if method_set is not None:
             if top in method_set:
@@ -124,11 +124,11 @@ class XRule:
 
                 # Extend the upper function into next layer.
                 for item in list1:
-                    if self.apkinfo.upperFunc(item[0], item[1]) is not None:
-                        next_list1.extend(self.apkinfo.upperFunc(item[0], item[1]))
+                    if self.apkinfo.upperfunc(item[0], item[1]) is not None:
+                        next_list1.extend(self.apkinfo.upperfunc(item[0], item[1]))
                 for item in list2:
-                    if self.apkinfo.upperFunc(item[0], item[1]) is not None:
-                        next_list2.extend(self.apkinfo.upperFunc(item[0], item[1]))
+                    if self.apkinfo.upperfunc(item[0], item[1]) is not None:
+                        next_list2.extend(self.apkinfo.upperfunc(item[0], item[1]))
 
                 return self.find_intersection(next_list1, next_list2, depth)
         else:
@@ -250,8 +250,8 @@ class XRule:
                 # Level 4
                 # [('class_a','method_a'),('class_b','method_b')]
                 # Looking for the first layer of the upperfunction
-                upperfunc0 = self.apkinfo.upperFunc(test_cls0, test_md0)
-                upperfunc1 = self.apkinfo.upperFunc(test_cls1, test_md1)
+                upperfunc0 = self.apkinfo.upperfunc(test_cls0, test_md0)
+                upperfunc1 = self.apkinfo.upperfunc(test_cls1, test_md1)
 
                 same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
