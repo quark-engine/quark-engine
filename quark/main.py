@@ -14,9 +14,7 @@ from quark.utils.colors import (
     red,
     bold,
     yellow,
-    green,
-    COLOR_OUTPUT_RED,
-    COLOR_OUTPUT_GREEN,
+    green
 )
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
@@ -314,28 +312,28 @@ class XRule:
 
         if rule_obj.check_item[0]:
 
-            COLOR_OUTPUT_RED(CHECK_LIST)
-            COLOR_OUTPUT_GREEN(bold("1.Permission Request"))
+            print(red(CHECK_LIST), end="")
+            print(green(bold("1.Permission Request")), end="")
             print("")
 
             for permission in rule_obj.x1_permission:
                 print("\t\t" + permission)
         if rule_obj.check_item[1]:
-            COLOR_OUTPUT_RED(CHECK_LIST)
-            COLOR_OUTPUT_GREEN(bold("2.Native API Usage"))
+            print(red(CHECK_LIST), end="")
+            print(green(bold("2.Native API Usage")), end="")
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
         if rule_obj.check_item[2]:
-            COLOR_OUTPUT_RED(CHECK_LIST)
-            COLOR_OUTPUT_GREEN(bold("3.Native API Combination"))
+            print(red(CHECK_LIST), end="")
+            print(green(bold("3.Native API Combination")), end="")
 
             print("")
             print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
             print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
         if rule_obj.check_item[3]:
 
-            COLOR_OUTPUT_RED(CHECK_LIST)
-            COLOR_OUTPUT_GREEN(bold("4.Native API Sequence"))
+            print(red(CHECK_LIST), end="")
+            print(green(bold("4.Native API Sequence")), end="")
 
             print("")
             print("\t\t" + "Sequence show up in:")
@@ -343,8 +341,8 @@ class XRule:
                 print("\t\t" + repr(seq_methon))
         if rule_obj.check_item[4]:
 
-            COLOR_OUTPUT_RED(CHECK_LIST)
-            COLOR_OUTPUT_GREEN(bold("5.Native API Use Same Parameter"))
+            print(red(CHECK_LIST), end="")
+            print(green(bold("5.Native API Use Same Parameter")), end="")
             print("")
             for seq_operation in self.same_operation:
                 print("\t\t" + repr(seq_operation))

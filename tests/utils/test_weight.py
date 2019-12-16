@@ -38,9 +38,9 @@ class TestWeight(object):
         weight_obj = Weight(score_sum, weight_sum)
 
         assert weight_obj.calculate() in [
-            "\x1b[32mLow Risk\x1b[0m",
+            "\x1b[92mLow Risk\x1b[0m",
             "\x1b[33mModerate Risk\x1b[0m",
-            "\x1b[31mHigh Risk\x1b[0m",
+            "\x1b[91mHigh Risk\x1b[0m",
         ]
 
     @pytest.mark.xfail(raises=ValueError)
@@ -50,7 +50,7 @@ class TestWeight(object):
         weight_obj = Weight(score_sum, weight_sum)
 
         assert weight_obj.calculate() in [
-            "\x1b[32mLow Risk\x1b[0m",
+            "\x1b[92mLow Risk\x1b[0m",
             "\x1b[33mModerate Risk\x1b[0m",
-            "\x1b[31mHigh Risk\x1b[0m",
+            "\x1b[91mHigh Risk\x1b[0m",
         ]
