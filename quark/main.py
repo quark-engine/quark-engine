@@ -25,6 +25,10 @@ CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
 
 class XRule:
     def __init__(self, apk):
+        """
+
+        @param apk: the filename of the apk
+        """
 
         self.apkinfo = Apkinfo(apk)
 
@@ -51,7 +55,7 @@ class XRule:
 
         @param base_method: the base function which needs to be searched.
         @param top_method: the top-level function which calls the basic function.
-        @param pre_method_list: list is used to track each function
+        @param pre_method_list: list is used to track each function.
         @return: None
         """
         class_name, method_name = base_method
@@ -70,15 +74,13 @@ class XRule:
 
     def find_intersection(self, list1, list2, depth=1):
         """
-        Find the list1 ∩ list2.
-
-        list1 & list2 are list within tuple, for example,
+        Find the list1 ∩ list2. list1 & list2 are list within tuple, for example,
         [("class_name","method_name"),...]
 
-        :param list1:
-        :param list2:
-        :param depth: MAX recursion
-        :return:
+        @param list1: first list that contains each method.
+        @param list2: second list that contains each method.
+        @param depth: maximum number of recursive search functions.
+        @return: a set of list1 ∩ list2 or None.
         """
         # Check both lists are not null
         if len(list1) > 0 and len(list2) > 0:
@@ -110,17 +112,20 @@ class XRule:
         else:
             raise ValueError("List is Null")
 
-    def check_sequence(self, same_method, f_func, s_func):
+    def check_sequence(self, same_method, first_func, second_func):
         """
         Check if the first function appeared before the second function.
 
-        :param same_method: the tuple with (class_name, method_name)
-        :param f_func: the first show up function, which is (class_name, method_name)
-        :param s_func: the tuple with (class_name, method_name)
-        :return: boolean
+        @param same_method: the tuple with (class_name, method_name).
+        @param first_func: the first show up function, which is (class_name, method_name)
+        @param second_func: the second show up function, which is (class_name, method_name)
+        @return: True or False
         """
+        same_class_name, same_method_name = same_method
+        first_class_name, first_method_name = first_func
+        second_class_name, second_method_name = second_func
 
-        method_set = self.apkinfo.find_method(same_method[0], same_method[1])
+        method_set = self.apkinfo.find_method(same_class_name, same_method_name)
         seq_table = []
 
         if method_set is not None:
@@ -129,7 +134,7 @@ class XRule:
 
                     to_md_name = str(call.name)
 
-                    if (to_md_name == f_func[1]) or (to_md_name == s_func[1]):
+                    if (to_md_name == first_method_name) or (to_md_name == second_method_name):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -143,12 +148,12 @@ class XRule:
             f_func_val = None
             s_func_val = None
             while idx < length:
-                if seq_table[idx][0] == f_func[1]:
+                if seq_table[idx][0] == first_method_name:
                     f_func_val = idx
                     break
                 idx += 1
             while length > 0:
-                if seq_table[length - 1][0] == s_func[1]:
+                if seq_table[length - 1][0] == second_method_name:
                     s_func_val = length - 1
                     break
                 length -= 1
@@ -159,23 +164,24 @@ class XRule:
             else:
                 return False
 
-    def check_parameter(self, common_method, fist_method_name, second_method_name):
+    def check_parameter(self, common_method, first_method_name, second_method_name):
         """
-        check the usage of the same parameter between
-        two method.
+        check the usage of the same parameter between two method.
 
-        :param common_method: ("class_name", "method_name")
-        :param fist_method_name:
-        :param second_method_name:
-        :return:
+        @param common_method: function that call the first function and second functions at the same time.
+        @param first_method_name: function which calls before the second method.
+        @param second_method_name: function which calls after the first method.
+        @return: True or False
         """
 
         pyeval = PyEval()
         # Check if there is an operation of the same register
         state = False
 
+        common_class_name, common_method_name = common_method
+
         for bytecode_obj in self.apkinfo.get_method_bytecode(
-                common_method[0], common_method[1]
+                common_class_name, common_method_name
         ):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
             instruction = [bytecode_obj.mnemonic]
@@ -192,7 +198,7 @@ class XRule:
 
         for table in pyeval.show_table():
             for val_obj in table:
-                matchers = [fist_method_name, second_method_name]
+                matchers = [first_method_name, second_method_name]
                 matching = [
                     s for s in val_obj.called_by_func if all(xs in s for xs in matchers)
                 ]
@@ -204,8 +210,9 @@ class XRule:
     def run(self, rule_obj):
         """
         Run the five levels check to get the y_score.
-        :param rule_obj:
-        :return:
+
+        @param rule_obj: the instance of the RuleObject.
+        @return: None
         """
 
         # Level 1
@@ -259,8 +266,8 @@ class XRule:
         """
         Show the summary report.
 
-        :param rule_obj:
-        :return:
+        @param rule_obj: the instance of the RuleObject.
+        @return: None
         """
         # Count the confidence
         confidence = str(rule_obj.check_item.count(True) * 20) + "%"
@@ -277,10 +284,10 @@ class XRule:
 
     def show_detail_report(self, rule_obj):
         """
-        Show the detail report
+        Show the detail report.
 
-        :param rule_obj:
-        :return:
+        @param rule_obj: the instance of the RuleObject.
+        @return: None
         """
 
         # Count the confidence
