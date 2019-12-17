@@ -1,24 +1,6 @@
 import os
 import sys
 
-from colorama import Fore, Style
-
-
-def COLOR_OUTPUT_RED(output):
-    print(Fore.LIGHTRED_EX, output, Style.RESET_ALL, end="")
-
-
-def COLOR_OUTPUT_GREEN(output):
-    print(Fore.LIGHTGREEN_EX, output, Style.RESET_ALL, end="")
-
-
-def COLOR_OUTPUT_YELLOW(output):
-    print(Fore.LIGHTYELLOW_EX, output, Style.RESET_ALL, end="")
-
-
-def COLOR_OUTPUT_CYAN(output):
-    print(Fore.LIGHTCYAN_EX, output, Style.RESET_ALL)
-
 
 def color(text, color_code):
     """Colorize text.
@@ -44,11 +26,11 @@ def yellow(text):
 
 
 def red(text):
-    return color(text, 31)
+    return color(text, 91)
 
 
 def green(text):
-    return color(text, 32)
+    return color(text, 92)
 
 
 def yel(text):

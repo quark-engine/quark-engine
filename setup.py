@@ -13,7 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/quark-engine/quark-engine",
     packages=setuptools.find_packages(),
-    entry_points={"console_scripts": ["quark=quark.main:main"]},
+    entry_points={"console_scripts": ["quark=quark.cli:entry_point"]},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
