@@ -24,7 +24,7 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
-<img src="https://i.imgur.com/mvUzma4.png"/>
+<img src="https://i.imgur.com/Gbnwmcm.png"/>
 
 ### Summary Report
 Examine with rules.
