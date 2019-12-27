@@ -12,7 +12,7 @@ Change directory to quark::
 
 Install engine with pipenv::
 
-    $ pipenv install
+    $ pipenv install --skip-lock
 
 Launching subshell in virtual env::
 
@@ -20,16 +20,17 @@ Launching subshell in virtual env::
 
 Run the help cmd of quark::
 
-    $ python main.py --help
+    $ quark --help
 
 Once you see the following msg, then you're all set::
 
-    usage: main.py [-h] [-e] [-d] -a APK -r RULE
+    Usage: quark [OPTIONS]
 
-    optional arguments:
-      -h, --help            show this help message and exit
-      -e, --easy            show easy report
+    Quark is an Obfuscation-Neglect Android Malware Scoring System
+
+    Options:
+      -s, --summary         show summary report
       -d, --detail          show detail report
-      -a APK, --apk APK     APK file
-      -r RULE, --rule RULE  Rules need to be checked
-
+      -a, --apk FILE        APK file  [required]
+      -r, --rule DIRECTORY  Rules folder need to be checked  [required]
+      --help                Show this message and exit.
