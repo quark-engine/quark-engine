@@ -10,10 +10,19 @@ class PyEval:
         self.eval = {
             "invoke-virtual": self.INVOKE_VIRTUAL,
             "invoke-direct": self.INVOKE_DIRECT,
+            "invoke-static": self.INVOKE_STATIC,
             "move-result-object": self.MOVE_RESULT_OBJECT,
+            "move-result": self.MOVE_RESULT,
             "new-instance": self.NEW_INSTANCE,
             "const-string": self.CONST_STRING,
+            "const": self.CONST,
             "const/4": self.CONST_FOUR,
+            "const/16": self.CONST_SIXTEEN,
+            "const/high16": self.CONST_HIGHSIXTEEN,
+            "const-wide": self.CONST_WIDE,
+            "const-wide/16": self.CONST_WIDE_SIXTEEN,
+            "const-wide/32": self.CONST_WIDE_THIRTY_TWO,
+            "const-wide/high16": self.CONST_WIDE_HIGHSIXTEEN,
             "aget-object": self.AGET_OBJECT,
         }
 
@@ -69,6 +78,12 @@ class PyEval:
         # print("[Exec]:invoke-direct")
         self.__invoke(instruction)
 
+    def INVOKE_STATIC(self, instruction):
+        """
+        invoke-static {parameters}, methodtocall
+        """
+        self.__invoke(instruction)
+
     def MOVE_RESULT_OBJECT(self, instruction):
         """
         move-result-object vx
@@ -79,6 +94,25 @@ class PyEval:
         """
         # print("[Exec]:move-result-object")
 
+        reg = instruction[1]
+        index = int(reg[1:])
+        try:
+            pre_ret = self.ret_stack.pop()
+            variable_object = VarabileObject(reg, pre_ret)
+            self.table_obj.insert(index, variable_object)
+        except Exception as e:
+            # No element in pop
+            pass
+
+    def MOVE_RESULT(self, instruction):
+        """
+        move-result vx
+        Move the result value of the previous method invocation into vx.
+
+        Save the value returned by the previous
+        function call to the vx register,and then
+        insert the VariableObject into table.
+        """
         reg = instruction[1]
         index = int(reg[1:])
         try:
@@ -121,6 +155,19 @@ class PyEval:
         variable_object = VarabileObject(reg, value)
         self.table_obj.insert(index, variable_object)
 
+    def CONST(self, instruction):
+        """
+        const vx, lit32
+
+        Puts the integer constant into vx
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+
+        variable_object = VarabileObject(reg, value)
+        self.table_obj.insert(index, variable_object)
+
     def CONST_FOUR(self, instruction):
         """
         const/4 vx,lit4
@@ -136,6 +183,96 @@ class PyEval:
 
         variable_object = VarabileObject(reg, value)
         self.table_obj.insert(index, variable_object)
+
+    def CONST_SIXTEEN(self, instruction):
+        """
+        const/16 vx,lit16
+
+        Puts the 4 bit constant into vx.
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+
+        variable_object = VarabileObject(reg, value)
+        self.table_obj.insert(index, variable_object)
+
+    def CONST_HIGHSIXTEEN(self, instruction):
+        """
+        const/high16 v0, lit16
+        Puts the 16 bit constant into the topmost bits of the register. Used to initialize float values.
+        """
+
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+
+        variable_object = VarabileObject(reg, value)
+        self.table_obj.insert(index, variable_object)
+
+    def CONST_WIDE(self, instruction):
+        """
+        const-wide vx, lit64
+
+        Puts the 64 bit constant into vx and vx+1 registers.
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+        reg_plus_one = f"v{index + 1}"
+
+        variable_object = VarabileObject(reg, value)
+        variable_object2 = VarabileObject(reg_plus_one, value)
+        self.table_obj.insert(index, variable_object)
+        self.table_obj.insert(index + 1, variable_object2)
+
+    def CONST_WIDE_SIXTEEN(self, instruction):
+        """
+        const-wide/16 vx, lit16
+
+        Puts the integer constant into vx and vx+1 registers, expanding the integer constant into a long constant.
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+        reg_plus_one = f"v{index + 1}"
+
+        variable_object = VarabileObject(reg, value)
+        variable_object2 = VarabileObject(reg_plus_one, value)
+        self.table_obj.insert(index, variable_object)
+        self.table_obj.insert(index + 1, variable_object2)
+
+    def CONST_WIDE_THIRTY_TWO(self, instruction):
+        """
+        const-wide/32 vx, lit32
+
+        Puts the 32 bit constant into vx and vx+1 registers, expanding the integer constant into a long constant.
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+        reg_plus_one = f"v{index + 1}"
+
+        variable_object = VarabileObject(reg, value)
+        variable_object2 = VarabileObject(reg_plus_one, value)
+        self.table_obj.insert(index, variable_object)
+        self.table_obj.insert(index + 1, variable_object2)
+
+    def CONST_WIDE_HIGHSIXTEEN(self, instruction):
+        """
+        const-wide/high16 vx,lit16
+
+        Puts the 16 bit constant into the highest 16 bit of vx and vx+1 registers. Used to initialize double values.
+        """
+        reg = instruction[1]
+        value = instruction[2]
+        index = int(reg[1:])
+        reg_plus_one = f"v{index + 1}"
+
+        variable_object = VarabileObject(reg, value)
+        variable_object2 = VarabileObject(reg_plus_one, value)
+        self.table_obj.insert(index, variable_object)
+        self.table_obj.insert(index + 1, variable_object2)
 
     def AGET_OBJECT(self, instruction):
         """
