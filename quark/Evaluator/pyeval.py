@@ -12,6 +12,7 @@ class PyEval:
             "invoke-direct": self.INVOKE_DIRECT,
             "invoke-static": self.INVOKE_STATIC,
             "move-result-object": self.MOVE_RESULT_OBJECT,
+            "move-result-wide": self.MOVE_RESULT_WIDE,
             "move-result": self.MOVE_RESULT,
             "new-instance": self.NEW_INSTANCE,
             "const-string": self.CONST_STRING,
@@ -100,6 +101,24 @@ class PyEval:
             pre_ret = self.ret_stack.pop()
             variable_object = VarabileObject(reg, pre_ret)
             self.table_obj.insert(index, variable_object)
+        except Exception as e:
+            # No element in pop
+            pass
+
+    def MOVE_RESULT_WIDE(self, instruction):
+        """
+        move-result-wide vx
+
+        Move the long/double result value of the previous method invocation into vx,vx+1.
+        """
+        reg = instruction[1]
+        index = int(reg[1:])
+        try:
+            pre_ret = self.ret_stack.pop()
+            variable_object = VarabileObject(reg, pre_ret)
+            variable_object2 = VarabileObject(f"v{index + 1}", pre_ret)
+            self.table_obj.insert(index, variable_object)
+            self.table_obj.insert(index + 1, variable_object2)
         except Exception as e:
             # No element in pop
             pass
