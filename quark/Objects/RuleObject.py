@@ -3,7 +3,6 @@ import json
 
 class RuleObject:
     def __init__(self, json_filename):
-
         self.check_item = [False, False, False, False, False]
 
         with open(json_filename, "r") as f:
@@ -37,6 +36,8 @@ class RuleObject:
 
         2^(confidence - 1)
         """
+        if confidence == 0:
+            return 0
         return (2 ** (confidence - 1) * self._yscore) / 2 ** 4
 
 
