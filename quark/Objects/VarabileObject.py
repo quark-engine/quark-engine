@@ -21,6 +21,10 @@ class VarabileObject:
         if called_by_func is not None:
             self._called_by_func.append(called_by_func)
 
+    def __repr__(self):
+        return "<VarabileObject-register:{}, value:{}, called_by_func:{}>".format(self._register_name, self._value,
+                                                                                  ','.join(self._called_by_func))
+
     @property
     def called_by_func(self):
         """

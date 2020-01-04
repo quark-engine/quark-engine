@@ -4,6 +4,10 @@ class BytecodeObject:
         self._registers = registers
         self._parameter = parameter
 
+    def __repr__(self):
+        return "<BytecodeObject-mnemonic:{}, registers:{}, parameter:{}>".format(self._mnemonic, self._registers,
+                                                                                 self._parameter)
+
     @property
     def mnemonic(self):
         return self._mnemonic

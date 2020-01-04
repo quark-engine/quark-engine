@@ -12,6 +12,9 @@ class TableObject:
         """
         self.hash_table = [[] for _ in range(count_reg)]
 
+    def __repr__(self):
+        return "<TableObject-{}>".format(self.hash_table)
+
     def insert(self, index, var_obj):
         """
         insert VariableObject into the nested

@@ -1,4 +1,5 @@
 import json
+import os
 
 
 class RuleObject:
@@ -7,11 +8,14 @@ class RuleObject:
 
         with open(json_filename, "r") as f:
             self._json_obj = json.loads(f.read())
-
             self._crime = self._json_obj["crime"]
             self._x1_permission = self._json_obj["x1_permission"]
             self._x2n3n4_comb = self._json_obj["x2n3n4_comb"]
             self._yscore = self._json_obj["yscore"]
+            self.rule_filename = os.path.basename(json_filename)
+
+    def __repr__(self):
+        return "<RuleObject-{}>".format(self.rule_filename)
 
     @property
     def crime(self):

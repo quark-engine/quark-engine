@@ -1,6 +1,10 @@
+import os
+
 from androguard.misc import AnalyzeAPK
+
 from quark.Objects.BytecodeObject import BytecodeObject
 from quark.utils import tools
+
 
 class Apkinfo:
 
@@ -10,6 +14,10 @@ class Apkinfo:
         # Create Class, Method, String and Field
         # crossreferences for all classes in the Analysis.
         # self.dx.create_xref()
+        self.apk_filename = os.path.basename(apk_filepath)
+
+    def __repr__(self):
+        return "<Apkinfo-APK:{}>".format(self.apk_filename)
 
     @property
     def permissions(self):
