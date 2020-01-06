@@ -76,3 +76,11 @@ class TestXRule():
         assert xrule.check_sequence(common_method_yes, contact_api, sendSms_api) == True
         assert xrule.check_sequence(common_method_no, location_api, sendSms_api) == False
         assert xrule.check_sequence(common_method_no, contact_api, sendSms_api) == False
+
+    def test_check_parameter(self, xrule):
+        first_method_name = "getLocation"
+        second_method_name = "sendSms"
+
+        common_method_yes = ("Lcom/google/progress/AndroidClientService;", "sendMessage")
+
+        assert xrule.check_parameter(common_method_yes, first_method_name, second_method_name) == True
