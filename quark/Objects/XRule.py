@@ -156,6 +156,8 @@ class XRule:
                 return True
             else:
                 return False
+        else:
+            return False
 
     def check_parameter(self, common_method, first_method_name, second_method_name):
         """

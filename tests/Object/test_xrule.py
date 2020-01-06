@@ -57,3 +57,22 @@ class TestXRule():
         assert xrule.find_intersection(location_api_upper, sms_api_upper) == expected_result_location
 
         assert xrule.find_intersection(contact_api_upper, sms_api_upper) == expected_result_contact
+
+    def test_check_sequence(self, xrule):
+        # Send Location via SMS
+
+        location_api = ("Lcom/google/progress/Locate;", "getLocation")
+        sendSms_api = ("Lcom/google/progress/SMSHelper;", "sendSms")
+
+        common_method_yes = ("Lcom/google/progress/AndroidClientService;", "sendMessage")
+        common_method_no = ("Lcom/google/progress/AndroidClientService$2;", "run")
+
+        # # Send contact via SMS
+
+        contact_api = ("Lcom/google/progress/ContactsCollecter;", "getContactList")
+        sendSms_api = ("Lcom/google/progress/SMSHelper;", "sendSms")
+
+        assert xrule.check_sequence(common_method_yes, location_api, sendSms_api) == True
+        assert xrule.check_sequence(common_method_yes, contact_api, sendSms_api) == True
+        assert xrule.check_sequence(common_method_no, location_api, sendSms_api) == False
+        assert xrule.check_sequence(common_method_no, contact_api, sendSms_api) == False
