@@ -234,10 +234,15 @@ class XRule:
                 same = self.find_intersection(upperfunc0, upperfunc1)
                 if same is not None:
 
+                    # Clear the results from the previous rule
+                    self.same_sequence_show_up.clear()
+                    self.same_operation.clear()
+
                     for common_method in same:
 
                         base_method_0 = (test_cls0, test_md0)
                         base_method_1 = (test_cls1, test_md1)
+                        # Clear the results from the previous common_method
                         self.pre_method0.clear()
                         self.pre_method1.clear()
                         self.find_previous_method(base_method_0, common_method, self.pre_method0)
