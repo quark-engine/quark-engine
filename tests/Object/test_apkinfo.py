@@ -5,7 +5,7 @@ from quark.Objects.Apkinfo import Apkinfo
 
 
 @pytest.fixture()
-def apkinfo(scope="fuction"):
+def apkinfo(scope="function"):
     apk_file = "quark/sample/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
     apkinfo = Apkinfo(apk_file)
     yield apkinfo
