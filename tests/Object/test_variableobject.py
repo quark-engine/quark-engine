@@ -35,7 +35,7 @@ class TestVariableObject(object):
     def test_get_all(self, variable_obj):
         variable_obj.called_by_func = "file_list"
         variable_obj.called_by_func = "file_delete"
-        assert variable_obj.get_all() == "v3 ,append() ,[file_list,file_delete]"
+        assert variable_obj.get_current_status() == "v3 ,append() ,[file_list,file_delete]"
 
     def test_hash_index(self, variable_obj):
         assert variable_obj.hash_index == 3
