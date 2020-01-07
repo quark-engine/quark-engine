@@ -14,7 +14,7 @@ def logo():
            \__>          \/           \/ v{}
     """
             )
-        ).format("19.10")
+        ).format("20.01")
         + bold(
             lightblue(
                 """
