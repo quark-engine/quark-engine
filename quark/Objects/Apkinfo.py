@@ -10,10 +10,6 @@ class Apkinfo:
 
     def __init__(self, apk_filepath):
         self.a, self.d, self.dx = AnalyzeAPK(apk_filepath)
-
-        # Create Class, Method, String and Field
-        # crossreferences for all classes in the Analysis.
-        # self.dx.create_xref()
         self.apk_filename = os.path.basename(apk_filepath)
 
     def __repr__(self):
@@ -22,18 +18,20 @@ class Apkinfo:
     @property
     def permissions(self):
         """
-        :returns: A list of permissions
-        :rtype: list
+        Return all permissions from given APK.
+
+        :return: a list of all permissions
         """
         return self.a.get_permissions()
 
     def find_method(self, class_name=".*", method_name=".*"):
         """
         Find method from given class_name and method_name,
-        default is find all.
+        default is find all method.
 
-        :returns: an generator of MethodClassAnalysis
-        :rtype: generator
+        :param class_name:
+        :param method_name:
+        :return: a generator of MethodClassAnalysis
         """
 
         result = self.dx.find_methods(class_name, method_name)
@@ -49,12 +47,13 @@ class Apkinfo:
         """
         Return the upper level method from given class name and
         method name.
+
         :param class_name:
         :param method_name:
-        :return: list
+        :return: a list of all upper functions
         """
 
-        result = []
+        upperfunc_result = []
         method_set = self.find_method(class_name, method_name)
 
         if method_set is not None:
@@ -62,9 +61,9 @@ class Apkinfo:
                 for _, call, _ in md.get_xref_from():
                     # Get class name and method name:
                     # call.class_name, call.name
-                    result.append((call.class_name, call.name))
+                    upperfunc_result.append((call.class_name, call.name))
 
-            return tools.remove_dup_list(result)
+            return tools.remove_dup_list(upperfunc_result)
         else:
             return None
 
@@ -72,9 +71,10 @@ class Apkinfo:
         """
         Return the corresponding bytecode according to the
         given class name and method name.
+
         :param class_name:
         :param method_name:
-        :return: generator
+        :return: a generator of all bytecode instructions
         """
 
         result = self.dx.find_methods(class_name, method_name)
@@ -88,17 +88,15 @@ class Apkinfo:
                     # count the number of the registers.
                     length_operands = len(ins.get_operands())
                     if length_operands == 0:
-                        # No register, no parm
+                        # No register, no parameter
                         bytecode_obj = BytecodeObject(ins.get_name(), None, None)
                     elif length_operands == 1:
                         # Only one register
 
-                        reg_list.append(
-                            "v" + str(ins.get_operands()[length_operands - 1][1])
-                        )
+                        reg_list.append(f"v{ins.get_operands()[length_operands - 1][1]}")
                         bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None, )
                     elif length_operands >= 2:
-                        # the last one is parm, the other are registers.
+                        # the last one is parameter, the other are registers.
 
                         parameter = ins.get_operands()[length_operands - 1]
                         for i in range(0, length_operands - 1):
