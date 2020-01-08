@@ -10,7 +10,7 @@ from quark.Objects.TableObject import TableObject
 from quark.Objects.VarabileObject import VarabileObject
 
 MAX_REG_COUNT = 40
-TIMESTAMPS = datetime.now().strftime('%Y-%m-%d-%H-%M')
+TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
 LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
 logging.basicConfig(level=logging.DEBUG, filename=LOG_FILENAME, filemode='w', datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger(__name__)
