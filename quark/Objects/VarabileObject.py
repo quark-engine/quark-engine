@@ -79,14 +79,6 @@ class VarabileObject:
         """
         self._value = value
 
-    def get_current_status(self):
-        """
-        Get the current status of this VariableObject.
-
-        :return: a string containing register_name, value, [called_by_func]
-        """
-        return f"{self._register_name} ,{self._value} ,[{','.join(self._called_by_func)}]"
-
     @property
     def hash_index(self):
         """
