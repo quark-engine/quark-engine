@@ -1,51 +1,51 @@
 class TableObject:
-    """
-    This table used to store the variable object,
-    which using a hash table with a stack-based
-    list to generate the bytecode variable tracker table.
-    """
 
     def __init__(self, count_reg):
         """
+        This table used to store the variable object, which uses a hash table with a stack-based list to generate the
+        bytecode variable tracker table.
 
-        :param count_reg:
+        :param count_reg: the maximum number of register to initialize
         """
         self.hash_table = [[] for _ in range(count_reg)]
 
+    def __repr__(self):
+        return "<TableObject-{}>".format(self.hash_table)
+
     def insert(self, index, var_obj):
         """
-        insert VariableObject into the nested
-        list in the hashtable.
-        :param index:
-        :param var_obj:
-        :return:
+        Insert VariableObject into the nested list in the hashtable.
+
+        :param index: the index to insert to the table
+        :param var_obj: instance of VariableObject
+        :return: None
         """
         self.hash_table[index].append(var_obj)
 
     def get_obj_list(self, index):
         """
-        return the list which contains the
-        VariableObject.
-        :param index:
-        :return:
+        Return the list which contains the VariableObject.
+
+        :param index: the index to get the corresponding VariableObject
+        :return: a list containing VariableObject
         """
         return self.hash_table[index]
 
     def get_table(self):
         """
-        :rtype: list
-        :return: a nested list.
+        Get the entire hash table.
+
+        :return: a two-dimensional list
         """
         return self.hash_table
 
     def pop(self, index):
         """
-        override the original pop() to `not`
-        deleting element after() in order to get
-        the top element of the stack in the
-        hashtable, which is VariableObject.
-
-        :rtype: VariableObject
+        Override the built-in pop function, to get the top element, which is VariableObject on the stack while not
+        delete it.
+        
+        :param index: the index to get the corresponding VariableObject
+        :return: VariableObject
         """
         return self.hash_table[index][-1]
 
