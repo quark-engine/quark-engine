@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username
-    version="19.10",
+    version="20.01",
     author="JunWei Song, KunYu Chen",
     author_email="sungboss2004@gmail.com",
     description="An Obfuscation-Neglect Android Malware Scoring System",
