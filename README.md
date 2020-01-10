@@ -1,7 +1,7 @@
 # Quark Engine [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![codecov](https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg)](https://codecov.io/gh/quark-engine/quark-engine) [![Coverage Status](https://coveralls.io/repos/github/quark-engine/quark-engine/badge.svg?branch=master)](https://coveralls.io/github/quark-engine/quark-engine?branch=master) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) ![Maintenance](https://img.shields.io/maintenance/yes/2020.svg?style=flat-square) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
-[![asciicast](https://asciinema.org/a/288450.svg)](https://asciinema.org/a/288450)
+[![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
 
 ### Concepts
 
@@ -24,7 +24,7 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
-<img src="https://i.imgur.com/Gbnwmcm.png"/>
+<img src="https://i.imgur.com/kh1jpsQ.png"/>
 
 ### Summary Report
 Examine with rules.
@@ -34,7 +34,7 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/ \
                --summary
 ```
-<img src="https://i.imgur.com/NtLiBST.png"/>
+<img src="https://i.imgur.com/Ib01V6k.png"/>
 
 ### Installation
 
