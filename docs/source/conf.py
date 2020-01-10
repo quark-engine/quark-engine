@@ -22,7 +22,7 @@ copyright = '2019, quark-engine team'
 author = 'KunYu Chen, JunWei Song'
 
 # The full version, including alpha/beta/rc tags
-release = 'v19.10'
+release = 'v20.01'
 
 
 # -- General configuration ---------------------------------------------------
