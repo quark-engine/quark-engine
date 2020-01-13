@@ -22,6 +22,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    addRules
    dev_index
    contribution
+   modules
 
 Indices and tables
 ==================
