@@ -2,20 +2,19 @@
     "crime": "Download files via http post",
     "x1_permission": [
         "android.permission.INTERNET",
-		"android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.WRITE_EXTERNAL_STORAGE"
     ],
     "x2n3n4_comb": [
         {
             "class": "Lorg/apache/http/client/methods/HttpPost",
             "method": "<init>"
         },
-		{
-			"class": "Ljava/io/File",
-			"method": "<init>"
-		}
+        {
+            "class": "Ljava/io/File",
+            "method": "<init>"
+        }
     ],
     "yscore": 1,
     "families": "HippoSMS",
     "contributor": "CHUNG HSIN"
 }
-
