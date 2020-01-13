@@ -1,0 +1,20 @@
+{
+    "crime": "Download file via socket",
+    "x1_permission": [
+        "android.permission.INTERNET",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/app/DownloadManager",
+            "method": "enqueue"
+        },
+        {
+            "class": "Landroid/app/DownloadManager/Request",
+            "method": "setDestinationInExternalPublicDir"
+        }
+    ],
+    "yscore": 1,
+    "families": "Anubis Downloader",
+    "contributor": "CHUNG HSIN"
+}
