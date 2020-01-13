@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Coding Style &mdash; quark-engine v19.10 documentation</title>
+  <title>Coding Style &mdash; quark-engine v20.01 documentation</title>
   
 
   
@@ -110,6 +110,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">quark-engine package</a></li>
 </ul>
 
             
@@ -217,7 +218,7 @@ Methods definitions inside a class are separated by a single blank line:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyClass</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Doing something.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
@@ -236,21 +237,21 @@ from classes by one blank line.</p>
 <h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
 <p>Imports must be on separate lines. If you’re importing multiple objects from a
 package, use a single line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
 </pre></div>
 </div>
 <p><strong>NOT</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span>
-<span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">b</span>
-<span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">c</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">a</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">b</span>
+<span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">c</span>
 </pre></div>
 </div>
 <p>Always specify explicitly the objects to import:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span>
 </pre></div>
 </div>
 <p><strong>NOT</strong>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="k">import</span> <span class="o">*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">lib</span> <span class="kn">import</span> <span class="o">*</span>
 </pre></div>
 </div>
 </div>
