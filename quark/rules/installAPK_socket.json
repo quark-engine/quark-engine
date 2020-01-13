@@ -2,7 +2,7 @@
     "crime": "Install APK via socket",
     "x1_permission": [
         "android.permission.INTERNET",
-        "REQUEST_INSTALL_PACKAGES"
+        "android.permission.REQUEST_INSTALL_PACKAGES"
     ],
     "x2n3n4_comb": [
         {
