@@ -1,5 +1,5 @@
 {
-    "crime": "Download File",
+    "crime": "Download file via socket",
     "x1_permission": [
         "android.permission.INTERNET",
         "android.permission.WRITE_EXTERNAL_STORAGE"
@@ -14,6 +14,7 @@
             "method": "setDestinationInExternalPublicDir"
         }
     ],
-    "yscore": 1
-    "families": "Anubis Downloader"
+    "yscore": 1,
+    "families": "Anubis Downloader",
+    "contributor": "CHUNG HSIN"
 }

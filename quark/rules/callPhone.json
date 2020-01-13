@@ -1,0 +1,19 @@
+{
+    "crime": "Call phone automatically",
+    "x1_permission": [
+        "android.permission.CALL_PHONE"
+    ],
+    "x2n3n4_comb": [
+        {
+            "class": "Landroid/content/Intent",
+            "method": "<init>"
+        },
+        {
+            "class": "Landroid/net/Uri",
+            "method": "parse"
+        }
+    ],
+    "yscore": 1,
+    "families": "DroidJack",
+    "contributor": "CHUNG HSIN"
+}
