@@ -1,5 +1,5 @@
 {
-    "crime": "Delete SMS",
+    "crime": "Delete SMS after parsing",
     "x1_permission": [
         "android.permission.READ_SMS",
         "android.permission.WRITE_SMS"
