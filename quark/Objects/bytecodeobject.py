@@ -1,4 +1,11 @@
+# This file is part of Quark Engine - https://quark-engine.rtfd.io
+# See GPLv3 for copying permission.
+"""BytecodeObject is used to store the instructions in smali, including mnemonic, registers, parameter"""
+
+
 class BytecodeObject:
+    """BytecodeObject is used to store the instructions in smali, including mnemonic, registers, parameter"""
+
     def __init__(self, mnemonic, registers, parameter):
         """
         ['invoke-virtual', 'v3', 'Lcom/google/progress/APNOperator;->deleteAPN()Z']
@@ -12,8 +19,7 @@ class BytecodeObject:
         self._parameter = parameter
 
     def __repr__(self):
-        return "<BytecodeObject-mnemonic:{}, registers:{}, parameter:{}>".format(self._mnemonic, self._registers,
-                                                                                 self._parameter)
+        return f"<BytecodeObject-mnemonic:{self._mnemonic}, registers:{self._registers}, parameter:{self._parameter}>"
 
     @property
     def mnemonic(self):

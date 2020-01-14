@@ -1,6 +1,6 @@
 import pytest
 
-from quark.Objects.VarabileObject import VarabileObject
+from quark.Objects.variableobject import VarabileObject
 
 
 @pytest.fixture()
@@ -24,9 +24,11 @@ class TestVariableObject(object):
         assert variable_obj.called_by_func == []
 
     def test_called_by_func(self, variable_obj):
-        variable_obj_with_called_by_func = VarabileObject("v3", "append()", "toString()")
+        variable_obj_with_called_by_func = VarabileObject(
+            "v3", "append()", "toString()")
 
-        assert variable_obj_with_called_by_func.called_by_func == ["toString()"]
+        assert variable_obj_with_called_by_func.called_by_func == [
+            "toString()"]
 
         variable_obj.called_by_func = "file_list"
         variable_obj.called_by_func = "file_delete"

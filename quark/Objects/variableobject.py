@@ -1,8 +1,15 @@
+# This file is part of Quark Engine - https://quark-engine.rtfd.io
+# See GPLv3 for copying permission.
+"""The variableobject is used to record the state of each register"""
+
+
 class VarabileObject:
+    """The variableobject is used to record the state of each register"""
 
     def __init__(self, register_name, value, called_by_func=None):
         """
-        A data structure for creating the bytecode variable object, which used to record the state of each register.
+        A data structure for creating the bytecode variable object, which
+        used to record the state of each register.
 
         +================+========+==================+
         | register_name  | value | called_by_func    |
@@ -19,8 +26,7 @@ class VarabileObject:
             self._called_by_func.append(called_by_func)
 
     def __repr__(self):
-        return "<VarabileObject-register:{}, value:{}, called_by_func:{}>".format(self._register_name, self._value,
-                                                                                  ','.join(self._called_by_func))
+        return f"<VarabileObject-register:{self._register_name}, value:{self._value}, called_by_func:{','.join(self._called_by_func)}>"
 
     @property
     def called_by_func(self):

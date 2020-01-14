@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from quark.Objects.RuleObject import RuleObject
+from quark.Objects.ruleobject import RuleObject
 
 
 @pytest.fixture()

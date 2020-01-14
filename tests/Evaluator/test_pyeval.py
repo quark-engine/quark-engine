@@ -1,8 +1,8 @@
 import pytest
 
 from quark.Evaluator.pyeval import PyEval, MAX_REG_COUNT
-from quark.Objects.TableObject import TableObject
-from quark.Objects.VarabileObject import VarabileObject
+from quark.Objects.tableobject import TableObject
+from quark.Objects.variableobject import VarabileObject
 
 
 @pytest.fixture()
@@ -26,9 +26,12 @@ def instructions():
 def pyeval():
     pyeval = PyEval()
 
-    # mock_hash_table = [...[], [v4_mock_variable_obj], [], [], [v9_mock_variable_obj]....]
-    v4_mock_variable_obj = VarabileObject("v4", "Lcom/google/progress/SMSHelper;", None)
-    v9_mock_variable_obj = VarabileObject("v9", "some_string", "java.io.file.close()")
+    # mock_hash_table = [...[], [v4_mock_variable_obj], [], [],
+    # [v9_mock_variable_obj]....]
+    v4_mock_variable_obj = VarabileObject(
+        "v4", "Lcom/google/progress/SMSHelper;", None)
+    v9_mock_variable_obj = VarabileObject(
+        "v9", "some_string", "java.io.file.close()")
     pyeval.table_obj.insert(4, v4_mock_variable_obj)
     pyeval.table_obj.insert(9, v9_mock_variable_obj)
 
@@ -44,12 +47,14 @@ class TestPyEval(object):
         assert pyeval.ret_stack == []
 
         assert pyeval.table_obj.pop(4).register_name == "v4"
-        assert pyeval.table_obj.pop(4).value == "Lcom/google/progress/SMSHelper;"
+        assert pyeval.table_obj.pop(
+            4).value == "Lcom/google/progress/SMSHelper;"
         assert pyeval.table_obj.pop(4).called_by_func == []
 
         assert pyeval.table_obj.pop(9).register_name == "v9"
         assert pyeval.table_obj.pop(9).value == "some_string"
-        assert pyeval.table_obj.pop(9).called_by_func == ["java.io.file.close()"]
+        assert pyeval.table_obj.pop(9).called_by_func == [
+            "java.io.file.close()"]
 
     def test_invoke_direct(self, pyeval):
         instruction = ["invoke-direct", "v4", "v9", "some_function()"]
@@ -67,8 +72,10 @@ class TestPyEval(object):
             "java.io.file.close()",
             "some_function()(Lcom/google/progress/SMSHelper;,some_string)",
         ]
-        assert pyeval.table_obj.pop(4).called_by_func == v4_expected_call_by_func
-        assert pyeval.table_obj.pop(9).called_by_func == v9_expected_call_by_func
+        assert pyeval.table_obj.pop(
+            4).called_by_func == v4_expected_call_by_func
+        assert pyeval.table_obj.pop(
+            9).called_by_func == v9_expected_call_by_func
 
     def test_invoke_virtual(self, pyeval):
         instruction = ["invoke-virtual", "v4", "v9", "some_function()"]
@@ -85,8 +92,10 @@ class TestPyEval(object):
             "java.io.file.close()",
             "some_function()(Lcom/google/progress/SMSHelper;,some_string)",
         ]
-        assert pyeval.table_obj.pop(4).called_by_func == v4_expected_call_by_func
-        assert pyeval.table_obj.pop(9).called_by_func == v9_expected_call_by_func
+        assert pyeval.table_obj.pop(
+            4).called_by_func == v4_expected_call_by_func
+        assert pyeval.table_obj.pop(
+            9).called_by_func == v9_expected_call_by_func
 
     def test_move_result_object(self, pyeval):
         v6_mock_variable_obj = VarabileObject("v6", "some_string", None)
@@ -118,16 +127,19 @@ class TestPyEval(object):
     def test_new_instance(self, pyeval):
         instruction = ["new-instance", "v3", "Lcom/google/progress/SMSHelper;"]
 
-        override_original_instruction = ["new-instance", "v4", "override_value"]
+        override_original_instruction = [
+            "new-instance", "v4", "override_value"]
 
         pyeval.NEW_INSTANCE(instruction)
 
         assert pyeval.table_obj.pop(3).register_name == "v3"
-        assert pyeval.table_obj.pop(3).value == "Lcom/google/progress/SMSHelper;"
+        assert pyeval.table_obj.pop(
+            3).value == "Lcom/google/progress/SMSHelper;"
         assert pyeval.table_obj.pop(3).called_by_func == []
 
         assert pyeval.table_obj.pop(4).register_name == "v4"
-        assert pyeval.table_obj.pop(4).value == "Lcom/google/progress/SMSHelper;"
+        assert pyeval.table_obj.pop(
+            4).value == "Lcom/google/progress/SMSHelper;"
         assert pyeval.table_obj.pop(4).called_by_func == []
 
         pyeval.NEW_INSTANCE(override_original_instruction)
@@ -153,7 +165,10 @@ class TestPyEval(object):
         assert pyeval.table_obj.pop(8).called_by_func == []
 
     def test_const_four(self, pyeval):
-        instruction = ["const/4", "v8", "https://github.com/quark-engine/quark-engine"]
+        instruction = [
+            "const/4",
+            "v8",
+            "https://github.com/quark-engine/quark-engine"]
 
         pyeval.CONST_FOUR(instruction)
 

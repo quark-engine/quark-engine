@@ -1,6 +1,6 @@
 import pytest
 
-from quark.Objects.TableObject import TableObject
+from quark.Objects.tableobject import TableObject
 
 
 @pytest.fixture()
