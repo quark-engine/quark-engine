@@ -92,10 +92,8 @@ class TestPyEval(object):
             "java.io.file.close()",
             "some_function()(Lcom/google/progress/SMSHelper;,some_string)",
         ]
-        assert pyeval.table_obj.pop(
-            4).called_by_func == v4_expected_call_by_func
-        assert pyeval.table_obj.pop(
-            9).called_by_func == v9_expected_call_by_func
+        assert pyeval.table_obj.pop(4).called_by_func == v4_expected_call_by_func
+        assert pyeval.table_obj.pop(9).called_by_func == v9_expected_call_by_func
 
     def test_move_result_object(self, pyeval):
         v6_mock_variable_obj = VarabileObject("v6", "some_string", None)
@@ -119,8 +117,8 @@ class TestPyEval(object):
 
         assert pyeval.table_obj.pop(1).register_name == "v1"
         assert (
-            pyeval.table_obj.pop(1).value
-            == "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;(some_string)"
+                pyeval.table_obj.pop(1).value
+                == "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;(some_string)"
         )
         assert pyeval.table_obj.pop(1).called_by_func == []
 
@@ -159,8 +157,8 @@ class TestPyEval(object):
 
         assert pyeval.table_obj.pop(8).register_name == "v8"
         assert (
-            pyeval.table_obj.pop(8).value
-            == "https://github.com/quark-engine/quark-engine"
+                pyeval.table_obj.pop(8).value
+                == "https://github.com/quark-engine/quark-engine"
         )
         assert pyeval.table_obj.pop(8).called_by_func == []
 
@@ -174,8 +172,8 @@ class TestPyEval(object):
 
         assert pyeval.table_obj.pop(8).register_name == "v8"
         assert (
-            pyeval.table_obj.pop(8).value
-            == "https://github.com/quark-engine/quark-engine"
+                pyeval.table_obj.pop(8).value
+                == "https://github.com/quark-engine/quark-engine"
         )
         assert pyeval.table_obj.pop(8).called_by_func == []
 

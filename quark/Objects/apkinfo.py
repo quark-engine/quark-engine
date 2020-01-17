@@ -1,6 +1,5 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-"""Information about apk based on androguard analysis"""
 import os
 
 from androguard.misc import AnalyzeAPK
@@ -93,15 +92,12 @@ class Apkinfo:
                     length_operands = len(ins.get_operands())
                     if length_operands == 0:
                         # No register, no parameter
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), None, None)
+                        bytecode_obj = BytecodeObject(ins.get_name(), None, None)
                     elif length_operands == 1:
                         # Only one register
 
-                        reg_list.append(
-                            f"v{ins.get_operands()[length_operands - 1][1]}")
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), reg_list, None, )
+                        reg_list.append(f"v{ins.get_operands()[length_operands - 1][1]}")
+                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None)
                     elif length_operands >= 2:
                         # the last one is parameter, the other are registers.
 
@@ -116,8 +112,6 @@ class Apkinfo:
                             # Operand.OFFSET
                             parameter = parameter[1]
 
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), reg_list, parameter,
-                        )
+                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, parameter)
 
                     yield bytecode_obj

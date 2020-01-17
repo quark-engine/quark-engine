@@ -1,6 +1,5 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-"""This table is used to track the usage of variables in the register"""
 
 
 class TableObject:

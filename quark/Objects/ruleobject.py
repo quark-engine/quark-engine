@@ -1,12 +1,12 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-"""RuleObject is used to store the rule from json file"""
 import json
 import os
 
 
 class RuleObject:
     """RuleObject is used to store the rule from json file"""
+
     def __init__(self, json_filename):
         """
         According to customized JSON rules, calculate the weighted score and assessing the stages of the crime.

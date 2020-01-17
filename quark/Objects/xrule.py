@@ -1,6 +1,5 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-"""XRule is used to test quark's five-stage theory"""
 import copy
 import operator
 

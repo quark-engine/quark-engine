@@ -1,7 +1,5 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-"""BytecodeObject is used to store the instructions in smali, including mnemonic, registers, parameter"""
-
 
 class BytecodeObject:
     """BytecodeObject is used to store the instructions in smali, including mnemonic, registers, parameter"""

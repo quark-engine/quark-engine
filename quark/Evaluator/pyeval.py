@@ -311,15 +311,12 @@ class PyEval:
 
         try:
 
-            array_obj = self.table_obj.get_obj_list(
-                int(instruction[2][1])).pop()
-            array_index = self.table_obj.get_obj_list(
-                int(instruction[3][1])).pop()
+            array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
+            array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
 
-            variable_object = VarabileObject(
-                reg, f"{array_obj.value}[{array_index.value}]"
-            )
+            variable_object = VarabileObject(reg, f"{array_obj.value}[{array_index.value}]")
             self.table_obj.insert(index, variable_object)
+
         except IndexError as e:
             log.exception(f"{e} in AGET_OBJECT")
 
