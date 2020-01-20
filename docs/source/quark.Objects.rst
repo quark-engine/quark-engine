@@ -4,50 +4,50 @@ quark.Objects package
 Submodules
 ----------
 
-quark.Objects.Apkinfo module
+quark.Objects.apkinfo module
 ----------------------------
 
-.. automodule:: quark.Objects.Apkinfo
+.. automodule:: quark.Objects.apkinfo
    :members:
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.BytecodeObject module
+quark.Objects.bytecodeobject module
 -----------------------------------
 
-.. automodule:: quark.Objects.BytecodeObject
+.. automodule:: quark.Objects.bytecodeobject
    :members:
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.RuleObject module
+quark.Objects.ruleobject module
 -------------------------------
 
-.. automodule:: quark.Objects.RuleObject
+.. automodule:: quark.Objects.ruleobject
    :members:
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.TableObject module
+quark.Objects.tableobject module
 --------------------------------
 
-.. automodule:: quark.Objects.TableObject
+.. automodule:: quark.Objects.tableobject
    :members:
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.VarabileObject module
+quark.Objects.variableobject module
 -----------------------------------
 
-.. automodule:: quark.Objects.VarabileObject
+.. automodule:: quark.Objects.variableobject
    :members:
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.XRule module
+quark.Objects.xrule module
 --------------------------
 
-.. automodule:: quark.Objects.XRule
+.. automodule:: quark.Objects.xrule
    :members:
    :undoc-members:
    :show-inheritance:
