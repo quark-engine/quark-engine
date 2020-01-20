@@ -1,4 +1,4 @@
-quark-engine package
+Quark-engine package
 ====================
 
 .. toctree::
