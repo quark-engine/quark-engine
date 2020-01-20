@@ -1,8 +1,8 @@
 import pytest
 
 from quark.Evaluator.pyeval import PyEval, MAX_REG_COUNT
-from quark.Objects.TableObject import TableObject
-from quark.Objects.VarabileObject import VarabileObject
+from quark.Objects.tableobject import TableObject
+from quark.Objects.variableobject import VarabileObject
 
 
 @pytest.fixture()
@@ -26,7 +26,8 @@ def instructions():
 def pyeval():
     pyeval = PyEval()
 
-    # mock_hash_table = [...[], [v4_mock_variable_obj], [], [], [v9_mock_variable_obj]....]
+    # mock_hash_table = [...[], [v4_mock_variable_obj], [], [],
+    # [v9_mock_variable_obj]....]
     v4_mock_variable_obj = VarabileObject("v4", "Lcom/google/progress/SMSHelper;", None)
     v9_mock_variable_obj = VarabileObject("v9", "some_string", "java.io.file.close()")
     pyeval.table_obj.insert(4, v4_mock_variable_obj)
@@ -110,15 +111,16 @@ class TestPyEval(object):
 
         assert pyeval.table_obj.pop(1).register_name == "v1"
         assert (
-            pyeval.table_obj.pop(1).value
-            == "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;(some_string)"
+                pyeval.table_obj.pop(1).value
+                == "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;(some_string)"
         )
         assert pyeval.table_obj.pop(1).called_by_func == []
 
     def test_new_instance(self, pyeval):
         instruction = ["new-instance", "v3", "Lcom/google/progress/SMSHelper;"]
 
-        override_original_instruction = ["new-instance", "v4", "override_value"]
+        override_original_instruction = [
+            "new-instance", "v4", "override_value"]
 
         pyeval.NEW_INSTANCE(instruction)
 
@@ -147,20 +149,23 @@ class TestPyEval(object):
 
         assert pyeval.table_obj.pop(8).register_name == "v8"
         assert (
-            pyeval.table_obj.pop(8).value
-            == "https://github.com/quark-engine/quark-engine"
+                pyeval.table_obj.pop(8).value
+                == "https://github.com/quark-engine/quark-engine"
         )
         assert pyeval.table_obj.pop(8).called_by_func == []
 
     def test_const_four(self, pyeval):
-        instruction = ["const/4", "v8", "https://github.com/quark-engine/quark-engine"]
+        instruction = [
+            "const/4",
+            "v8",
+            "https://github.com/quark-engine/quark-engine"]
 
         pyeval.CONST_FOUR(instruction)
 
         assert pyeval.table_obj.pop(8).register_name == "v8"
         assert (
-            pyeval.table_obj.pop(8).value
-            == "https://github.com/quark-engine/quark-engine"
+                pyeval.table_obj.pop(8).value
+                == "https://github.com/quark-engine/quark-engine"
         )
         assert pyeval.table_obj.pop(8).called_by_func == []
 

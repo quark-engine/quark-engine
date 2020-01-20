@@ -1,9 +1,14 @@
+# This file is part of Quark Engine - https://quark-engine.rtfd.io
+# See GPLv3 for copying permission.
+
+
 class TableObject:
+    """This table is used to track the usage of variables in the register"""
 
     def __init__(self, count_reg):
         """
-        This table used to store the variable object, which uses a hash table with a stack-based list to generate the
-        bytecode variable tracker table.
+        This table used to store the variable object, which uses a hash table
+        with a stack-based list to generate the bytecode variable tracker table.
 
         :param count_reg: the maximum number of register to initialize
         """
@@ -41,9 +46,9 @@ class TableObject:
 
     def pop(self, index):
         """
-        Override the built-in pop function, to get the top element, which is VariableObject on the stack while not
-        delete it.
-        
+        Override the built-in pop function, to get the top element, which
+        is VariableObject on the stack while not delete it.
+
         :param index: the index to get the corresponding VariableObject
         :return: VariableObject
         """

@@ -1,10 +1,12 @@
+# This file is part of Quark Engine - https://quark-engine.rtfd.io
+# See GPLv3 for copying permission.
 import copy
 import operator
 
 from prettytable import PrettyTable
 
 from quark.Evaluator.pyeval import PyEval
-from quark.Objects.Apkinfo import Apkinfo
+from quark.Objects.apkinfo import Apkinfo
 from quark.utils.colors import (
     red,
     bold,
@@ -17,6 +19,8 @@ CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
 
 
 class XRule:
+    """XRule is used to test quark's five-stage theory"""
+
     def __init__(self, apk):
         """
 
@@ -63,7 +67,8 @@ class XRule:
                     # prevent some functions from looking for themselves.
                     if item == base_method:
                         continue
-                    self.find_previous_method(item, top_method, pre_method_list)
+                    self.find_previous_method(
+                        item, top_method, pre_method_list)
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -96,10 +101,14 @@ class XRule:
                 # Extend the upper function into next layer.
                 for item in list1:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
-                        next_list1.extend(self.apkinfo.upperfunc(item[0], item[1]))
+                        next_list1.extend(
+                            self.apkinfo.upperfunc(
+                                item[0], item[1]))
                 for item in list2:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
-                        next_list2.extend(self.apkinfo.upperfunc(item[0], item[1]))
+                        next_list2.extend(
+                            self.apkinfo.upperfunc(
+                                item[0], item[1]))
 
                 return self.find_intersection(next_list1, next_list2, depth)
         else:
@@ -118,16 +127,18 @@ class XRule:
         first_class_name, first_method_name = first_func
         second_class_name, second_method_name = second_func
 
-        method_set = self.apkinfo.find_method(same_class_name, same_method_name)
+        method_set = self.apkinfo.find_method(
+            same_class_name, same_method_name)
         seq_table = []
 
         if method_set is not None:
-            for md in method_set:
-                for _, call, number in md.get_xref_to():
+            for method in method_set:
+                for _, call, number in method.get_xref_to():
 
                     to_md_name = str(call.name)
 
-                    if (to_md_name == first_method_name) or (to_md_name == second_method_name):
+                    if (to_md_name == first_method_name) or (
+                            to_md_name == second_method_name):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -159,7 +170,8 @@ class XRule:
         else:
             return False
 
-    def check_parameter(self, common_method, first_method_name, second_method_name):
+    def check_parameter(self, common_method,
+                        first_method_name, second_method_name):
         """
         check the usage of the same parameter between two method.
 
@@ -245,9 +257,12 @@ class XRule:
                         # Clear the results from the previous common_method
                         self.pre_method0.clear()
                         self.pre_method1.clear()
-                        self.find_previous_method(base_method_0, common_method, self.pre_method0)
-                        self.find_previous_method(base_method_1, common_method, self.pre_method1)
-                        # TODO It may have many previous method in self.pre_method
+                        self.find_previous_method(
+                            base_method_0, common_method, self.pre_method0)
+                        self.find_previous_method(
+                            base_method_1, common_method, self.pre_method1)
+                        # TODO It may have many previous method in
+                        # self.pre_method
                         pre_0 = self.pre_method0[0]
                         pre_1 = self.pre_method1[0]
 
@@ -275,7 +290,8 @@ class XRule:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        self.tb.add_row([green(rule_obj.crime), yellow(confidence), score, red(weight)])
+        self.tb.add_row([green(rule_obj.crime), yellow(
+            confidence), score, red(weight)])
 
         # add the weight
         self.weight_sum += weight

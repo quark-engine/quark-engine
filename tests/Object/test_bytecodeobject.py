@@ -1,11 +1,14 @@
 import pytest
 
-from quark.Objects.BytecodeObject import BytecodeObject
+from quark.Objects.bytecodeobject import BytecodeObject
 
 
 @pytest.fixture()
 def bytecode_obj():
-    bytecode_obj = BytecodeObject("invoke-direct", "v1", "java.io.FilterOutputStream.close:()V")
+    bytecode_obj = BytecodeObject(
+        "invoke-direct",
+        "v1",
+        "java.io.FilterOutputStream.close:()V")
 
     yield bytecode_obj
 

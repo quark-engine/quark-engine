@@ -3,15 +3,13 @@ import os
 import click
 from tqdm import tqdm
 
-from quark.Objects.RuleObject import RuleObject
+from quark.Objects.ruleobject import RuleObject
 from quark.logo import logo
-from quark.Objects.XRule import XRule
+from quark.Objects.xrule import XRule
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 
 logo()
-
-
 
 
 @click.command()
