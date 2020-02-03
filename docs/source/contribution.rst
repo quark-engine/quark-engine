@@ -54,6 +54,8 @@ shows great support to our engine.
 +-----------------+
 | Jheng-Jia Huang |
 +-----------------+
+| Lin Gao-Yu      |
++-----------------+
 | Pippen Wang     |
 +-----------------+
 | ChaoWen Li      |
