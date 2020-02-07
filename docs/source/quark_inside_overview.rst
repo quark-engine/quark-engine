@@ -13,7 +13,7 @@ The entire Quark-Engine project can be composed of four major parts, namely
 * Five-stage rule
 * Dalvik Bytecode Loader
 * Scoring System
-* self define objects data structure
+* Self-define objects data structure
 
 
 Quark module architecture diagram
