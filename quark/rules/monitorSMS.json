@@ -1,5 +1,5 @@
 {
-    "crime": "Monitor SMS",
+    "crime": "Monitor incoming SMS and read",
     "x1_permission": [
         "android.permission.RECEIVE_SMS",
         "android.permission.READ_SMS"
