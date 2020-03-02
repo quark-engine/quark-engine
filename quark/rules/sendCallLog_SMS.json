@@ -1,5 +1,5 @@
 {
-    "crime": "Send file via SMS",
+    "crime": "Send call log via SMS",
     "x1_permission": [
         "android.permission.SEND_SMS",
         "android.permission.READ_EXTERNAL_STORAGE"
