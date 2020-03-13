@@ -165,7 +165,7 @@ instruction.
 
 
 
-RuleoOject(quark.Objects.ruleobject)
+RuleObject(quark.Objects.ruleobject)
 ====================================
 
 The ruleobject in Quark-Engine will read a ``JSON`` format rule from a given JSON
