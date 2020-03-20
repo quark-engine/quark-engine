@@ -45,7 +45,7 @@ class XRule:
         # Sum of the each rule
         self.score_sum = 0
 
-    def find_previous_method(self, base_method, top_method, pre_method_list, visited_methods=set()):
+    def find_previous_method(self, base_method, top_method, pre_method_list, visited_methods=None):
         """
         Find the previous method based on base method before top method.
         This will append the method into pre_method_list.
@@ -56,6 +56,9 @@ class XRule:
         :param visited_methods: set with tested method.
         :return: None
         """
+        if visited_methods is None:
+            visited_methods = set()
+
         class_name, method_name = base_method
         method_set = self.apkinfo.upperfunc(class_name, method_name)
         visited_methods.add(base_method)
@@ -260,9 +263,9 @@ class XRule:
                         self.pre_method0.clear()
                         self.pre_method1.clear()
                         self.find_previous_method(
-                            base_method_0, common_method, self.pre_method0, set())
+                            base_method_0, common_method, self.pre_method0)
                         self.find_previous_method(
-                            base_method_1, common_method, self.pre_method1, set())
+                            base_method_1, common_method, self.pre_method1)
                         # TODO It may have many previous method in
                         # self.pre_method
                         pre_0 = self.pre_method0[0]
