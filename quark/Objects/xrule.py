@@ -45,6 +45,8 @@ class XRule:
         # Sum of the each rule
         self.score_sum = 0
 
+        self.level_2_reuslt = []
+
     def find_previous_method(self, base_method, top_method, pre_method_list, visited_methods=None):
         """
         Find the previous method based on base method before top method.
@@ -230,57 +232,81 @@ class XRule:
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.apkinfo.permissions)):
             rule_obj.check_item[0] = True
+        else:
+            # Exit if the level 1 stage check fails.
+            return
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
-        if self.apkinfo.find_method(test_cls0, test_md0) is not None:
+        test_md1 = rule_obj.x2n3n4_comb[1]["method"]
+        test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
+
+        first_method_result = self.apkinfo.find_method(test_cls0, test_md0)
+        second_method_result = self.apkinfo.find_method(test_cls1, test_md1)
+
+        self.level_2_reuslt.clear()
+
+        if first_method_result is not None or second_method_result is not None:
             rule_obj.check_item[1] = True
-            # Level 3
-            test_md1 = rule_obj.x2n3n4_comb[1]["method"]
-            test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
-            if self.apkinfo.find_method(test_cls1, test_md1) is not None:
-                rule_obj.check_item[2] = True
 
-                # Level 4
-                # [('class_a','method_a'),('class_b','method_b')]
-                # Looking for the first layer of the upperfunction
-                upperfunc0 = self.apkinfo.upperfunc(test_cls0, test_md0)
-                upperfunc1 = self.apkinfo.upperfunc(test_cls1, test_md1)
+            if first_method_result is not None:
+                self.level_2_reuslt.append((test_cls0, test_md0))
+            if second_method_result is not None:
+                self.level_2_reuslt.append((test_cls1, test_md1))
+        else:
+            # Exit if the level 2 stage check fails.
+            return
 
-                same = self.find_intersection(upperfunc0, upperfunc1)
-                if same is not None:
+        # Level 3
+        if first_method_result is not None and second_method_result is not None:
+            rule_obj.check_item[2] = True
+        else:
+            # Exit if the level 3 stage check fails.
+            return
 
-                    # Clear the results from the previous rule
-                    self.same_sequence_show_up.clear()
-                    self.same_operation.clear()
+        # Level 4
+        # [('class_a','method_a'),('class_b','method_b')]
+        # Looking for the first layer of the upperfunction
+        upperfunc0 = self.apkinfo.upperfunc(test_cls0, test_md0)
+        upperfunc1 = self.apkinfo.upperfunc(test_cls1, test_md1)
 
-                    for common_method in same:
+        same = self.find_intersection(upperfunc0, upperfunc1)
 
-                        base_method_0 = (test_cls0, test_md0)
-                        base_method_1 = (test_cls1, test_md1)
-                        # Clear the results from the previous common_method
-                        self.pre_method0.clear()
-                        self.pre_method1.clear()
-                        self.find_previous_method(
-                            base_method_0, common_method, self.pre_method0)
-                        self.find_previous_method(
-                            base_method_1, common_method, self.pre_method1)
-                        # TODO It may have many previous method in
-                        # self.pre_method
-                        pre_0 = self.pre_method0[0]
-                        pre_1 = self.pre_method1[0]
+        if same is not None:
 
-                        if self.check_sequence(common_method, pre_0, pre_1):
-                            rule_obj.check_item[3] = True
-                            self.same_sequence_show_up.append(common_method)
+            # Clear the results from the previous rule
+            self.same_sequence_show_up.clear()
+            self.same_operation.clear()
 
-                            # Level 5
-                            if self.check_parameter(
-                                    common_method, str(pre_0[1]), str(pre_1[1])
-                            ):
-                                rule_obj.check_item[4] = True
-                                self.same_operation.append(common_method)
+            for common_method in same:
+
+                base_method_0 = (test_cls0, test_md0)
+                base_method_1 = (test_cls1, test_md1)
+                # Clear the results from the previous common_method
+                self.pre_method0.clear()
+                self.pre_method1.clear()
+                self.find_previous_method(
+                    base_method_0, common_method, self.pre_method0)
+                self.find_previous_method(
+                    base_method_1, common_method, self.pre_method1)
+                # TODO It may have many previous method in
+                # self.pre_method
+                pre_0 = self.pre_method0[0]
+                pre_1 = self.pre_method1[0]
+
+                if self.check_sequence(common_method, pre_0, pre_1):
+                    rule_obj.check_item[3] = True
+                    self.same_sequence_show_up.append(common_method)
+
+                    # Level 5
+                    if self.check_parameter(common_method, str(pre_0[1]), str(pre_1[1])):
+                        rule_obj.check_item[4] = True
+                        self.same_operation.append(common_method)
+
+        else:
+            # Exit if the level 4 stage check fails.
+            return
 
     def show_summary_report(self, rule_obj):
         """
@@ -323,35 +349,37 @@ class XRule:
             print("")
 
             for permission in rule_obj.x1_permission:
-                print("\t\t" + permission)
+                print(f"\t\t {permission}")
         if rule_obj.check_item[1]:
             print(red(CHECK_LIST), end="")
             print(green(bold("2.Native API Usage")), end="")
             print("")
-            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+
+            for class_name, method_name in self.level_2_reuslt:
+                print(f"\t\t ({class_name}, {method_name})")
         if rule_obj.check_item[2]:
             print(red(CHECK_LIST), end="")
             print(green(bold("3.Native API Combination")), end="")
 
             print("")
-            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-            print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
+            print(f"\t\t ({rule_obj.x2n3n4_comb[0]['class']}, {rule_obj.x2n3n4_comb[0]['method']})")
+            print(f"\t\t ({rule_obj.x2n3n4_comb[1]['class']}, {rule_obj.x2n3n4_comb[1]['method']})")
         if rule_obj.check_item[3]:
 
             print(red(CHECK_LIST), end="")
             print(green(bold("4.Native API Sequence")), end="")
 
             print("")
-            print("\t\t" + "Sequence show up in:")
-            for seq_methon in self.same_sequence_show_up:
-                print("\t\t" + repr(seq_methon))
+            print(f"\t\t Sequence show up in:")
+            for seq_method in self.same_sequence_show_up:
+                print(f"\t\t {repr(seq_method)}")
         if rule_obj.check_item[4]:
 
             print(red(CHECK_LIST), end="")
             print(green(bold("5.Native API Use Same Parameter")), end="")
             print("")
             for seq_operation in self.same_operation:
-                print("\t\t" + repr(seq_operation))
+                print(f"\t\t {repr(seq_operation)}")
 
 
 if __name__ == "__main__":
