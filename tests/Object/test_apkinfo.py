@@ -1,5 +1,5 @@
 import pytest
-from androguard.core.analysis.analysis import MethodAnalysis
+from quark.androguard.core.analysis.analysis import MethodAnalysis
 
 from quark.Objects.apkinfo import Apkinfo
 

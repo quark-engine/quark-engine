@@ -2,9 +2,8 @@
 # See GPLv3 for copying permission.
 import os
 
-from androguard.misc import AnalyzeAPK
-
 from quark.Objects.bytecodeobject import BytecodeObject
+from quark.androguard.misc import AnalyzeAPK
 from quark.utils import tools
 
 
