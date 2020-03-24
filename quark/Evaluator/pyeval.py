@@ -74,7 +74,7 @@ class PyEval:
         for reg in reg_list:
             index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
-            if len(obj_stack) > 0:
+            if obj_stack:
                 var_obj = self.table_obj.pop(index)
                 value_of_reg_list.append(var_obj.value)
 
@@ -82,7 +82,7 @@ class PyEval:
         for reg in reg_list:
             index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
-            if len(obj_stack) > 0:
+            if obj_stack:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
                 var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"

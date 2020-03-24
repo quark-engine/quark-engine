@@ -88,11 +88,11 @@ class XRule:
         :return: a set of list1 ∩ list2 or None.
         """
         # Check both lists are not null
-        if len(list1) > 0 and len(list2) > 0:
+        if list1 and list2:
 
             # find ∩
             result = set(list1).intersection(list2)
-            if len(result) > 0:
+            if result:
 
                 return result
             else:
@@ -216,7 +216,7 @@ class XRule:
                 matching = [
                     s for s in val_obj.called_by_func if all(xs in s for xs in matchers)
                 ]
-                if len(matching) > 0:
+                if matching:
                     state = True
                     break
         return state
