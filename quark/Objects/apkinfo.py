@@ -41,7 +41,7 @@ class Apkinfo:
 
         result = self.analysis.find_methods(class_name, method_name)
 
-        if len(list(result)) > 0:
+        if list(result):
             return self.analysis.find_methods(class_name, method_name)
 
         return None
@@ -82,7 +82,7 @@ class Apkinfo:
 
         result = self.analysis.find_methods(class_name, method_name)
 
-        if len(list(result)) > 0:
+        if list(result):
             for method in self.analysis.find_methods(class_name, method_name):
                 for _, ins in method.get_method().get_instructions_idx():
                     bytecode_obj = None
