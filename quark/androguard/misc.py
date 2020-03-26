@@ -1,4 +1,3 @@
-from quark.androguard.session import Session
 from quark.androguard.decompiler import decompiler
 from quark.androguard.core import androconf
 import hashlib
@@ -10,19 +9,8 @@ from quark.androguard.core.analysis.analysis import Analysis
 
 import logging
 import warnings
+
 log = logging.getLogger("androguard.misc")
-
-
-def get_default_session():
-    """
-    Return the default Session from the configuration
-    or create a new one, if the session in the configuration is None.
-
-    :rtype: androguard.session.Session
-    """
-    if androconf.CONF["SESSION"] is None:
-        androconf.CONF["SESSION"] = Session()
-    return androconf.CONF["SESSION"]
 
 
 def AnalyzeAPK(_file, session=None, raw=False):
@@ -86,9 +74,6 @@ def AnalyzeDex(filename, session=None):
     """
     log.debug("AnalyzeDex")
 
-    if not session:
-        session = get_default_session()
-
     with open(filename, "rb") as fd:
         data = fd.read()
 
@@ -106,9 +91,6 @@ def AnalyzeODex(filename, session=None):
     :rtype: return a tuple of (sha256hash, :class:`DalvikOdexVMFormat`, :class:`Analysis`)
     """
     log.debug("AnalyzeODex")
-
-    if not session:
-        session = get_default_session()
 
     with open(filename, "rb") as fd:
         data = fd.read()
@@ -220,7 +202,7 @@ def clean_file_name(filename, unique=True, replace="_", force_nt=False):
     if len(fname) > PATH_MAX_LENGTH:
         if "." in fname:
             f, ext = fname.rsplit(".", 1)
-            fname = "{}.{}".format(f[:PATH_MAX_LENGTH-(len(ext)+1)], ext)
+            fname = "{}.{}".format(f[:PATH_MAX_LENGTH - (len(ext) + 1)], ext)
         else:
             fname = fname[:PATH_MAX_LENGTH]
 
@@ -243,5 +225,3 @@ def clean_file_name(filename, unique=True, replace="_", force_nt=False):
             counter += 1
 
     return os.path.join(path, fname)
-
-
