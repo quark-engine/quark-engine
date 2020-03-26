@@ -1,4 +1,3 @@
-import hashlib
 import logging
 
 from quark.androguard.core.analysis.analysis import Analysis
@@ -27,32 +26,19 @@ def AnalyzeAPK(_file, session=None, raw=False):
     """
     log.debug("AnalyzeAPK")
 
-    if session:
-        log.debug("Using existing session {}".format(session))
-        if raw:
-            data = _file
-            filename = hashlib.md5(_file).hexdigest()
-        else:
-            with open(_file, "rb") as fd:
-                data = fd.read()
-                filename = _file
+    log.debug("Analysing without session")
+    a = APK(_file, raw=raw)
+    # FIXME: probably it is not necessary to keep all DalvikVMFormats, as
+    # they are already part of Analysis. But when using sessions, it works
+    # this way...
+    d = []
+    dx = Analysis()
+    for dex in a.get_all_dex():
+        df = DalvikVMFormat(dex, using_api=a.get_target_sdk_version())
+        dx.add(df)
+        d.append(df)
+        df.set_decompiler(decompiler.DecompilerDAD(d, dx))
 
-        digest = session.add(filename, data)
-        return session.get_objects_apk(filename, digest)
-    else:
-        log.debug("Analysing without session")
-        a = APK(_file, raw=raw)
-        # FIXME: probably it is not necessary to keep all DalvikVMFormats, as
-        # they are already part of Analysis. But when using sessions, it works
-        # this way...
-        d = []
-        dx = Analysis()
-        for dex in a.get_all_dex():
-            df = DalvikVMFormat(dex, using_api=a.get_target_sdk_version())
-            dx.add(df)
-            d.append(df)
-            df.set_decompiler(decompiler.DecompilerDAD(d, dx))
+    dx.create_xref()
 
-        dx.create_xref()
-
-        return a, d, dx
+    return a, d, dx
