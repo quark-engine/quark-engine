@@ -141,43 +141,6 @@ def is_android_raw(raw):
     return val
 
 
-def show_logging(level=logging.INFO):
-    """
-    enable log messages on stdout
-
-    We will catch all messages here! From all loggers...
-    """
-    logger = logging.getLogger()
-
-    h = logging.StreamHandler(stream=sys.stderr)
-    h.setFormatter(logging.Formatter(fmt="[%(levelname)-8s] %(name)s: %(message)s"))
-
-    logger.addHandler(h)
-    logger.setLevel(level)
-
-
-def set_options(key, value):
-    """
-    .. deprecated:: 3.3.5
-        Use :code:`CONF[key] = value` instead
-    """
-    CONF[key] = value
-
-
-def rrmdir(directory):
-    """
-    Recursivly delete a directory
-
-    :param directory: directory to remove
-    """
-    for root, dirs, files in os.walk(directory, topdown=False):
-        for name in files:
-            os.remove(os.path.join(root, name))
-        for name in dirs:
-            os.rmdir(os.path.join(root, name))
-    os.rmdir(directory)
-
-
 def make_color_tuple(color):
     """
     turn something like "#000000" into 0,0,0
@@ -235,16 +198,6 @@ def interpolate_tuple(startcolor, goalcolor, steps):
         buffer.append(color)
 
     return buffer
-
-
-def color_range(startcolor, goalcolor, steps):
-    """
-    wrapper for interpolate_tuple that accepts colors as html ("#CCCCC" and such)
-    """
-    start_tuple = make_color_tuple(startcolor)
-    goal_tuple = make_color_tuple(goalcolor)
-
-    return interpolate_tuple(start_tuple, goal_tuple, steps)
 
 
 def load_api_specific_resource_module(resource_name, api=None):

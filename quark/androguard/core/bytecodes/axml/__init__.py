@@ -1,21 +1,16 @@
-from quark.androguard.core import bytecode
-
-from quark.androguard.core.resources import public
-from quark.androguard.core.bytecodes.axml.types import *
-
-from struct import pack, unpack
-from xml.sax.saxutils import escape
-import collections
-from collections import defaultdict
-
-from lxml import etree
+import binascii
 import logging
 import re
-import sys
-import binascii
+from collections import defaultdict
+from struct import pack, unpack
+
+from lxml import etree
+
+from quark.androguard.core import bytecode
+from quark.androguard.core.bytecodes.axml.types import *
+from quark.androguard.core.resources import public
 
 log = logging.getLogger("androguard.axml")
-
 
 # Constants for ARSC Files
 # see http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#215
@@ -24,20 +19,20 @@ RES_STRING_POOL_TYPE = 0x0001
 RES_TABLE_TYPE = 0x0002
 RES_XML_TYPE = 0x0003
 
-RES_XML_FIRST_CHUNK_TYPE    = 0x0100
-RES_XML_START_NAMESPACE_TYPE= 0x0100
-RES_XML_END_NAMESPACE_TYPE  = 0x0101
-RES_XML_START_ELEMENT_TYPE  = 0x0102
-RES_XML_END_ELEMENT_TYPE    = 0x0103
-RES_XML_CDATA_TYPE          = 0x0104
-RES_XML_LAST_CHUNK_TYPE     = 0x017f
+RES_XML_FIRST_CHUNK_TYPE = 0x0100
+RES_XML_START_NAMESPACE_TYPE = 0x0100
+RES_XML_END_NAMESPACE_TYPE = 0x0101
+RES_XML_START_ELEMENT_TYPE = 0x0102
+RES_XML_END_ELEMENT_TYPE = 0x0103
+RES_XML_CDATA_TYPE = 0x0104
+RES_XML_LAST_CHUNK_TYPE = 0x017f
 
-RES_XML_RESOURCE_MAP_TYPE   = 0x0180
+RES_XML_RESOURCE_MAP_TYPE = 0x0180
 
-RES_TABLE_PACKAGE_TYPE      = 0x0200
-RES_TABLE_TYPE_TYPE         = 0x0201
-RES_TABLE_TYPE_SPEC_TYPE    = 0x0202
-RES_TABLE_LIBRARY_TYPE      = 0x0203
+RES_TABLE_PACKAGE_TYPE = 0x0200
+RES_TABLE_TYPE_TYPE = 0x0201
+RES_TABLE_TYPE_SPEC_TYPE = 0x0202
+RES_TABLE_LIBRARY_TYPE = 0x0203
 
 # Flags in the STRING Section
 SORTED_FLAG = 1 << 0
@@ -102,6 +97,7 @@ class StringBlock:
 
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#436
     """
+
     def __init__(self, buff, header):
         """
         :param buff: buffer which holds the string block
@@ -370,6 +366,7 @@ class AXMLParser:
 
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#563
     """
+
     def __init__(self, raw_buff):
         self._reset()
 
@@ -405,12 +402,15 @@ class AXMLParser:
             log.warning("Header size is 28024! Are you trying to parse a plain XML file?")
 
         if axml_header.header_size != 8:
-            log.error("This does not look like an AXML file. header size does not equal 8! header size = {}".format(axml_header.header_size))
+            log.error("This does not look like an AXML file. header size does not equal 8! header size = {}".format(
+                axml_header.header_size))
             self._valid = False
             return
 
         if self.filesize > self.buff.size():
-            log.error("This does not look like an AXML file. Declared filesize does not match real size: {} vs {}".format(self.filesize, self.buff.size()))
+            log.error(
+                "This does not look like an AXML file. Declared filesize does not match real size: {} vs {}".format(
+                    self.filesize, self.buff.size()))
             self._valid = False
             return
 
@@ -418,7 +418,8 @@ class AXMLParser:
             # The file can still be parsed up to the point where the chunk should end.
             self.axml_tampered = True
             log.warning("Declared filesize ({}) is smaller than total file size ({}). "
-                        "Was something appended to the file? Trying to parse it anyways.".format(self.filesize, self.buff.size()))
+                        "Was something appended to the file? Trying to parse it anyways.".format(self.filesize,
+                                                                                                 self.buff.size()))
 
         # Not that severe of an error, we have plenty files where this is not
         # set correctly
@@ -437,7 +438,9 @@ class AXMLParser:
             return
 
         if header.header_size != 0x1C:
-            log.error("This does not look like an AXML file. String chunk header size does not equal 28! header size = {}".format(header.header_size))
+            log.error(
+                "This does not look like an AXML file. String chunk header size does not equal 28! header size = {}".format(
+                    header.header_size))
             self._valid = False
             return
 
@@ -519,7 +522,8 @@ class AXMLParser:
             # Check that we read a correct header
             if h.header_size != 0x10:
                 log.error("XML Resource Type Chunk header size does not match 16! " \
-                "At chunk type 0x{:04x}, declared header size={}, chunk size={}".format(h.type, h.header_size, h.size))
+                          "At chunk type 0x{:04x}, declared header size={}, chunk size={}".format(h.type, h.header_size,
+                                                                                                  h.size))
                 self._valid = False
                 return
 
@@ -529,7 +533,8 @@ class AXMLParser:
             # Comment_Index (usually 0xFFFFFFFF)
             self.m_comment_index, = unpack('<L', self.buff.read(4))
 
-            if self.m_comment_index != 0xFFFFFFFF and h.type in [RES_XML_START_NAMESPACE_TYPE, RES_XML_END_NAMESPACE_TYPE]:
+            if self.m_comment_index != 0xFFFFFFFF and h.type in [RES_XML_START_NAMESPACE_TYPE,
+                                                                 RES_XML_END_NAMESPACE_TYPE]:
                 log.warning("Unhandled Comment at namespace chunk: '{}'".format(self.sb[self.m_comment_index]))
 
             if h.type == RES_XML_START_NAMESPACE_TYPE:
@@ -539,7 +544,8 @@ class AXMLParser:
                 s_prefix = self.sb[prefix]
                 s_uri = self.sb[uri]
 
-                log.debug("Start of Namespace mapping: prefix {}: '{}' --> uri {}: '{}'".format(prefix, s_prefix, uri, s_uri))
+                log.debug(
+                    "Start of Namespace mapping: prefix {}: '{}' --> uri {}: '{}'".format(prefix, s_prefix, uri, s_uri))
 
                 if s_uri == '':
                     log.warning("Namespace prefix '{}' resolves to empty URI. "
@@ -547,7 +553,8 @@ class AXMLParser:
 
                 if (prefix, uri) in self.namespaces:
                     log.info("Namespace mapping ({}, {}) already seen! "
-                             "This is usually not a problem but could indicate packers or broken AXML compilers.".format(prefix, uri))
+                             "This is usually not a problem but could indicate packers or broken AXML compilers.".format(
+                        prefix, uri))
                 self.namespaces.append((prefix, uri))
 
                 # We can continue with the next chunk, as we store the namespace
@@ -726,27 +733,6 @@ class AXMLParser:
             return ''
 
         return self.sb[self.m_name]
-
-    def getName(self):
-        """
-        Legacy only!
-        use :py:attr:`~androguard.core.bytecodes.AXMLParser.name` instead
-        """
-        return self.name
-
-    def getText(self):
-        """
-        Legacy only!
-        use :py:attr:`~androguard.core.bytecodes.AXMLParser.text` instead
-        """
-        return self.text
-
-    def getPrefix(self):
-        """
-        Legacy only!
-        use :py:attr:`~androguard.core.bytecodes.AXMLParser.namespace` instead
-        """
-        return self.namespace
 
     def _get_attribute_offset(self, index):
         """
@@ -964,7 +950,9 @@ class AXMLPrinter:
                 uri = self._print_namespace(self.axml.namespace)
                 tag = "{}{}".format(uri, name)
                 if cur[-1].tag != tag:
-                    log.warning("Closing tag '{}' does not match current stack! At line number: {}. Is the XML malformed?".format(self.axml.name, self.axml.m_lineNumber))
+                    log.warning(
+                        "Closing tag '{}' does not match current stack! At line number: {}. Is the XML malformed?".format(
+                            self.axml.name, self.axml.m_lineNumber))
                 cur.pop()
             if _type == TEXT:
                 log.debug("TEXT for {}".format(cur[-1]))
@@ -1061,7 +1049,9 @@ class AXMLPrinter:
             name = "_{}".format(name)
         if name.startswith("android:") and prefix == '' and 'android' in self.axml.nsmap:
             # Seems be a common thing...
-            log.info("Name '{}' starts with 'android:' prefix but 'android' is a known prefix. Replacing prefix.".format(name))
+            log.info(
+                "Name '{}' starts with 'android:' prefix but 'android' is a known prefix. Replacing prefix.".format(
+                    name))
             prefix = self._print_namespace(self.axml.nsmap['android'])
             name = name[len("android:"):]
             # It looks like this is some kind of packer... Not sure though.
@@ -1203,6 +1193,7 @@ class ARSCParser:
     Each package is a chunk of type RES_TABLE_PACKAGE_TYPE.
     It contains again many more chunks.
     """
+
     def __init__(self, raw_buff):
         """
         :param bytes raw_buff: the raw bytes of the file
@@ -1226,13 +1217,17 @@ class ARSCParser:
 
         # More sanity checks...
         if self.header.header_size != 12:
-            log.warning("The ResTable_header has an unexpected header size! Expected 12 bytes, got {}.".format(self.header.header_size))
+            log.warning("The ResTable_header has an unexpected header size! Expected 12 bytes, got {}.".format(
+                self.header.header_size))
 
         if self.header.size > self.buff.size():
-            raise ResParserError("The file seems to be truncated. Refuse to parse the file! Filesize: {}, declared size: {}".format(self.buff.size(), self.header.size))
+            raise ResParserError(
+                "The file seems to be truncated. Refuse to parse the file! Filesize: {}, declared size: {}".format(
+                    self.buff.size(), self.header.size))
 
         if self.header.size < self.buff.size():
-            log.warning("The Resource file seems to have data appended to it. Filesize: {}, declared size: {}".format(self.buff.size(), self.header.size))
+            log.warning("The Resource file seems to have data appended to it. Filesize: {}, declared size: {}".format(
+                self.buff.size(), self.header.size))
 
         # The ResTable_header contains the packageCount, i.e. the number of ResTable_package
         self.packageCount = unpack('<I', self.buff.read(4))[0]
@@ -1259,14 +1254,16 @@ class ARSCParser:
             if res_header.type == RES_STRING_POOL_TYPE:
                 # There should be only one StringPool per resource table.
                 if self.stringpool_main:
-                    log.warning("Already found a ResStringPool_header, but there should be only one! Will not parse the Pool again.")
+                    log.warning(
+                        "Already found a ResStringPool_header, but there should be only one! Will not parse the Pool again.")
                 else:
                     self.stringpool_main = StringBlock(self.buff, res_header)
                     log.debug("Found the main string pool: %s", self.stringpool_main)
 
             elif res_header.type == RES_TABLE_PACKAGE_TYPE:
                 if len(self.packages) > self.packageCount:
-                    raise ResParserError("Got more packages ({}) than expected ({})".format(len(self.packages), self.packageCount))
+                    raise ResParserError(
+                        "Got more packages ({}) than expected ({})".format(len(self.packages), self.packageCount))
 
                 current_package = ARSCResTablePackage(self.buff, res_header)
                 package_name = current_package.get_name()
@@ -1480,10 +1477,6 @@ class ARSCParser:
                 ate.key.get_data() & COMPLEX_UNIT_MASK))
             return [ate.get_value(), ate.key.get_data()]
 
-    # FIXME
-    def get_resource_style(self, ate):
-        return ["", ""]
-
     def get_packages_names(self):
         """
         Retrieve a list of all package names, which are available
@@ -1491,268 +1484,12 @@ class ARSCParser:
         """
         return list(self.packages.keys())
 
-    def get_locales(self, package_name):
-        """
-        Retrieve a list of all available locales in a given packagename.
-
-        :param package_name: the package name to get locales of
-        """
-        self._analyse()
-        return list(self.values[package_name].keys())
-
-    def get_types(self, package_name, locale='\x00\x00'):
-        """
-        Retrieve a list of all types which are available in the given
-        package and locale.
-
-        :param package_name: the package name to get types of
-        :param locale: the locale to get types of (default: '\x00\x00')
-        """
-        self._analyse()
-        return list(self.values[package_name][locale].keys())
-
-    def get_public_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'public'.
-
-        The public resources table contains the IDs for each item.
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["public"]:
-                buff += '<public type="{}" name="{}" id="0x{:08x}" />\n'.format(
-                    i[0], i[1], i[2])
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_string_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'string'.
-
-        Read more about string resources:
-        https://developer.android.com/guide/topics/resources/string-resource.html
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["string"]:
-                if any(map(i[1].__contains__, '<&>')):
-                    value = '<![CDATA[%s]]>' % i[1]
-                else:
-                    value = i[1]
-                buff += '<string name="{}">{}</string>\n'.format(i[0], value)
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_strings_resources(self):
-        """
-        Get the XML (as string) of all resources of type 'string'.
-        This is a combined variant, which has all locales and all package names
-        stored.
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-
-        buff += "<packages>\n"
-        for package_name in self.get_packages_names():
-            buff += "<package name=\"%s\">\n" % package_name
-
-            for locale in self.get_locales(package_name):
-                buff += "<locale value=%s>\n" % repr(locale)
-
-                buff += '<resources>\n'
-                try:
-                    for i in self.values[package_name][locale]["string"]:
-                        buff += '<string name="{}">{}</string>\n'.format(i[0], escape(i[1]))
-                except KeyError:
-                    pass
-
-                buff += '</resources>\n'
-                buff += '</locale>\n'
-
-            buff += "</package>\n"
-
-        buff += "</packages>\n"
-
-        return buff.encode('utf-8')
-
-    def get_id_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'id'.
-
-        Read more about ID resources:
-        https://developer.android.com/guide/topics/resources/more-resources.html#Id
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["id"]:
-                if len(i) == 1:
-                    buff += '<item type="id" name="%s"/>\n' % (i[0])
-                else:
-                    buff += '<item type="id" name="{}">{}</item>\n'.format(i[0],
-                                                                       escape(i[1]))
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_bool_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'bool'.
-
-        Read more about bool resources:
-        https://developer.android.com/guide/topics/resources/more-resources.html#Bool
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["bool"]:
-                buff += '<bool name="{}">{}</bool>\n'.format(i[0], i[1])
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_integer_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'integer'.
-
-        Read more about integer resources:
-        https://developer.android.com/guide/topics/resources/more-resources.html#Integer
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["integer"]:
-                buff += '<integer name="{}">{}</integer>\n'.format(i[0], i[1])
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_color_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'color'.
-
-        Read more about color resources:
-        https://developer.android.com/guide/topics/resources/more-resources.html#Color
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["color"]:
-                buff += '<color name="{}">{}</color>\n'.format(i[0], i[1])
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_dimen_resources(self, package_name, locale='\x00\x00'):
-        """
-        Get the XML (as string) of all resources of type 'dimen'.
-
-        Read more about Dimension resources:
-        https://developer.android.com/guide/topics/resources/more-resources.html#Dimension
-
-        :param package_name: the package name to get the resources for
-        :param locale: the locale to get the resources for (default: '\x00\x00')
-        """
-        self._analyse()
-
-        buff = '<?xml version="1.0" encoding="utf-8"?>\n'
-        buff += '<resources>\n'
-
-        try:
-            for i in self.values[package_name][locale]["dimen"]:
-                buff += '<dimen name="{}">{}</dimen>\n'.format(i[0], i[1])
-        except KeyError:
-            pass
-
-        buff += '</resources>\n'
-
-        return buff.encode('utf-8')
-
-    def get_id(self, package_name, rid, locale='\x00\x00'):
-        """
-        Returns the tuple (resource_type, resource_name, resource_id)
-        for the given resource_id.
-
-        :param package_name: package name to query
-        :param rid: the resource_id
-        :param locale: specific locale
-        :return: tuple of (resource_type, resource_name, resource_id)
-        """
-        self._analyse()
-
-        try:
-            for i in self.values[package_name][locale]["public"]:
-                if i[2] == rid:
-                    return i
-        except KeyError:
-            pass
-        return None, None, None
-
     class ResourceResolver:
         """
         Resolves resources by ID and configuration.
         This resolver deals with complex resources as well as with references.
         """
+
         def __init__(self, android_resources, config=None):
             """
             :param ARSCParser android_resources: A resource parser
@@ -1839,41 +1576,6 @@ class ARSCParser:
         resolver = ARSCParser.ResourceResolver(self, config)
         return resolver.resolve(rid)
 
-    def get_resolved_strings(self):
-        self._analyse()
-        if self._resolved_strings:
-            return self._resolved_strings
-
-        r = {}
-        for package_name in self.get_packages_names():
-            r[package_name] = {}
-            k = {}
-
-            for locale in self.values[package_name]:
-                v_locale = locale
-                if v_locale == '\x00\x00':
-                    v_locale = 'DEFAULT'
-
-                r[package_name][v_locale] = {}
-
-                try:
-                    for i in self.values[package_name][locale]["public"]:
-                        if i[0] == 'string':
-                            r[package_name][v_locale][i[2]] = None
-                            k[i[1]] = i[2]
-                except KeyError:
-                    pass
-
-                try:
-                    for i in self.values[package_name][locale]["string"]:
-                        if i[0] in k:
-                            r[package_name][v_locale][k[i[0]]] = i[1]
-                except KeyError:
-                    pass
-
-        self._resolved_strings = r
-        return r
-
     def get_res_configs(self, rid, config=None, fallback=True):
         """
         Return the resources found with the ID `rid` and select
@@ -1910,7 +1612,9 @@ class ARSCParser:
             if config in res_options:
                 return [(config, res_options[config])]
             elif fallback and config == ARSCResTableConfig.default_config():
-                log.warning("No default resource config could be found for the given rid '0x{:08x}', using fallback!".format(rid))
+                log.warning(
+                    "No default resource config could be found for the given rid '0x{:08x}', using fallback!".format(
+                        rid))
                 return [list(self.resource_values[rid].items())[0]]
             else:
                 return []
@@ -1926,28 +1630,6 @@ class ARSCParser:
                     return i
         except KeyError:
             return None
-
-    def get_res_id_by_key(self, package_name, resource_type, key):
-        try:
-            return self.resource_keys[package_name][resource_type][key]
-        except KeyError:
-            return None
-
-    def get_items(self, package_name):
-        self._analyse()
-        return self.packages[package_name]
-
-    def get_type_configs(self, package_name, type_name=None):
-        if package_name is None:
-            package_name = self.get_packages_names()[0]
-        result = collections.defaultdict(list)
-
-        for res_type, configs in list(self.resource_configs[package_name].items()):
-            if res_type.get_package_name() == package_name and (
-                            type_name is None or res_type.get_type() == type_name):
-                result[res_type.get_type()].extend(configs)
-
-        return result
 
     @staticmethod
     def parse_id(name):
@@ -1982,42 +1664,6 @@ class ARSCParser:
             return int(res_id, 16), package
         except ValueError:
             raise ValueError("ID is not a hex ID: '{}'".format(res_id))
-
-    def get_resource_xml_name(self, r_id, package=None):
-        """
-        Returns the XML name for a resource, including the package name if package is None.
-        A full name might look like `@com.example:string/foobar`
-        Otherwise the name is only looked up in the specified package and is returned without
-        the package name.
-        The same example from about without the package name will read as `@string/foobar`.
-
-        If the ID could not be found, `None` is returned.
-
-        A description of the XML name can be found here:
-        https://developer.android.com/guide/topics/resources/providing-resources#ResourcesFromXml
-
-        :param r_id: numerical ID if the resource
-        :param package: package name
-        :return: XML name identifier
-        """
-        if package:
-            resource, name, i_id = self.get_id(package, r_id)
-            if not i_id:
-                return None
-            return "@{}/{}".format(resource, name)
-        else:
-            for p in self.get_packages_names():
-                r, n, i_id = self.get_id(p, r_id)
-                if i_id:
-                    # found the resource in this package
-                    package = p
-                    resource = r
-                    name = n
-                    break
-            if not package:
-                return None
-            else:
-                return "@{}:{}/{}".format(package, resource, name)
 
 
 class PackageContext:
@@ -2082,7 +1728,9 @@ class ARSCHeader:
         self._type, self._header_size, self._size = unpack('<HHL', buff.read(self.SIZE))
 
         if expected_type and self._type != expected_type:
-            raise ResParserError("Header type is not equal the expected type: Got 0x{:04x}, wanted 0x{:04x}".format(self._type, expected_type))
+            raise ResParserError(
+                "Header type is not equal the expected type: Got 0x{:04x}, wanted 0x{:04x}".format(self._type,
+                                                                                                   expected_type))
 
         # Assert that the read data will fit into the chunk.
         # The total size must be equal or larger than the header size
@@ -2146,6 +1794,7 @@ class ARSCResTablePackage:
 
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#861
     """
+
     def __init__(self, buff, header):
         self.header = header
         self.start = buff.get_idx()
@@ -2169,6 +1818,7 @@ class ARSCResTypeSpec:
     """
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#1327
     """
+
     def __init__(self, buff, parent=None):
         self.start = buff.get_idx()
         self.parent = parent
@@ -2193,6 +1843,7 @@ class ARSCResType:
 
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#1364
     """
+
     def __init__(self, buff, parent=None):
         self.start = buff.get_idx()
         self.parent = parent
@@ -2240,6 +1891,7 @@ class ARSCResTableConfig:
     See the definition of `ResTable_config` in
     http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#911
     """
+
     @classmethod
     def default_config(cls):
         if not hasattr(cls, 'DEFAULT'):
@@ -2387,17 +2039,10 @@ class ARSCResTableConfig:
         """
         if self.locale != 0:
             _language = self._unpack_language_or_region([self.locale & 0xff, (self.locale & 0xff00) >> 8, ], ord('a'))
-            _region = self._unpack_language_or_region([(self.locale & 0xff0000) >> 16, (self.locale & 0xff000000) >> 24, ], ord('0'))
+            _region = self._unpack_language_or_region(
+                [(self.locale & 0xff0000) >> 16, (self.locale & 0xff000000) >> 24, ], ord('0'))
             return (_language + "-r" + _region) if _region else _language
         return "\x00\x00"
-
-    def get_config_name_friendly(self):
-        """
-        Here for legacy reasons.
-
-        use :meth:`~get_qualifier` instead.
-        """
-        return self.get_qualifier()
 
     def get_qualifier(self):
         """
@@ -2512,27 +2157,6 @@ class ARSCResTableConfig:
 
         return "-".join(res)
 
-    def get_language(self):
-        x = self.locale & 0x0000ffff
-        return chr(x & 0x00ff) + chr((x & 0xff00) >> 8)
-
-    def get_country(self):
-        x = (self.locale & 0xffff0000) >> 16
-        return chr(x & 0x00ff) + chr((x & 0xff00) >> 8)
-
-    def get_density(self):
-        x = ((self.screenType >> 16) & 0xffff)
-        return x
-
-    def is_default(self):
-        """
-        Test if this is a default resource, which matches all
-
-        This is indicated that all fields are zero.
-        :return: True if default, False otherwise
-        """
-        return all(map(lambda x: x == 0, self._get_tuple()))
-
     def _get_tuple(self):
         return (
             self.imsi,
@@ -2603,9 +2227,6 @@ class ARSCResTableEntry:
     def get_key_data(self):
         return self.key.get_data_value()
 
-    def is_public(self):
-        return (self.flags & self.FLAG_PUBLIC) != 0
-
     def is_complex(self):
         return (self.flags & self.FLAG_COMPLEX) != 0
 
@@ -2632,6 +2253,7 @@ class ARSCComplex:
     See http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#1485 for `ResTable_map_entry`
     and http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#1498 for `ResTable_map`
     """
+
     def __init__(self, buff, parent=None):
         self.start = buff.get_idx()
         self.parent = parent
@@ -2657,6 +2279,7 @@ class ARSCResStringPoolRef:
 
     See: http://androidxref.com/9.0.0_r3/xref/frameworks/base/libs/androidfw/include/androidfw/ResourceTypes.h#262
     """
+
     def __init__(self, buff, parent=None):
         self.start = buff.get_idx()
         self.parent = parent
@@ -2674,12 +2297,6 @@ class ARSCResStringPoolRef:
 
     def get_data(self):
         return self.data
-
-    def get_data_type(self):
-        return self.data_type
-
-    def get_data_type_string(self):
-        return TYPE_TABLE[self.data_type]
 
     def format_value(self):
         """
@@ -2703,27 +2320,3 @@ class ARSCResStringPoolRef:
             self.size,
             TYPE_TABLE.get(self.data_type, "0x%x" % self.data_type),
             self.data)
-
-
-def get_arsc_info(arscobj):
-    """
-    Return a string containing all resources packages ordered by packagename, locale and type.
-
-    :param arscobj: :class:`~ARSCParser`
-    :return: a string
-    """
-    buff = ""
-    for package in arscobj.get_packages_names():
-        buff += package + ":\n"
-        for locale in arscobj.get_locales(package):
-            buff += "\t" + repr(locale) + ":\n"
-            for ttype in arscobj.get_types(package, locale):
-                buff += "\t\t" + ttype + ":\n"
-                try:
-                    tmp_buff = getattr(arscobj, "get_" + ttype + "_resources")(
-                        package, locale).decode("utf-8", 'replace').split("\n")
-                    for i in tmp_buff:
-                        buff += "\t\t\t" + i + "\n"
-                except AttributeError:
-                    pass
-    return buff

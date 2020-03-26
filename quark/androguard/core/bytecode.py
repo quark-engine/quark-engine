@@ -54,12 +54,6 @@ class BuffHandle:
         """
         return len(self.__buff)
 
-    def length_buff(self):
-        """
-        Alias for :meth:`size`
-        """
-        return self.size()
-
     def set_idx(self, idx):
         """
         Set the current offset in the buffer
@@ -75,14 +69,6 @@ class BuffHandle:
         :rtype: int
         """
         return self.__idx
-
-    def add_idx(self, idx):
-        """
-        Advance the current offset by `idx`
-
-        :param int idx: number of bytes to advance
-        """
-        self.__idx += idx
 
     def tell(self):
         """
@@ -110,12 +96,6 @@ class BuffHandle:
         :rtype: bytearray
         """
         return self.__buff[self.__idx:self.__idx + size]
-
-    def peek(self, size):
-        """
-        Alias for :meth:`read_b`
-        """
-        return self.read_b(size)
 
     def read_at(self, offset, size):
         """
@@ -199,21 +179,6 @@ class Buff:
 
 # Here for legacy reasons. Might get removed some day...
 _Bytecode = BuffHandle
-
-
-def FormatClassToJava(i):
-    """
-    Transform a java class name into the typed variant found in DEX files.
-
-    example::
-
-        >>> FormatClassToJava('java.lang.Object')
-        'Ljava/lang/Object;'
-
-    :param i: the input class name
-    :rtype: str
-    """
-    return "L" + i.replace(".", "/") + ";"
 
 
 def FormatClassToPython(i):

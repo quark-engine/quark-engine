@@ -46,6 +46,7 @@ class DVMBasicBlock:
     A basic block consists of a series of :class:`~androguard.core.bytecodes.dvm.Instruction`
     which are not interrupted by branch or jump instructions such as `goto`, `if`, `throw`, `return`, `switch` etc.
     """
+
     def __init__(self, start, vm, method, context):
         self.__vm = vm
         self.method = method
@@ -221,6 +222,7 @@ class BasicBlocks:
 
     It is a collection of many :class:`DVMBasicBlock`.
     """
+
     def __init__(self):
         self.bb = []
 
@@ -337,6 +339,7 @@ class MethodAnalysis:
     :type vm: a :class:`DalvikVMFormat` object
     :type method: a :class:`EncodedMethod` object
     """
+
     def __init__(self, vm, method):
         self.__vm = vm
         self.method = method
@@ -667,10 +670,10 @@ class MethodAnalysis:
             args = ["{} v{}".format(a, start_reg + i) for i, a in enumerate(args)]
 
         print("METHOD {} {} {} ({}){}".format(
-              self.method.get_class_name(),
-              self.method.get_access_flags_string(),
-              self.method.get_name(),
-              ", ".join(args), ret))
+            self.method.get_class_name(),
+            self.method.get_access_flags_string(),
+            self.method.get_name(),
+            ", ".join(args), ret))
         bytecode.PrettyShow(self.basic_blocks.gets(), self.method.notes)
 
     def show_xrefs(self):
@@ -699,6 +702,7 @@ class StringAnalysis:
 
     This Array stores the information in which method the String is used.
     """
+
     def __init__(self, value):
         """
 
@@ -788,6 +792,7 @@ class FieldAnalysis:
 
     :param androguard.core.bytecodes.dvm.EncodedField field: `dvm.EncodedField`
     """
+
     def __init__(self, field):
         self.field = field
         self.xrefread = set()
@@ -875,6 +880,7 @@ class ExternalClass:
 
     :param name: Name of the external class
     """
+
     def __init__(self, name):
         self.name = name
         self.methods = []
@@ -915,6 +921,7 @@ class ExternalMethod:
     :param str name: name of the method
     :param List[str] descriptor: descriptor string
     """
+
     def __init__(self, class_name, name, descriptor):
         self.class_name = class_name
         self.name = name
@@ -1306,7 +1313,7 @@ class ClassAnalysis:
 
     def __repr__(self):
         return "<analysis.ClassAnalysis {}{}>".format(self.orig_class.get_name(),
-                " EXTERNAL" if isinstance(self.orig_class, ExternalClass) else "")
+                                                      " EXTERNAL" if isinstance(self.orig_class, ExternalClass) else "")
 
     def __str__(self):
         # Print only instantiation from other classes here
@@ -1341,6 +1348,7 @@ class MethodClassAnalysis(MethodAnalysis):
         This method is just here for compatability
 
     """
+
     def __init__(self, meth):
         super().__init__(meth.cm.vm, meth)
 
@@ -1368,6 +1376,7 @@ class Analysis:
 
     :param Optional[androguard.core.bytecodes.dvm.DalvikVMFormat] vm: inital DalvikVMFormat object (default None)
     """
+
     def __init__(self, vm=None):
         # Contains DalvikVMFormat objects
         self.vms = []
@@ -1760,7 +1769,7 @@ class Analysis:
                 yield c
 
     def find_methods(self, classname=".*", methodname=".*", descriptor=".*",
-            accessflags=".*", no_external=False):
+                     accessflags=".*", no_external=False):
         """
         Find a method by name using regular expression.
         This method will return all MethodAnalysis objects, which match the
@@ -1786,8 +1795,8 @@ class Analysis:
                     if no_external and isinstance(z, ExternalMethod):
                         continue
                     if re.match(methodname, z.get_name()) and \
-                       re.match(descriptor, z.get_descriptor()) and \
-                       re.match(accessflags, z.get_access_flags_string()):
+                            re.match(descriptor, z.get_descriptor()) and \
+                            re.match(accessflags, z.get_access_flags_string()):
                         yield m
 
     def find_strings(self, string=".*"):
@@ -1820,12 +1829,15 @@ class Analysis:
                 for f in c.get_fields():
                     z = f.get_field()
                     if re.match(fieldname, z.get_name()) and \
-                       re.match(fieldtype, z.get_descriptor()) and \
-                       re.match(accessflags, z.get_access_flags_string()):
+                            re.match(fieldtype, z.get_descriptor()) and \
+                            re.match(accessflags, z.get_access_flags_string()):
                         yield f
 
     def __repr__(self):
-        return "<analysis.Analysis VMs: {}, Classes: {}, Methods: {}, Strings: {}>".format(len(self.vms), len(self.classes), len(self.methods), len(self.strings))
+        return "<analysis.Analysis VMs: {}, Classes: {}, Methods: {}, Strings: {}>".format(len(self.vms),
+                                                                                           len(self.classes),
+                                                                                           len(self.methods),
+                                                                                           len(self.strings))
 
     def get_call_graph(self, classname=".*", methodname=".*", descriptor=".*",
                        accessflags=".*", no_isolated=False, entry_points=[]):
@@ -1944,7 +1956,8 @@ class Analysis:
                     _, method_name = bytecode.get_package_class_name(cls.name)
 
                 # FIXME this naming schema is not very good... but to describe a method uniquely, we need all of it
-                mname = "METH_" + method_name + "_" + bytecode.FormatDescriptorToPython(meth.access) + "_" + bytecode.FormatDescriptorToPython(meth.descriptor)
+                mname = "METH_" + method_name + "_" + bytecode.FormatDescriptorToPython(
+                    meth.access) + "_" + bytecode.FormatDescriptorToPython(meth.descriptor)
                 if hasattr(cls, mname):
                     log.warning("already existing method: {} at class {}".format(mname, name))
                 setattr(cls, mname, meth)
@@ -2001,60 +2014,3 @@ class Analysis:
                 meth = meth_analysis.get_method()
                 if meth.permission_api_name in permmap:
                     yield meth_analysis, permmap[meth.permission_api_name]
-
-    def get_permission_usage(self, permission, apilevel=None):
-        """
-        Find the usage of a permission inside the Analysis.
-
-        example::
-            from androguard.misc import AnalyzeAPK
-            a, d, dx = AnalyzeAPK("somefile.apk")
-
-            for meth in dx.get_permission_usage('android.permission.SEND_SMS', a.get_effective_target_sdk_version()):
-                print("Using API method {}".format(meth))
-                print("used in:")
-                for _, m, _ in meth.get_xref_from():
-                    print(m.full_name)
-
-        .. note::
-            The permission mappings might be incomplete! See also :meth:`get_permissions`.
-
-        :param permission: the name of the android permission (usually 'android.permission.XXX')
-        :param apilevel: the requested API level or None for default
-        :return: yields :class:`MethodAnalysis` objects for all using API methods
-        """
-
-        # TODO maybe have the API level loading in the __init__ method and pass the APK as well?
-        permmap = load_api_specific_resource_module('api_permission_mappings', apilevel)
-        if not permmap:
-            raise ValueError("No permission mapping found! Is one available? "
-                             "The requested API level was '{}'".format(apilevel))
-
-        apis = {k for k, v in permmap.items() if permission in v}
-        if not apis:
-            raise ValueError("No API methods could be found which use the permission. "
-                             "Does the permission exists? You requested: '{}'".format(permission))
-
-        for cls in self.get_external_classes():
-            for meth_analysis in cls.get_methods():
-                meth = meth_analysis.get_method()
-                if meth.permission_api_name in apis:
-                    yield meth_analysis
-
-
-def is_ascii_obfuscation(vm):
-    """
-    Tests if any class inside a DalvikVMObject
-    uses ASCII Obfuscation (e.g. UTF-8 Chars in Classnames)
-
-    :param androguard.core.bytecodes.dvm.DalvikVMFormat vm: `DalvikVMObject`
-    :return: True if ascii obfuscation otherwise False
-    :rtype: bool
-    """
-    for classe in vm.get_classes():
-        if is_ascii_problem(classe.get_name()):
-            return True
-        for method in classe.get_methods():
-            if is_ascii_problem(method.get_name()):
-                return True
-    return False

@@ -8,7 +8,7 @@ from quark.androguard.decompiler import decompiler
 log = logging.getLogger("androguard.misc")
 
 
-def AnalyzeAPK(_file, session=None, raw=False):
+def AnalyzeAPK(_file, raw=False):
     """
     Analyze an android application and setup all stuff for a more quickly
     analysis!

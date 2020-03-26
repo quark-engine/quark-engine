@@ -127,37 +127,7 @@ def common_dom(idom, cur, pred):
     return cur
 
 
-def merge_inner(clsdict):
-    """
-    Merge the inner class(es) of a class:
-    e.g class A { ... } class A$foo{ ... } class A$bar{ ... }
-    ==> class A { class foo{...} class bar{...} ... }
-    """
-    samelist = False
-    done = {}
-    while not samelist:
-        samelist = True
-        classlist = list(clsdict.keys())
-        for classname in classlist:
-            parts_name = classname.rsplit('$', 1)
-            if len(parts_name) > 1:
-                mainclass, innerclass = parts_name
-                innerclass = innerclass[:-1]  # remove ';' of the name
-                mainclass += ';'
-                if mainclass in clsdict:
-                    clsdict[mainclass].add_subclass(innerclass,
-                                                    clsdict[classname])
-                    clsdict[classname].name = innerclass
-                    done[classname] = clsdict[classname]
-                    del clsdict[classname]
-                    samelist = False
-                elif mainclass in done:
-                    cls = done[mainclass]
-                    cls.add_subclass(innerclass, clsdict[classname])
-                    clsdict[classname].name = innerclass
-                    done[classname] = done[mainclass]
-                    del clsdict[classname]
-                    samelist = False
+
 
 
 def get_type_size(param):
