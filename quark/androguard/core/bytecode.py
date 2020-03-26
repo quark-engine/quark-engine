@@ -88,15 +88,6 @@ class BuffHandle:
         data = self.read(size)
         return data
 
-    def read_b(self, size):
-        """
-        Read bytes with length `size` without incrementing the current offset
-
-        :param int size: length to read in bytes
-        :rtype: bytearray
-        """
-        return self.__buff[self.__idx:self.__idx + size]
-
     def read_at(self, offset, size):
         """
         Read bytes from the given offset with length `size` without incrementing
@@ -179,68 +170,6 @@ class Buff:
 
 # Here for legacy reasons. Might get removed some day...
 _Bytecode = BuffHandle
-
-
-def FormatClassToPython(i):
-    """
-    Transform a typed class name into a form which can be used as a python
-    attribute
-
-    example::
-
-        >>> FormatClassToPython('Lfoo/bar/foo/Barfoo$InnerClass;')
-        'Lfoo_bar_foo_Barfoo_InnerClass'
-
-    :param i: classname to transform
-    :rtype: str
-    """
-    i = i[:-1]
-    i = i.replace("/", "_")
-    i = i.replace("$", "_")
-
-    return i
-
-
-def get_package_class_name(name):
-    """
-    Return package and class name in a java variant from a typed variant name.
-
-    If no package could be found, the package is an empty string.
-
-    If the name is an array type, the array is discarded.
-
-    example::
-
-        >>> get_package_class_name('Ljava/lang/Object;')
-        ('java.lang', 'Object')
-        >>> get_package_class_name('[[Ljava/lang/Object;')
-        ('java.lang', 'Object')
-        >>> get_package_class_name('LSomeClass;')
-        ('', 'SomeClass')
-
-    :param name: the name
-    :rtype: tuple
-    :return:
-    """
-    # name is MUTF8, so make sure we get the string variant
-    name = str(name)
-    if name[-1] != ';':
-        raise ValueError("The name '{}' does not look like a typed name!".format(name))
-
-    # discard array types, there might be many...
-    name = name.lstrip('[')
-
-    if name[0] != 'L':
-        raise ValueError("The name '{}' does not look like a typed name!".format(name))
-
-    name = name[1:-1]
-    if '/' not in name:
-        return '', name
-
-    package, clsname = name.rsplit('/', 1)
-    package = package.replace('/', '.')
-
-    return package, clsname
 
 
 def FormatNameToPython(i):

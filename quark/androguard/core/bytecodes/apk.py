@@ -1,25 +1,18 @@
-from quark.androguard.core import androconf
-from quark.androguard.util import read, get_certificate_name_string
-
-from quark.androguard.core.bytecodes.axml import ARSCParser, AXMLPrinter, ARSCResTableConfig, AXMLParser, format_value, \
-    START_TAG, END_TAG, TEXT, END_DOCUMENT
-
-import io
-from zlib import crc32
-import os
-import re
 import binascii
-import zipfile
-import logging
-from struct import unpack
 import hashlib
-import warnings
-
-import lxml.sax
-from xml.dom.pulldom import SAX2DOM
+import io
+import logging
+import re
+import zipfile
+from struct import unpack
+from zlib import crc32
 
 # Used for reading Certificates
-from asn1crypto import cms, x509, keys
+from asn1crypto import cms, x509
+
+from quark.androguard.core import androconf
+from quark.androguard.core.bytecodes.axml import ARSCParser, AXMLPrinter, ARSCResTableConfig
+from quark.androguard.util import read, get_certificate_name_string
 
 NS_ANDROID_URI = 'http://schemas.android.com/apk/res/android'
 NS_ANDROID = '{{{}}}'.format(NS_ANDROID_URI)  # Namespace as used by etree
@@ -1018,18 +1011,6 @@ class APK:
 
         return self._is_signed_v2
 
-    def is_signed_v3(self):
-        """
-        Returns true of a v3 / APK signature was found.
-
-        Returning `True` does not mean that the file is properly signed!
-        It just says that there is a signature file which needs to be validated.
-        """
-        if self._is_signed_v3 is None:
-            self.parse_v2_v3_signature()
-
-        return self._is_signed_v3
-
     def read_uint32_le(self, io_stream):
         value, = unpack('<I', io_stream.read(4))
         return value
@@ -1133,103 +1114,6 @@ class APK:
 
         if self._APK_SIG_KEY_V3_SIGNATURE in self._v2_blocks:
             self._is_signed_v3 = True
-
-    def parse_v3_signing_block(self):
-        """
-        Parse the V2 signing block and extract all features
-        """
-
-        self._v3_signing_data = []
-
-        # calling is_signed_v3 should also load the signature, if any
-        if not self.is_signed_v3():
-            return
-
-        block_bytes = self._v2_blocks[self._APK_SIG_KEY_V3_SIGNATURE]
-        block = io.BytesIO(block_bytes)
-        view = block.getvalue()
-
-        # V3 signature Block data format:
-        #
-        # * signer:
-        #    * signed data:
-        #        * digests:
-        #            * signature algorithm ID (uint32)
-        #            * digest (length-prefixed) 
-        #        * certificates
-        #        * minSDK
-        #        * maxSDK
-        #        * additional attributes
-        #    * minSDK
-        #    * maxSDK
-        #    * signatures
-        #    * publickey
-        size_sequence = self.read_uint32_le(block)
-        if size_sequence + 4 != len(block_bytes):
-            raise BrokenAPKError("size of sequence and blocksize does not match")
-
-        while block.tell() < len(block_bytes):
-            off_signer = block.tell()
-            size_signer = self.read_uint32_le(block)
-
-            # read whole signed data, since we might to parse
-            # content within the signed data, and mess up offset
-            len_signed_data = self.read_uint32_le(block)
-            signed_data_bytes = block.read(len_signed_data)
-            signed_data = io.BytesIO(signed_data_bytes)
-
-            # Digests
-            len_digests = self.read_uint32_le(signed_data)
-            raw_digests = signed_data.read(len_digests)
-            digests = self.parse_signatures_or_digests(raw_digests)
-
-            # Certs
-            certs = []
-            len_certs = self.read_uint32_le(signed_data)
-            start_certs = signed_data.tell()
-            while signed_data.tell() < start_certs + len_certs:
-                len_cert = self.read_uint32_le(signed_data)
-                cert = signed_data.read(len_cert)
-                certs.append(cert)
-
-            # versions
-            signed_data_min_sdk = self.read_uint32_le(signed_data)
-            signed_data_max_sdk = self.read_uint32_le(signed_data)
-
-            # Addional attributes
-            len_attr = self.read_uint32_le(signed_data)
-            attr = signed_data.read(len_attr)
-
-            signed_data_object = APKV3SignedData()
-            signed_data_object._bytes = signed_data_bytes
-            signed_data_object.digests = digests
-            signed_data_object.certificates = certs
-            signed_data_object.additional_attributes = attr
-            signed_data_object.minSDK = signed_data_min_sdk
-            signed_data_object.maxSDK = signed_data_max_sdk
-
-            # versions (should be the same as signed data's versions)
-            signer_min_sdk = self.read_uint32_le(block)
-            signer_max_sdk = self.read_uint32_le(block)
-
-            # Signatures
-            len_sigs = self.read_uint32_le(block)
-            raw_sigs = block.read(len_sigs)
-            sigs = self.parse_signatures_or_digests(raw_sigs)
-
-            # PublicKey
-            len_publickey = self.read_uint32_le(block)
-            publickey = block.read(len_publickey)
-
-            signer = APKV3Signer()
-            signer._bytes = view[off_signer:off_signer + size_signer]
-            signer.signed_data = signed_data_object
-            signer.signatures = sigs
-            signer.public_key = publickey
-            signer.minSDK = signer_min_sdk
-            signer.maxSDK = signer_max_sdk
-
-            self._v3_signing_data.append(signer)
 
     def parse_v2_signing_block(self):
         """

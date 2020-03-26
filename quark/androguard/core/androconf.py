@@ -1,6 +1,5 @@
-import sys
-import os
 import logging
+import sys
 import tempfile
 
 from quark.androguard import __version__
@@ -16,22 +15,6 @@ class InvalidResourceError(Exception):
     Invalid Resource Erorr is thrown by load_api_specific_resource_module
     """
     pass
-
-
-def is_ascii_problem(s):
-    """
-    Test if a string contains other chars than ASCII
-
-    :param androguard.core.mutf8.MUTF8String s: a string to test
-    :return: True if string contains other chars than ASCII, False otherwise
-    :rtype: bool
-    """
-    try:
-        # As MUTF8Strings are actually bytes, we can simply check if they are ASCII or not
-        s.decode("ascii")
-        return False
-    except (UnicodeEncodeError, UnicodeDecodeError):
-        return True
 
 
 default_conf = {
@@ -139,65 +122,6 @@ def is_android_raw(raw):
         val = "ARSC"
 
     return val
-
-
-def make_color_tuple(color):
-    """
-    turn something like "#000000" into 0,0,0
-    or "#FFFFFF into "255,255,255"
-    """
-    R = color[1:3]
-    G = color[3:5]
-    B = color[5:7]
-
-    R = int(R, 16)
-    G = int(G, 16)
-    B = int(B, 16)
-
-    return R, G, B
-
-
-def interpolate_tuple(startcolor, goalcolor, steps):
-    """
-    Take two RGB color sets and mix them over a specified number of steps.  Return the list
-    """
-    # white
-
-    R = startcolor[0]
-    G = startcolor[1]
-    B = startcolor[2]
-
-    targetR = goalcolor[0]
-    targetG = goalcolor[1]
-    targetB = goalcolor[2]
-
-    DiffR = targetR - R
-    DiffG = targetG - G
-    DiffB = targetB - B
-
-    buffer = []
-
-    for i in range(0, steps + 1):
-        iR = R + (DiffR * i // steps)
-        iG = G + (DiffG * i // steps)
-        iB = B + (DiffB * i // steps)
-
-        hR = str.replace(hex(iR), "0x", "")
-        hG = str.replace(hex(iG), "0x", "")
-        hB = str.replace(hex(iB), "0x", "")
-
-        if len(hR) == 1:
-            hR = "0" + hR
-        if len(hB) == 1:
-            hB = "0" + hB
-
-        if len(hG) == 1:
-            hG = "0" + hG
-
-        color = str.upper("#" + hR + hG + hB)
-        buffer.append(color)
-
-    return buffer
 
 
 def load_api_specific_resource_module(resource_name, api=None):
