@@ -2,17 +2,13 @@ import sys
 import os
 import logging
 import tempfile
-from colorama import init, Fore
 
 from quark.androguard import __version__
 from quark.androguard.core.api_specific_resources import load_permission_mappings, load_permissions
+
 ANDROGUARD_VERSION = __version__
 
 log = logging.getLogger("androguard.default")
-
-
-# initialize colorama, only has an effect on windows
-init()
 
 
 class InvalidResourceError(Exception):
@@ -69,30 +65,6 @@ default_conf = {
     # Session, for persistence
     "SESSION": None,
 
-    # Color output configuration
-    "COLORS": {
-        "OFFSET": Fore.YELLOW,
-        "OFFSET_ADDR": Fore.GREEN,
-        "INSTRUCTION_NAME": Fore.YELLOW,
-        "BRANCH_FALSE": Fore.RED,
-        "BRANCH_TRUE": Fore.GREEN,
-        "BRANCH": Fore.BLUE,
-        "EXCEPTION": Fore.CYAN,
-        "BB": Fore.MAGENTA,
-        "NOTE": Fore.RED,
-        "NORMAL": Fore.RESET,
-        "OUTPUT": {
-            "normal": Fore.RESET,
-            "registers": Fore.YELLOW,
-            "literal": Fore.GREEN,
-            "offset": Fore.MAGENTA,
-            "raw": Fore.RED,
-            "string": Fore.RED,
-            "meth": Fore.CYAN,
-            "type": Fore.BLUE,
-            "field": Fore.GREEN,
-        },
-    },
 }
 
 
@@ -304,4 +276,3 @@ def load_api_specific_resource_module(resource_name, api=None):
         ret = loader[resource_name](CONF['DEFAULT_API'])
 
     return ret
-
