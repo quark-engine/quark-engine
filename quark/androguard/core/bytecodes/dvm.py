@@ -6879,10 +6879,3 @@ class DalvikOdexVMFormat(DalvikVMFormat):
             :rtype: a string
         """
         return "ODEX"
-
-
-class ExportObject:
-    """
-    Wrapper object for ipython exports
-    """
-    pass

@@ -101,32 +101,6 @@ class APKV2SignedData:
         ])
 
 
-class APKV3SignedData(APKV2SignedData):
-    """ 
-    This class holds all data associated with an APK V3 SigningBlock signed data.
-    source : https://source.android.com/security/apksigning/v3.html
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.minSDK = None
-        self.maxSDK = None
-
-    def __str__(self):
-        base_str = super().__str__()
-
-        # maxSDK is set to a negative value if there is no upper bound on the sdk targeted
-        max_sdk_str = "%d" % self.maxSDK
-        if self.maxSDK >= 0x7fffffff:
-            max_sdk_str = "0x%x" % self.maxSDK
-
-        return "\n".join([
-            'signer minSDK : {:d}'.format(self.minSDK),
-            'signer maxSDK : {:s}'.format(max_sdk_str),
-            base_str
-        ])
-
-
 class APKV2Signer:
     """ 
     This class holds all data associated with an APK V2 SigningBlock signer.
@@ -144,32 +118,6 @@ class APKV2Signer:
             '{:s}'.format(str(self.signed_data)),
             'signatures : {}'.format(_dump_digests_or_signatures(self.signatures)),
             'public key : {}'.format(binascii.hexlify(self.public_key)),
-        ])
-
-
-class APKV3Signer(APKV2Signer):
-    """ 
-    This class holds all data associated with an APK V3 SigningBlock signer.
-    source : https://source.android.com/security/apksigning/v3.html
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.minSDK = None
-        self.maxSDK = None
-
-    def __str__(self):
-        base_str = super().__str__()
-
-        # maxSDK is set to a negative value if there is no upper bound on the sdk targeted
-        max_sdk_str = "%d" % self.maxSDK
-        if self.maxSDK >= 0x7fffffff:
-            max_sdk_str = "0x%x" % self.maxSDK
-
-        return "\n".join([
-            'signer minSDK : {:d}'.format(self.minSDK),
-            'signer maxSDK : {:s}'.format(max_sdk_str),
-            base_str
         ])
 
 

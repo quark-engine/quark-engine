@@ -1090,20 +1090,6 @@ class ClassAnalysis:
         return data
 
 
-class MethodClassAnalysis(MethodAnalysis):
-    """
-
-    .. deprecated:: 3.4.0
-
-        Always use MethodAnalysis!
-        This method is just here for compatability
-
-    """
-
-    def __init__(self, meth):
-        super().__init__(meth.cm.vm, meth)
-
-
 class Analysis:
     """
     Analysis Object
