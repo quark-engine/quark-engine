@@ -1,11 +1,7 @@
-import logging
-
 from quark.androguard.core.analysis.analysis import Analysis
 from quark.androguard.core.bytecodes.apk import APK
 from quark.androguard.core.bytecodes.dvm import DalvikVMFormat
 from quark.androguard.decompiler import decompiler
-
-log = logging.getLogger("androguard.misc")
 
 
 def AnalyzeAPK(_file, raw=False):
@@ -24,9 +20,7 @@ def AnalyzeAPK(_file, raw=False):
     :param raw: boolean if raw bytes are supplied instead of a filename
     :rtype: return the :class:`~androguard.core.bytecodes.apk.APK`, list of :class:`~androguard.core.bytecodes.dvm.DalvikVMFormat`, and :class:`~androguard.core.analysis.analysis.Analysis` objects
     """
-    log.debug("AnalyzeAPK")
 
-    log.debug("Analysing without session")
     a = APK(_file, raw=raw)
     # FIXME: probably it is not necessary to keep all DalvikVMFormats, as
     # they are already part of Analysis. But when using sessions, it works

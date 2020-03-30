@@ -2693,17 +2693,6 @@ class EncodedMethod:
                 bytecode._PrintNote(i)
             bytecode._PrintSubBanner()
 
-    def source(self):
-        """
-        Return the source code of this method
-
-        :rtype: string
-        """
-        self.CM.decompiler_ob.display_source(self)
-
-    def get_source(self):
-        return self.CM.decompiler_ob.get_source_method(self)
-
     def get_length(self):
         """
         Return the length of the associated code of the method
@@ -3163,23 +3152,6 @@ class ClassDefItem:
         for method in self.get_methods():
             method.show()
 
-    def source(self):
-        """
-        Return the source code of the entire class
-
-        :rtype: string
-        """
-        self.CM.decompiler_ob.display_all(self)
-
-    def get_source(self):
-        return self.CM.decompiler_ob.get_source_class(self)
-
-    def get_source_ext(self):
-        return self.CM.decompiler_ob.get_source_class_ext(self)
-
-    def get_ast(self):
-        return self.CM.decompiler_ob.get_ast_class(self)
-
     def get_obj(self):
         if self.interfaces_off != 0:
             self.interfaces_off = self.CM.get_obj_by_offset(
@@ -3615,14 +3587,6 @@ class Instruction:
         :rtype: string
         """
         return self.get_output(idx)
-
-    def get_translated_kind(self):
-        """
-        Return the translated value of the 'kind' argument
-
-        :rtype: string
-        """
-        return get_kind(self.cm, self.get_kind(), self.get_ref_kind())
 
     def get_output(self, idx=-1):
         """
@@ -6623,19 +6587,6 @@ class DalvikVMFormat(bytecode.BuffHandle):
             # There is a rare case that the DEX has no classes
             return []
 
-    def get_class(self, name):
-        """
-        Return a specific class
-
-        :param name: the name of the class
-
-        :rtype: a :class:`ClassDefItem` object
-        """
-        for i in self.get_classes():
-            if i.get_name() == name:
-                return i
-        return None
-
     def get_method(self, name):
         """
         Return a list all methods which corresponds to the regexp
@@ -6830,20 +6781,6 @@ class OdexDependencies:
                pack("=I", self.dalvik_build) + \
                pack("=I", self.dependency_count) + \
                dependencies
-
-
-class DalvikOdexVMFormat(DalvikVMFormat):
-    """
-        This class can parse an odex file
-
-        :param buff: a string which represents the odex file
-        :param decompiler: associate a decompiler object to display the java source code
-        :type buff: string
-        :type decompiler: object
-
-        :Example:
-          DalvikOdexVMFormat( read("classes.odex") )
-    """
 
     def _preload(self, buff):
         self.orig_buff = buff

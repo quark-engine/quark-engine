@@ -155,19 +155,6 @@ class DVMBasicBlock:
             code = self.method.get_code().get_bc()
             self.special_ins[idx] = code.get_ins_off(idx + i.get_ref_off() * 2)
 
-    def get_special_ins(self, idx):
-        """
-        Return the associated instruction to a specific instruction (for example a packed/sparse switch)
-
-        :param idx: the index of the instruction
-
-        :rtype: None or an Instruction
-        """
-        if idx in self.special_ins:
-            return self.special_ins[idx]
-        else:
-            return None
-
     def set_exception_analysis(self, exception_analysis):
         self.exception_analysis = exception_analysis
 
@@ -512,15 +499,6 @@ class MethodAnalysis:
         :rtype: boolean
         """
         return isinstance(self.method, ExternalMethod)
-
-    def get_basic_blocks(self):
-        """
-        Returns the :class:`BasicBlocks` generated for this method.
-        The :class:`BasicBlocks` can be used to get a control flow graph (CFG) of the method.
-
-        :rtype: a :class:`BasicBlocks` object
-        """
-        return self.basic_blocks
 
     def get_length(self):
         """

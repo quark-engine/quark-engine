@@ -6,10 +6,6 @@ import re
 log = logging.getLogger(__name__)
 
 
-class APILevelNotFoundError(Exception):
-    pass
-
-
 def load_permissions(apilevel, permtype='permissions'):
     """
     Load the Permissions for the given apilevel.

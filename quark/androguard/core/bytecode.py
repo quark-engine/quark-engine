@@ -215,10 +215,3 @@ def FormatDescriptorToPython(i):
     i = i.replace("$", "")
 
     return i
-
-
-class Node:
-    def __init__(self, n, s):
-        self.id = n
-        self.title = s
-        self.children = []

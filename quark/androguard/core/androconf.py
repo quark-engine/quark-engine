@@ -2,10 +2,7 @@ import logging
 import sys
 import tempfile
 
-from quark.androguard import __version__
 from quark.androguard.core.api_specific_resources import load_permission_mappings, load_permissions
-
-ANDROGUARD_VERSION = __version__
 
 log = logging.getLogger("androguard.default")
 
@@ -79,21 +76,6 @@ class Configuration:
 
 
 CONF = Configuration()
-
-
-def is_android(filename):
-    """
-    Return the type of the file
-
-    :param filename : the filename
-    :returns: "APK", "DEX", None
-    """
-    if not filename:
-        return None
-
-    with open(filename, "rb") as fd:
-        f_bytes = fd.read()
-        return is_android_raw(f_bytes)
 
 
 def is_android_raw(raw):
