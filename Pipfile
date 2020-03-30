@@ -15,8 +15,7 @@ click = "*"
 pytest = "*"
 asn1crypto = "*"
 lxml = "*"
-networkx = "*"
-pygments = "*"
+vulture = "*"
 
 [requires]
 python_version = "3.7"
