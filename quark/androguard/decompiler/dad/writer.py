@@ -17,12 +17,13 @@
 
 import logging
 from struct import unpack
+
 from quark.androguard.core import mutf8
-from quark.androguard.decompiler.dad.util import get_type
-from quark.androguard.decompiler.dad.opcode_ins import Op
 from quark.androguard.decompiler.dad.instruction import (
     Constant, ThisParam, BinaryExpression, BaseClass, InstanceExpression,
     NewInstance, Variable, BinaryCompExpression)
+from quark.androguard.decompiler.dad.opcode_ins import Op
+from quark.androguard.decompiler.dad.util import get_type
 
 logger = logging.getLogger('dad.writer')
 
@@ -32,6 +33,7 @@ class Writer:
     Transforms a method into Java code.
 
     """
+
     def __init__(self, graph, method):
         self.graph = graph
         self.method = method
@@ -127,7 +129,7 @@ class Writer:
         if isinstance(rhs, BinaryExpression) and lhs == rhs.var_map[rhs.arg1]:
             exp_rhs = rhs.var_map[rhs.arg2]
             if rhs.op in '+-' and isinstance(exp_rhs, Constant) and \
-                            exp_rhs.get_int_value() == 1:
+                    exp_rhs.get_int_value() == 1:
                 return self.write_ind_visit_end(lhs, rhs.op * 2, data=rhs)
             return self.write_ind_visit_end(
                 lhs,
@@ -171,7 +173,8 @@ class Writer:
         self.write_ext(('PARENTHESIS_START', '('))
         if self.method.params_type:
             proto = ', '.join(['{} p{}'.format(get_type(p_type), param) for p_type,
-                                                                        param in zip(self.method.params_type, params)])
+                                                                            param in
+                               zip(self.method.params_type, params)])
             first = True
             for p_type, param in zip(self.method.params_type, params):
                 if not first:
@@ -288,7 +291,7 @@ class Writer:
             self.visit_node(cond.false)
         elif follow is not None:
             if cond.true in (follow, self.next_case) or \
-                            cond.num > cond.true.num:
+                    cond.num > cond.true.num:
                 # or cond.true.num > cond.false.num:
                 cond.neg()
                 cond.true, cond.false = cond.false, cond.true
@@ -422,7 +425,7 @@ class Writer:
             var_type = var.get_type() or 'unknownType'
             self.write('{}{} v{}'.format(
                 self.space(), get_type(var_type), var.name),
-                       data="DECLARATION")
+                data="DECLARATION")
             self.end_ins()
 
     def visit_constant(self, cst):
@@ -524,7 +527,7 @@ class Writer:
                         call_name = "{} -> {}".format(base2base.type, name)
                         break
                     elif (hasattr(base2base, "base") and
-                              hasattr(base2base, "var_map")):
+                          hasattr(base2base, "var_map")):
                         continue
                     else:
                         call_name = "UNKNOWN_TODO"
@@ -613,8 +616,8 @@ class Writer:
             elem_id = 'b'
             elem_size = 1
 
-        for i in range(0, value.size*elem_size, elem_size):
-            tab.append('%s' % unpack(elem_id, data[i:i+elem_size])[0])
+        for i in range(0, value.size * elem_size, elem_size):
+            tab.append('%s' % unpack(elem_id, data[i:i + elem_size])[0])
         self.write(', '.join(tab), data="COMMA")
         self.write('}', data="ARRAY_FILLED_END")
         self.end_ins()

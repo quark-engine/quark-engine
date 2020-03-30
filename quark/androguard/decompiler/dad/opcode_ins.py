@@ -17,6 +17,7 @@
 
 import logging
 from struct import pack, unpack
+
 import quark.androguard.decompiler.dad.util as util
 from quark.androguard.decompiler.dad.instruction import (
     ArrayLengthExpression, ArrayLoadExpression, ArrayStoreInstruction,

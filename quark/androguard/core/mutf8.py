@@ -29,12 +29,12 @@ def decode(b):
                     "Third byte of 3 byte sequence does not looks right.")
 
             ord_array[ord_index] = (x & 0xf) << 12 | (
-                b2 & 0x3f) << 6 | b3 & 0x3f
+                    b2 & 0x3f) << 6 | b3 & 0x3f
         else:
             raise UnicodeDecodeError("Could not decode byte")
         ord_index += 1
 
-    chr_array = [""]*size
+    chr_array = [""] * size
     chr_index = 0
     while chr_index < size:
         c = ord_array[chr_index]
@@ -60,7 +60,7 @@ def decode(b):
 
 
 def encode(s):
-    b = [b""]*len(s)
+    b = [b""] * len(s)
     ord_array = [i for i in map(lambda x: ord(x), s)]
     for x in ord_array:
         if (x == 0) or ((x <= 0x7ff) and (x >= 0x80)):

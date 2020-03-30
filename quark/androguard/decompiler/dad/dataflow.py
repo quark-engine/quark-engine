@@ -17,9 +17,10 @@
 
 import logging
 from collections import defaultdict
+
 from quark.androguard.decompiler.dad.instruction import (Variable, ThisParam, Param)
-from quark.androguard.decompiler.dad.util import build_path, common_dom
 from quark.androguard.decompiler.dad.node import Node
+from quark.androguard.decompiler.dad.util import build_path, common_dom
 
 logger = logging.getLogger('dad.control_flow')
 

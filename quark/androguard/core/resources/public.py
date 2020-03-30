@@ -31,10 +31,9 @@ SYSTEM_RESOURCES = {
     }
 }
 
-
-
 if __name__ == '__main__':
     import json
+
     _resources = None
     if _resources is None:
         root = os.path.dirname(os.path.realpath(__file__))
@@ -49,8 +48,8 @@ if __name__ == '__main__':
     for _type in set([] + list(_public_res.keys()) + list(_resources.keys())):
         for k in set([] + list(_public_res.get(_type, {}).keys())
                      + list(_resources.get(_type, {}).keys())):
-            a,b = _public_res.get(_type, {}).get(k), \
-                  _resources.get(_type, {}).get(k),
+            a, b = _public_res.get(_type, {}).get(k), \
+                   _resources.get(_type, {}).get(k),
             if a != b:
-                print(k, a,b)
+                print(k, a, b)
     print(None)

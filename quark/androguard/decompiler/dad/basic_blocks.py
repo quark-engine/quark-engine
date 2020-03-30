@@ -17,9 +17,10 @@
 
 import logging
 from collections import defaultdict
-from quark.androguard.decompiler.dad.opcode_ins import INSTRUCTION_SET
+
 from quark.androguard.decompiler.dad.instruction import MoveExceptionExpression
 from quark.androguard.decompiler.dad.node import Node
+from quark.androguard.decompiler.dad.opcode_ins import INSTRUCTION_SET
 from quark.androguard.decompiler.dad.util import get_type
 
 logger = logging.getLogger('dad.basic_blocks')

@@ -1,5 +1,6 @@
-from enum import IntEnum
 from collections import OrderedDict
+from enum import IntEnum
+
 
 # This file contains dictionaries used in the Dalvik Format.
 
@@ -127,6 +128,7 @@ class TypeMapItem(IntEnum):
                 unloaded.discard(type_name)
         return ordered
 
+
 # https://source.android.com/devices/tech/dalvik/dex-format#access-flags
 ACCESS_FLAGS = {
     0x1: 'public',
@@ -160,4 +162,3 @@ TYPE_DESCRIPTOR = {
     'F': 'float',
     'D': 'double',
 }
-

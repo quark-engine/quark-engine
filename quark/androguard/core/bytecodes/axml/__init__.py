@@ -2,9 +2,8 @@ import binascii
 import logging
 import re
 from collections import defaultdict
-from struct import pack, unpack
-
 from lxml import etree
+from struct import pack, unpack
 
 from quark.androguard.core import bytecode
 from quark.androguard.core.bytecodes.axml.types import *

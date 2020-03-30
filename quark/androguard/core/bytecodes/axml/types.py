@@ -48,4 +48,3 @@ TYPE_INT_COLOR_RGB4 = 0x1f
 TYPE_LAST_COLOR_INT = 0x1f
 # ...end of integer flavors.
 TYPE_LAST_INT = 0x1f
-

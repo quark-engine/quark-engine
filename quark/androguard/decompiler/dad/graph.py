@@ -18,7 +18,7 @@ import logging
 from collections import defaultdict
 
 from quark.androguard.decompiler.dad.basic_blocks import (build_node_from_block,
-                                                    StatementBlock, CondBlock)
+                                                          StatementBlock, CondBlock)
 from quark.androguard.decompiler.dad.instruction import Variable
 
 logger = logging.getLogger('dad.graph')
@@ -32,6 +32,7 @@ class Graph:
     The CFG defines an entry node :py:attr:`entry`, a single exit node :py:attr:`exit`, a list of nodes
     :py:attr:`nodes` and a list of edges :py:attr:`edges`.
     """
+
     def __init__(self):
         self.entry = None
         self.exit = None
@@ -149,6 +150,7 @@ class Graph:
         Yields the :class`~androguard.decompiler.dad.node.Node`s of the graph in post-order i.e we visit all the
         children of a node before visiting the node itself.
         """
+
         def _visit(n, cnt):
             visited.add(n)
             for suc in self.all_sucs(n):
@@ -310,8 +312,8 @@ def simplify(graph):
                         graph.entry = suc
                     graph.remove_node(node)
                 elif (suc.type.is_stmt and len(graph.all_preds(suc)) == 1 and
-                          not (suc in graph.catch_edges) and not (
-                            (node is suc) or (suc is graph.entry))):
+                      not (suc in graph.catch_edges) and not (
+                                (node is suc) or (suc is graph.entry))):
                     ins_to_merge = suc.get_ins()
                     node.add_ins(ins_to_merge)
                     for var in suc.var_to_declare:

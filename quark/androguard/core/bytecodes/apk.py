@@ -4,11 +4,10 @@ import io
 import logging
 import re
 import zipfile
-from struct import unpack
-from zlib import crc32
-
 # Used for reading Certificates
 from asn1crypto import cms, x509
+from struct import unpack
+from zlib import crc32
 
 from quark.androguard.core import androconf
 from quark.androguard.core.bytecodes.axml import ARSCParser, AXMLPrinter, ARSCResTableConfig

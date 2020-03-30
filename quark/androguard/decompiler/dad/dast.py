@@ -16,8 +16,8 @@
 """This file is a simplified version of writer.py that outputs an AST instead of source code."""
 import struct
 
-from quark.androguard.decompiler.dad import basic_blocks, instruction, opcode_ins
 from quark.androguard.core.bytecodes.dvm_types import TYPE_DESCRIPTOR
+from quark.androguard.decompiler.dad import basic_blocks, instruction, opcode_ins
 
 
 def array_access(arr, ind):
@@ -587,7 +587,7 @@ class JSONWriter:
             self.add(if_stmt(cond_expr, scopes))
         elif follow is not None:
             if cond.true in (follow, self.next_case) or \
-                            cond.num > cond.true.num:
+                    cond.num > cond.true.num:
                 # or cond.true.num > cond.false.num:
                 cond.neg()
                 cond.true, cond.false = cond.false, cond.true

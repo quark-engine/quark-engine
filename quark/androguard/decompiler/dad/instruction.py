@@ -599,14 +599,14 @@ class InvokeInstruction(IRForm):
     def __str__(self):
         v_m = self.var_map
         return '{}.{}({})'.format(v_m[self.base], self.name,
-                              ', '.join('%s' % v_m[i] for i in self.args))
+                                  ', '.join('%s' % v_m[i] for i in self.args))
 
 
 class InvokeRangeInstruction(InvokeInstruction):
     def __init__(self, clsname, name, rtype, ptype, args, triple):
         base = args.pop(0)
         super().__init__(clsname, name, base, rtype,
-                                                     ptype, args, triple)
+                         ptype, args, triple)
 
 
 class InvokeDirectInstruction(InvokeInstruction):

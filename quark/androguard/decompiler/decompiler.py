@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import logging
-
 from pygments import highlight
 from pygments.formatters import TerminalFormatter
 from pygments.lexers import get_lexer_by_name

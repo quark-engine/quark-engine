@@ -76,6 +76,7 @@ class DvMethod:
 
     :param androguard.core.analysis.analysis.MethodAnalysis methanalysis:
     """
+
     def __init__(self, methanalysis):
         method = methanalysis.get_method()
         self.method = method
@@ -116,7 +117,8 @@ class DvMethod:
         if not __debug__:
             from androguard.core import bytecode
             # TODO: use tempfile to create a correct tempfile (cross platform compatible)
-            bytecode.method2png('/tmp/dad/graphs/{}#{}.png'.format(self.cls_name.split('/')[-1][:-1], self.name), methanalysis)
+            bytecode.method2png('/tmp/dad/graphs/{}#{}.png'.format(self.cls_name.split('/')[-1][:-1], self.name),
+                                methanalysis)
 
     def process(self, doAST=False):
         """
@@ -239,6 +241,7 @@ class DvClass:
     :param androguard.core.bytecodes.dvm.ClassDefItem dvclass: the class item
     :param androguard.core.analysis.analysis.Analysis vma: an Analysis object
     """
+
     def __init__(self, dvclass, vma):
         name = dvclass.get_name()
         if name.find('/') > 0:
@@ -451,6 +454,7 @@ class DvMachine:
     At first, :py:attr:`classes` contains only :class:`~androguard.core.bytecodes.dvm.ClassDefItem` as values.
     Then these objects are replaced by :class:`DvClass` items successively.
     """
+
     def __init__(self, name):
         """
 

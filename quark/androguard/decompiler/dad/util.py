@@ -127,9 +127,6 @@ def common_dom(idom, cur, pred):
     return cur
 
 
-
-
-
 def get_type_size(param):
     """
     Return the number of register needed by the type @param
