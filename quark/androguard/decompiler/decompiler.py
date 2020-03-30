@@ -1,30 +1,3 @@
-# This file is part of Androguard.
-#
-# Copyright (C) 2013, Anthony Desnos <desnos at t0t0.fr>
-# All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS-IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-import logging
-from pygments import highlight
-from pygments.formatters import TerminalFormatter
-from pygments.lexers import get_lexer_by_name
-
-from quark.androguard.decompiler.dad import decompile
-
-log = logging.getLogger("androguard.decompiler")
-
-
 class DecompilerDAD:
     def __init__(self, vm, vmx):
         """
@@ -41,42 +14,4 @@ class DecompilerDAD:
         self.vm = vm
         self.vmx = vmx
 
-    def get_source_method(self, m):
-        mx = self.vmx.get_method(m)
-        z = decompile.DvMethod(mx)
-        z.process()
-        return z.get_source()
 
-    def display_source(self, m):
-        result = self.get_source_method(m)
-
-        lexer = get_lexer_by_name("java", stripall=True)
-        formatter = TerminalFormatter()
-        result = highlight(result, lexer, formatter)
-        print(result)
-
-    def get_source_class(self, _class):
-        c = decompile.DvClass(_class, self.vmx)
-        c.process()
-        return c.get_source()
-
-    def get_ast_class(self, _class):
-        c = decompile.DvClass(_class, self.vmx)
-        c.process(doAST=True)
-        return c.get_ast()
-
-    def get_source_class_ext(self, _class):
-        c = decompile.DvClass(_class, self.vmx)
-        c.process()
-
-        result = c.get_source_ext()
-
-        return result
-
-    def display_all(self, _class):
-        result = self.get_source_class(_class)
-
-        lexer = get_lexer_by_name("java", stripall=True)
-        formatter = TerminalFormatter()
-        result = highlight(result, lexer, formatter)
-        print(result)
