@@ -12,10 +12,8 @@ tqdm = "*"
 colorama = "*"
 quark-engine = {editable = true,path = "."}
 click = "*"
-pytest = "*"
 asn1crypto = "*"
 lxml = "*"
-vulture = "*"
 
 [requires]
 python_version = "3.7"
