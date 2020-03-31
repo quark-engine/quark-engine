@@ -3090,14 +3090,6 @@ class ClassDefItem:
         """
         return self.access_flags
 
-    def get_class_data_off(self):
-        """
-        Return the offset from the start of the file to the associated class data for this item,
-        or 0 if there is no class data for this class
-
-        :rtype: int
-        """
-        return self.class_data_off
 
     def get_name(self):
         """
