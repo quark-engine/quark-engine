@@ -1,9 +1,6 @@
 import json
-import logging
 import os
 import re
-
-log = logging.getLogger(__name__)
 
 
 def load_permissions(apilevel, permtype='permissions'):
@@ -40,25 +37,25 @@ def load_permissions(apilevel, permtype='permissions'):
     levels = list(map(lambda x: int(x[:-5].split('_')[1]), levels))
 
     if not levels:
-        log.error("No Permissions available, can not load!")
+        # log.error("No Permissions available, can not load!")
         return {}
 
-    log.debug("Available API levels: {}".format(", ".join(map(str, sorted(levels)))))
+    # log.debug("Available API levels: {}".format(", ".join(map(str, sorted(levels)))))
 
     if not os.path.isfile(permissions_file):
         if apilevel > max(levels):
-            log.warning("Requested API level {} is larger than maximum we have, returning API level {} instead.".format(
-                apilevel, max(levels)))
+            # log.warning("Requested API level {} is larger than maximum we have, returning API level {} instead.".format(
+            #     apilevel, max(levels)))
             return load_permissions(max(levels), permtype)
         if apilevel < min(levels):
-            log.warning(
-                "Requested API level {} is smaller than minimal we have, returning API level {} instead.".format(
-                    apilevel, max(levels)))
+            # log.warning(
+            #     "Requested API level {} is smaller than minimal we have, returning API level {} instead.".format(
+            #         apilevel, max(levels)))
             return load_permissions(min(levels), permtype)
 
         # Missing level between existing ones, return the lower level
         lower_level = max(filter(lambda x: x < apilevel, levels))
-        log.warning("Requested API Level could not be found, using {} instead".format(lower_level))
+        # log.warning("Requested API Level could not be found, using {} instead".format(lower_level))
         return load_permissions(lower_level, permtype)
 
     with open(permissions_file, "r") as fp:

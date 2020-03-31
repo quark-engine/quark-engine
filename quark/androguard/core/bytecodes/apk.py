@@ -1,7 +1,7 @@
 import binascii
 import hashlib
 import io
-import logging
+# import logging
 import re
 import zipfile
 # Used for reading Certificates
@@ -16,7 +16,7 @@ from quark.androguard.util import read, get_certificate_name_string
 NS_ANDROID_URI = 'http://schemas.android.com/apk/res/android'
 NS_ANDROID = '{{{}}}'.format(NS_ANDROID_URI)  # Namespace as used by etree
 
-log = logging.getLogger("androguard.apk")
+# log = logging.getLogger("androguard.apk")
 
 
 class Error(Exception):
@@ -168,7 +168,8 @@ class APK:
 
         """
         if magic_file:
-            log.warning("You set magic_file but this parameter is actually unused. You should remove it.")
+            # log.warning("You set magic_file but this parameter is actually unused. You should remove it.")
+            pass
 
         self.filename = filename
 
@@ -203,7 +204,7 @@ class APK:
         self.zip = zipfile.ZipFile(io.BytesIO(self.__raw), mode="r")
 
         if testzip:
-            log.info("Testing zip file integrity, this might take a while...")
+            # log.info("Testing zip file integrity, this might take a while...")
             # Test the zipfile for integrity before continuing.
             # This process might be slow, as the whole file is read.
             # Therefore it is possible to enable it as a separate feature.
@@ -237,27 +238,29 @@ class APK:
         extracted from the Manifest.
         """
         i = "AndroidManifest.xml"
-        log.info("Starting analysis on {}".format(i))
+        # log.info("Starting analysis on {}".format(i))
         try:
             manifest_data = self.zip.read(i)
         except KeyError:
-            log.warning("Missing AndroidManifest.xml. Is this an APK file?")
+            # log.warning("Missing AndroidManifest.xml. Is this an APK file?")
+            pass
         else:
             ap = AXMLPrinter(manifest_data)
 
             if not ap.is_valid():
-                log.error("Error while parsing AndroidManifest.xml - is the file valid?")
+                # log.error("Error while parsing AndroidManifest.xml - is the file valid?")
                 return
 
             self.axml[i] = ap
             self.xml[i] = self.axml[i].get_xml_obj()
 
             if self.axml[i].is_packed():
-                log.warning("XML Seems to be packed, operations on the AndroidManifest.xml might fail.")
+                # log.warning("XML Seems to be packed, operations on the AndroidManifest.xml might fail.")
+                pass
 
             if self.xml[i] is not None:
                 if self.xml[i].tag != "manifest":
-                    log.error("AndroidManifest.xml does not start with a <manifest> tag! Is this a valid APK?")
+                    # log.error("AndroidManifest.xml does not start with a <manifest> tag! Is this a valid APK?")
                     return
 
                 self.package = self.get_attribute_value("manifest", "package")
@@ -294,7 +297,7 @@ class APK:
                     self.declared_permissions[d_perm_name] = d_perm_details
 
                 self.valid_apk = True
-                log.info("APK file was successfully validated!")
+                # log.info("APK file was successfully validated!")
 
         self.permission_module = androconf.load_api_specific_resource_module(
             "aosp_permissions", self.get_target_sdk_version())
@@ -349,7 +352,8 @@ class APK:
         try:
             maxSdkVersion = int(self.get_value_from_tag(item, "maxSdkVersion"))
         except ValueError:
-            log.warning(self.get_max_sdk_version() + 'is not a valid value for <uses-permission> maxSdkVersion')
+            # log.warning(self.get_max_sdk_version() + 'is not a valid value for <uses-permission> maxSdkVersion')
+            pass
         except TypeError:
             pass
         return maxSdkVersion
@@ -379,15 +383,15 @@ class APK:
             import magic
         except ImportError:
             self.__no_magic = True
-            log.warning("No Magic library was found on your system.")
+            # log.warning("No Magic library was found on your system.")
             return default
         except TypeError as e:
             self.__no_magic = True
-            log.warning("It looks like you have the magic python package installed but not the magic library itself!")
-            log.warning("Error from magic library: %s", e)
-            log.warning(
-                "Please follow the installation instructions at https://github.com/ahupp/python-magic/#installation")
-            log.warning("You can also install the 'python-magic-bin' package on Windows and MacOS")
+            # log.warning("It looks like you have the magic python package installed but not the magic library itself!")
+            # log.warning("Error from magic library: %s", e)
+            # log.warning(
+            #     "Please follow the installation instructions at https://github.com/ahupp/python-magic/#installation")
+            # log.warning("You can also install the 'python-magic-bin' package on Windows and MacOS")
             return default
 
         try:
@@ -398,15 +402,15 @@ class APK:
             getattr(magic, "MagicException")
         except AttributeError:
             self.__no_magic = True
-            log.warning("Not the correct Magic library was found on your "
-                        "system. Please install python-magic or python-magic-bin!")
+            # log.warning("Not the correct Magic library was found on your "
+            #             "system. Please install python-magic or python-magic-bin!")
             return default
 
         try:
             # 1024 byte are usually enough to test the magic
             ftype = magic.from_buffer(buffer[:1024])
         except magic.MagicException as e:
-            log.exception("Error getting the magic type: %s", e)
+            # log.exception("Error getting the magic type: %s", e)
             return default
 
         if not ftype:
@@ -465,10 +469,11 @@ class APK:
         if filename not in self.files_crc32:
             self.files_crc32[filename] = crc32(buffer)
             if self.files_crc32[filename] != self.zip.getinfo(filename).CRC:
-                log.error("File '{}' has different CRC32 after unpacking! "
-                          "Declared: {:08x}, Calculated: {:08x}".format(filename,
-                                                                        self.zip.getinfo(filename).CRC,
-                                                                        self.files_crc32[filename]))
+                # log.error("File '{}' has different CRC32 after unpacking! "
+                #           "Declared: {:08x}, Calculated: {:08x}".format(filename,
+                #                                                         self.zip.getinfo(filename).CRC,
+                #                                                         self.files_crc32[filename]))
+                pass
         return buffer
 
     def get_raw(self):
@@ -622,8 +627,9 @@ class APK:
 
             if value:
                 # If value is still None, the attribute could not be found, thus is not present
-                log.warning("Failed to get the attribute '{}' on tag '{}' with namespace. "
-                            "But found the same attribute without namespace!".format(attribute, tag.tag))
+                # log.warning("Failed to get the attribute '{}' on tag '{}' with namespace. "
+                #             "But found the same attribute without namespace!".format(attribute, tag.tag))
+                pass
         return value
 
     def find_tags(self, tag_name, **attribute_filter):
@@ -723,7 +729,8 @@ class APK:
                         if activity is not None:
                             x.add(item.get(self._ns("name")))
                         else:
-                            log.warning('Main activity without name')
+                            # log.warning('Main activity without name')
+                            pass
 
                 for sitem in item.findall(".//category"):
                     val = sitem.get(self._ns("name"))
@@ -732,7 +739,8 @@ class APK:
                         if activity is not None:
                             y.add(item.get(self._ns("name")))
                         else:
-                            log.warning('Launcher activity without name')
+                            # log.warning('Launcher activity without name')
+                            pass
 
         return x.intersection(y)
 
@@ -798,7 +806,7 @@ class APK:
                 res_id,
                 ARSCResTableConfig.default_config())[0][1]
         except Exception as e:
-            log.warning("Exception get resolved resource id: %s" % e)
+            # log.warning("Exception get resolved resource id: %s" % e)
             return name
 
         return value
@@ -1193,7 +1201,8 @@ class APK:
                 if "{}.SF".format(i.rsplit(".", 1)[0]) in self.get_files():
                     signatures.append(i)
                 else:
-                    log.warning("v1 signature file {} missing .SF file - Partial signature!".format(i))
+                    # log.warning("v1 signature file {} missing .SF file - Partial signature!".format(i))
+                    pass
 
         return signatures
 

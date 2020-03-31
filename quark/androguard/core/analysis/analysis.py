@@ -1,5 +1,4 @@
 import collections
-import logging
 import re
 import time
 from enum import IntEnum
@@ -9,7 +8,6 @@ from quark.androguard.core import bytecode, mutf8
 from quark.androguard.core.androconf import load_api_specific_resource_module
 from quark.androguard.core.bytecodes import dvm
 
-log = logging.getLogger("androguard.analysis")
 
 BasicOPCODES = set()
 for i in dvm.BRANCH_DVM_OPCODES:
@@ -365,21 +363,18 @@ class MethodAnalysis:
         l = []
         h = dict()
 
-        log.debug("Parsing instructions for method at @0x{:08x}".format(self.method.get_code_off()))
         for idx, ins in self.method.get_instructions_idx():
             if ins.get_op_value() in BasicOPCODES:
                 v = dvm.determineNext(ins, idx, self.method)
                 h[idx] = v
                 l.extend(v)
 
-        log.debug("Parsing exceptions")
         excepts = dvm.determineException(self.__vm, self.method)
         for i in excepts:
             l.extend([i[0]])
             for handler in i[2:]:
                 l.append(handler[1])
 
-        log.debug("Creating basic blocks")
         for idx, ins in self.method.get_instructions_idx():
             # index is a destination
             if idx in l:
@@ -397,14 +392,12 @@ class MethodAnalysis:
         if current_basic.get_nb_instructions() == 0:
             self.basic_blocks.pop(-1)
 
-        log.debug("Settings basic blocks childs")
         for i in self.basic_blocks.get():
             try:
                 i.set_childs(h[i.end - i.get_last_length()])
             except KeyError:
                 i.set_childs([])
 
-        log.debug("Creating exceptions")
         self.exceptions.add(excepts, self.basic_blocks)
 
         for i in self.basic_blocks.get():
@@ -1118,7 +1111,6 @@ class Analysis:
         """
         self.vms.append(vm)
 
-        log.info("Adding DEX file version {}".format(vm.version))
         # TODO: This step can easily be multithreaded, as there is no dependecy between the objects at this stage
         tic = time.time()
         for current_class in vm.get_classes():
@@ -1132,7 +1124,6 @@ class Analysis:
                 m_hash = (current_class.get_name(), method.get_name(), str(method.get_descriptor()))
                 self.__method_hashes[m_hash] = self.methods[method]
 
-        log.info("Reading bytecode took : {:0d}min {:02d}s".format(*divmod(int(time.time() - tic), 60)))
 
     def create_xref(self):
         """
@@ -1147,13 +1138,9 @@ class Analysis:
         if self.__created_xrefs:
             # TODO on concurrent runs, we probably need to clean up first,
             # or check that we do not write garbage.
-            log.error("You have requested to run create_xref() twice! "
-                      "This will not work and cause problems! This function will exit right now. "
-                      "If you want to add multiple DEX files, use add() several times and then run create_xref() once.")
             return
 
         self.__created_xrefs = True
-        log.debug("Creating Crossreferences (XREF)")
         tic = time.time()
 
         # TODO multiprocessing
@@ -1166,8 +1153,6 @@ class Analysis:
         # TODO: After we collected all the information, we should add field and
         # string xrefs to each MethodAnalysis
 
-        log.info("End of creating cross references (XREF) "
-                 "run time: {:0d}min {:02d}s".format(*divmod(int(time.time() - tic), 60)))
 
     def _create_xref(self, current_class):
         """
@@ -1187,9 +1172,7 @@ class Analysis:
         """
         cur_cls_name = current_class.get_name()
 
-        log.debug("Creating XREF/DREF for class at @0x{:08x}".format(current_class.get_class_data_off()))
         for current_method in current_class.get_methods():
-            log.debug("Creating XREF for method at @0x{:08x}".format(current_method.get_code_off()))
 
             cur_meth = self.get_method(current_method)
             cur_cls = self.classes[cur_cls_name]
@@ -1237,9 +1220,6 @@ class Analysis:
                     idx_meth = instruction.get_ref_kind()
                     method_info = instruction.cm.vm.get_cm_method(idx_meth)
                     if not method_info:
-                        log.warning("Could not get method_info "
-                                    "for instruction at {} in method at @{}. "
-                                    "Requested IDX {}".format(off, current_method.get_code_off(), idx_meth))
                         continue
 
                     class_info = method_info[0].lstrip(b'[')
