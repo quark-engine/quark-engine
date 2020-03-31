@@ -1,10 +1,7 @@
-import logging
 import sys
 import tempfile
 
 from quark.androguard.core.api_specific_resources import load_permission_mappings, load_permissions
-
-log = logging.getLogger("androguard.default")
 
 
 class InvalidResourceError(Exception):
@@ -130,8 +127,6 @@ def load_api_specific_resource_module(resource_name, api=None):
 
     if ret == {}:
         # No API mapping found, return default
-        log.warning("API mapping for API level {} was not found! "
-                    "Returning default, which is API level {}".format(api, CONF['DEFAULT_API']))
         ret = loader[resource_name](CONF['DEFAULT_API'])
 
     return ret

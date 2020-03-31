@@ -1,7 +1,4 @@
-import logging
 from struct import pack
-
-log = logging.getLogger("androguard.bytecode")
 
 
 def object_to_bytes(obj):
