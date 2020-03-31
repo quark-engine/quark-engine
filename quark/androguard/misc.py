@@ -1,7 +1,6 @@
 from quark.androguard.core.analysis.analysis import Analysis
 from quark.androguard.core.bytecodes.apk import APK
 from quark.androguard.core.bytecodes.dvm import DalvikVMFormat
-from quark.androguard.decompiler import decompiler
 
 
 def AnalyzeAPK(_file, raw=False):
@@ -31,7 +30,6 @@ def AnalyzeAPK(_file, raw=False):
         df = DalvikVMFormat(dex, using_api=a.get_target_sdk_version())
         dx.add(df)
         d.append(df)
-        df.set_decompiler(decompiler.DecompilerDAD(d, dx))
 
     dx.create_xref()
 
