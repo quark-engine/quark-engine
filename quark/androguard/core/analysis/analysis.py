@@ -8,7 +8,6 @@ from quark.androguard.core import bytecode, mutf8
 from quark.androguard.core.androconf import load_api_specific_resource_module
 from quark.androguard.core.bytecodes import dvm
 
-
 BasicOPCODES = set()
 for i in dvm.BRANCH_DVM_OPCODES:
     p = re.compile(i)
@@ -1124,7 +1123,6 @@ class Analysis:
                 m_hash = (current_class.get_name(), method.get_name(), str(method.get_descriptor()))
                 self.__method_hashes[m_hash] = self.methods[method]
 
-
     def create_xref(self):
         """
         Create Class, Method, String and Field crossreferences
@@ -1152,7 +1150,6 @@ class Analysis:
 
         # TODO: After we collected all the information, we should add field and
         # string xrefs to each MethodAnalysis
-
 
     def _create_xref(self, current_class):
         """

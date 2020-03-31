@@ -3090,7 +3090,6 @@ class ClassDefItem:
         """
         return self.access_flags
 
-
     def get_name(self):
         """
         Return the name of this class

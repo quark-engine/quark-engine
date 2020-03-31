@@ -4,10 +4,11 @@ import io
 # import logging
 import re
 import zipfile
-# Used for reading Certificates
-from asn1crypto import cms, x509
 from struct import unpack
 from zlib import crc32
+
+# Used for reading Certificates
+from asn1crypto import cms, x509
 
 from quark.androguard.core import androconf
 from quark.androguard.core.bytecodes.axml import ARSCParser, AXMLPrinter, ARSCResTableConfig
@@ -15,6 +16,7 @@ from quark.androguard.util import read, get_certificate_name_string
 
 NS_ANDROID_URI = 'http://schemas.android.com/apk/res/android'
 NS_ANDROID = '{{{}}}'.format(NS_ANDROID_URI)  # Namespace as used by etree
+
 
 # log = logging.getLogger("androguard.apk")
 
