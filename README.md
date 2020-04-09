@@ -3,6 +3,8 @@ An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
 <img src="https://i.imgur.com/8GwkWei.png"/>
 
+Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html).
+
 [![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
 
 ### Concepts
