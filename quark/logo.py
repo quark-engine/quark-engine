@@ -1,3 +1,5 @@
+from quark import __version__
+
 from quark.utils.colors import bold, lightyellow, lightblue
 
 
@@ -14,7 +16,7 @@ def logo():
            \__>          \/           \/ v{}
     """
             )
-        ).format("20.01")
+        ).format(__version__)
         + bold(
             lightblue(
                 """
