@@ -42,7 +42,7 @@ def rule_obj(scope="function"):
     os.remove("sendLocation.json")
 
 
-class TestRuleObject(object):
+class TestRuleObject:
     def test_init(self, rule_obj):
         assert rule_obj.crime == "Send Location via SMS"
 

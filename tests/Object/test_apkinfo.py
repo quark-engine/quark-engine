@@ -22,7 +22,7 @@ class TestApkinfo():
             'android.permission.INTERNET',
             'android.permission.READ_PHONE_STATE',
             'android.permission.RECEIVE_SMS',
-            'android.permission.READ_CONTACTS'
+            'android.permission.READ_CONTACTS',
         ]
         assert set(apkinfo.permissions) == set(ans)
 
@@ -32,8 +32,10 @@ class TestApkinfo():
         assert isinstance(result[0], MethodAnalysis)
 
     def test_upperfunc(self, apkinfo):
-        result = apkinfo.upperfunc("Ljava/lang/reflect/Field",
-                                   "setAccessible")
+        result = apkinfo.upperfunc(
+            "Ljava/lang/reflect/Field",
+            "setAccessible",
+        )
         expect_func = "Landroid/support/v4/widget/SlidingPaneLayout$" \
                       "SlidingPanelLayoutImplJB;"
         assert expect_func in result[0]

@@ -12,7 +12,7 @@ def table_obj():
     del table_obj
 
 
-class TestTableObject(object):
+class TestTableObject:
 
     def test_init(self, table_obj):
         with pytest.raises(TypeError):
