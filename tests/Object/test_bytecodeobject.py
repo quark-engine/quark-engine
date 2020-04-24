@@ -8,14 +8,15 @@ def bytecode_obj():
     bytecode_obj = BytecodeObject(
         "invoke-direct",
         "v1",
-        "java.io.FilterOutputStream.close:()V")
+        "java.io.FilterOutputStream.close:()V",
+    )
 
     yield bytecode_obj
 
     del bytecode_obj
 
 
-class TestBytecodeObject(object):
+class TestBytecodeObject:
 
     def test_init(self, bytecode_obj):
         with pytest.raises(TypeError):

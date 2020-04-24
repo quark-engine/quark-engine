@@ -15,10 +15,14 @@ logo()
 @click.command()
 @click.option("--summary", "-s", is_flag=True, help='show summary report')
 @click.option("--detail", "-d", is_flag=True, help="show detail report")
-@click.option("-a", "--apk", help="APK file", type=click.Path(exists=True, file_okay=True, dir_okay=False),
-              required=True)
-@click.option("-r", "--rule", help="Rules folder need to be checked",
-              type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True)
+@click.option(
+    "-a", "--apk", help="APK file", type=click.Path(exists=True, file_okay=True, dir_okay=False),
+    required=True,
+)
+@click.option(
+    "-r", "--rule", help="Rules folder need to be checked",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True,
+)
 def entry_point(summary, detail, apk, rule):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 

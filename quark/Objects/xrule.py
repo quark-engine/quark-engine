@@ -11,11 +11,11 @@ from quark.utils.colors import (
     red,
     bold,
     yellow,
-    green
+    green,
 )
 
 MAX_SEARCH_LAYER = 3
-CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
+CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
 
 
 class XRule:
@@ -75,7 +75,8 @@ class XRule:
                     if item in visited_methods:
                         continue
                     self.find_previous_method(
-                        item, top_method, pre_method_list, visited_methods)
+                        item, top_method, pre_method_list, visited_methods,
+                    )
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -110,12 +111,16 @@ class XRule:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
                         next_list1.extend(
                             self.apkinfo.upperfunc(
-                                item[0], item[1]))
+                                item[0], item[1],
+                            ),
+                        )
                 for item in list2:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
                         next_list2.extend(
                             self.apkinfo.upperfunc(
-                                item[0], item[1]))
+                                item[0], item[1],
+                            ),
+                        )
 
                 return self.find_intersection(next_list1, next_list2, depth)
         else:
@@ -135,7 +140,8 @@ class XRule:
         second_class_name, second_method_name = second_func
 
         method_set = self.apkinfo.find_method(
-            same_class_name, same_method_name)
+            same_class_name, same_method_name,
+        )
         seq_table = []
 
         if method_set is not None:
@@ -145,7 +151,8 @@ class XRule:
                     to_md_name = str(call.name)
 
                     if (to_md_name == first_method_name) or (
-                            to_md_name == second_method_name):
+                            to_md_name == second_method_name
+                    ):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -177,8 +184,10 @@ class XRule:
         else:
             return False
 
-    def check_parameter(self, common_method,
-                        first_method_name, second_method_name):
+    def check_parameter(
+        self, common_method,
+        first_method_name, second_method_name,
+    ):
         """
         check the usage of the same parameter between two method.
 
@@ -195,7 +204,7 @@ class XRule:
         common_class_name, common_method_name = common_method
 
         for bytecode_obj in self.apkinfo.get_method_bytecode(
-                common_class_name, common_method_name
+                common_class_name, common_method_name,
         ):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
             instruction = [bytecode_obj.mnemonic]
@@ -287,9 +296,11 @@ class XRule:
                 self.pre_method0.clear()
                 self.pre_method1.clear()
                 self.find_previous_method(
-                    base_method_0, common_method, self.pre_method0)
+                    base_method_0, common_method, self.pre_method0,
+                )
                 self.find_previous_method(
-                    base_method_1, common_method, self.pre_method1)
+                    base_method_1, common_method, self.pre_method1,
+                )
                 # TODO It may have many previous method in
                 # self.pre_method
                 pre_0 = self.pre_method0[0]
@@ -321,8 +332,11 @@ class XRule:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        self.tb.add_row([green(rule_obj.crime), yellow(
-            confidence), score, red(weight)])
+        self.tb.add_row([
+            green(rule_obj.crime), yellow(
+                confidence,
+            ), score, red(weight),
+        ])
 
         # add the weight
         self.weight_sum += weight
@@ -362,8 +376,12 @@ class XRule:
             print(green(bold("3.Native API Combination")), end="")
 
             print("")
-            print(f"\t\t ({rule_obj.x2n3n4_comb[0]['class']}, {rule_obj.x2n3n4_comb[0]['method']})")
-            print(f"\t\t ({rule_obj.x2n3n4_comb[1]['class']}, {rule_obj.x2n3n4_comb[1]['method']})")
+            print(
+                f"\t\t ({rule_obj.x2n3n4_comb[0]['class']}, {rule_obj.x2n3n4_comb[0]['method']})",
+            )
+            print(
+                f"\t\t ({rule_obj.x2n3n4_comb[1]['class']}, {rule_obj.x2n3n4_comb[1]['method']})",
+            )
         if rule_obj.check_item[3]:
 
             print(red(CHECK_LIST), end="")

@@ -16,7 +16,7 @@ class RuleObject:
         # the state of five stages
         self.check_item = [False, False, False, False, False]
 
-        with open(json_filename, "r") as json_file:
+        with open(json_filename) as json_file:
             self._json_obj = json.loads(json_file.read())
             self._crime = self._json_obj["crime"]
             self._x1_permission = self._json_obj["x1_permission"]

@@ -15,7 +15,7 @@ def expected_failed_data(request):
     return request.param
 
 
-class TestWeight(object):
+class TestWeight:
     def test_init(self, data):
         score_sum, weight_sum = data
 

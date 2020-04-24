@@ -3,19 +3,19 @@ from quark.utils.colors import bold, cyan, yellow, red, green
 
 
 def print_info(message):
-    print(bold(cyan("[*]")) + " {0}".format(message))
+    print(bold(cyan("[*]")) + f" {message}")
 
 
 def print_warning(message):
-    print(bold(yellow("[!]")) + " WARNING: {0}".format(message))
+    print(bold(yellow("[!]")) + f" WARNING: {message}")
 
 
 def print_error(message):
-    print(bold(red("[!]")) + " ERROR: {0}".format(message))
+    print(bold(red("[!]")) + f" ERROR: {message}")
 
 
 def print_success(message):
-    print(bold(green("[+]")) + " DONE: {0}".format(message))
+    print(bold(green("[+]")) + f" DONE: {message}")
 
 
 def table(header, rows):
