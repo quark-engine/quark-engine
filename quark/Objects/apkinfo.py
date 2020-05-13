@@ -39,6 +39,11 @@ class Apkinfo:
         :return: a generator of MethodClassAnalysis
         """
 
+        if class_name != ".*":
+            class_name = f'{class_name}$'
+        if method_name != ".*":
+            method_name = f'{method_name}$'
+        
         result = self.analysis.find_methods(class_name, method_name)
 
         if len(list(result)) > 0:
