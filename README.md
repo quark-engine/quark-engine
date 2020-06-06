@@ -65,3 +65,11 @@ Options:
   -r, --rule DIRECTORY  Rules folder need to be checked  [required]
   --help                Show this message and exit.
 ```
+
+### Analysis Reports
+
+Qaurk Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. 
+
+Also, we will soon give out our new detection rules! 
+
+![](https://i.imgur.com/Wi9mPtx.png)
