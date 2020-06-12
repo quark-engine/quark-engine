@@ -50,6 +50,26 @@ $ pipenv shell
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
 
+### Docker
+
+```bash
+docker build . -t quark
+```
+Examples:
+
+```bash
+docker run -it quark quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/ --summary
+```
+
+```bash
+docker run -v $(pwd):/tmp -it quark quark -a /tmp/ThaiCamera.apk -r rules/ --summary
+```
+```bash
+docker run -v $(pwd):/tmp -it quark bash
+quark -a /tmp/ThaiCamera.apk -r rules/ --summary
+```
+
+
 ### Usage
 
 ```bash
