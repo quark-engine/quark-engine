@@ -26,6 +26,7 @@ class XRule:
 
         :param apk: the filename of the apk.
         """
+        self.apk_path = apk
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -33,6 +34,9 @@ class XRule:
 
         self.same_sequence_show_up = []
         self.same_operation = []
+
+        # Json report
+        self.json_report = []
 
         # Pretty Table Output
         self.tb = PrettyTable()
@@ -325,7 +329,26 @@ class XRule:
         :param rule_obj: the instance of the RuleObject. 
         :return: None
         """
-        pass
+        # Count the confidence
+        confidence = str(rule_obj.check_item.count(True) * 20) + "%"
+        conf = rule_obj.check_item.count(True)
+        weight = rule_obj.get_score(conf)
+        score = rule_obj.yscore
+
+        crime = {
+            "rule": rule_obj.crime,
+            "permissions": rule_obj.x1_permission,
+            "methods": rule_obj.x2n3n4_comb,
+            "confidence": confidence,
+            "score": score,
+            "weight": weight
+        }
+        self.json_report.append(crime)
+
+        # add the weight
+        self.weight_sum += weight
+        # add the score
+        self.score_sum += score
 
         
             

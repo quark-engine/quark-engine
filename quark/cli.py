@@ -1,4 +1,5 @@
 import os
+import json
 
 import click
 from tqdm import tqdm
@@ -13,6 +14,7 @@ logo()
 
 
 @click.command()
+@click.option("--jreport", "-j", is_flag=True, help='show json report')
 @click.option("--summary", "-s", is_flag=True, help='show summary report')
 @click.option("--detail", "-d", is_flag=True, help="show detail report")
 @click.option(
@@ -23,9 +25,9 @@ logo()
     "-r", "--rule", help="Rules folder need to be checked",
     type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True,
 )
-def entry_point(summary, detail, apk, rule):
+def entry_point(summary, detail, jreport, apk, rule):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
-
+      
     if summary:
         # show summary report
         # Load APK
@@ -67,6 +69,29 @@ def entry_point(summary, detail, apk, rule):
 
             data.show_detail_report(rule_checker)
             print_success("OK")
+    
+    if jreport:
+        # show json report
+        
+        # Load APK
+        data = XRule(apk)
+
+        # Load rules
+        rules_list = os.listdir(rule)
+
+        for single_rule in tqdm(rules_list):
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = RuleObject(rulepath)
+
+            # Run the checker
+            data.run(rule_checker)
+
+            data.show_json_report(rule_checker, False)
+
+        w = Weight(data.score_sum, data.weight_sum)
+        print_warning(w.calculate())
+        print_info("Total Score: " + str(data.score_sum))
+        print(json.dumps(data.json_report, indent=4))
 
 
 if __name__ == '__main__':
