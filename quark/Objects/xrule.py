@@ -26,7 +26,6 @@ class XRule:
 
         :param apk: the filename of the apk.
         """
-
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -318,6 +317,19 @@ class XRule:
         else:
             # Exit if the level 4 stage check fails.
             return
+
+    def show_json_report(self, rule_obj, output):
+        """
+        Show the json report
+
+        :param rule_obj: the instance of the RuleObject. 
+        :return: None
+        """
+        pass
+
+        
+            
+        
 
     def show_summary_report(self, rule_obj):
         """
