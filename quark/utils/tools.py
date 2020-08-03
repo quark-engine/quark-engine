@@ -1,5 +1,6 @@
-import os
+import json
 from filehash import FileHash
+
 
 def remove_dup_list(element):
     """
@@ -7,17 +8,37 @@ def remove_dup_list(element):
     """
     return list(set(element))
 
-def output_json_report(name):
+
+def write_json_report(report_path, content):
     """
-    Output the json report as a json file and name it with given name
+    Write file as json
+
+    :param report_path: the path of report file
+    :param content: content of the report
+    :return: if write file succeed return True, otherwise return False
     """
-    pass
+    # Verify if content is dict
+    if not isinstance(content, dict):
+        return False
+
+    # Write content as json file
+    try:
+        with open(report_path, "w+") as report_file:
+            json.dump(content, report_file, indent=4)
+    except OSError:
+        return False
+
+    report_file.close()
+
+    return True
+
+
 def hash_apk(apk):
     """
-    Hash apk name
+    Hash apk file
 
     :param apk: the path of the apk file
     :return hashed name of apk file
     """
-    sha512 = FileHash("sha512")
-    return sha512.hash_file(apk)
+    md5 = FileHash("md5")
+    return md5.hash_file(apk)

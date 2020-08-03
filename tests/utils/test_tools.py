@@ -1,3 +1,5 @@
+import json
+
 from quark.utils import tools
 
 
@@ -13,12 +15,18 @@ def test_remove_dup_list():
     assert len(tools.remove_dup_list([2.0, 30, 4.0, 2.0])) == 3
     assert tools.remove_dup_list([1, 2, 3]) == [1, 2, 3]
 
-def test_output_json_report():
-    pass
+
+def test_write_json_report(tmpdir):
+    content_dict = {
+        "test": "test",
+    }
+    tfile = tmpdir.join('test_write_report.json')
+    content_json = json.dumps(content_dict)
+    assert tools.write_json_report(tfile, content_dict) == True
+    assert tools.write_json_report(tfile, "asdf") == False
+
 
 def test_hash_apk():
     apk = "quark/sample/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
     hashed = tools.hash_apk(apk)
-    assert hashed == "228e236646ec70aa24e7e1c7b1ec81b4496d2fb16a2b7ae0dd843c704df14a5a88ef471c217125391084b9137bffdcf8afdd2ba7a581ea0bf28cfe15dcea18e2"
-    
-    
+    assert hashed == "1e80ac341a665e8984f07bec7f351e18"

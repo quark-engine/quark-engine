@@ -188,8 +188,8 @@ class XRule:
             return False
 
     def check_parameter(
-        self, common_method,
-        first_method_name, second_method_name,
+            self, common_method,
+            first_method_name, second_method_name,
     ):
         """
         check the usage of the same parameter between two method.
@@ -322,11 +322,11 @@ class XRule:
             # Exit if the level 4 stage check fails.
             return
 
-    def show_json_report(self, rule_obj, output):
+    def show_json_report(self, rule_obj):
         """
         Show the json report
 
-        :param rule_obj: the instance of the RuleObject. 
+        :param rule_obj: the instance of the RuleObject.
         :return: None
         """
         # Count the confidence
@@ -341,7 +341,7 @@ class XRule:
             "methods": rule_obj.x2n3n4_comb,
             "confidence": confidence,
             "score": score,
-            "weight": weight
+            "weight": weight,
         }
         self.json_report.append(crime)
 
@@ -349,10 +349,6 @@ class XRule:
         self.weight_sum += weight
         # add the score
         self.score_sum += score
-
-        
-            
-        
 
     def show_summary_report(self, rule_obj):
         """
