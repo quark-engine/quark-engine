@@ -8,11 +8,11 @@ black = "*"
 
 [packages]
 prettytable = "*"
-androguard = {editable = true,git = "https://github.com/androguard/androguard"}
 tqdm = "*"
 colorama = "*"
 quark-engine = {editable = true,path = "."}
 click = "*"
+androguard = "==3.4.0a1"
 
 [requires]
 python_version = "3.7"

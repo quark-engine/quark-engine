@@ -1,11 +1,13 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+from quark import __version__
+
+with open("README.md") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username
-    version="20.01",
+    version=__version__,
     author="JunWei Song, KunYu Chen",
     author_email="sungboss2004@gmail.com",
     description="An Obfuscation-Neglect Android Malware Scoring System",
@@ -21,4 +23,11 @@ setuptools.setup(
         "Topic :: Security",
     ],
     python_requires=">=3.7",
+    install_requires=[
+        "prettytable",
+        "androguard==3.4.0a1",
+        "tqdm",
+        "colorama",
+        "click",
+    ],
 )

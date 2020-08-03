@@ -16,7 +16,8 @@ logging.basicConfig(
     level=logging.DEBUG,
     filename=LOG_FILENAME,
     filemode='w',
-    datefmt='%Y-%m-%d %H:%M:%S')
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 log = logging.getLogger(__name__)
 
 
@@ -74,7 +75,7 @@ class PyEval:
         for reg in reg_list:
             index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
-            if len(obj_stack) > 0:
+            if obj_stack:
                 var_obj = self.table_obj.pop(index)
                 value_of_reg_list.append(var_obj.value)
 
@@ -82,7 +83,7 @@ class PyEval:
         for reg in reg_list:
             index = int(reg[1:])
             obj_stack = self.table_obj.get_obj_list(index)
-            if len(obj_stack) > 0:
+            if obj_stack:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
                 var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"
@@ -311,10 +312,16 @@ class PyEval:
 
         try:
 
-            array_obj = self.table_obj.get_obj_list(int(instruction[2][1])).pop()
-            array_index = self.table_obj.get_obj_list(int(instruction[3][1])).pop()
+            array_obj = self.table_obj.get_obj_list(
+                int(instruction[2][1]),
+            ).pop()
+            array_index = self.table_obj.get_obj_list(
+                int(instruction[3][1]),
+            ).pop()
 
-            variable_object = VarabileObject(reg, f"{array_obj.value}[{array_index.value}]")
+            variable_object = VarabileObject(
+                reg, f"{array_obj.value}[{array_index.value}]",
+            )
             self.table_obj.insert(index, variable_object)
 
         except IndexError as e:

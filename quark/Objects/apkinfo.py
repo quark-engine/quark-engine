@@ -18,7 +18,7 @@ class Apkinfo:
         self.apk_filename = os.path.basename(apk_filepath)
 
     def __repr__(self):
-        return "<Apkinfo-APK:{}>".format(self.apk_filename)
+        return f"<Apkinfo-APK:{self.apk_filename}>"
 
     @property
     def permissions(self):
@@ -46,7 +46,7 @@ class Apkinfo:
         
         result = self.analysis.find_methods(class_name, method_name)
 
-        if len(list(result)) > 0:
+        if list(result):
             return self.analysis.find_methods(class_name, method_name)
 
         return None
@@ -87,7 +87,7 @@ class Apkinfo:
 
         result = self.analysis.find_methods(class_name, method_name)
 
-        if len(list(result)) > 0:
+        if list(result):
             for method in self.analysis.find_methods(class_name, method_name):
                 for _, ins in method.get_method().get_instructions_idx():
                     bytecode_obj = None
@@ -97,19 +97,26 @@ class Apkinfo:
                     length_operands = len(ins.get_operands())
                     if length_operands == 0:
                         # No register, no parameter
-                        bytecode_obj = BytecodeObject(ins.get_name(), None, None)
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), None, None,
+                        )
                     elif length_operands == 1:
                         # Only one register
 
-                        reg_list.append(f"v{ins.get_operands()[length_operands - 1][1]}")
-                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, None)
+                        reg_list.append(
+                            f"v{ins.get_operands()[length_operands - 1][1]}",
+                        )
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, None,
+                        )
                     elif length_operands >= 2:
                         # the last one is parameter, the other are registers.
 
                         parameter = ins.get_operands()[length_operands - 1]
                         for i in range(0, length_operands - 1):
                             reg_list.append(
-                                "v" + str(ins.get_operands()[i][1]))
+                                "v" + str(ins.get_operands()[i][1]),
+                            )
                         if len(parameter) == 3:
                             # method or value
                             parameter = parameter[2]
@@ -117,6 +124,8 @@ class Apkinfo:
                             # Operand.OFFSET
                             parameter = parameter[1]
 
-                        bytecode_obj = BytecodeObject(ins.get_name(), reg_list, parameter)
+                        bytecode_obj = BytecodeObject(
+                            ins.get_name(), reg_list, parameter,
+                        )
 
                     yield bytecode_obj

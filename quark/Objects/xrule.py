@@ -11,11 +11,11 @@ from quark.utils.colors import (
     red,
     bold,
     yellow,
-    green
+    green,
 )
 
 MAX_SEARCH_LAYER = 3
-CHECK_LIST = "".join(["\t[" + u"\u2713" + "]"])
+CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
 
 
 class XRule:
@@ -45,7 +45,9 @@ class XRule:
         # Sum of the each rule
         self.score_sum = 0
 
-    def find_previous_method(self, base_method, top_method, pre_method_list):
+        self.level_2_reuslt = []
+
+    def find_previous_method(self, base_method, top_method, pre_method_list, visited_methods=None):
         """
         Find the previous method based on base method before top method.
         This will append the method into pre_method_list.
@@ -53,10 +55,15 @@ class XRule:
         :param base_method: the base function which needs to be searched.
         :param top_method: the top-level function which calls the basic function.
         :param pre_method_list: list is used to track each function.
+        :param visited_methods: set with tested method.
         :return: None
         """
+        if visited_methods is None:
+            visited_methods = set()
+
         class_name, method_name = base_method
         method_set = self.apkinfo.upperfunc(class_name, method_name)
+        visited_methods.add(base_method)
 
         if method_set is not None:
 
@@ -64,11 +71,12 @@ class XRule:
                 pre_method_list.append(base_method)
             else:
                 for item in method_set:
-                    # prevent some functions from looking for themselves.
-                    if item == base_method:
+                    # prevent to test the tested methods.
+                    if item in visited_methods:
                         continue
                     self.find_previous_method(
-                        item, top_method, pre_method_list)
+                        item, top_method, pre_method_list, visited_methods,
+                    )
 
     def find_intersection(self, list1, list2, depth=1):
         """
@@ -81,11 +89,11 @@ class XRule:
         :return: a set of list1 ∩ list2 or None.
         """
         # Check both lists are not null
-        if len(list1) > 0 and len(list2) > 0:
+        if list1 and list2:
 
             # find ∩
             result = set(list1).intersection(list2)
-            if len(result) > 0:
+            if result:
 
                 return result
             else:
@@ -103,12 +111,16 @@ class XRule:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
                         next_list1.extend(
                             self.apkinfo.upperfunc(
-                                item[0], item[1]))
+                                item[0], item[1],
+                            ),
+                        )
                 for item in list2:
                     if self.apkinfo.upperfunc(item[0], item[1]) is not None:
                         next_list2.extend(
                             self.apkinfo.upperfunc(
-                                item[0], item[1]))
+                                item[0], item[1],
+                            ),
+                        )
 
                 return self.find_intersection(next_list1, next_list2, depth)
         else:
@@ -128,7 +140,8 @@ class XRule:
         second_class_name, second_method_name = second_func
 
         method_set = self.apkinfo.find_method(
-            same_class_name, same_method_name)
+            same_class_name, same_method_name,
+        )
         seq_table = []
 
         if method_set is not None:
@@ -138,7 +151,8 @@ class XRule:
                     to_md_name = str(call.name)
 
                     if (to_md_name == first_method_name) or (
-                            to_md_name == second_method_name):
+                            to_md_name == second_method_name
+                    ):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
@@ -170,8 +184,10 @@ class XRule:
         else:
             return False
 
-    def check_parameter(self, common_method,
-                        first_method_name, second_method_name):
+    def check_parameter(
+        self, common_method,
+        first_method_name, second_method_name,
+    ):
         """
         check the usage of the same parameter between two method.
 
@@ -188,7 +204,7 @@ class XRule:
         common_class_name, common_method_name = common_method
 
         for bytecode_obj in self.apkinfo.get_method_bytecode(
-                common_class_name, common_method_name
+                common_class_name, common_method_name,
         ):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
             instruction = [bytecode_obj.mnemonic]
@@ -209,7 +225,7 @@ class XRule:
                 matching = [
                     s for s in val_obj.called_by_func if all(xs in s for xs in matchers)
                 ]
-                if len(matching) > 0:
+                if matching:
                     state = True
                     break
         return state
@@ -225,57 +241,83 @@ class XRule:
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.apkinfo.permissions)):
             rule_obj.check_item[0] = True
+        else:
+            # Exit if the level 1 stage check fails.
+            return
 
         # Level 2
         test_md0 = rule_obj.x2n3n4_comb[0]["method"]
         test_cls0 = rule_obj.x2n3n4_comb[0]["class"]
-        if self.apkinfo.find_method(test_cls0, test_md0) is not None:
+        test_md1 = rule_obj.x2n3n4_comb[1]["method"]
+        test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
+
+        first_method_result = self.apkinfo.find_method(test_cls0, test_md0)
+        second_method_result = self.apkinfo.find_method(test_cls1, test_md1)
+
+        self.level_2_reuslt.clear()
+
+        if first_method_result is not None or second_method_result is not None:
             rule_obj.check_item[1] = True
-            # Level 3
-            test_md1 = rule_obj.x2n3n4_comb[1]["method"]
-            test_cls1 = rule_obj.x2n3n4_comb[1]["class"]
-            if self.apkinfo.find_method(test_cls1, test_md1) is not None:
-                rule_obj.check_item[2] = True
 
-                # Level 4
-                # [('class_a','method_a'),('class_b','method_b')]
-                # Looking for the first layer of the upperfunction
-                upperfunc0 = self.apkinfo.upperfunc(test_cls0, test_md0)
-                upperfunc1 = self.apkinfo.upperfunc(test_cls1, test_md1)
+            if first_method_result is not None:
+                self.level_2_reuslt.append((test_cls0, test_md0))
+            if second_method_result is not None:
+                self.level_2_reuslt.append((test_cls1, test_md1))
+        else:
+            # Exit if the level 2 stage check fails.
+            return
 
-                same = self.find_intersection(upperfunc0, upperfunc1)
-                if same is not None:
+        # Level 3
+        if first_method_result is not None and second_method_result is not None:
+            rule_obj.check_item[2] = True
+        else:
+            # Exit if the level 3 stage check fails.
+            return
 
-                    # Clear the results from the previous rule
-                    self.same_sequence_show_up.clear()
-                    self.same_operation.clear()
+        # Level 4
+        # [('class_a','method_a'),('class_b','method_b')]
+        # Looking for the first layer of the upperfunction
+        upperfunc0 = self.apkinfo.upperfunc(test_cls0, test_md0)
+        upperfunc1 = self.apkinfo.upperfunc(test_cls1, test_md1)
 
-                    for common_method in same:
+        same = self.find_intersection(upperfunc0, upperfunc1)
 
-                        base_method_0 = (test_cls0, test_md0)
-                        base_method_1 = (test_cls1, test_md1)
-                        # Clear the results from the previous common_method
-                        self.pre_method0.clear()
-                        self.pre_method1.clear()
-                        self.find_previous_method(
-                            base_method_0, common_method, self.pre_method0)
-                        self.find_previous_method(
-                            base_method_1, common_method, self.pre_method1)
-                        # TODO It may have many previous method in
-                        # self.pre_method
-                        pre_0 = self.pre_method0[0]
-                        pre_1 = self.pre_method1[0]
+        if same is not None:
 
-                        if self.check_sequence(common_method, pre_0, pre_1):
-                            rule_obj.check_item[3] = True
-                            self.same_sequence_show_up.append(common_method)
+            # Clear the results from the previous rule
+            self.same_sequence_show_up.clear()
+            self.same_operation.clear()
 
-                            # Level 5
-                            if self.check_parameter(
-                                    common_method, str(pre_0[1]), str(pre_1[1])
-                            ):
-                                rule_obj.check_item[4] = True
-                                self.same_operation.append(common_method)
+            for common_method in same:
+
+                base_method_0 = (test_cls0, test_md0)
+                base_method_1 = (test_cls1, test_md1)
+                # Clear the results from the previous common_method
+                self.pre_method0.clear()
+                self.pre_method1.clear()
+                self.find_previous_method(
+                    base_method_0, common_method, self.pre_method0,
+                )
+                self.find_previous_method(
+                    base_method_1, common_method, self.pre_method1,
+                )
+                # TODO It may have many previous method in
+                # self.pre_method
+                pre_0 = self.pre_method0[0]
+                pre_1 = self.pre_method1[0]
+
+                if self.check_sequence(common_method, pre_0, pre_1):
+                    rule_obj.check_item[3] = True
+                    self.same_sequence_show_up.append(common_method)
+
+                    # Level 5
+                    if self.check_parameter(common_method, str(pre_0[1]), str(pre_1[1])):
+                        rule_obj.check_item[4] = True
+                        self.same_operation.append(common_method)
+
+        else:
+            # Exit if the level 4 stage check fails.
+            return
 
     def show_summary_report(self, rule_obj):
         """
@@ -290,8 +332,11 @@ class XRule:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        self.tb.add_row([green(rule_obj.crime), yellow(
-            confidence), score, red(weight)])
+        self.tb.add_row([
+            green(rule_obj.crime), yellow(
+                confidence,
+            ), score, red(weight),
+        ])
 
         # add the weight
         self.weight_sum += weight
@@ -318,35 +363,41 @@ class XRule:
             print("")
 
             for permission in rule_obj.x1_permission:
-                print("\t\t" + permission)
+                print(f"\t\t {permission}")
         if rule_obj.check_item[1]:
             print(red(CHECK_LIST), end="")
             print(green(bold("2.Native API Usage")), end="")
             print("")
-            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
+
+            for class_name, method_name in self.level_2_reuslt:
+                print(f"\t\t ({class_name}, {method_name})")
         if rule_obj.check_item[2]:
             print(red(CHECK_LIST), end="")
             print(green(bold("3.Native API Combination")), end="")
 
             print("")
-            print("\t\t" + rule_obj.x2n3n4_comb[0]["method"])
-            print("\t\t" + rule_obj.x2n3n4_comb[1]["method"])
+            print(
+                f"\t\t ({rule_obj.x2n3n4_comb[0]['class']}, {rule_obj.x2n3n4_comb[0]['method']})",
+            )
+            print(
+                f"\t\t ({rule_obj.x2n3n4_comb[1]['class']}, {rule_obj.x2n3n4_comb[1]['method']})",
+            )
         if rule_obj.check_item[3]:
 
             print(red(CHECK_LIST), end="")
             print(green(bold("4.Native API Sequence")), end="")
 
             print("")
-            print("\t\t" + "Sequence show up in:")
-            for seq_methon in self.same_sequence_show_up:
-                print("\t\t" + repr(seq_methon))
+            print(f"\t\t Sequence show up in:")
+            for seq_method in self.same_sequence_show_up:
+                print(f"\t\t {repr(seq_method)}")
         if rule_obj.check_item[4]:
 
             print(red(CHECK_LIST), end="")
             print(green(bold("5.Native API Use Same Parameter")), end="")
             print("")
             for seq_operation in self.same_operation:
-                print("\t\t" + repr(seq_operation))
+                print(f"\t\t {repr(seq_operation)}")
 
 
 if __name__ == "__main__":

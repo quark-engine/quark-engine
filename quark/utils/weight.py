@@ -29,7 +29,7 @@ class Weight:
 
         total_weight = self.weight_sum
 
-        if 0 < total_weight <= level_one_threshold:
+        if 0 <= total_weight <= level_one_threshold:
             return green(LEVEL_INFO.LOW.value)
 
         elif level_one_threshold < total_weight <= level_two_threshold:
