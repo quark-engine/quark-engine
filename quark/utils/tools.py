@@ -11,7 +11,7 @@ def remove_dup_list(element):
 
 def write_json_report(report_path, content):
     """
-    Write file as json
+    Output reports in json format.
 
     :param report_path: the path of report file
     :param content: content of the report
@@ -35,7 +35,7 @@ def write_json_report(report_path, content):
 
 def hash_apk(apk):
     """
-    Hash apk file
+    Hash the apk file to get the MD5.
 
     :param apk: the path of the apk file
     :return hashed name of apk file
