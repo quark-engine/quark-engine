@@ -22,8 +22,11 @@ def test_write_json_report(tmpdir):
     }
     tfile = tmpdir.join('test_write_report.json')
     content_json = json.dumps(content_dict)
-    assert tools.write_json_report(tfile, content_dict) == True
-    assert tools.write_json_report(tfile, "asdf") == False
+    assert tools.write_json_report(tfile, content_dict)
+    assert not tools.write_json_report(tfile, "asdf")
+    with open(tfile) as f:
+        assert content_dict == json.load(f)
+        f.close()
 
 
 def test_hash_apk():
