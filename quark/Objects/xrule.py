@@ -324,7 +324,7 @@ class XRule:
 
     def show_json_report(self, rule_obj):
         """
-        Show the json report
+        Show the json report.
 
         :param rule_obj: the instance of the RuleObject.
         :return: None
