@@ -13,7 +13,6 @@ colorama = "*"
 quark-engine = {editable = true,path = "."}
 click = "*"
 androguard = "==3.4.0a1"
-filehash = "*"
 
 [requires]
 python_version = "3.7"
