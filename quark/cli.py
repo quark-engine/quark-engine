@@ -91,11 +91,12 @@ def entry_point(summary, detail, apk, rule, output):
             data.show_json_report(rule_checker)
 
         json_report = data.get_json_report()
-        print(json.dumps(json_report, indent=4))
 
         with open(output, "w+") as f:
             json.dump(json_report, f, indent=4)
             f.close()
+
+        print(f"Output report to > {output}")
 
 
 if __name__ == '__main__':
