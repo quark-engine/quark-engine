@@ -344,11 +344,11 @@ class XRule:
                 warning = level
 
         json_report = {
-            "sample": self.apk_hashed_code,
-            "apk-name": self.apk_name,
+            "md5": self.apk_hashed_code,
+            "apk_name": self.apk_name,
             "size": self.apk_size,
-            "warnning": warning,
-            "summary-score": self.score_sum,
+            "threat_level": warning,
+            "total_score": self.score_sum,
             "crimes": self.json_report,
         }
 
