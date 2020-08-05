@@ -1,5 +1,5 @@
 import json
-from filehash import FileHash
+import hashlib
 
 
 def remove_dup_list(element):
@@ -40,5 +40,8 @@ def hash_apk(apk):
     :param apk: the path of the apk file
     :return hashed name of apk file
     """
-    md5 = FileHash("md5")
-    return md5.hash_file(apk)
+    md5 = hashlib.md5()
+    with open(apk, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            md5.update(chunk)
+    return md5.hexdigest()
