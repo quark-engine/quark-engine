@@ -1,5 +1,3 @@
-import json
-
 from quark.utils import tools
 
 
@@ -14,19 +12,6 @@ def test_remove_dup_list():
     assert tools.remove_dup_list([2.0, 30, 4.0, 2.0]) == [2.0, 4.0, 30]
     assert len(tools.remove_dup_list([2.0, 30, 4.0, 2.0])) == 3
     assert tools.remove_dup_list([1, 2, 3]) == [1, 2, 3]
-
-
-def test_write_json_report(tmpdir):
-    content_dict = {
-        "test": "test",
-    }
-    tfile = tmpdir.join('test_write_report.json')
-    content_json = json.dumps(content_dict)
-    assert tools.write_json_report(tfile, content_dict)
-    assert not tools.write_json_report(tfile, "asdf")
-    with open(tfile) as f:
-        assert content_dict == json.load(f)
-        f.close()
 
 
 def test_hash_apk():
