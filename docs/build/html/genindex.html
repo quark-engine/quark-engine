@@ -1,9 +1,7 @@
 
 
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -13,27 +11,29 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
 </head>
@@ -49,7 +49,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> quark-engine
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> quark-engine
           
 
           
@@ -75,6 +75,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -86,6 +87,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installing Quark-Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_index.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quark_inside_index.html">Quark-Engine Inside</a></li>
@@ -95,6 +97,7 @@
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -133,7 +136,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Index</li>
     
@@ -335,6 +338,47 @@
 </li>
       <li><a href="quark.utils.html#quark.utils.weight.LEVEL_INFO.Moderate">Moderate (quark.utils.weight.LEVEL_INFO attribute)</a>
 </li>
+      <li>
+    module
+
+      <ul>
+        <li><a href="quark.html#module-quark">quark</a>
+</li>
+        <li><a href="quark.html#module-quark.cli">quark.cli</a>
+</li>
+        <li><a href="quark.Evaluator.html#module-quark.Evaluator">quark.Evaluator</a>
+</li>
+        <li><a href="quark.Evaluator.html#module-quark.Evaluator.pyeval">quark.Evaluator.pyeval</a>
+</li>
+        <li><a href="quark.html#module-quark.logo">quark.logo</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects">quark.Objects</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.apkinfo">quark.Objects.apkinfo</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.bytecodeobject">quark.Objects.bytecodeobject</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.ruleobject">quark.Objects.ruleobject</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.tableobject">quark.Objects.tableobject</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.variableobject">quark.Objects.variableobject</a>
+</li>
+        <li><a href="quark.Objects.html#module-quark.Objects.xrule">quark.Objects.xrule</a>
+</li>
+        <li><a href="quark.utils.html#module-quark.utils">quark.utils</a>
+</li>
+        <li><a href="quark.utils.html#module-quark.utils.colors">quark.utils.colors</a>
+</li>
+        <li><a href="quark.utils.html#module-quark.utils.out">quark.utils.out</a>
+</li>
+        <li><a href="quark.utils.html#module-quark.utils.tools">quark.utils.tools</a>
+</li>
+        <li><a href="quark.utils.html#module-quark.utils.weight">quark.utils.weight</a>
+</li>
+        <li><a href="quark.html#module-quark.version">quark.version</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.Evaluator.html#quark.Evaluator.pyeval.PyEval.MOVE_RESULT">MOVE_RESULT() (quark.Evaluator.pyeval.PyEval method)</a>
@@ -381,44 +425,134 @@
 <h2 id="Q">Q</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="quark.html#module-quark">quark (module)</a>
+      <li>
+    quark
+
+      <ul>
+        <li><a href="quark.html#module-quark">module</a>
 </li>
-      <li><a href="quark.html#module-quark.cli">quark.cli (module)</a>
+      </ul></li>
+      <li>
+    quark.cli
+
+      <ul>
+        <li><a href="quark.html#module-quark.cli">module</a>
 </li>
-      <li><a href="quark.Evaluator.html#module-quark.Evaluator">quark.Evaluator (module)</a>
+      </ul></li>
+      <li>
+    quark.Evaluator
+
+      <ul>
+        <li><a href="quark.Evaluator.html#module-quark.Evaluator">module</a>
 </li>
-      <li><a href="quark.Evaluator.html#module-quark.Evaluator.pyeval">quark.Evaluator.pyeval (module)</a>
+      </ul></li>
+      <li>
+    quark.Evaluator.pyeval
+
+      <ul>
+        <li><a href="quark.Evaluator.html#module-quark.Evaluator.pyeval">module</a>
 </li>
-      <li><a href="quark.html#module-quark.logo">quark.logo (module)</a>
+      </ul></li>
+      <li>
+    quark.logo
+
+      <ul>
+        <li><a href="quark.html#module-quark.logo">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects">quark.Objects (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects.apkinfo">quark.Objects.apkinfo (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects.apkinfo
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.apkinfo">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects.bytecodeobject">quark.Objects.bytecodeobject (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects.bytecodeobject
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.bytecodeobject">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects.ruleobject">quark.Objects.ruleobject (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects.ruleobject
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.ruleobject">module</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="quark.Objects.html#module-quark.Objects.tableobject">quark.Objects.tableobject (module)</a>
+      <li>
+    quark.Objects.tableobject
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.tableobject">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects.variableobject">quark.Objects.variableobject (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects.variableobject
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.variableobject">module</a>
 </li>
-      <li><a href="quark.Objects.html#module-quark.Objects.xrule">quark.Objects.xrule (module)</a>
+      </ul></li>
+      <li>
+    quark.Objects.xrule
+
+      <ul>
+        <li><a href="quark.Objects.html#module-quark.Objects.xrule">module</a>
 </li>
-      <li><a href="quark.utils.html#module-quark.utils">quark.utils (module)</a>
+      </ul></li>
+      <li>
+    quark.utils
+
+      <ul>
+        <li><a href="quark.utils.html#module-quark.utils">module</a>
 </li>
-      <li><a href="quark.utils.html#module-quark.utils.colors">quark.utils.colors (module)</a>
+      </ul></li>
+      <li>
+    quark.utils.colors
+
+      <ul>
+        <li><a href="quark.utils.html#module-quark.utils.colors">module</a>
 </li>
-      <li><a href="quark.utils.html#module-quark.utils.out">quark.utils.out (module)</a>
+      </ul></li>
+      <li>
+    quark.utils.out
+
+      <ul>
+        <li><a href="quark.utils.html#module-quark.utils.out">module</a>
 </li>
-      <li><a href="quark.utils.html#module-quark.utils.tools">quark.utils.tools (module)</a>
+      </ul></li>
+      <li>
+    quark.utils.tools
+
+      <ul>
+        <li><a href="quark.utils.html#module-quark.utils.tools">module</a>
 </li>
-      <li><a href="quark.utils.html#module-quark.utils.weight">quark.utils.weight (module)</a>
+      </ul></li>
+      <li>
+    quark.utils.weight
+
+      <ul>
+        <li><a href="quark.utils.html#module-quark.utils.weight">module</a>
 </li>
-      <li><a href="quark.html#module-quark.version">quark.version (module)</a>
+      </ul></li>
+      <li>
+    quark.version
+
+      <ul>
+        <li><a href="quark.html#module-quark.version">module</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -540,11 +674,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2019, quark-engine team
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -555,7 +697,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {
