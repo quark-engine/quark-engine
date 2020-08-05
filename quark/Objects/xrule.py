@@ -1,5 +1,6 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
+import os
 import copy
 import operator
 
@@ -7,6 +8,8 @@ from prettytable import PrettyTable
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.apkinfo import Apkinfo
+from quark.utils.tools import hash_apk
+from quark.utils.weight import Weight
 from quark.utils.colors import (
     red,
     bold,
@@ -27,6 +30,9 @@ class XRule:
         :param apk: the filename of the apk.
         """
         self.apk_path = apk
+        self.apk_name = os.path.basename(apk)
+        self.apk_size = os.path.getsize(apk)
+        self.apk_hashed_code = hash_apk(apk)
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -322,6 +328,32 @@ class XRule:
             # Exit if the level 4 stage check fails.
             return
 
+    def get_json_report(self):
+        """
+        Get json report including summary and detail as json format
+
+        :return: json report
+        """
+
+        w = Weight(self.score_sum, self.weight_sum)
+        warning = w.calculate()
+
+        # Filting color code in warning
+        for level in ["Low Risk", "Moderate Risk", "High Risk"]:
+            if level in warning:
+                warning = level
+
+        json_report = {
+            "sample": self.apk_hashed_code,
+            "apk-name": self.apk_name,
+            "size": self.apk_size,
+            "warnning": warning,
+            "summary-score": self.score_sum,
+            "crimes": self.json_report,
+        }
+
+        return json_report
+
     def show_json_report(self, rule_obj):
         """
         Show the json report
@@ -336,7 +368,7 @@ class XRule:
         score = rule_obj.yscore
 
         crime = {
-            "rule": rule_obj.crime,
+            "crime": rule_obj.crime,
             "permissions": rule_obj.x1_permission,
             "methods": rule_obj.x2n3n4_comb,
             "confidence": confidence,
