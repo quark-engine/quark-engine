@@ -7,6 +7,15 @@ Quark-Engine usage example
 --------------------------
 
 This is the guidance for using quark-engine as a Python module
+    
+Install
+#########
+::
+
+    $ pip3 install quark-engine
+
+Implement
+#########
 
     1. import module::
 
