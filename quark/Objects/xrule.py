@@ -30,7 +30,7 @@ class XRule:
         :param apk: the filename of the apk.
         """
         self.apk_path = apk
-        self.apk_name = os.path.basename(apk)
+        self.apk_filename = os.path.basename(apk)
         self.apk_size = os.path.getsize(apk)
         self.apk_hashed_code = hash_apk(apk)
         self.apkinfo = Apkinfo(apk)
@@ -338,15 +338,15 @@ class XRule:
         w = Weight(self.score_sum, self.weight_sum)
         warning = w.calculate()
 
-        # Filting color code in warning
+        # Filting color code in threat level
         for level in ["Low Risk", "Moderate Risk", "High Risk"]:
             if level in warning:
                 warning = level
 
         json_report = {
             "md5": self.apk_hashed_code,
-            "apk_name": self.apk_name,
-            "size": self.apk_size,
+            "apk_filename": self.apk_filename,
+            "size_bytes": self.apk_size,
             "threat_level": warning,
             "total_score": self.score_sum,
             "crimes": self.json_report,
@@ -367,13 +367,34 @@ class XRule:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
+        # Assign level 4 to 5 examine result if exist
+        sequnce_show_up = None
+        same_operation_show_up = None
+
+        if self.same_operation:
+            sequnce_show_up = [
+                {
+                    "class": repr(seq_method[0]),
+                    "method": repr(seq_method[1]),
+                } for seq_method in self.same_sequence_show_up
+            ]
+        if self.same_operation:
+            same_operation_show_up = [
+                {
+                    "class": repr(same_method[0]),
+                    "method": repr(same_method[1]),
+                } for same_method in self.same_operation
+            ]
+
         crime = {
             "crime": rule_obj.crime,
-            "permissions": rule_obj.x1_permission,
-            "methods": rule_obj.x2n3n4_comb,
-            "confidence": confidence,
             "score": score,
             "weight": weight,
+            "confidence": confidence,
+            "permissions": rule_obj.x1_permission,
+            "methods": rule_obj.x2n3n4_comb,
+            "sequnce_show_up": sequnce_show_up,
+            "same_operation_show_up": same_operation_show_up,
         }
         self.json_report.append(crime)
 
