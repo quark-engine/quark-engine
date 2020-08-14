@@ -14,7 +14,8 @@ def apkinfo(scope="function"):
 class TestApkinfo():
 
     def test_filename(self, apkinfo):
-        assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        assert apkinfo.filename == \
+            "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
     def test_size(self, apkinfo):
         assert apkinfo.size == 266155
