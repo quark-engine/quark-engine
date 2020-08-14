@@ -1,6 +1,7 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
 import os
+import hashlib
 
 from androguard.misc import AnalyzeAPK
 
@@ -16,9 +17,41 @@ class Apkinfo:
         # return the APK, list of DalvikVMFormat, and Analysis objects
         self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
         self.apk_filename = os.path.basename(apk_filepath)
+        self.apk_filepath = apk_filepath
 
     def __repr__(self):
         return f"<Apkinfo-APK:{self.apk_filename}>"
+
+    @property
+    def filename(self):
+        """
+        Return filename of apk.
+
+        :return: a string of apk filename
+        """
+        return os.path.basename(self.apk_filepath)
+
+    @property
+    def size(self):
+        """
+        Return file size of apk file by bytes.
+
+        :return: a number of size bytes
+        """
+        return os.path.getsize(self.apk_filepath)
+
+    @property
+    def md5(self):
+        """
+        Return hashed md5 checksum for apk file.
+
+        :return: String of md5 checksum for hashed apk file
+        """
+        md5 = hashlib.md5()
+        with open(self.apk_filepath, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                md5.update(chunk)
+        return md5.hexdigest()
 
     @property
     def permissions(self):

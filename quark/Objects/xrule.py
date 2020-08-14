@@ -1,6 +1,6 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-import os
+
 import copy
 import operator
 
@@ -8,7 +8,6 @@ from prettytable import PrettyTable
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.apkinfo import Apkinfo
-from quark.utils.tools import get_apk_md5
 from quark.utils.weight import Weight
 from quark.utils.colors import (
     red,
@@ -29,10 +28,6 @@ class XRule:
 
         :param apk: the filename of the apk.
         """
-        self.apk_path = apk
-        self.apk_filename = os.path.basename(apk)
-        self.apk_size = os.path.getsize(apk)
-        self.apk_hashed_code = get_apk_md5(apk)
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -344,9 +339,9 @@ class XRule:
                 warning = level
 
         json_report = {
-            "md5": self.apk_hashed_code,
-            "apk_filename": self.apk_filename,
-            "size_bytes": self.apk_size,
+            "md5": self.apkinfo.md5,
+            "apk_filename": self.apkinfo.filename,
+            "size_bytes": self.apkinfo.size,
             "threat_level": warning,
             "total_score": self.score_sum,
             "crimes": self.json_report,
