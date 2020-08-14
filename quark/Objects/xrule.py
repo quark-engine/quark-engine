@@ -8,7 +8,7 @@ from prettytable import PrettyTable
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.apkinfo import Apkinfo
-from quark.utils.tools import hash_apk
+from quark.utils.tools import get_apk_md5
 from quark.utils.weight import Weight
 from quark.utils.colors import (
     red,
@@ -32,7 +32,7 @@ class XRule:
         self.apk_path = apk
         self.apk_filename = os.path.basename(apk)
         self.apk_size = os.path.getsize(apk)
-        self.apk_hashed_code = hash_apk(apk)
+        self.apk_hashed_code = get_apk_md5(apk)
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -330,7 +330,7 @@ class XRule:
 
     def get_json_report(self):
         """
-        Get json report including summary and detail as json format
+        Get json report including summary and detail as json format.
 
         :return: json report
         """
@@ -338,7 +338,7 @@ class XRule:
         w = Weight(self.score_sum, self.weight_sum)
         warning = w.calculate()
 
-        # Filting color code in threat level
+        # Filter out color code in threat level
         for level in ["Low Risk", "Moderate Risk", "High Risk"]:
             if level in warning:
                 warning = level
@@ -356,7 +356,7 @@ class XRule:
 
     def show_json_report(self, rule_obj):
         """
-        Show the json report
+        Show the json report.
 
         :param rule_obj: the instance of the RuleObject.
         :return: None

@@ -8,12 +8,12 @@ def remove_dup_list(element):
     return list(set(element))
 
 
-def hash_apk(apk):
+def get_apk_md5(apk):
     """
-    Hash apk file
+    Return hashed md5 checksum for apk file.
 
-    :param apk: the path of the apk file
-    :return hashed name of apk file
+    :param apk: the path of the apk file.
+    :return: String of md5 checksum for hashed apk file.
     """
     md5 = hashlib.md5()
     with open(apk, "rb") as f:
