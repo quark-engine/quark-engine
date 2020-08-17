@@ -92,7 +92,7 @@ def entry_point(summary, detail, apk, rule, output):
 
         json_report = data.get_json_report()
 
-        with open(output, "w+") as f:
+        with open(output, "w") as f:
             json.dump(json_report, f, indent=4)
             f.close()
 
