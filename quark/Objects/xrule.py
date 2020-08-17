@@ -362,24 +362,25 @@ class XRule:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        # Assign level 4 to 5 examine result if exist
-        sequnce_show_up = None
-        same_operation_show_up = None
+        # Assign level 4 - 5 examine result if exist
+        sequnce_show_up = []
+        same_operation_show_up = []
 
-        if self.same_operation:
-            sequnce_show_up = [
-                {
-                    "class": repr(seq_method[0]),
-                    "method": repr(seq_method[1]),
-                } for seq_method in self.same_sequence_show_up
-            ]
-        if self.same_operation:
-            same_operation_show_up = [
-                {
-                    "class": repr(same_method[0]),
-                    "method": repr(same_method[1]),
-                } for same_method in self.same_operation
-            ]
+        # Check examination has passed level 4
+        if self.same_sequence_show_up and rule_obj.check_item[3]:
+            for same_sequence_cls, same_sequence_md in self.same_sequence_show_up:
+                sequnce_show_up.append({
+                    "class": repr(same_sequence_cls),
+                    "method": repr(same_sequence_md),
+                })
+
+            # Check examination has passed level 5
+            if self.same_operation and rule_obj.check_item[4]:
+                for same_operation_cls, same_operation_md in self.same_operation:
+                    same_operation_show_up.append({
+                        "class": repr(same_operation_cls),
+                        "method": repr(same_operation_md),
+                    })
 
         crime = {
             "crime": rule_obj.crime,
