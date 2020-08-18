@@ -1,20 +1,24 @@
-import os
-
 import click
-from tqdm import tqdm
-
+import json
+import os
 from quark.Objects.ruleobject import RuleObject
-from quark.logo import logo
 from quark.Objects.xrule import XRule
+from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
+from tqdm import tqdm
 
 logo()
 
 
 @click.command()
-@click.option("--summary", "-s", is_flag=True, help='show summary report')
-@click.option("--detail", "-d", is_flag=True, help="show detail report")
+@click.option("-s", "--summary", is_flag=True, help='Show summary report')
+@click.option("-d", "--detail", is_flag=True, help="Show detail report")
+@click.option(
+    "-o", "--output", help="Output report as json file",
+    type=click.Path(exists=False, file_okay=True, dir_okay=False),
+    required=False,
+)
 @click.option(
     "-a", "--apk", help="APK file", type=click.Path(exists=True, file_okay=True, dir_okay=False),
     required=True,
@@ -23,7 +27,7 @@ logo()
     "-r", "--rule", help="Rules folder need to be checked",
     type=click.Path(exists=True, file_okay=False, dir_okay=True), required=True,
 )
-def entry_point(summary, detail, apk, rule):
+def entry_point(summary, detail, apk, rule, output):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     if summary:
@@ -67,6 +71,30 @@ def entry_point(summary, detail, apk, rule):
 
             data.show_detail_report(rule_checker)
             print_success("OK")
+
+    if output:
+        # show json report
+
+        # Load APK
+        data = XRule(apk)
+
+        # Load rules
+        rules_list = os.listdir(rule)
+
+        for single_rule in tqdm(rules_list):
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = RuleObject(rulepath)
+
+            # Run the checker
+            data.run(rule_checker)
+
+            data.generate_json_report(rule_checker)
+
+        json_report = data.get_json_report()
+
+        with open(output, "w") as f:
+            json.dump(json_report, f, indent=4)
+            f.close()
 
 
 if __name__ == '__main__':

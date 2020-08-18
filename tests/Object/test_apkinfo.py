@@ -13,6 +13,16 @@ def apkinfo(scope="function"):
 
 class TestApkinfo():
 
+    def test_filename(self, apkinfo):
+        assert apkinfo.filename == \
+            "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+
+    def test_filesize(self, apkinfo):
+        assert apkinfo.filesize == 266155
+
+    def test_md5(self, apkinfo):
+        assert apkinfo.md5 == "1e80ac341a665e8984f07bec7f351e18"
+
     def test_permissions(self, apkinfo):
         ans = [
             'android.permission.SEND_SMS',
