@@ -393,7 +393,7 @@ class Quark:
             "weight": weight,
             "confidence": confidence,
             "permissions": permissions,
-            "api": api,
+            "native_api": api,
             "combination": combination,
             "sequence": sequnce_show_up,
             "register": same_operation_show_up,
