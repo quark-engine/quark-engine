@@ -25,7 +25,7 @@ class Apkinfo:
     @property
     def filename(self):
         """
-        Return filename of apk.
+        Return the filename of apk.
 
         :return: a string of apk filename
         """
@@ -43,9 +43,9 @@ class Apkinfo:
     @property
     def md5(self):
         """
-        Return hashed md5 checksum for apk file.
+        Return the md5 checksum of the apk file.
 
-        :return: String of md5 checksum for hashed apk file
+        :return: string of md5 checksum for hashed apk file
         """
         md5 = hashlib.md5()
         with open(self.apk_filepath, "rb") as f:
