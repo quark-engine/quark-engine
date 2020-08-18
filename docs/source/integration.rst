@@ -1,85 +1,42 @@
-+++++++++++
+++++++++++++++++++++++++++++++++++++++++
 Integration
-+++++++++++
+++++++++++++++++++++++++++++++++++++++++
 
---------------------------
-Quark-Engine usage example
---------------------------
+Quark Engine Integration In Just 2 Steps
 
-This is the guidance for using quark-engine as a Python module
-    
-Install
-#########
+First Step: Installation
+------------------------
+
 ::
 
     $ pip3 install quark-engine
 
-Implement
-#########
+Second Step: Code Snippet As You Go
+-----------------------------------
 
-    1. import module::
+Here we present the simplest way for quark API usage:
 
-    >>> from quark.Objects.quark import Quark
-    >>> from quark.Objects.quarkrule import QuarkRule
+.. code-block:: python
 
-    2. Examine apk with one single rule::
+    from quark.report import Report
 
-    >>> apk_path = "14d9f1a92dd984d6040cc41ed06e273e.apk"
-    >>> quark = Quark(apk_path)
+    APK_PATH = "14d9f1a92dd984d6040cc41ed06e273e.apk"
+    RULE_PATH = "sendLocation_SMS.json"
 
-    >>> rule_path = "sendContact_SMS.json"
-    >>> rule_object = QuarkRule(rule_path)
+    report = Report()
 
-    >>> quark.run(rule_object)
+    '''
+    RULE_PATH can be a directory with multiple rules inside
+    EX: "rules/"
+    '''
+    report.analysis(APK_PATH, RULE_PATH)
+    json_report = report.get_report("json")
+    print(json_report)
 
-    3. Three ways for report to present
 
-    Show summary report::
+Then you get the json report. :D
 
-        >>> quark.show_summary_report(rule_object)
-        >>> print(quark.tb)
-
-    .. code-block::
-
-        +----------------------+------------+-------+--------+
-        | Rule                 | Confidence | Score | Weight |
-        +----------------------+------------+-------+--------+
-        | Send contact via SMS | 100%       | 2     | 2.0    |
-        +----------------------+------------+-------+--------+
-
-    Show detail report::
-
-        >>> quark.show_detail_report(rule_object)
-
-    .. code-block::
-
-        Confidence: 100%
-
-            [✓]1.Permission Request
-                android.permission.SEND_SMS
-                android.permission.READ_CONTACTS
-            [✓]2.Native API Usage
-                (Landroid/content/ContentResolver, query)
-                (Landroid/telephony/SmsManager, sendTextMessage)
-            [✓]3.Native API Combination
-                (Landroid/content/ContentResolver, query)
-                (Landroid/telephony/SmsManager, sendTextMessage)
-            [✓]4.Native API Sequence
-                Sequence show up in:
-                (Lcom/google/progress/AndroidClientService;, sendMessage)
-                (Lcom/google/progress/AndroidClientService;, doByte)
-            [✓]5.Native API Use Same Parameter
-                (Lcom/google/progress/AndroidClientService;, sendMessage)
-
-    Show json report::
-
-        >>> quark.generate_json_report(rule_object)
-        >>> report = quark.get_json_report()
-
-        >>> import json
-        >>> print(json.dumps(report, indent=4))
-
-    .. code-block:: json
+.. code-block:: json
 
         {
             "md5": "14d9f1a92dd984d6040cc41ed06e273e",
@@ -98,7 +55,7 @@ Implement
                         "android.permission.ACCESS_COARSE_LOCATION",
                         "android.permission.ACCESS_FINE_LOCATION"
                     ],
-                    "api": [
+                    "native_api": [
                         {
                             "class": "Landroid/telephony/TelephonyManager",
                             "method": "getCellLocation"
@@ -137,32 +94,3 @@ Implement
                 }
             ]
         }
-Example
-#########
-Here give an example for module usage
-    .. code-block:: python
-
-        import json
-
-        from quark.Objects.quark import Quark
-        from quark.Objects.quarkrule import QuarkRule
-
-        apk_path = "14d9f1a92dd984d6040cc41ed06e273e.apk"
-        quark = Quark(apk_path)
-
-        rule_path = "sendContact_SMS.json"
-        rule_object = QuarkRule(rule_path)
-
-        quark.run(rule_object)
-
-        # Generate summary reporte
-        quark.show_summary_report(rule_object)
-        # Print detail report
-        quark.show_detail_report(rule_object)
-        # Generate json report
-        quark.generate_json_report(rule_object)
-
-        # Print summary report table
-        print(quark.tb)
-        # Print Json report
-        print(json.dumps(quark.get_json_report(), indent=4))
