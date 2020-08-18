@@ -4,7 +4,7 @@ import json
 import os
 
 
-class RuleObject:
+class QuarkRule:
     """RuleObject is used to store the rule from json file"""
 
     def __init__(self, json_filename):

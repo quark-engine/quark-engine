@@ -1,5 +1,6 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
+
 import copy
 import operator
 
@@ -7,18 +8,20 @@ from prettytable import PrettyTable
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.apkinfo import Apkinfo
+from quark.utils.weight import Weight
 from quark.utils.colors import (
     red,
     bold,
     yellow,
     green,
 )
+from quark.utils import tools
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
 
 
-class XRule:
+class Quark:
     """XRule is used to test quark's five-stage theory"""
 
     def __init__(self, apk):
@@ -26,7 +29,6 @@ class XRule:
 
         :param apk: the filename of the apk.
         """
-
         self.apkinfo = Apkinfo(apk)
 
         self.pre_method0 = []
@@ -34,6 +36,9 @@ class XRule:
 
         self.same_sequence_show_up = []
         self.same_operation = []
+
+        # Json report
+        self.json_report = []
 
         # Pretty Table Output
         self.tb = PrettyTable()
@@ -160,33 +165,18 @@ class XRule:
                 # Not Found sequence in same_method
                 return False
             seq_table.sort(key=operator.itemgetter(1))
+            # seq_table would look like: [(getLocation, 1256), (sendSms, 1566), (sendSms, 2398)]
 
-            idx = 0
-            length = len(seq_table)
-            f_func_val = None
-            s_func_val = None
-            while idx < length:
-                if seq_table[idx][0] == first_method_name:
-                    f_func_val = idx
-                    break
-                idx += 1
-            while length > 0:
-                if seq_table[length - 1][0] == second_method_name:
-                    s_func_val = length - 1
-                    break
-                length -= 1
+            method_list = [x[0] for x in seq_table]
+            check_sequence_method = [first_method_name, second_method_name]
 
-            if s_func_val > f_func_val:
-                # print("Found sequence in :" + repr(same_method))
-                return True
-            else:
-                return False
+            return tools.contains(check_sequence_method, method_list)
         else:
             return False
 
     def check_parameter(
-        self, common_method,
-        first_method_name, second_method_name,
+            self, common_method,
+            first_method_name, second_method_name,
     ):
         """
         check the usage of the same parameter between two method.
@@ -318,6 +308,102 @@ class XRule:
         else:
             # Exit if the level 4 stage check fails.
             return
+
+    def get_json_report(self):
+        """
+        Get quark report including summary and detail with json format.
+
+        :return: json report
+        """
+
+        w = Weight(self.score_sum, self.weight_sum)
+        warning = w.calculate()
+
+        # Filter out color code in threat level
+        for level in ["Low Risk", "Moderate Risk", "High Risk"]:
+            if level in warning:
+                warning = level
+
+        json_report = {
+            "md5": self.apkinfo.md5,
+            "apk_filename": self.apkinfo.filename,
+            "size_bytes": self.apkinfo.filesize,
+            "threat_level": warning,
+            "total_score": self.score_sum,
+            "crimes": self.json_report,
+        }
+
+        return json_report
+
+    def generate_json_report(self, rule_obj):
+        """
+        Show the json report.
+
+        :param rule_obj: the instance of the RuleObject
+        :return: None
+        """
+        # Count the confidence
+        confidence = str(rule_obj.check_item.count(True) * 20) + "%"
+        conf = rule_obj.check_item.count(True)
+        weight = rule_obj.get_score(conf)
+        score = rule_obj.yscore
+
+        # Assign level 1 examine result
+        permissions = []
+        if rule_obj.check_item[0]:
+            permissions = rule_obj.x1_permission
+
+        # Assign level 2 examine result
+        api = []
+        if rule_obj.check_item[1]:
+            for class_name, method_name in self.level_2_reuslt:
+                api.append({
+                    "class": class_name,
+                    "method": method_name,
+                })
+
+        # Assign level 3 examine result
+        combination = []
+        if rule_obj.check_item[2]:
+            combination = rule_obj.x2n3n4_comb
+
+        # Assign level 4 - 5 examine result if exist
+        sequnce_show_up = []
+        same_operation_show_up = []
+
+        # Check examination has passed level 4
+        if self.same_sequence_show_up and rule_obj.check_item[3]:
+            for same_sequence_cls, same_sequence_md in self.same_sequence_show_up:
+                sequnce_show_up.append({
+                    "class": repr(same_sequence_cls),
+                    "method": repr(same_sequence_md),
+                })
+
+            # Check examination has passed level 5
+            if self.same_operation and rule_obj.check_item[4]:
+                for same_operation_cls, same_operation_md in self.same_operation:
+                    same_operation_show_up.append({
+                        "class": repr(same_operation_cls),
+                        "method": repr(same_operation_md),
+                    })
+
+        crime = {
+            "crime": rule_obj.crime,
+            "score": score,
+            "weight": weight,
+            "confidence": confidence,
+            "permissions": permissions,
+            "api": api,
+            "combination": combination,
+            "sequence": sequnce_show_up,
+            "register": same_operation_show_up,
+        }
+        self.json_report.append(crime)
+
+        # add the weight
+        self.weight_sum += weight
+        # add the score
+        self.score_sum += score
 
     def show_summary_report(self, rule_obj):
         """

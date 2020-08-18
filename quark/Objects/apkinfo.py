@@ -1,6 +1,7 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
 import os
+import hashlib
 
 from androguard.misc import AnalyzeAPK
 
@@ -16,9 +17,41 @@ class Apkinfo:
         # return the APK, list of DalvikVMFormat, and Analysis objects
         self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
         self.apk_filename = os.path.basename(apk_filepath)
+        self.apk_filepath = apk_filepath
 
     def __repr__(self):
         return f"<Apkinfo-APK:{self.apk_filename}>"
+
+    @property
+    def filename(self):
+        """
+        Return the filename of apk.
+
+        :return: a string of apk filename
+        """
+        return os.path.basename(self.apk_filepath)
+
+    @property
+    def filesize(self):
+        """
+        Return the file size of apk file by bytes.
+
+        :return: a number of size bytes
+        """
+        return os.path.getsize(self.apk_filepath)
+
+    @property
+    def md5(self):
+        """
+        Return the md5 checksum of the apk file.
+
+        :return: a string of md5 checksum of the apk file
+        """
+        md5 = hashlib.md5()
+        with open(self.apk_filepath, "rb") as f:
+            for chunk in iter(lambda: f.read(4096), b""):
+                md5.update(chunk)
+        return md5.hexdigest()
 
     @property
     def permissions(self):
@@ -84,43 +117,47 @@ class Apkinfo:
 
         if list(result):
             for method in self.analysis.find_methods(class_name, method_name):
-                for _, ins in method.get_method().get_instructions_idx():
-                    bytecode_obj = None
-                    reg_list = []
+                try:
+                    for _, ins in method.get_method().get_instructions_idx():
+                        bytecode_obj = None
+                        reg_list = []
 
-                    # count the number of the registers.
-                    length_operands = len(ins.get_operands())
-                    if length_operands == 0:
-                        # No register, no parameter
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), None, None,
-                        )
-                    elif length_operands == 1:
-                        # Only one register
-
-                        reg_list.append(
-                            f"v{ins.get_operands()[length_operands - 1][1]}",
-                        )
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), reg_list, None,
-                        )
-                    elif length_operands >= 2:
-                        # the last one is parameter, the other are registers.
-
-                        parameter = ins.get_operands()[length_operands - 1]
-                        for i in range(0, length_operands - 1):
-                            reg_list.append(
-                                "v" + str(ins.get_operands()[i][1]),
+                        # count the number of the registers.
+                        length_operands = len(ins.get_operands())
+                        if length_operands == 0:
+                            # No register, no parameter
+                            bytecode_obj = BytecodeObject(
+                                ins.get_name(), None, None,
                             )
-                        if len(parameter) == 3:
-                            # method or value
-                            parameter = parameter[2]
-                        else:
-                            # Operand.OFFSET
-                            parameter = parameter[1]
+                        elif length_operands == 1:
+                            # Only one register
 
-                        bytecode_obj = BytecodeObject(
-                            ins.get_name(), reg_list, parameter,
-                        )
+                            reg_list.append(
+                                f"v{ins.get_operands()[length_operands - 1][1]}",
+                            )
+                            bytecode_obj = BytecodeObject(
+                                ins.get_name(), reg_list, None,
+                            )
+                        elif length_operands >= 2:
+                            # the last one is parameter, the other are registers.
 
-                    yield bytecode_obj
+                            parameter = ins.get_operands()[length_operands - 1]
+                            for i in range(0, length_operands - 1):
+                                reg_list.append(
+                                    "v" + str(ins.get_operands()[i][1]),
+                                )
+                            if len(parameter) == 3:
+                                # method or value
+                                parameter = parameter[2]
+                            else:
+                                # Operand.OFFSET
+                                parameter = parameter[1]
+
+                            bytecode_obj = BytecodeObject(
+                                ins.get_name(), reg_list, parameter,
+                            )
+
+                        yield bytecode_obj
+                except AttributeError as error:
+                    # TODO Log the rule here
+                    continue

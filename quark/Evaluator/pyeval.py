@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 
 from quark.Objects.tableobject import TableObject
-from quark.Objects.variableobject import VarabileObject
+from quark.Objects.variableobject import RegisterObject
 
 MAX_REG_COUNT = 40
 TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
@@ -97,7 +97,7 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = VarabileObject(reg, pre_ret)
+            variable_object = RegisterObject(reg, pre_ret)
             self.table_obj.insert(index, variable_object)
         except IndexError as e:
 
@@ -109,7 +109,7 @@ class PyEval:
         value = instruction[2]
         index = int(reg[1:])
 
-        variable_object = VarabileObject(reg, value)
+        variable_object = RegisterObject(reg, value)
         self.table_obj.insert(index, variable_object)
 
     def _assign_value_wide(self, instruction):
@@ -121,8 +121,8 @@ class PyEval:
         index = int(reg[1:])
         reg_plus_one = f"v{index + 1}"
 
-        variable_object = VarabileObject(reg, value)
-        variable_object2 = VarabileObject(reg_plus_one, value)
+        variable_object = RegisterObject(reg, value)
+        variable_object2 = RegisterObject(reg_plus_one, value)
         self.table_obj.insert(index, variable_object)
         self.table_obj.insert(index + 1, variable_object2)
 
@@ -176,8 +176,8 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = VarabileObject(reg, pre_ret)
-            variable_object2 = VarabileObject(f"v{index + 1}", pre_ret)
+            variable_object = RegisterObject(reg, pre_ret)
+            variable_object2 = RegisterObject(f"v{index + 1}", pre_ret)
             self.table_obj.insert(index, variable_object)
             self.table_obj.insert(index + 1, variable_object2)
         except IndexError as e:
@@ -319,7 +319,7 @@ class PyEval:
                 int(instruction[3][1]),
             ).pop()
 
-            variable_object = VarabileObject(
+            variable_object = RegisterObject(
                 reg, f"{array_obj.value}[{array_index.value}]",
             )
             self.table_obj.insert(index, variable_object)
