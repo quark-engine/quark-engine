@@ -12,8 +12,8 @@ logo()
 
 
 @click.command()
-@click.option("--summary", "-s", is_flag=True, help='show summary report')
-@click.option("--detail", "-d", is_flag=True, help="show detail report")
+@click.option("-s", "--summary", is_flag=True, help='Show summary report')
+@click.option("-d", "--detail", is_flag=True, help="Show detail report")
 @click.option(
     "-o", "--output", help="Output report as json file",
     type=click.Path(exists=False, file_okay=True, dir_okay=False),
@@ -95,8 +95,6 @@ def entry_point(summary, detail, apk, rule, output):
         with open(output, "w") as f:
             json.dump(json_report, f, indent=4)
             f.close()
-
-        print(f"Output report to > {output}")
 
 
 if __name__ == '__main__':
