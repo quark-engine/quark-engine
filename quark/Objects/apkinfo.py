@@ -32,9 +32,9 @@ class Apkinfo:
         return os.path.basename(self.apk_filepath)
 
     @property
-    def size(self):
+    def filesize(self):
         """
-        Return file size of apk file by bytes.
+        Return the file size of apk file by bytes.
 
         :return: a number of size bytes
         """

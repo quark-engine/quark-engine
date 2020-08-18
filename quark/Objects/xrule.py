@@ -341,7 +341,7 @@ class XRule:
         json_report = {
             "md5": self.apkinfo.md5,
             "apk_filename": self.apkinfo.filename,
-            "size_bytes": self.apkinfo.size,
+            "size_bytes": self.apkinfo.filesize,
             "threat_level": warning,
             "total_score": self.score_sum,
             "crimes": self.json_report,
@@ -353,7 +353,7 @@ class XRule:
         """
         Show the json report.
 
-        :param rule_obj: the instance of the RuleObject.
+        :param rule_obj: the instance of the RuleObject
         :return: None
         """
         # Count the confidence
@@ -361,6 +361,25 @@ class XRule:
         conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
+
+        # Assign level 1 examine result
+        permissions = []
+        if rule_obj.check_item[0]:
+            permissions = rule_obj.x1_permission
+
+        # Assign level 2 examine result
+        api = []
+        if rule_obj.check_item[1]:
+            for class_name, method_name in self.level_2_reuslt:
+                api.append({
+                    "class": class_name,
+                    "method": method_name,
+                })
+
+        # Assign level 3 examine result
+        combination = []
+        if rule_obj.check_item[2]:
+            combination = rule_obj.x2n3n4_comb
 
         # Assign level 4 - 5 examine result if exist
         sequnce_show_up = []
@@ -387,10 +406,11 @@ class XRule:
             "score": score,
             "weight": weight,
             "confidence": confidence,
-            "permissions": rule_obj.x1_permission,
-            "methods": rule_obj.x2n3n4_comb,
-            "sequnce_show_up": sequnce_show_up,
-            "same_operation_show_up": same_operation_show_up,
+            "permissions": permissions,
+            "api": api,
+            "combination": combination,
+            "sequence": sequnce_show_up,
+            "register": same_operation_show_up,
         }
         self.json_report.append(crime)
 
