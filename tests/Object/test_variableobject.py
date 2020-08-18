@@ -1,11 +1,11 @@
 import pytest
 
-from quark.Objects.variableobject import VarabileObject
+from quark.Objects.variableobject import RegisterObject
 
 
 @pytest.fixture()
 def variable_obj():
-    variable_obj = VarabileObject("v3", "append()", None)
+    variable_obj = RegisterObject("v3", "append()", None)
 
     yield variable_obj
 
@@ -16,15 +16,15 @@ class TestVariableObject:
 
     def test_init(self, variable_obj):
         with pytest.raises(TypeError):
-            variable_obj_with_no_argu = VarabileObject()
+            variable_obj_with_no_argu = RegisterObject()
 
-        assert isinstance(variable_obj, VarabileObject)
+        assert isinstance(variable_obj, RegisterObject)
         assert variable_obj.register_name == "v3"
         assert variable_obj.value == "append()"
         assert variable_obj.called_by_func == []
 
     def test_called_by_func(self, variable_obj):
-        variable_obj_with_called_by_func = VarabileObject(
+        variable_obj_with_called_by_func = RegisterObject(
             "v3", "append()", "toString()",
         )
 

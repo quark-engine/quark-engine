@@ -2,7 +2,7 @@
 # See GPLv3 for copying permission.
 
 
-class VarabileObject:
+class RegisterObject:
     """The variableobject is used to record the state of each register"""
 
     def __init__(self, register_name, value, called_by_func=None):

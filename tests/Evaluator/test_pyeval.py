@@ -2,7 +2,7 @@ import pytest
 
 from quark.Evaluator.pyeval import PyEval, MAX_REG_COUNT
 from quark.Objects.tableobject import TableObject
-from quark.Objects.variableobject import VarabileObject
+from quark.Objects.variableobject import RegisterObject
 
 
 @pytest.fixture()
@@ -28,10 +28,10 @@ def pyeval():
 
     # mock_hash_table = [...[], [v4_mock_variable_obj], [], [],
     # [v9_mock_variable_obj]....]
-    v4_mock_variable_obj = VarabileObject(
+    v4_mock_variable_obj = RegisterObject(
         "v4", "Lcom/google/progress/SMSHelper;", None,
     )
-    v9_mock_variable_obj = VarabileObject(
+    v9_mock_variable_obj = RegisterObject(
         "v9", "some_string", "java.io.file.close()",
     )
     pyeval.table_obj.insert(4, v4_mock_variable_obj)
@@ -106,7 +106,7 @@ class TestPyEval:
         ).called_by_func == v9_expected_call_by_func
 
     def test_move_result_object(self, pyeval):
-        v6_mock_variable_obj = VarabileObject("v6", "some_string", None)
+        v6_mock_variable_obj = RegisterObject("v6", "some_string", None)
 
         pyeval.table_obj.insert(6, v6_mock_variable_obj)
 
@@ -197,10 +197,10 @@ class TestPyEval:
 
         It means vx = vy[vz].
         """
-        v2_mock_variable_obj = VarabileObject(
+        v2_mock_variable_obj = RegisterObject(
             "v2", "some_list_like[1,2,3,4]", "java.io.file.close()",
         )
-        v3_mock_variable_obj = VarabileObject("v3", "2", None)
+        v3_mock_variable_obj = RegisterObject("v3", "2", None)
         pyeval.table_obj.insert(2, v2_mock_variable_obj)
         pyeval.table_obj.insert(3, v3_mock_variable_obj)
 
@@ -217,5 +217,5 @@ class TestPyEval:
         assert len(pyeval.show_table()[9]) == 1
         assert len(pyeval.show_table()[3]) == 0
 
-        assert isinstance(pyeval.show_table()[4][0], VarabileObject)
-        assert isinstance(pyeval.show_table()[9][0], VarabileObject)
+        assert isinstance(pyeval.show_table()[4][0], RegisterObject)
+        assert isinstance(pyeval.show_table()[9][0], RegisterObject)
