@@ -15,6 +15,7 @@ from quark.utils.colors import (
     yellow,
     green,
 )
+from quark.utils import tools
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
@@ -164,27 +165,12 @@ class XRule:
                 # Not Found sequence in same_method
                 return False
             seq_table.sort(key=operator.itemgetter(1))
+            # seq_table would look like: [(getLocation, 1256), (sendSms, 1566), (sendSms, 2398)]
 
-            idx = 0
-            length = len(seq_table)
-            f_func_val = None
-            s_func_val = None
-            while idx < length:
-                if seq_table[idx][0] == first_method_name:
-                    f_func_val = idx
-                    break
-                idx += 1
-            while length > 0:
-                if seq_table[length - 1][0] == second_method_name:
-                    s_func_val = length - 1
-                    break
-                length -= 1
+            method_list = [x[0] for x in seq_table]
+            check_sequence_method = [first_method_name, second_method_name]
 
-            if s_func_val > f_func_val:
-                # print("Found sequence in :" + repr(same_method))
-                return True
-            else:
-                return False
+            return tools.contains(check_sequence_method, method_list)
         else:
             return False
 
