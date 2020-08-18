@@ -39,13 +39,14 @@ def entry_point(summary, detail, apk, rule, output):
         rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            if single_rule.endswith("json"):
+                rulepath = os.path.join(rule, single_rule)
+                rule_checker = QuarkRule(rulepath)
 
-            # Run the checker
-            data.run(rule_checker)
+                # Run the checker
+                data.run(rule_checker)
 
-            data.show_summary_report(rule_checker)
+                data.show_summary_report(rule_checker)
 
         w = Weight(data.score_sum, data.weight_sum)
         print_warning(w.calculate())
@@ -62,15 +63,16 @@ def entry_point(summary, detail, apk, rule, output):
         rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            print(rulepath)
-            rule_checker = QuarkRule(rulepath)
+            if single_rule.endswith("json"):
+                rulepath = os.path.join(rule, single_rule)
+                print(rulepath)
+                rule_checker = QuarkRule(rulepath)
 
-            # Run the checker
-            data.run(rule_checker)
+                # Run the checker
+                data.run(rule_checker)
 
-            data.show_detail_report(rule_checker)
-            print_success("OK")
+                data.show_detail_report(rule_checker)
+                print_success("OK")
 
     if output:
         # show json report
@@ -82,13 +84,14 @@ def entry_point(summary, detail, apk, rule, output):
         rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            if single_rule.endswith("json"):
+                rulepath = os.path.join(rule, single_rule)
+                rule_checker = QuarkRule(rulepath)
 
-            # Run the checker
-            data.run(rule_checker)
+                # Run the checker
+                data.run(rule_checker)
 
-            data.generate_json_report(rule_checker)
+                data.generate_json_report(rule_checker)
 
         json_report = data.get_json_report()
 
