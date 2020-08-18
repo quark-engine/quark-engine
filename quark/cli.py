@@ -88,7 +88,7 @@ def entry_point(summary, detail, apk, rule, output):
             # Run the checker
             data.run(rule_checker)
 
-            data.show_json_report(rule_checker)
+            data.generate_json_report(rule_checker)
 
         json_report = data.get_json_report()
 

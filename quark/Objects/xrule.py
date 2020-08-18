@@ -325,7 +325,7 @@ class XRule:
 
     def get_json_report(self):
         """
-        Get json report including summary and detail as json format.
+        Get quark report including summary and detail with json format.
 
         :return: json report
         """
@@ -349,7 +349,7 @@ class XRule:
 
         return json_report
 
-    def show_json_report(self, rule_obj):
+    def generate_json_report(self, rule_obj):
         """
         Show the json report.
 
