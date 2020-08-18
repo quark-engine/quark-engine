@@ -45,7 +45,7 @@ class Apkinfo:
         """
         Return the md5 checksum of the apk file.
 
-        :return: string of md5 checksum for hashed apk file
+        :return: a string of md5 checksum of the apk file
         """
         md5 = hashlib.md5()
         with open(self.apk_filepath, "rb") as f:
