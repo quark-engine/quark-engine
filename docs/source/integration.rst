@@ -19,25 +19,25 @@ Implement
 
     1. import module::
 
-    >>> from quark.Objects.xrule import XRule
-    >>> from quark.Objects.ruleobject import RuleObject
+    >>> from quark.Objects.quark import Quark
+    >>> from quark.Objects.quarkrule import QuarkRule
 
     2. Examine apk with one single rule::
 
-    >>> apk_path = "quark/sample/14d9f1a92dd984d6040cc41ed06e273e.apk"
-    >>> data = XRule(apk_path)
+    >>> apk_path = "14d9f1a92dd984d6040cc41ed06e273e.apk"
+    >>> quark = Quark(apk_path)
 
-    >>> rule_path = "quark/rules/sendContact_SMS.json"
-    >>> rule_object = RuleObject(rule_path)
+    >>> rule_path = "sendContact_SMS.json"
+    >>> rule_object = QuarkRule(rule_path)
 
-    >>> data.run(rule_object)
+    >>> quark.run(rule_object)
 
     3. Three ways for report to present
 
     Show summary report::
 
-        >>> data.show_summary_report(rule_object)
-        >>> print(data.tb)
+        >>> quark.show_summary_report(rule_object)
+        >>> print(quark.tb)
 
     .. code-block::
 
@@ -49,7 +49,7 @@ Implement
 
     Show detail report::
 
-        >>> data.show_detail_report(rule_object)
+        >>> quark.show_detail_report(rule_object)
 
     .. code-block::
 
@@ -73,8 +73,8 @@ Implement
 
     Show json report::
 
-        >>> data.show_json_report(rule_object)
-        >>> report = data.get_json_report()
+        >>> quark.generate_json_report(rule_object)
+        >>> report = quark.get_json_report()
 
         >>> import json
         >>> print(json.dumps(report, indent=4))
@@ -137,3 +137,32 @@ Implement
                 }
             ]
         }
+Example
+#########
+Here give an example for module usage
+    .. code-block:: python
+
+        import json
+
+        from quark.Objects.quark import Quark
+        from quark.Objects.quarkrule import QuarkRule
+
+        apk_path = "14d9f1a92dd984d6040cc41ed06e273e.apk"
+        quark = Quark(apk_path)
+
+        rule_path = "sendContact_SMS.json"
+        rule_object = QuarkRule(rule_path)
+
+        quark.run(rule_object)
+
+        # Generate summary reporte
+        quark.show_summary_report(rule_object)
+        # Print detail report
+        quark.show_detail_report(rule_object)
+        # Generate json report
+        quark.generate_json_report(rule_object)
+
+        # Print summary report table
+        print(quark.tb)
+        # Print Json report
+        print(json.dumps(quark.get_json_report(), indent=4))
