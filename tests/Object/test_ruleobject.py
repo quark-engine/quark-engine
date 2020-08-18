@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from quark.Objects.ruleobject import RuleObject
+from quark.Objects.quarkrule import QuarkRule
 
 
 @pytest.fixture()
@@ -34,7 +34,7 @@ def rule_obj(scope="function"):
 
     print("setup() begin")
 
-    rule_obj = RuleObject("sendLocation.json")
+    rule_obj = QuarkRule("sendLocation.json")
 
     yield rule_obj
 

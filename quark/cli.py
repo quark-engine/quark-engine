@@ -1,8 +1,8 @@
 import click
 import json
 import os
-from quark.Objects.ruleobject import RuleObject
-from quark.Objects.xrule import XRule
+from quark.Objects.quarkrule import QuarkRule
+from quark.Objects.quark import Quark
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
@@ -33,14 +33,14 @@ def entry_point(summary, detail, apk, rule, output):
     if summary:
         # show summary report
         # Load APK
-        data = XRule(apk)
+        data = Quark(apk)
 
         # Load rules
         rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+            rule_checker = QuarkRule(rulepath)
 
             # Run the checker
             data.run(rule_checker)
@@ -56,7 +56,7 @@ def entry_point(summary, detail, apk, rule, output):
         # show summary report
 
         # Load APK
-        data = XRule(apk)
+        data = Quark(apk)
 
         # Load rules
         rules_list = os.listdir(rule)
@@ -64,7 +64,7 @@ def entry_point(summary, detail, apk, rule, output):
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
             print(rulepath)
-            rule_checker = RuleObject(rulepath)
+            rule_checker = QuarkRule(rulepath)
 
             # Run the checker
             data.run(rule_checker)
@@ -76,14 +76,14 @@ def entry_point(summary, detail, apk, rule, output):
         # show json report
 
         # Load APK
-        data = XRule(apk)
+        data = Quark(apk)
 
         # Load rules
         rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+            rule_checker = QuarkRule(rulepath)
 
             # Run the checker
             data.run(rule_checker)

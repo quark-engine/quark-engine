@@ -21,7 +21,7 @@ MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
 
 
-class XRule:
+class Quark:
     """XRule is used to test quark's five-stage theory"""
 
     def __init__(self, apk):

@@ -1,12 +1,12 @@
 import pytest
 
-from quark.Objects.xrule import XRule
+from quark.Objects.quark import Quark
 
 
 @pytest.fixture()
 def xrule(scope="function"):
     apk_file = "quark/sample/14d9f1a92dd984d6040cc41ed06e273e.apk"
-    xrule = XRule(apk_file)
+    xrule = Quark(apk_file)
     yield xrule
 
 
