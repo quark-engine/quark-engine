@@ -36,7 +36,6 @@ quark.utils.weight module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    quark.Evaluator
    quark.Objects
@@ -29,14 +30,13 @@ quark.logo module
    :undoc-members:
    :show-inheritance:
 
-quark.version module
---------------------
+quark.report module
+-------------------
 
-.. automodule:: quark.version
+.. automodule:: quark.report
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

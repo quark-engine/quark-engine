@@ -20,10 +20,18 @@ quark.Objects.bytecodeobject module
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.ruleobject module
--------------------------------
+quark.Objects.quark module
+--------------------------
 
-.. automodule:: quark.Objects.ruleobject
+.. automodule:: quark.Objects.quark
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.Objects.quarkrule module
+------------------------------
+
+.. automodule:: quark.Objects.quarkrule
    :members:
    :undoc-members:
    :show-inheritance:
@@ -43,15 +51,6 @@ quark.Objects.variableobject module
    :members:
    :undoc-members:
    :show-inheritance:
-
-quark.Objects.xrule module
---------------------------
-
-.. automodule:: quark.Objects.xrule
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 Module contents
 ---------------
