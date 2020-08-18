@@ -82,31 +82,58 @@ Implement
     .. code-block:: json
 
         {
-            "sample": "14d9f1a92dd984d6040cc41ed06e273e",
-            "apk-name": "14d9f1a92dd984d6040cc41ed06e273e.apk",
-            "size": 166917,
-            "warnning": "High Risk",
-            "summary-score": 2,
+            "md5": "14d9f1a92dd984d6040cc41ed06e273e",
+            "apk_filename": "14d9f1a92dd984d6040cc41ed06e273e.apk",
+            "size_bytes": 166917,
+            "threat_level": "High Risk",
+            "total_score": 4,
             "crimes": [
                 {
-                    "crime": "Send contact via SMS",
+                    "crime": "Send Location via SMS",
+                    "score": 4,
+                    "weight": 4.0,
+                    "confidence": "100%",
                     "permissions": [
                         "android.permission.SEND_SMS",
-                        "android.permission.READ_CONTACTS"
+                        "android.permission.ACCESS_COARSE_LOCATION",
+                        "android.permission.ACCESS_FINE_LOCATION"
                     ],
-                    "methods": [
+                    "api": [
                         {
-                            "class": "Landroid/content/ContentResolver",
-                            "method": "query"
+                            "class": "Landroid/telephony/TelephonyManager",
+                            "method": "getCellLocation"
                         },
                         {
                             "class": "Landroid/telephony/SmsManager",
                             "method": "sendTextMessage"
                         }
                     ],
-                    "confidence": "100%",
-                    "score": 2,
-                    "weight": 2.0
+                    "combination": [
+                        {
+                            "class": "Landroid/telephony/TelephonyManager",
+                            "method": "getCellLocation"
+                        },
+                        {
+                            "class": "Landroid/telephony/SmsManager",
+                            "method": "sendTextMessage"
+                        }
+                    ],
+                    "sequence": [
+                        {
+                            "class": "Lcom/google/progress/AndroidClientService;",
+                            "method": "doByte"
+                        },
+                        {
+                            "class": "Lcom/google/progress/AndroidClientService;",
+                            "method": "sendMessage"
+                        }
+                    ],
+                    "register": [
+                        {
+                            "class": "Lcom/google/progress/AndroidClientService;",
+                            "method": "sendMessage"
+                        }
+                    ]
                 }
             ]
         }
