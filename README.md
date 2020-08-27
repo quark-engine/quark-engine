@@ -31,6 +31,10 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 
 <img src="https://i.imgur.com/kh1jpsQ.png"/>
 
+### Call Graph for Every Potential Malicious Activity
+We'll soon release this feature in the next version of quark!
+<img src="https://i.imgur.com/hdTbvuq.png"/>
+
 ### Summary Report
 Examine with rules.
 
