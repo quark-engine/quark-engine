@@ -22,10 +22,10 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 
 ### Easy to Use and Reading Friendly Report
 
-Quark is very easy to use and also provides flexible output formats. There are 3 types of output report: detail, call graph, and summary.
+Quark is very easy to use and also provides flexible output formats. There are 3 types of output report: detail report, call graph, and summary report. Please see below for more details.
 
 
-#### Detail Format of Report
+#### Detail Report
 
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
@@ -43,7 +43,7 @@ and the report will look like:
 We'll soon release this feature in the next version of quark!
 <img src="https://i.imgur.com/hdTbvuq.png"/>
 
-### Summary Format of Report
+### Summary Report
 Examine with rules.
 
 ```bash
@@ -70,119 +70,9 @@ Check `--help` to see the detailed usage description.
 $ quark --help
 ```
 
-#### Test It Out
+### Test It Out
 
-Firstly let's fetch `rules` and some apk examples.
-
-```bash
-$ git clone https://github.com/quark-engine/quark-rules.git
-$ git clone https://github.com/quark-engine/apk-malware-samples.git
-```
-
-Then we could test one of the apk in `apk-malware-samples` by the rules `quark-rules`. For example:
-
-```
-$ quark -a ./apk-malware-samples/com.cdim.driver.core.apk -r quark-rules/ --summary
-```
-
-And you should get a summary report like this:
-
-```
-
-    ________                      __
-    \_____  \  __ _______ _______|  | __
-     /  / \  \|  |  \__  \_  __ \  |/ /
-    /   \_/.  \  |  // __ \|  | \/    <
-    \_____\ \_/____/(____  /__|  |__|_ \
-           \__>          \/           \/ v20.08
-    
-            An Obfuscation-Neglect Android Malware Scoring System
-            
-100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:05<00:00,  3.48it/s]
-[!] WARNING: Low Risk
-[*] Total Score: 38
-+------------------------------------------------------------------+------------+-------+--------+
-| Rule                                                             | Confidence | Score | Weight |
-+------------------------------------------------------------------+------------+-------+--------+
-| Download files via http post                                     | 100%       | 1     | 1.0    |
-| Send Location via SMS                                            | 0%         | 4     | 0      |
-| Send file via SMS                                                | 0%         | 6     | 0      |
-| Send recording via socket                                        | 20%        | 5     | 0.3125 |
-| Send contact via SMS                                             | 0%         | 2     | 0      |
-| Call phone automatically                                         | 0%         | 1     | 0      |
-| Read web browsing history                                        | 60%        | 1     | 0.25   |
-| Send call log via SMS                                            | 0%         | 3     | 0      |
-| Monitor SMS                                                      | 0%         | 1     | 0      |
-| Send contact via socket                                          | 0%         | 2     | 0      |
-| Hotspot Detection - Get current location and active network info | 100%       | 1     | 1.0    |
-| Delete SMS after querying                                        | 0%         | 1     | 0      |
-| Download file via socket                                         | 20%        | 1     | 0.0625 |
-| Download files via http get                                      | 100%       | 1     | 1.0    |
-| Send file via socket                                             | 0%         | 6     | 0      |
-| Install APK via socket                                           | 0%         | 1     | 0      |
-| Delete SMS after parsing                                         | 0%         | 1     | 0      |
-+------------------------------------------------------------------+------------+-------+--------+
-
-```
-
-### Running in Docker
-
-We could build the corresponding docker image by this command:
-
-```bash
-docker build . -t quark
-```
-
-When the image is ready, let's run an example to test the image:
-
-```bash
-docker run -it quark quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/ --summary
-```
-
-An apk `14d9f1a92dd984d6040cc41ed06e273e.apk` is then scanned by quark in this docker container, and deliver a report in summary format.
-
-You may also interactively use quark in the docker container. For example:
-
-```bash
-$ docker run -v $(pwd):/tmp -it quark bash
-(in-docker): /app/quark# cd /tmp
-(in-docker)::/tmp# quark -a ./apk-malware-samples/com.cdim.driver.core.apk -r quark-rules/ --summary
-
-    ________                      __
-    \_____  \  __ _______ _______|  | __
-     /  / \  \|  |  \__  \_  __ \  |/ /
-    /   \_/.  \  |  // __ \|  | \/    <
-    \_____\ \_/____/(____  /__|  |__|_ \
-           \__>          \/           \/ v20.08
-    
-            An Obfuscation-Neglect Android Malware Scoring System
-            
-100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:07<00:00,  2.44it/s]
-[!] WARNING: Low Risk
-[*] Total Score: 38
-+------------------------------------------------------------------+------------+-------+--------+
-| Rule                                                             | Confidence | Score | Weight |
-+------------------------------------------------------------------+------------+-------+--------+
-| Download files via http post                                     | 100%       | 1     | 1.0    |
-| Send Location via SMS                                            | 0%         | 4     | 0      |
-| Send file via SMS                                                | 0%         | 6     | 0      |
-| Send recording via socket                                        | 20%        | 5     | 0.3125 |
-| Send contact via SMS                                             | 0%         | 2     | 0      |
-| Call phone automatically                                         | 0%         | 1     | 0      |
-| Read web browsing history                                        | 60%        | 1     | 0.25   |
-| Send call log via SMS                                            | 0%         | 3     | 0      |
-| Monitor SMS                                                      | 0%         | 1     | 0      |
-| Send contact via socket                                          | 0%         | 2     | 0      |
-| Hotspot Detection - Get current location and active network info | 100%       | 1     | 1.0    |
-| Delete SMS after querying                                        | 0%         | 1     | 0      |
-| Download file via socket                                         | 20%        | 1     | 0.0625 |
-| Download files via http get                                      | 100%       | 1     | 1.0    |
-| Send file via socket                                             | 0%         | 6     | 0      |
-| Install APK via socket                                           | 0%         | 1     | 0      |
-| Delete SMS after parsing                                         | 0%         | 1     | 0      |
-+------------------------------------------------------------------+------------+-------+--------+
-```
-
+You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
 
 ## Analysis Reports of Real Malware
 

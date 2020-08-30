@@ -2,7 +2,7 @@
 Installing Quark-Engine
 +++++++++++++++++++++++
 
-Clone the project from Gitub::
+Clone the project from Github::
 
     $ git clone https://github.com/quark-engine/quark-engine.git
 
