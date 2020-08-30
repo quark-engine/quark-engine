@@ -22,7 +22,7 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 
 ### Easy to Use and Reading Friendly Report
 
-Quark is very easy to use and also provides flexible output format. There are 3 types of output report: detail, call graph, and summary.
+Quark is very easy to use and also provides flexible output formats. There are 3 types of output report: detail, call graph, and summary.
 
 
 #### Detail Format of Report
@@ -72,7 +72,7 @@ $ quark --help
 
 #### Test It Out
 
-Firstly let;s fetch `rules` and some apk examples.
+Firstly let's fetch `rules` and some apk examples.
 
 ```bash
 $ git clone https://github.com/quark-engine/quark-rules.git
