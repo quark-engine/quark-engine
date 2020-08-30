@@ -8,7 +8,7 @@ Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html)
 
 [![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
 
-### Concepts
+## Why Quark?
 
 Android malware analysis engine is not a new story. Every antivirus company has their own secrets to build it. With curiosity, we develop a malware scoring system from the perspective of Taiwan Criminal Law in an easy but solid way.
 
@@ -20,7 +20,13 @@ Malware evolved with new techniques to gain difficulties for reverse engineering
 
 Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross reference and calling sequence of the native API. 2. Tracing the bytecode register. The combination of these functionalities (yes, the order theory) not only can neglect obfuscation but also match perfectly to the design of our malware scoring system.
 
-### Detail Report
+### Easy to Use and Reading Friendly Report
+
+Quark is very easy to use and also provides flexible output format. There are 3 types of output report: detail, call graph, and summary.
+
+
+#### Detail Format of Report
+
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
@@ -29,13 +35,15 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  --detail
 ```
 
+and the report will look like:
+
 <img src="https://i.imgur.com/kh1jpsQ.png"/>
 
 ### Call Graph for Every Potential Malicious Activity
 We'll soon release this feature in the next version of quark!
 <img src="https://i.imgur.com/hdTbvuq.png"/>
 
-### Summary Report
+### Summary Format of Report
 Examine with rules.
 
 ```bash
@@ -45,6 +53,7 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 ```
 <img src="https://i.imgur.com/Ib01V6k.png"/>
 
+## QuickStart
 ### Installation
 
 ```bash
@@ -55,43 +64,127 @@ $ pipenv shell
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
 
-### Docker
+Check `--help` to see the detailed usage description.
+
+```bash
+$ quark --help
+```
+
+#### Test It Out
+
+Firstly let;s fetch `rules` and some apk examples.
+
+```bash
+$ git clone https://github.com/quark-engine/quark-rules.git
+$ git clone https://github.com/quark-engine/apk-malware-samples.git
+```
+
+Then we could test one of the apk in `apk-malware-samples` by the rules `quark-rules`. For example:
+
+```
+$ quark -a ./apk-malware-samples/com.cdim.driver.core.apk -r quark-rules/ --summary
+```
+
+And you should get a summary report like this:
+
+```
+
+    ________                      __
+    \_____  \  __ _______ _______|  | __
+     /  / \  \|  |  \__  \_  __ \  |/ /
+    /   \_/.  \  |  // __ \|  | \/    <
+    \_____\ \_/____/(____  /__|  |__|_ \
+           \__>          \/           \/ v20.08
+    
+            An Obfuscation-Neglect Android Malware Scoring System
+            
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:05<00:00,  3.48it/s]
+[!] WARNING: Low Risk
+[*] Total Score: 38
++------------------------------------------------------------------+------------+-------+--------+
+| Rule                                                             | Confidence | Score | Weight |
++------------------------------------------------------------------+------------+-------+--------+
+| Download files via http post                                     | 100%       | 1     | 1.0    |
+| Send Location via SMS                                            | 0%         | 4     | 0      |
+| Send file via SMS                                                | 0%         | 6     | 0      |
+| Send recording via socket                                        | 20%        | 5     | 0.3125 |
+| Send contact via SMS                                             | 0%         | 2     | 0      |
+| Call phone automatically                                         | 0%         | 1     | 0      |
+| Read web browsing history                                        | 60%        | 1     | 0.25   |
+| Send call log via SMS                                            | 0%         | 3     | 0      |
+| Monitor SMS                                                      | 0%         | 1     | 0      |
+| Send contact via socket                                          | 0%         | 2     | 0      |
+| Hotspot Detection - Get current location and active network info | 100%       | 1     | 1.0    |
+| Delete SMS after querying                                        | 0%         | 1     | 0      |
+| Download file via socket                                         | 20%        | 1     | 0.0625 |
+| Download files via http get                                      | 100%       | 1     | 1.0    |
+| Send file via socket                                             | 0%         | 6     | 0      |
+| Install APK via socket                                           | 0%         | 1     | 0      |
+| Delete SMS after parsing                                         | 0%         | 1     | 0      |
++------------------------------------------------------------------+------------+-------+--------+
+
+```
+
+### Running in Docker
+
+We could build the corresponding docker image by this command:
 
 ```bash
 docker build . -t quark
 ```
-Examples:
+
+When the image is ready, let's run an example to test the image:
 
 ```bash
 docker run -it quark quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/ --summary
 ```
 
-```bash
-docker run -v $(pwd):/tmp -it quark quark -a /tmp/ThaiCamera.apk -r rules/ --summary
-```
-```bash
-docker run -v $(pwd):/tmp -it quark bash
-quark -a /tmp/ThaiCamera.apk -r rules/ --summary
-```
+An apk `14d9f1a92dd984d6040cc41ed06e273e.apk` is then scanned by quark in this docker container, and deliver a report in summary format.
 
-
-### Usage
+You may also interactively use quark in the docker container. For example:
 
 ```bash
-$ quark --help
-Usage: quark [OPTIONS]
+$ docker run -v $(pwd):/tmp -it quark bash
+(in-docker): /app/quark# cd /tmp
+(in-docker)::/tmp# quark -a ./apk-malware-samples/com.cdim.driver.core.apk -r quark-rules/ --summary
 
-  Quark is an Obfuscation-Neglect Android Malware Scoring System
-
-Options:
-  -s, --summary         show summary report
-  -d, --detail          show detail report
-  -a, --apk FILE        APK file  [required]
-  -r, --rule DIRECTORY  Rules folder need to be checked  [required]
-  --help                Show this message and exit.
+    ________                      __
+    \_____  \  __ _______ _______|  | __
+     /  / \  \|  |  \__  \_  __ \  |/ /
+    /   \_/.  \  |  // __ \|  | \/    <
+    \_____\ \_/____/(____  /__|  |__|_ \
+           \__>          \/           \/ v20.08
+    
+            An Obfuscation-Neglect Android Malware Scoring System
+            
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 19/19 [00:07<00:00,  2.44it/s]
+[!] WARNING: Low Risk
+[*] Total Score: 38
++------------------------------------------------------------------+------------+-------+--------+
+| Rule                                                             | Confidence | Score | Weight |
++------------------------------------------------------------------+------------+-------+--------+
+| Download files via http post                                     | 100%       | 1     | 1.0    |
+| Send Location via SMS                                            | 0%         | 4     | 0      |
+| Send file via SMS                                                | 0%         | 6     | 0      |
+| Send recording via socket                                        | 20%        | 5     | 0.3125 |
+| Send contact via SMS                                             | 0%         | 2     | 0      |
+| Call phone automatically                                         | 0%         | 1     | 0      |
+| Read web browsing history                                        | 60%        | 1     | 0.25   |
+| Send call log via SMS                                            | 0%         | 3     | 0      |
+| Monitor SMS                                                      | 0%         | 1     | 0      |
+| Send contact via socket                                          | 0%         | 2     | 0      |
+| Hotspot Detection - Get current location and active network info | 100%       | 1     | 1.0    |
+| Delete SMS after querying                                        | 0%         | 1     | 0      |
+| Download file via socket                                         | 20%        | 1     | 0.0625 |
+| Download files via http get                                      | 100%       | 1     | 1.0    |
+| Send file via socket                                             | 0%         | 6     | 0      |
+| Install APK via socket                                           | 0%         | 1     | 0      |
+| Delete SMS after parsing                                         | 0%         | 1     | 0      |
++------------------------------------------------------------------+------------+-------+--------+
 ```
 
-### Analysis Reports
+
+## Analysis Reports of Real Malware
 
 Qaurk Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. If you really want to see the very first version of report please visit [here](https://quark-engine.github.io/reports/report_5751cfdf656f2a5ee021940c5448a77e5b921d1510d2abfa520a57d02c74821e0f5c2e4935bea2554c440072d32fc22bb8317a85dabbbc7c9cca9d1c077793c2.html)
 
