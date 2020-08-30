@@ -8,7 +8,7 @@ Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html)
 
 [![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
 
-### Concepts
+## Why Quark?
 
 Android malware analysis engine is not a new story. Every antivirus company has their own secrets to build it. With curiosity, we develop a malware scoring system from the perspective of Taiwan Criminal Law in an easy but solid way.
 
@@ -20,7 +20,13 @@ Malware evolved with new techniques to gain difficulties for reverse engineering
 
 Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross reference and calling sequence of the native API. 2. Tracing the bytecode register. The combination of these functionalities (yes, the order theory) not only can neglect obfuscation but also match perfectly to the design of our malware scoring system.
 
-### Detail Report
+### Easy to Use and Reading Friendly Report
+
+Quark is very easy to use and also provides flexible output formats. There are 3 types of output report: detail report, call graph, and summary report. Please see below for more details.
+
+
+#### Detail Report
+
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
@@ -28,6 +34,8 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                  -r rules/ \
                  --detail
 ```
+
+and the report will look like:
 
 <img src="https://i.imgur.com/kh1jpsQ.png"/>
 
@@ -45,6 +53,7 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 ```
 <img src="https://i.imgur.com/Ib01V6k.png"/>
 
+## QuickStart
 ### Installation
 
 ```bash
@@ -55,43 +64,17 @@ $ pipenv shell
 
 Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
 
-### Docker
-
-```bash
-docker build . -t quark
-```
-Examples:
-
-```bash
-docker run -it quark quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk -r rules/ --summary
-```
-
-```bash
-docker run -v $(pwd):/tmp -it quark quark -a /tmp/ThaiCamera.apk -r rules/ --summary
-```
-```bash
-docker run -v $(pwd):/tmp -it quark bash
-quark -a /tmp/ThaiCamera.apk -r rules/ --summary
-```
-
-
-### Usage
+Check `--help` to see the detailed usage description.
 
 ```bash
 $ quark --help
-Usage: quark [OPTIONS]
-
-  Quark is an Obfuscation-Neglect Android Malware Scoring System
-
-Options:
-  -s, --summary         show summary report
-  -d, --detail          show detail report
-  -a, --apk FILE        APK file  [required]
-  -r, --rule DIRECTORY  Rules folder need to be checked  [required]
-  --help                Show this message and exit.
 ```
 
-### Analysis Reports
+### Test It Out
+
+You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
+
+## Analysis Reports of Real Malware
 
 Qaurk Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. If you really want to see the very first version of report please visit [here](https://quark-engine.github.io/reports/report_5751cfdf656f2a5ee021940c5448a77e5b921d1510d2abfa520a57d02c74821e0f5c2e4935bea2554c440072d32fc22bb8317a85dabbbc7c9cca9d1c077793c2.html)
 
