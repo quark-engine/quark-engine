@@ -33,6 +33,8 @@ Core members
 +---------------+-------------------------------------------------------------------------------------------+
 | AnWei Kung    | ``Core Developer, Backend (database, downloader, API), Testing``                          |
 +---------------+-------------------------------------------------------------------------------------------+
+| ChaoWen Li    | ``Quark Community Development``  
++---------------+-------------------------------------------------------------------------------------------+
 | Sin           | ``Malware Analyst, Detection Rules, Engine Implementation (Malware Anti-Detection)``      |
 +---------------+-------------------------------------------------------------------------------------------+
 | IokJin Sih    | ``Malware Analyst``                                                                       |
@@ -61,6 +63,4 @@ shows great support to our engine.
 | Lin Gao-Yu      |
 +-----------------+
 | Pippen Wang     |
-+-----------------+
-| ChaoWen Li      |
 +-----------------+
