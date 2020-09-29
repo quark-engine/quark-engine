@@ -76,7 +76,7 @@ You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io
 
 ## Analysis Reports of Real Malware
 
-Qaurk Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. If you really want to see the very first version of report please visit [here](https://quark-engine.github.io/reports/report_5751cfdf656f2a5ee021940c5448a77e5b921d1510d2abfa520a57d02c74821e0f5c2e4935bea2554c440072d32fc22bb8317a85dabbbc7c9cca9d1c077793c2.html)
+Quark Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. If you really want to see the very first version of report please visit [here](https://quark-engine.github.io/reports/report_5751cfdf656f2a5ee021940c5448a77e5b921d1510d2abfa520a57d02c74821e0f5c2e4935bea2554c440072d32fc22bb8317a85dabbbc7c9cca9d1c077793c2.html)
 
 Also, we will soon give out our new detection rules! 
 
