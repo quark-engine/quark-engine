@@ -1,7 +1,8 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
-import os
 import hashlib
+import itertools
+import os
 
 from androguard.misc import AnalyzeAPK
 
@@ -72,10 +73,13 @@ class Apkinfo:
         :return: a generator of MethodClassAnalysis
         """
 
-        result = self.analysis.find_methods(class_name, method_name)
+        regex_method_name = f"^{method_name}$"
 
-        if list(result):
-            return self.analysis.find_methods(class_name, method_name)
+        result = self.analysis.find_methods(class_name, regex_method_name)
+        result, result_copy = itertools.tee(result)
+
+        if list(result_copy):
+            return result
 
         return None
 
