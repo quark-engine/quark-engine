@@ -76,10 +76,9 @@ class Apkinfo:
         regex_method_name = f"^{method_name}$"
 
         result = self.analysis.find_methods(class_name, regex_method_name)
-        result, result_copy = itertools.tee(result)
 
-        if list(result_copy):
-            return result
+        if list(result):
+            return self.analysis.find_methods(class_name, regex_method_name)
 
         return None
 
