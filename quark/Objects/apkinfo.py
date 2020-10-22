@@ -63,7 +63,7 @@ class Apkinfo:
         """
         return self.apk.get_permissions()
 
-    def find_method(self, class_name=".*", method_name=".*"):
+    def find_method(self, class_name=".*", method_name=".*", descriptor=None):
         """
         Find method from given class_name and method_name,
         default is find all method.
@@ -75,12 +75,22 @@ class Apkinfo:
 
         regex_method_name = f"^{method_name}$"
 
-        result = self.analysis.find_methods(class_name, regex_method_name)
+        if descriptor is not None:
 
-        if list(result):
-            return self.analysis.find_methods(class_name, regex_method_name)
+            result = self.analysis.find_methods(class_name, regex_method_name, descriptor=descriptor)
 
-        return None
+            if list(result):
+                return self.analysis.find_methods(class_name, regex_method_name, descriptor=descriptor)
+            else:
+                return None
+        else:
+
+            result = self.analysis.find_methods(class_name, regex_method_name)
+
+            if list(result):
+                return self.analysis.find_methods(class_name, regex_method_name)
+            else:
+                return None
 
     def upperfunc(self, class_name, method_name):
         """
