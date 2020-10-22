@@ -4,25 +4,24 @@
 import copy
 import operator
 
-from prettytable import PrettyTable
-
 from quark.Evaluator.pyeval import PyEval
+from quark.Objects.analysis import QuarkAnalysis
 from quark.Objects.apkinfo import Apkinfo
-from quark.utils.weight import Weight
+from quark.utils import tools
 from quark.utils.colors import (
     red,
     bold,
     yellow,
     green,
 )
-from quark.utils import tools
+from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
 
 
 class Quark:
-    """XRule is used to test quark's five-stage theory"""
+    """Quark module is used to check quark's five-stage theory"""
 
     def __init__(self, apk):
         """
@@ -34,23 +33,7 @@ class Quark:
         self.pre_method0 = []
         self.pre_method1 = []
 
-        self.same_sequence_show_up = []
-        self.same_operation = []
-
-        # Json report
-        self.json_report = []
-
-        # Pretty Table Output
-        self.tb = PrettyTable()
-        self.tb.field_names = ["Rule", "Confidence", "Score", "Weight"]
-        self.tb.align = "l"
-
-        # Sum of the each weight
-        self.weight_sum = 0
-        # Sum of the each rule
-        self.score_sum = 0
-
-        self.level_2_reuslt = []
+        self.quark_analysis = QuarkAnalysis()
 
     def find_previous_method(self, base_method, top_method, pre_method_list, visited_methods=None):
         """
@@ -227,6 +210,7 @@ class Quark:
         :param rule_obj: the instance of the RuleObject.
         :return: None
         """
+        self.quark_analysis.clean_result()
 
         # Level 1
         if set(rule_obj.x1_permission).issubset(set(self.apkinfo.permissions)):
@@ -244,15 +228,13 @@ class Quark:
         first_method_result = self.apkinfo.find_method(test_cls0, test_md0)
         second_method_result = self.apkinfo.find_method(test_cls1, test_md1)
 
-        self.level_2_reuslt.clear()
-
         if first_method_result is not None or second_method_result is not None:
             rule_obj.check_item[1] = True
 
             if first_method_result is not None:
-                self.level_2_reuslt.append((test_cls0, test_md0))
+                self.quark_analysis.level_2_result.append((test_cls0, test_md0))
             if second_method_result is not None:
-                self.level_2_reuslt.append((test_cls1, test_md1))
+                self.quark_analysis.level_2_result.append((test_cls1, test_md1))
         else:
             # Exit if the level 2 stage check fails.
             return
@@ -274,10 +256,6 @@ class Quark:
 
         if same is not None:
 
-            # Clear the results from the previous rule
-            self.same_sequence_show_up.clear()
-            self.same_operation.clear()
-
             for common_method in same:
 
                 base_method_0 = (test_cls0, test_md0)
@@ -298,12 +276,12 @@ class Quark:
 
                 if self.check_sequence(common_method, pre_0, pre_1):
                     rule_obj.check_item[3] = True
-                    self.same_sequence_show_up.append(common_method)
+                    self.quark_analysis.level_4_result.append(common_method)
 
                     # Level 5
                     if self.check_parameter(common_method, str(pre_0[1]), str(pre_1[1])):
                         rule_obj.check_item[4] = True
-                        self.same_operation.append(common_method)
+                        self.quark_analysis.level_5_result.append(common_method)
 
         else:
             # Exit if the level 4 stage check fails.
@@ -316,7 +294,7 @@ class Quark:
         :return: json report
         """
 
-        w = Weight(self.score_sum, self.weight_sum)
+        w = Weight(self.quark_analysis.score_sum, self.quark_analysis.weight_sum)
         warning = w.calculate()
 
         # Filter out color code in threat level
@@ -329,8 +307,8 @@ class Quark:
             "apk_filename": self.apkinfo.filename,
             "size_bytes": self.apkinfo.filesize,
             "threat_level": warning,
-            "total_score": self.score_sum,
-            "crimes": self.json_report,
+            "total_score": self.quark_analysis.score_sum,
+            "crimes": self.quark_analysis.json_report,
         }
 
         return json_report
@@ -356,7 +334,7 @@ class Quark:
         # Assign level 2 examine result
         api = []
         if rule_obj.check_item[1]:
-            for class_name, method_name in self.level_2_reuslt:
+            for class_name, method_name in self.quark_analysis.level_2_result:
                 api.append({
                     "class": class_name,
                     "method": method_name,
@@ -372,16 +350,16 @@ class Quark:
         same_operation_show_up = []
 
         # Check examination has passed level 4
-        if self.same_sequence_show_up and rule_obj.check_item[3]:
-            for same_sequence_cls, same_sequence_md in self.same_sequence_show_up:
+        if self.quark_analysis.level_4_result and rule_obj.check_item[3]:
+            for same_sequence_cls, same_sequence_md in self.quark_analysis.level_4_result:
                 sequnce_show_up.append({
                     "class": repr(same_sequence_cls),
                     "method": repr(same_sequence_md),
                 })
 
             # Check examination has passed level 5
-            if self.same_operation and rule_obj.check_item[4]:
-                for same_operation_cls, same_operation_md in self.same_operation:
+            if self.quark_analysis.level_5_result and rule_obj.check_item[4]:
+                for same_operation_cls, same_operation_md in self.quark_analysis.level_5_result:
                     same_operation_show_up.append({
                         "class": repr(same_operation_cls),
                         "method": repr(same_operation_md),
@@ -398,12 +376,12 @@ class Quark:
             "sequence": sequnce_show_up,
             "register": same_operation_show_up,
         }
-        self.json_report.append(crime)
+        self.quark_analysis.json_report.append(crime)
 
         # add the weight
-        self.weight_sum += weight
+        self.quark_analysis.weight_sum += weight
         # add the score
-        self.score_sum += score
+        self.quark_analysis.score_sum += score
 
     def show_summary_report(self, rule_obj):
         """
@@ -418,16 +396,16 @@ class Quark:
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        self.tb.add_row([
+        self.quark_analysis.summary_report_table.add_row([
             green(rule_obj.crime), yellow(
                 confidence,
             ), score, red(weight),
         ])
 
         # add the weight
-        self.weight_sum += weight
+        self.quark_analysis.weight_sum += weight
         # add the score
-        self.score_sum += score
+        self.quark_analysis.score_sum += score
 
     def show_detail_report(self, rule_obj):
         """
@@ -455,7 +433,7 @@ class Quark:
             print(green(bold("2.Native API Usage")), end="")
             print("")
 
-            for class_name, method_name in self.level_2_reuslt:
+            for class_name, method_name in self.quark_analysis.level_2_result:
                 print(f"\t\t ({class_name}, {method_name})")
         if rule_obj.check_item[2]:
             print(red(CHECK_LIST), end="")
@@ -475,14 +453,14 @@ class Quark:
 
             print("")
             print(f"\t\t Sequence show up in:")
-            for seq_method in self.same_sequence_show_up:
+            for seq_method in self.quark_analysis.level_4_result:
                 print(f"\t\t {repr(seq_method)}")
         if rule_obj.check_item[4]:
 
             print(red(CHECK_LIST), end="")
             print(green(bold("5.Native API Use Same Parameter")), end="")
             print("")
-            for seq_operation in self.same_operation:
+            for seq_operation in self.quark_analysis.level_5_result:
                 print(f"\t\t {repr(seq_operation)}")
 
 

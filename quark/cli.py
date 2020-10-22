@@ -48,10 +48,10 @@ def entry_point(summary, detail, apk, rule, output):
 
                 data.show_summary_report(rule_checker)
 
-        w = Weight(data.score_sum, data.weight_sum)
+        w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
         print_warning(w.calculate())
-        print_info("Total Score: " + str(data.score_sum))
-        print(data.tb)
+        print_info("Total Score: " + str(data.quark_analysis.score_sum))
+        print(data.quark_analysis.summary_report_table)
 
     if detail:
         # show summary report
