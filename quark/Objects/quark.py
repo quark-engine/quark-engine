@@ -138,9 +138,7 @@ class Quark:
 
                     to_md_name = str(call.name)
 
-                    if (to_md_name == first_method_name) or (
-                            to_md_name == second_method_name
-                    ):
+                    if to_md_name in (first_method_name, second_method_name):
                         seq_table.append((call.name, number))
 
             # sorting based on the value of the number
