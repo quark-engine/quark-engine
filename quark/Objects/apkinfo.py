@@ -1,7 +1,6 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
 import hashlib
-import itertools
 import os
 
 from androguard.misc import AnalyzeAPK
@@ -68,6 +67,7 @@ class Apkinfo:
         Find method from given class_name and method_name,
         default is find all method.
 
+        :param descriptor:
         :param class_name: the class name of the Android API
         :param method_name: the method name of the Android API
         :return: a generator of MethodClassAnalysis
@@ -77,10 +77,12 @@ class Apkinfo:
 
         if descriptor is not None:
 
-            result = self.analysis.find_methods(class_name, regex_method_name, descriptor=descriptor)
+            des = descriptor.replace(")", "\)").replace("(", "\(")
+
+            result = self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
 
             if list(result):
-                return self.analysis.find_methods(class_name, regex_method_name, descriptor=descriptor)
+                return self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
             else:
                 return None
         else:
@@ -108,9 +110,9 @@ class Apkinfo:
         if method_set is not None:
             for method in method_set:
                 for _, call, _ in method.get_xref_from():
-                    # Get class name and method name:
-                    # call.class_name, call.name
-                    upperfunc_result.append((call.class_name, call.name))
+                    # Call is the MethodAnalysis in the androguard
+                    # call.class_name, call.name, call.descriptor
+                    upperfunc_result.append(call)
 
             return tools.remove_dup_list(upperfunc_result)
 
