@@ -131,7 +131,7 @@ class Quark:
                 # sorting based on the value of the number
                 if len(seq_table) < 2:
                     # Not Found sequence in same_method
-                    return False
+                    continue
                 seq_table.sort(key=operator.itemgetter(1))
                 # seq_table would look like: [(getLocation, 1256), (sendSms, 1566), (sendSms, 2398)]
 
@@ -244,7 +244,6 @@ class Quark:
         if mutual_parent_function_list is not None:
 
             for parent_function in mutual_parent_function_list:
-
                 first_wrapper = []
                 second_wrapper = []
 
