@@ -73,7 +73,7 @@ class TestQuark():
         expected_result_location = {
             list(result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "doByte"))[0],
             list(result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage"))[0],
-            list(result.apkinfo.find_method("Lcom/google/progress/AndroidClientService\$2;", "run"))[0],
+            list(result.apkinfo.find_method(r"Lcom/google/progress/AndroidClientService\$2;", "run"))[0],
         }
 
         # Send contact via SMS
@@ -102,7 +102,7 @@ class TestQuark():
             result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage"))[0]
         mutual_parent_false = list(
             result.apkinfo.find_method(
-                "Lcom/google/progress/AndroidClientService\$2;", "run",
+                r"Lcom/google/progress/AndroidClientService\$2;", "run",
             ))[0]
 
         # # Send contact via SMS
