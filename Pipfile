@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+pytest = "*"
 
 [packages]
 prettytable = "*"
