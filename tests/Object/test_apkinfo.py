@@ -15,7 +15,7 @@ class TestApkinfo():
 
     def test_filename(self, apkinfo):
         assert apkinfo.filename == \
-            "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+               "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
     def test_filesize(self, apkinfo):
         assert apkinfo.filesize == 266155
@@ -42,10 +42,17 @@ class TestApkinfo():
         assert isinstance(result[0], MethodAnalysis)
 
     def test_upperfunc(self, apkinfo):
-        result = apkinfo.upperfunc(
+        method_list = apkinfo.upperfunc(
             "Ljava/lang/reflect/Field",
             "setAccessible",
         )
-        expect_func = "Landroid/support/v4/widget/SlidingPaneLayout$" \
-                      "SlidingPanelLayoutImplJB;"
-        assert expect_func in result[0]
+
+        check_method = method_list[0]
+
+        expect_class_name = "Landroid/support/v4/widget/SlidingPaneLayout$SlidingPanelLayoutImplJB;"
+        expect_name = "<init>"
+        expect_descriptor = "()V"
+
+        assert str(check_method.class_name) == expect_class_name
+        assert str(check_method.name) == expect_name
+        assert str(check_method.descriptor) == expect_descriptor
