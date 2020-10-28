@@ -462,8 +462,8 @@ class Quark:
             call_graph(call_graph_analysis)
         print_success("Call Graph Completed")
 
-    def show_parent_function(self):
-        print_info("Mutual Parent Function")
+    def show_rule_classification(self):
+        print_info("Rules Classification")
         output_parent_function_table(self.quark_analysis.call_graph_analysis_list)
 
 

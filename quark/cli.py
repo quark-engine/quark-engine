@@ -38,20 +38,20 @@ logo()
     required=True,
 )
 @click.option(
-    "-c",
-    "--call",
+    "-g",
+    "--graph",
     is_flag=True,
-    help="Creating call graph and save to call_graph_image directory",
+    help="Creating call graph and save it to call_graph_image directory",
     required=False,
 )
 @click.option(
-    "-p",
-    "--parent",
+    "-c",
+    "--classification",
     is_flag=True,
-    help="Show crime description with mutual parent function",
+    help="Show rules classification",
     required=False,
 )
-def entry_point(summary, detail, apk, rule, output, call, parent):
+def entry_point(summary, detail, apk, rule, output, graph, classification):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     if summary:
@@ -77,9 +77,9 @@ def entry_point(summary, detail, apk, rule, output, call, parent):
         print_info("Total Score: " + str(data.quark_analysis.score_sum))
         print(data.quark_analysis.summary_report_table)
 
-        if parent:
-            data.show_parent_function()
-        if call:
+        if classification:
+            data.show_rule_classification()
+        if graph:
             data.show_call_graph()
 
     if detail:
@@ -103,9 +103,9 @@ def entry_point(summary, detail, apk, rule, output, call, parent):
                 data.show_detail_report(rule_checker)
                 print_success("OK")
 
-        if parent:
-            data.show_parent_function()
-        if call:
+        if classification:
+            data.show_rule_classification()
+        if graph:
             data.show_call_graph()
 
     if output:
