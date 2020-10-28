@@ -53,7 +53,7 @@ output the rules classification with mutual parent function (only those rules ma
 ```bash
 quark -a Ahmyth.apk -r quark-rules/ -s -c
 ```
-<img src="https://i.imgur.com/0TEnzR4.png"/>
+<img src="https://i.imgur.com/YTK8V1x.png"/>
 
 ### Summary Report
 Examine with rules.
