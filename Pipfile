@@ -5,6 +5,7 @@ verify_ssl = true
 
 [dev-packages]
 black = "*"
+pytest = "*"
 
 [packages]
 prettytable = "*"
@@ -13,9 +14,10 @@ colorama = "*"
 quark-engine = {editable = true,path = "."}
 click = "*"
 androguard = "==3.4.0a1"
+graphviz = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8"
 
 [pipenv]
 allow_prereleases = true

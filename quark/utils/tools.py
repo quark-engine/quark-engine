@@ -20,7 +20,8 @@ def contains(subset_to_check, target_list):
     target_list = ["sendTextMessage", "put", "getCellLocation", "query"]
     then it will return False.
     """
-    target_copy = copy.deepcopy(target_list)
+
+    target_copy = copy.copy(target_list)
 
     # Delete elements that do not exist in the subset_to_check list
     for item in target_copy:

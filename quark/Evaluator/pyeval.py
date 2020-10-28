@@ -38,6 +38,8 @@ class PyEval:
             "invoke-virtual": self.INVOKE_VIRTUAL,
             "invoke-direct": self.INVOKE_DIRECT,
             "invoke-static": self.INVOKE_STATIC,
+            "invoke-virtual/range": self.INVOKE_VIRTUAL_RANGE,
+            "invoke-interface": self.INVOKE_INTERFACE,
             # move-result-kind
             "move-result": self.MOVE_RESULT,
             "move-result-wide": self.MOVE_RESULT_WIDE,
@@ -150,6 +152,22 @@ class PyEval:
         invoke-static {parameters}, methodtocall
 
         Invokes a static method with parameters.
+        """
+        self._invoke(instruction)
+
+    @logger
+    def INVOKE_VIRTUAL_RANGE(self, instruction):
+        """
+        invoke-virtual/range { parameters }, methodtocall
+        Invokes a virtual-range method with parameters.
+        """
+        self._invoke(instruction)
+
+    @logger
+    def INVOKE_INTERFACE(self, instruction):
+        """
+        invoke-interface { parameters }, methodtocall
+        Invokes a interface method with parameters.
         """
         self._invoke(instruction)
 
