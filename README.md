@@ -40,8 +40,20 @@ and the report will look like:
 <img src="https://i.imgur.com/kh1jpsQ.png"/>
 
 ### Call Graph for Every Potential Malicious Activity
-We'll soon release this feature in the next version of quark!
-<img src="https://i.imgur.com/hdTbvuq.png"/>
+You can add the `-g` option to the quark command, and you can
+get the call graph (only those rules match with 100% confidence)
+```bash
+quark -a Ahmyth.apk -r quark-rules -s -g
+```
+<img src="https://i.imgur.com/5xcrcdN.png"/>
+
+### Rules Classification
+You can add the `-c` option to the quark command, and you can
+output the rules classification with mutual parent function (only those rules match with 100% confidence)
+```bash
+quark -a Ahmyth.apk -r quark-rules -s -c
+```
+<img src="https://i.imgur.com/0TEnzR4.png"/>
 
 ### Summary Report
 Examine with rules.
