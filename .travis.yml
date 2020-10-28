@@ -1,7 +1,7 @@
 # Set the build language to Python
 language: python
 
-python: 3.7
+python: 3.8
 
 # Installation
 install:
