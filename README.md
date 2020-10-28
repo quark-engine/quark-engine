@@ -1,4 +1,4 @@
-# Quark Engine [![HITB](https://img.shields.io/badge/HITB-Lockdown%20002-red)](https://conference.hitb.org/hitb-lockdown002/) [![ROOTCON](https://img.shields.io/badge/ROOTCON-2020-orange)](https://www.rootcon.org/html/recoverymode/talks) [![DEFCON](https://img.shields.io/badge/DEFCON%2028-BTV-blue)](https://www.blueteamvillage.org/)  [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![codecov](https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg)](https://codecov.io/gh/quark-engine/quark-engine) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) [![Python 3.7](https://img.shields.io/badge/python-3.7-blue.svg)](https://www.python.org/downloads/release/python-360/)
+# Quark Engine [![HITB](https://img.shields.io/badge/HITB-Lockdown%20002-red)](https://conference.hitb.org/hitb-lockdown002/) [![ROOTCON](https://img.shields.io/badge/ROOTCON-2020-orange)](https://www.rootcon.org/html/recoverymode/talks) [![DEFCON](https://img.shields.io/badge/DEFCON%2028-BTV-blue)](https://www.blueteamvillage.org/)  [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![codecov](https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg)](https://codecov.io/gh/quark-engine/quark-engine) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/)
 An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 
 <img src="https://i.imgur.com/8GwkWei.png"/>
@@ -74,7 +74,7 @@ $ pipenv install --skip-lock
 $ pipenv shell
 ```
 
-Make sure your python version is `3.7`, or you could change it from `Pipfile` to what you have.
+Make sure your python version is `3.8`, or you could change it from `Pipfile` to what you have.
 
 Check `--help` to see the detailed usage description.
 
