@@ -3,7 +3,7 @@
 
 import copy
 import operator
-
+from quark.utils.out import print_info, print_success
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
 from quark.Objects.apkinfo import Apkinfo
@@ -14,6 +14,8 @@ from quark.utils.colors import (
     yellow,
     green,
 )
+from quark.utils.graph import call_graph
+from quark.utils.output import output_parent_function_table
 from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
@@ -187,6 +189,18 @@ class Quark:
                             if first_method_pattern in c_func and second_method_pattern in c_func:
                                 state = True
 
+                # Build for the call graph
+                if state:
+                    call_graph_analysis = {"parent": parent_function,
+                                           "first_call": first_call_method,
+                                           "second_call": second_call_method,
+                                           "apkinfo": self.apkinfo,
+                                           "first_api": self.quark_analysis.first_api,
+                                           "second_api": self.quark_analysis.second_api,
+                                           "crime": self.quark_analysis.crime_description,
+                                           }
+                    self.quark_analysis.call_graph_analysis_list.append(call_graph_analysis)
+
         return state
 
     def run(self, rule_obj):
@@ -197,6 +211,7 @@ class Quark:
         :return: None
         """
         self.quark_analysis.clean_result()
+        self.quark_analysis.crime_description = rule_obj.crime
 
         # Level 1: Permission Check
         if set(rule_obj.x1_permission).issubset(set(self.apkinfo.permissions)):
@@ -229,6 +244,8 @@ class Quark:
 
         # Level 3: Both Native API Check
         if first_api is not None and second_api is not None:
+            self.quark_analysis.first_api = first_api
+            self.quark_analysis.second_api = second_api
             rule_obj.check_item[2] = True
 
         else:
@@ -438,6 +455,16 @@ class Quark:
             print("")
             for seq_operation in self.quark_analysis.level_5_result:
                 print(f"\t\t {seq_operation.full_name}")
+
+    def show_call_graph(self):
+        print_info("Creating Call Graph...")
+        for call_graph_analysis in self.quark_analysis.call_graph_analysis_list:
+            call_graph(call_graph_analysis)
+        print_success("Call Graph Completed")
+
+    def show_parent_function(self):
+        print_info("Mutual Parent Function")
+        output_parent_function_table(self.quark_analysis.call_graph_analysis_list)
 
 
 if __name__ == "__main__":

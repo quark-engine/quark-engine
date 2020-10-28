@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from typing import Any
 from prettytable import PrettyTable
 
 
@@ -13,6 +13,9 @@ def init_pretty_table():
 
 @dataclass()
 class QuarkAnalysis:
+    crime_description: str = ""
+    first_api: Any = None
+    second_api: Any = None
     level_1_result: list = field(default_factory=list)
     level_2_result: list = field(default_factory=list)
     level_3_result: list = field(default_factory=list)
@@ -25,6 +28,8 @@ class QuarkAnalysis:
     # Sum of the each rule
     score_sum: int = 0
     summary_report_table: PrettyTable = field(default_factory=init_pretty_table)
+    # Call graph analysis
+    call_graph_analysis_list: list = field(default_factory=list)
 
     def clean_result(self):
         self.level_1_result.clear()
