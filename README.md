@@ -43,7 +43,7 @@ and the report will look like:
 You can add the `-g` option to the quark command, and you can
 get the call graph (only those rules match with 100% confidence)
 ```bash
-quark -a Ahmyth.apk -r quark-rules -s -g
+quark -a Ahmyth.apk -r quark-rules/ -s -g
 ```
 <img src="https://i.imgur.com/5xcrcdN.png"/>
 
@@ -51,7 +51,7 @@ quark -a Ahmyth.apk -r quark-rules -s -g
 You can add the `-c` option to the quark command, and you can
 output the rules classification with mutual parent function (only those rules match with 100% confidence)
 ```bash
-quark -a Ahmyth.apk -r quark-rules -s -c
+quark -a Ahmyth.apk -r quark-rules/ -s -c
 ```
 <img src="https://i.imgur.com/0TEnzR4.png"/>
 
