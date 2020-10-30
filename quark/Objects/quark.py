@@ -15,7 +15,7 @@ from quark.utils.colors import (
     green,
 )
 from quark.utils.graph import call_graph
-from quark.utils.output import output_parent_function_table
+from quark.utils.output import output_parent_function_table, output_parent_function_json
 from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
@@ -465,6 +465,7 @@ class Quark:
     def show_rule_classification(self):
         print_info("Rules Classification")
         output_parent_function_table(self.quark_analysis.call_graph_analysis_list)
+        output_parent_function_json(self.quark_analysis.call_graph_analysis_list)
 
 
 if __name__ == "__main__":
