@@ -1,0 +1,6 @@
+/*
+This file will contains Dependencies packages which needs to be installed on the host system before installing quark-engine to avoid dependencies errors. */
+
+pip install androguard =>3.4.0a1
+pip install pipenv
+pip install django 
