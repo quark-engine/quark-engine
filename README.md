@@ -6,6 +6,8 @@ An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
 Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html).
 :shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. https://twitter.com/quarkengine
 
+<img src="https://i.imgur.com/nz4m8kr.png"/>
+
 [![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
 
 ## Why Quark?
