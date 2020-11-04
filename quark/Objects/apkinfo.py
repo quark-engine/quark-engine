@@ -1,12 +1,13 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
+import functools
 import hashlib
 import os
+import re
 
 from androguard.misc import AnalyzeAPK
 
 from quark.Objects.bytecodeobject import BytecodeObject
-from quark.utils import tools
 
 
 class Apkinfo:
@@ -62,61 +63,50 @@ class Apkinfo:
         """
         return self.apk.get_permissions()
 
-    def find_method(self, class_name=".*", method_name=".*", descriptor=None):
+    @functools.lru_cache()
+    def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
         """
-        Find method from given class_name and method_name,
+        Find method from given class_name, method_name and the descriptor.
         default is find all method.
 
-        :param descriptor:
         :param class_name: the class name of the Android API
         :param method_name: the method name of the Android API
+        :param descriptor: the descriptor of the Android API
         :return: a generator of MethodClassAnalysis
         """
 
-        regex_method_name = f"^{method_name}$"
+        regex_class_name = re.escape(class_name)
+        regex_method_name = re.escape(method_name)
+        regex_descriptor = re.escape(descriptor)
 
-        if descriptor is not None:
+        method_result = self.analysis.find_methods(classname=regex_class_name,
+                                                   methodname=regex_method_name,
+                                                   descriptor=regex_descriptor)
+        if list(method_result):
+            result, = list(self.analysis.find_methods(classname=regex_class_name,
+                                                      methodname=regex_method_name,
+                                                      descriptor=regex_descriptor))
 
-            des = descriptor.replace(")", "\)").replace("(", "\(")
-
-            result = self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
-
-            if list(result):
-                return self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
-            else:
-                return None
+            return result
         else:
+            return None
 
-            result = self.analysis.find_methods(class_name, regex_method_name)
-
-            if list(result):
-                return self.analysis.find_methods(class_name, regex_method_name)
-            else:
-                return None
-
-    def upperfunc(self, class_name, method_name):
+    @functools.lru_cache()
+    def upperfunc(self, method_analysis):
         """
-        Return the upper level method from given class name and
-        method name.
+        Return the xref from method from given method analysis instance.
 
-        :param class_name: the class name of the Android API
-        :param method_name: the method name of the Android API
-        :return: a list of all upper functions
+        :param method_analysis: the method analysis in androguard
+        :return: a set of all xref from functions
         """
+        upperfunc_result = set()
 
-        upperfunc_result = []
-        method_set = self.find_method(class_name, method_name)
+        for _, call, _ in method_analysis.get_xref_from():
+            # Call is the MethodAnalysis in the androguard
+            # call.class_name, call.name, call.descriptor
+            upperfunc_result.add(call)
 
-        if method_set is not None:
-            for method in method_set:
-                for _, call, _ in method.get_xref_from():
-                    # Call is the MethodAnalysis in the androguard
-                    # call.class_name, call.name, call.descriptor
-                    upperfunc_result.append(call)
-
-            return tools.remove_dup_list(upperfunc_result)
-
-        return None
+        return upperfunc_result
 
     def get_method_bytecode(self, class_name, method_name):
         """

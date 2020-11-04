@@ -1,9 +1,8 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
 
-import copy
 import operator
-from quark.utils.out import print_info, print_success
+
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
 from quark.Objects.apkinfo import Apkinfo
@@ -15,6 +14,7 @@ from quark.utils.colors import (
     green,
 )
 from quark.utils.graph import call_graph
+from quark.utils.out import print_info, print_success
 from quark.utils.output import output_parent_function_table, output_parent_function_json
 from quark.utils.weight import Weight
 
@@ -48,7 +48,7 @@ class Quark:
         if visited_methods is None:
             visited_methods = set()
 
-        method_set = self.apkinfo.upperfunc(base_method.class_name, base_method.name)
+        method_set = self.apkinfo.upperfunc(base_method)
         visited_methods.add(base_method)
 
         if method_set is not None:
@@ -62,21 +62,21 @@ class Quark:
                         continue
                     self.find_previous_method(item, parent_function, wrapper, visited_methods)
 
-    def find_intersection(self, first_method_list, second_method_list, depth=1):
+    def find_intersection(self, first_method_set, second_method_set, depth=1):
         """
         Find the first_method_list ∩ second_method_list.
         [MethodAnalysis, MethodAnalysis,...]
 
-        :param first_method_list: first list that contains each MethodAnalysis.
-        :param second_method_list: second list that contains each MethodAnalysis.
+        :param first_method_set: first list that contains each MethodAnalysis.
+        :param second_method_set: second list that contains each MethodAnalysis.
         :param depth: maximum number of recursive search functions.
         :return: a set of first_method_list ∩ second_method_list or None.
         """
         # Check both lists are not null
-        if first_method_list and second_method_list:
+        if first_method_set and second_method_set:
 
             # find ∩
-            result = set(first_method_list).intersection(second_method_list)
+            result = first_method_set & second_method_set
             if result:
                 return result
             else:
@@ -86,28 +86,20 @@ class Quark:
                     return None
 
                 # Append first layer into next layer.
-                next_list1 = copy.copy(first_method_list)
-                next_list2 = copy.copy(second_method_list)
+                next_level_set_1 = set()
+                next_level_set_2 = set()
 
                 # Extend the upper function into next layer.
-                for method in first_method_list:
-                    if self.apkinfo.upperfunc(method.class_name, method.name) is not None:
-                        next_list1.extend(
-                            self.apkinfo.upperfunc(
-                                method.class_name, method.name,
-                            ),
-                        )
-                for method in second_method_list:
-                    if self.apkinfo.upperfunc(method.class_name, method.name) is not None:
-                        next_list2.extend(
-                            self.apkinfo.upperfunc(
-                                method.class_name, method.name,
-                            ),
-                        )
+                for method in first_method_set:
+                    if self.apkinfo.upperfunc(method):
+                        next_level_set_1 = self.apkinfo.upperfunc(method) | first_method_set
+                for method in second_method_set:
+                    if self.apkinfo.upperfunc(method):
+                        next_level_set_2 = self.apkinfo.upperfunc(method) | second_method_set
 
-                return self.find_intersection(next_list1, next_list2, depth)
+                return self.find_intersection(next_level_set_1, next_level_set_2, depth)
         else:
-            raise ValueError("List is Null")
+            raise ValueError("Set is Null")
 
     def check_sequence(self, mutual_parent, first_method_list, second_method_list):
         """
@@ -223,20 +215,23 @@ class Quark:
         # Level 2: Single Native API Check
         api_1_method_name = rule_obj.x2n3n4_comb[0]["method"]
         api_1_class_name = rule_obj.x2n3n4_comb[0]["class"]
+        api_1_descriptor = rule_obj.x2n3n4_comb[0]["descriptor"]
+
         api_2_method_name = rule_obj.x2n3n4_comb[1]["method"]
         api_2_class_name = rule_obj.x2n3n4_comb[1]["class"]
+        api_2_descriptor = rule_obj.x2n3n4_comb[1]["descriptor"]
 
-        first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name)
-        second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name)
+        first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name, api_1_descriptor)
+        second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name, api_2_descriptor)
 
         if first_api is not None or second_api is not None:
             rule_obj.check_item[1] = True
 
             if first_api is not None:
-                first_api = list(self.apkinfo.find_method(api_1_class_name, api_1_method_name))[0]
+                first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name, api_1_descriptor)
                 self.quark_analysis.level_2_result.append(first_api)
             if second_api is not None:
-                second_api = list(self.apkinfo.find_method(api_2_class_name, api_2_method_name))[0]
+                second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name, api_2_descriptor)
                 self.quark_analysis.level_2_result.append(second_api)
         else:
             # Exit if the level 2 stage check fails.
@@ -254,8 +249,9 @@ class Quark:
 
         # Level 4: Sequence Check
         # Looking for the first layer of the upper function
-        first_api_xref_from = self.apkinfo.upperfunc(first_api.class_name, first_api.name)
-        second_api_xref_from = self.apkinfo.upperfunc(second_api.class_name, second_api.name)
+        first_api_xref_from = self.apkinfo.upperfunc(first_api)
+        second_api_xref_from = self.apkinfo.upperfunc(second_api)
+
         mutual_parent_function_list = self.find_intersection(first_api_xref_from, second_api_xref_from)
 
         if mutual_parent_function_list is not None:
