@@ -78,7 +78,7 @@ class Apkinfo:
         """
 
         regex_class_name = re.escape(class_name)
-        regex_method_name = re.escape(method_name)
+        regex_method_name = f"^{re.escape(method_name)}$"
         regex_descriptor = re.escape(descriptor)
 
         method_result = self.analysis.find_methods(classname=regex_class_name,
