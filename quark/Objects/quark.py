@@ -89,7 +89,7 @@ class Quark:
                 next_level_set_1 = set()
                 next_level_set_2 = set()
 
-                # Extend the upper function into next layer.
+                # Extend the xref from function into next layer.
                 for method in first_method_set:
                     if self.apkinfo.upperfunc(method):
                         next_level_set_1 = self.apkinfo.upperfunc(method) | first_method_set
@@ -106,8 +106,8 @@ class Quark:
         Check if the first function appeared before the second function.
 
         :param mutual_parent: function that call the first function and second functions at the same time.
-        :param first_method_list: the first show up function, which is (class_name, method_name)
-        :param second_method_list: the second show up function, which is (class_name, method_name)
+        :param first_method_list: the first show up function, which is a MethodAnalysis
+        :param second_method_list: the second show up function, which is a MethodAnalysis
         :return: True or False
         """
         state = False
@@ -154,9 +154,7 @@ class Quark:
                 pyeval = PyEval()
                 # Check if there is an operation of the same register
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(
-                        parent_function.class_name, parent_function.name,
-                ):
+                for bytecode_obj in self.apkinfo.get_method_bytecode(parent_function):
                     # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
                     instruction = [bytecode_obj.mnemonic]
                     if bytecode_obj.registers is not None:
@@ -175,8 +173,8 @@ class Quark:
 
                         for c_func in val_obj.called_by_func:
 
-                            first_method_pattern = f"{first_call_method.class_name}->{first_call_method.name}"
-                            second_method_pattern = f"{second_call_method.class_name}->{second_call_method.name}"
+                            first_method_pattern = f"{first_call_method.class_name}->{first_call_method.name}{first_call_method.descriptor}"
+                            second_method_pattern = f"{second_call_method.class_name}->{second_call_method.name}{second_call_method.descriptor}"
 
                             if first_method_pattern in c_func and second_method_pattern in c_func:
                                 state = True

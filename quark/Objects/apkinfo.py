@@ -108,61 +108,56 @@ class Apkinfo:
 
         return upperfunc_result
 
-    def get_method_bytecode(self, class_name, method_name):
+    def get_method_bytecode(self, method_analysis):
         """
         Return the corresponding bytecode according to the
         given class name and method name.
 
-        :param class_name: the class name of the Android API
-        :param method_name: the method name of the Android API
+        :param method_analysis: the method analysis in androguard
         :return: a generator of all bytecode instructions
         """
 
-        result = self.analysis.find_methods(class_name, method_name)
+        try:
+            for _, ins in method_analysis.get_method().get_instructions_idx():
+                bytecode_obj = None
+                reg_list = []
 
-        if list(result):
-            for method in self.analysis.find_methods(class_name, method_name):
-                try:
-                    for _, ins in method.get_method().get_instructions_idx():
-                        bytecode_obj = None
-                        reg_list = []
+                # count the number of the registers.
+                length_operands = len(ins.get_operands())
+                if length_operands == 0:
+                    # No register, no parameter
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), None, None,
+                    )
+                elif length_operands == 1:
+                    # Only one register
 
-                        # count the number of the registers.
-                        length_operands = len(ins.get_operands())
-                        if length_operands == 0:
-                            # No register, no parameter
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), None, None,
-                            )
-                        elif length_operands == 1:
-                            # Only one register
+                    reg_list.append(
+                        f"v{ins.get_operands()[length_operands - 1][1]}",
+                    )
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), reg_list, None,
+                    )
+                elif length_operands >= 2:
+                    # the last one is parameter, the other are registers.
 
-                            reg_list.append(
-                                f"v{ins.get_operands()[length_operands - 1][1]}",
-                            )
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), reg_list, None,
-                            )
-                        elif length_operands >= 2:
-                            # the last one is parameter, the other are registers.
+                    parameter = ins.get_operands()[length_operands - 1]
+                    for i in range(0, length_operands - 1):
+                        reg_list.append(
+                            "v" + str(ins.get_operands()[i][1]),
+                        )
+                    if len(parameter) == 3:
+                        # method or value
+                        parameter = parameter[2]
+                    else:
+                        # Operand.OFFSET
+                        parameter = parameter[1]
 
-                            parameter = ins.get_operands()[length_operands - 1]
-                            for i in range(0, length_operands - 1):
-                                reg_list.append(
-                                    "v" + str(ins.get_operands()[i][1]),
-                                )
-                            if len(parameter) == 3:
-                                # method or value
-                                parameter = parameter[2]
-                            else:
-                                # Operand.OFFSET
-                                parameter = parameter[1]
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), reg_list, parameter,
+                    )
 
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), reg_list, parameter,
-                            )
-
-                        yield bytecode_obj
-                except AttributeError as error:
-                    # TODO Log the rule here
-                    continue
+                yield bytecode_obj
+        except AttributeError as error:
+            # TODO Log the rule here
+            pass
