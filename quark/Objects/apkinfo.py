@@ -13,6 +13,8 @@ from quark.Objects.bytecodeobject import BytecodeObject
 class Apkinfo:
     """Information about apk based on androguard analysis"""
 
+    __slots__ = ["apk", "dalvikvmformat", "analysis", "apk_filename", "apk_filepath"]
+
     def __init__(self, apk_filepath):
         """Information about apk based on androguard analysis"""
         # return the APK, list of DalvikVMFormat, and Analysis objects

@@ -5,6 +5,8 @@
 class BytecodeObject:
     """BytecodeObject is used to store the instructions in smali, including mnemonic, registers, parameter"""
 
+    __slots__ = ["_mnemonic", "_registers", "_parameter"]
+
     def __init__(self, mnemonic, registers, parameter):
         """
         ['invoke-virtual', 'v3', 'Lcom/google/progress/APNOperator;->deleteAPN()Z']

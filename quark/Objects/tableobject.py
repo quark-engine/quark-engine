@@ -5,6 +5,8 @@
 class TableObject:
     """This table is used to track the usage of variables in the register"""
 
+    __slots__ = ["hash_table"]
+
     def __init__(self, count_reg):
         """
         This table used to store the variable object, which uses a hash table
