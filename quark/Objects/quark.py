@@ -73,6 +73,7 @@ class Quark:
         :return: a set of first_method_list ∩ second_method_list or None.
         """
         # Check both lists are not null
+
         if first_method_set and second_method_set:
 
             # find ∩
@@ -86,16 +87,16 @@ class Quark:
                     return None
 
                 # Append first layer into next layer.
-                next_level_set_1 = set()
-                next_level_set_2 = set()
+                next_level_set_1 = first_method_set.copy()
+                next_level_set_2 = second_method_set.copy()
 
                 # Extend the xref from function into next layer.
                 for method in first_method_set:
                     if self.apkinfo.upperfunc(method):
-                        next_level_set_1 = self.apkinfo.upperfunc(method) | first_method_set
+                        next_level_set_1 = self.apkinfo.upperfunc(method) | next_level_set_1
                 for method in second_method_set:
                     if self.apkinfo.upperfunc(method):
-                        next_level_set_2 = self.apkinfo.upperfunc(method) | second_method_set
+                        next_level_set_2 = self.apkinfo.upperfunc(method) | next_level_set_2
 
                 return self.find_intersection(next_level_set_1, next_level_set_2, depth)
         else:
