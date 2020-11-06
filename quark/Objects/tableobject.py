@@ -27,7 +27,10 @@ class TableObject:
         :param var_obj: instance of VariableObject
         :return: None
         """
-        self.hash_table[index].append(var_obj)
+        try:
+            self.hash_table[index].append(var_obj)
+        except IndexError:
+            pass
 
     def get_obj_list(self, index):
         """
@@ -36,7 +39,10 @@ class TableObject:
         :param index: the index to get the corresponding VariableObject
         :return: a list containing VariableObject
         """
-        return self.hash_table[index]
+        try:
+            return self.hash_table[index]
+        except IndexError:
+            return None
 
     def get_table(self):
         """
