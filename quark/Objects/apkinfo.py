@@ -5,7 +5,8 @@ import hashlib
 import os
 import re
 
-from androguard.misc import AnalyzeAPK
+from androguard.core import androconf
+from androguard.misc import AnalyzeAPK, AnalyzeDex
 
 from quark.Objects.bytecodeobject import BytecodeObject
 
@@ -13,12 +14,20 @@ from quark.Objects.bytecodeobject import BytecodeObject
 class Apkinfo:
     """Information about apk based on androguard analysis"""
 
-    __slots__ = ["apk", "dalvikvmformat", "analysis", "apk_filename", "apk_filepath"]
+    __slots__ = ["ret_type", "apk", "dalvikvmformat", "analysis", "apk_filename", "apk_filepath"]
 
     def __init__(self, apk_filepath):
         """Information about apk based on androguard analysis"""
-        # return the APK, list of DalvikVMFormat, and Analysis objects
-        self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
+        self.ret_type = androconf.is_android(apk_filepath)
+
+        if self.ret_type == "APK":
+            # return the APK, list of DalvikVMFormat, and Analysis objects
+            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
+
+        if self.ret_type == "DEX":
+            # return the sha256hash, DalvikVMFormat, and Analysis objects
+            _, _, self.analysis = AnalyzeDex(apk_filepath)
+
         self.apk_filename = os.path.basename(apk_filepath)
         self.apk_filepath = apk_filepath
 
@@ -63,7 +72,11 @@ class Apkinfo:
 
         :return: a list of all permissions
         """
-        return self.apk.get_permissions()
+        if self.ret_type == "APK":
+            return self.apk.get_permissions()
+
+        if self.ret_type == "DEX":
+            return []
 
     @functools.lru_cache()
     def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
