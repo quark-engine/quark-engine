@@ -8,11 +8,13 @@
     "x2n3n4_comb": [
         {
             "class": "Landroid/telephony/TelephonyManager",
-            "method": "getCellLocation"
+            "method": "getCellLocation",
+            "descriptor": "()Landroid/telephony/CellLocation;"
         },
         {
             "class": "Landroid/telephony/SmsManager",
-            "method": "sendTextMessage"
+            "method": "sendTextMessage",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
         }
     ],
     "yscore": 4
