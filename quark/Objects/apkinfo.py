@@ -1,21 +1,33 @@
 # This file is part of Quark Engine - https://quark-engine.rtfd.io
 # See GPLv3 for copying permission.
+import functools
 import hashlib
 import os
+import re
 
-from androguard.misc import AnalyzeAPK
+from androguard.core import androconf
+from androguard.misc import AnalyzeAPK, AnalyzeDex
 
 from quark.Objects.bytecodeobject import BytecodeObject
-from quark.utils import tools
 
 
 class Apkinfo:
     """Information about apk based on androguard analysis"""
 
+    __slots__ = ["ret_type", "apk", "dalvikvmformat", "analysis", "apk_filename", "apk_filepath"]
+
     def __init__(self, apk_filepath):
         """Information about apk based on androguard analysis"""
-        # return the APK, list of DalvikVMFormat, and Analysis objects
-        self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
+        self.ret_type = androconf.is_android(apk_filepath)
+
+        if self.ret_type == "APK":
+            # return the APK, list of DalvikVMFormat, and Analysis objects
+            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
+
+        if self.ret_type == "DEX":
+            # return the sha256hash, DalvikVMFormat, and Analysis objects
+            _, _, self.analysis = AnalyzeDex(apk_filepath)
+
         self.apk_filename = os.path.basename(apk_filepath)
         self.apk_filepath = apk_filepath
 
@@ -60,119 +72,107 @@ class Apkinfo:
 
         :return: a list of all permissions
         """
-        return self.apk.get_permissions()
+        if self.ret_type == "APK":
+            return self.apk.get_permissions()
 
-    def find_method(self, class_name=".*", method_name=".*", descriptor=None):
+        if self.ret_type == "DEX":
+            return []
+
+    @functools.lru_cache()
+    def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
         """
-        Find method from given class_name and method_name,
+        Find method from given class_name, method_name and the descriptor.
         default is find all method.
 
-        :param descriptor:
         :param class_name: the class name of the Android API
         :param method_name: the method name of the Android API
+        :param descriptor: the descriptor of the Android API
         :return: a generator of MethodClassAnalysis
         """
 
-        regex_method_name = f"^{method_name}$"
+        regex_class_name = re.escape(class_name)
+        regex_method_name = f"^{re.escape(method_name)}$"
+        regex_descriptor = re.escape(descriptor)
 
-        if descriptor is not None:
+        method_result = self.analysis.find_methods(classname=regex_class_name,
+                                                   methodname=regex_method_name,
+                                                   descriptor=regex_descriptor)
+        if list(method_result):
+            result, = list(self.analysis.find_methods(classname=regex_class_name,
+                                                      methodname=regex_method_name,
+                                                      descriptor=regex_descriptor))
 
-            des = descriptor.replace(")", "\)").replace("(", "\(")
-
-            result = self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
-
-            if list(result):
-                return self.analysis.find_methods(class_name, regex_method_name, descriptor=des)
-            else:
-                return None
+            return result
         else:
+            return None
 
-            result = self.analysis.find_methods(class_name, regex_method_name)
-
-            if list(result):
-                return self.analysis.find_methods(class_name, regex_method_name)
-            else:
-                return None
-
-    def upperfunc(self, class_name, method_name):
+    @functools.lru_cache()
+    def upperfunc(self, method_analysis):
         """
-        Return the upper level method from given class name and
-        method name.
+        Return the xref from method from given method analysis instance.
 
-        :param class_name: the class name of the Android API
-        :param method_name: the method name of the Android API
-        :return: a list of all upper functions
+        :param method_analysis: the method analysis in androguard
+        :return: a set of all xref from functions
         """
+        upperfunc_result = set()
 
-        upperfunc_result = []
-        method_set = self.find_method(class_name, method_name)
+        for _, call, _ in method_analysis.get_xref_from():
+            # Call is the MethodAnalysis in the androguard
+            # call.class_name, call.name, call.descriptor
+            upperfunc_result.add(call)
 
-        if method_set is not None:
-            for method in method_set:
-                for _, call, _ in method.get_xref_from():
-                    # Call is the MethodAnalysis in the androguard
-                    # call.class_name, call.name, call.descriptor
-                    upperfunc_result.append(call)
+        return upperfunc_result
 
-            return tools.remove_dup_list(upperfunc_result)
-
-        return None
-
-    def get_method_bytecode(self, class_name, method_name):
+    def get_method_bytecode(self, method_analysis):
         """
         Return the corresponding bytecode according to the
         given class name and method name.
 
-        :param class_name: the class name of the Android API
-        :param method_name: the method name of the Android API
+        :param method_analysis: the method analysis in androguard
         :return: a generator of all bytecode instructions
         """
 
-        result = self.analysis.find_methods(class_name, method_name)
+        try:
+            for _, ins in method_analysis.get_method().get_instructions_idx():
+                bytecode_obj = None
+                reg_list = []
 
-        if list(result):
-            for method in self.analysis.find_methods(class_name, method_name):
-                try:
-                    for _, ins in method.get_method().get_instructions_idx():
-                        bytecode_obj = None
-                        reg_list = []
+                # count the number of the registers.
+                length_operands = len(ins.get_operands())
+                if length_operands == 0:
+                    # No register, no parameter
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), None, None,
+                    )
+                elif length_operands == 1:
+                    # Only one register
 
-                        # count the number of the registers.
-                        length_operands = len(ins.get_operands())
-                        if length_operands == 0:
-                            # No register, no parameter
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), None, None,
-                            )
-                        elif length_operands == 1:
-                            # Only one register
+                    reg_list.append(
+                        f"v{ins.get_operands()[length_operands - 1][1]}",
+                    )
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), reg_list, None,
+                    )
+                elif length_operands >= 2:
+                    # the last one is parameter, the other are registers.
 
-                            reg_list.append(
-                                f"v{ins.get_operands()[length_operands - 1][1]}",
-                            )
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), reg_list, None,
-                            )
-                        elif length_operands >= 2:
-                            # the last one is parameter, the other are registers.
+                    parameter = ins.get_operands()[length_operands - 1]
+                    for i in range(0, length_operands - 1):
+                        reg_list.append(
+                            "v" + str(ins.get_operands()[i][1]),
+                        )
+                    if len(parameter) == 3:
+                        # method or value
+                        parameter = parameter[2]
+                    else:
+                        # Operand.OFFSET
+                        parameter = parameter[1]
 
-                            parameter = ins.get_operands()[length_operands - 1]
-                            for i in range(0, length_operands - 1):
-                                reg_list.append(
-                                    "v" + str(ins.get_operands()[i][1]),
-                                )
-                            if len(parameter) == 3:
-                                # method or value
-                                parameter = parameter[2]
-                            else:
-                                # Operand.OFFSET
-                                parameter = parameter[1]
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), reg_list, parameter,
+                    )
 
-                            bytecode_obj = BytecodeObject(
-                                ins.get_name(), reg_list, parameter,
-                            )
-
-                        yield bytecode_obj
-                except AttributeError as error:
-                    # TODO Log the rule here
-                    continue
+                yield bytecode_obj
+        except AttributeError as error:
+            # TODO Log the rule here
+            pass

@@ -1,3 +1,4 @@
+import json
 from collections import defaultdict
 
 from prettytable import PrettyTable
@@ -30,3 +31,25 @@ def output_parent_function_table(call_graph_analysis_list):
             count += 1
 
         print(tb)
+
+
+def output_parent_function_json(call_graph_analysis_list):
+    dd = defaultdict(list)
+
+    for item in call_graph_analysis_list:
+        # print(item["parent"].class_name, item["parent"].name, item["crime"])
+        key = f"{item['parent'].class_name}{item['parent'].name}"
+        dd[key].append(item["crime"])
+
+    # Json Output
+
+    data = {"rules_classification": []}
+
+    for parent, crimes in dd.items():
+        data["rules_classification"].append({
+            "parent": parent,
+            "crime": crimes,
+        })
+
+    with open('rules_classification.json', 'w') as outfile:
+        json.dump(data, outfile)

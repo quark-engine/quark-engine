@@ -7,6 +7,8 @@ import os
 class QuarkRule:
     """RuleObject is used to store the rule from json file"""
 
+    __slots__ = ["check_item", "_json_obj", "_crime", "_x1_permission", "_x2n3n4_comb", "_yscore", "rule_filename"]
+
     def __init__(self, json_filename):
         """
         According to customized JSON rules, calculate the weighted score and assessing the stages of the crime.
