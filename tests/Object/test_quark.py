@@ -1,12 +1,25 @@
+import os
 import pytest
 
 from quark.Objects.quark import Quark
-
+from quark.Objects.quarkrule import QuarkRule
 
 @pytest.fixture()
 def result(scope="function"):
     apk_file = "quark/sample/14d9f1a92dd984d6040cc41ed06e273e.apk"
     data = Quark(apk_file)
+    # rule
+    rules = "quark/rules"
+    rules_list = os.listdir(rules)
+    for single_rule in rules_list:
+        if single_rule.endswith("json"):
+            rulepath = os.path.join(rules, single_rule)
+            rule_checker = QuarkRule(rulepath)
+
+            # Run the checker
+            data.run(rule_checker)
+            data.generate_json_report(rule_checker)
+
     yield data
 
 
@@ -122,4 +135,10 @@ class TestQuark():
             result.apkinfo.find_method("Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;")]
         mutual_parent = result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage", "()V")
 
-        assert result.check_parameter(mutual_parent, first_method, second_method) is True
+        assert result.check_parameter(mutual_parent, first_method, second_method) == True
+
+    def test_get_json_report(self, result):
+        json_report = result.get_json_report()
+        # Check if proper dict object
+        assert isinstance(json_report, dict)
+        assert json_report.get("md5") == "14d9f1a92dd984d6040cc41ed06e273e"

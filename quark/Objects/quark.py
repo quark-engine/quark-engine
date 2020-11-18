@@ -322,10 +322,10 @@ class Quark:
         # Assign level 2 examine result
         api = []
         if rule_obj.check_item[1]:
-            for class_name, method_name in self.quark_analysis.level_2_result:
+            for item2 in self.quark_analysis.level_2_result:
                 api.append({
-                    "class": class_name,
-                    "method": method_name,
+                    "class": repr(item2.class_name),
+                    "method": repr(item2.name),
                 })
 
         # Assign level 3 examine result
@@ -339,18 +339,18 @@ class Quark:
 
         # Check examination has passed level 4
         if self.quark_analysis.level_4_result and rule_obj.check_item[3]:
-            for same_sequence_cls, same_sequence_md in self.quark_analysis.level_4_result:
+            for item4 in self.quark_analysis.level_4_result:
                 sequnce_show_up.append({
-                    "class": repr(same_sequence_cls),
-                    "method": repr(same_sequence_md),
+                    "class": repr(item4.class_name),
+                    "method": repr(item4.name),
                 })
 
             # Check examination has passed level 5
             if self.quark_analysis.level_5_result and rule_obj.check_item[4]:
-                for same_operation_cls, same_operation_md in self.quark_analysis.level_5_result:
+                for item5 in self.quark_analysis.level_5_result:
                     same_operation_show_up.append({
-                        "class": repr(same_operation_cls),
-                        "method": repr(same_operation_md),
+                        "class": repr(item5.class_name),
+                        "method": repr(item5.name),
                     })
 
         crime = {
