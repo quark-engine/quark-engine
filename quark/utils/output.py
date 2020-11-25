@@ -25,9 +25,9 @@ def output_parent_function_table(call_graph_analysis_list):
 
         for crime in crimes:
             if count == 1:
-                tb.add_row(["Crime Description", red(f"{count}. {crime}")])
+                tb.add_row(["Crime Description", red(f"* {crime}")])
             else:
-                tb.add_row(["", red(f"{count}. {crime}")])
+                tb.add_row(["", red(f"* {crime}")])
             count += 1
 
         print(tb)
