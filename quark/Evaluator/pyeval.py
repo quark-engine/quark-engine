@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 
 from quark.Objects.tableobject import TableObject
-from quark.Objects.variableobject import RegisterObject
+from quark.Objects.registerobject import RegisterObject
 
 MAX_REG_COUNT = 40
 TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')

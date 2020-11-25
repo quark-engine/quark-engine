@@ -3,7 +3,9 @@
 
 
 class RegisterObject:
-    """The variableobject is used to record the state of each register"""
+    """The RegisterObject is used to record the state of each register"""
+
+    __slots__ = ["_register_name", "_value", "_called_by_func"]
 
     def __init__(self, register_name, value, called_by_func=None):
         """

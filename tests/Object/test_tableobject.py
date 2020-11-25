@@ -26,17 +26,12 @@ class TestTableObject:
         table_obj.insert(2, "test_insert_value")
         table_obj.insert(0, "first")
         table_obj.insert(0, "second")
-        with pytest.raises(IndexError):
-            table_obj.insert(5, "show IndexError")
 
         assert table_obj.hash_table[2] == ["test_insert_value"]
         assert table_obj.hash_table[0] == ["first", "second"]
 
     def test_get_obj_list(self, table_obj):
         table_obj.insert(3, "test_value")
-
-        with pytest.raises(IndexError):
-            table_obj.insert(6, "show IndexError")
 
         assert table_obj.get_obj_list(3) == ["test_value"]
         assert table_obj.hash_table[3] == ["test_value"]

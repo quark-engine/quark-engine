@@ -2,7 +2,7 @@ import pytest
 
 from quark.Evaluator.pyeval import PyEval, MAX_REG_COUNT
 from quark.Objects.tableobject import TableObject
-from quark.Objects.variableobject import RegisterObject
+from quark.Objects.registerobject import RegisterObject
 
 
 @pytest.fixture()

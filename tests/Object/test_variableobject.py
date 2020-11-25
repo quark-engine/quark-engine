@@ -1,6 +1,6 @@
 import pytest
 
-from quark.Objects.variableobject import RegisterObject
+from quark.Objects.registerobject import RegisterObject
 
 
 @pytest.fixture()

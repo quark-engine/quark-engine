@@ -37,18 +37,18 @@ class TestApkinfo():
         assert set(apkinfo.permissions) == set(ans)
 
     def test_find_method(self, apkinfo):
-        result = list(apkinfo.find_method("Ljava/lang/reflect/Field"))
-        assert len(result) == 2
-        assert isinstance(result[0], MethodAnalysis)
+        result = apkinfo.find_method("Ljava/lang/reflect/Field", "setAccessible", "(Z)V")
+
+        assert isinstance(result, MethodAnalysis)
+        assert str(result.class_name) == "Ljava/lang/reflect/Field;"
+        assert str(result.name) == "setAccessible"
+        assert str(result.descriptor) == "(Z)V"
 
     def test_upperfunc(self, apkinfo):
-        method_list = apkinfo.upperfunc(
-            "Ljava/lang/reflect/Field",
-            "setAccessible",
-        )
+        api = apkinfo.find_method("Ljava/lang/reflect/Field", "setAccessible", "(Z)V")
 
-        check_method = method_list[0]
-
+        expect_upperfunc = apkinfo.upperfunc(api)
+        check_method, = expect_upperfunc
         expect_class_name = "Landroid/support/v4/widget/SlidingPaneLayout$SlidingPanelLayoutImplJB;"
         expect_name = "<init>"
         expect_descriptor = "()V"
