@@ -29,5 +29,6 @@ setuptools.setup(
         "tqdm",
         "colorama",
         "click",
+        "graphviz",
     ],
 )
