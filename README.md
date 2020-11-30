@@ -8,7 +8,7 @@ Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html)
 
 <img src="https://i.imgur.com/nz4m8kr.png"/>
 
-[![asciicast](https://asciinema.org/a/292752.svg)](https://asciinema.org/a/292752)
+[![asciicast](https://asciinema.org/a/376166.svg)](https://asciinema.org/a/376166)
 
 ## Why Quark?
 
@@ -39,7 +39,7 @@ $ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 
 and the report will look like:
 
-<img src="https://i.imgur.com/kh1jpsQ.png"/>
+<img src="https://i.imgur.com/TFle3dL.png"/>
 
 ### Call Graph for Every Potential Malicious Activity
 You can add the `-g` option to the quark command, and you can
@@ -65,7 +65,7 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
                -r rules/ \
                --summary
 ```
-<img src="https://i.imgur.com/Ib01V6k.png"/>
+<img src="https://i.imgur.com/kxPYeIO.png"/>
 
 ## QuickStart
 ### Installation
