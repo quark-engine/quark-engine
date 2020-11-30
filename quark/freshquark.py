@@ -7,11 +7,13 @@ from quark.utils.out import print_success, print_warning, print_info
 
 DIR_PATH = "quark-rules"
 
+SOURCE = "https://github.com/quark-engine/quark-rules"
+
 
 def download():
     try:
-        print_info("Download the latest rules from https://github.com/quark-engine/quark-rules")
-        git.Repo.clone_from(url="https://github.com/quark-engine/quark-rules", to_path=DIR_PATH)
+        print_info(f"Download the latest rules from {SOURCE}")
+        git.Repo.clone_from(url=SOURCE, to_path=DIR_PATH)
         print_success("Complete downloading the latest quark-rules")
 
     except git.GitCommandError:
