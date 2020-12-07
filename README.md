@@ -71,12 +71,14 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 ### Installation
 
 ```bash
-$ git clone https://github.com/quark-engine/quark-engine.git; cd quark-engine/quark
-$ pipenv install --skip-lock
-$ pipenv shell
+$ pip install -U quark-engine
 ```
 
-Make sure your python version is `3.8`, or you could change it from `Pipfile` to what you have.
+### Get the latest quark rules from our [quark-rules](https://github.com/quark-engine/quark-rules) repo
+
+```bash
+$ freshquark
+```
 
 Check `--help` to see the detailed usage description.
 
