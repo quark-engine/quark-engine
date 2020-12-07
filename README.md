@@ -1,14 +1,32 @@
-# Quark Engine [![HITB](https://img.shields.io/badge/HITB-Lockdown%20002-red)](https://conference.hitb.org/hitb-lockdown002/) [![ROOTCON](https://img.shields.io/badge/ROOTCON-2020-orange)](https://www.rootcon.org/html/recoverymode/talks) [![DEFCON](https://img.shields.io/badge/DEFCON%2028-BTV-blue)](https://www.blueteamvillage.org/)  [![Build Status](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master)](https://travis-ci.org/quark-engine/quark-engine.svg?branch=master) [![codecov](https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg)](https://codecov.io/gh/quark-engine/quark-engine) [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://github.com/18z/quark-rules/blob/master/LICENSE) [![Python 3.8](https://img.shields.io/badge/python-3.8-blue.svg)](https://www.python.org/downloads/release/python-360/)
-
 <p align="center">
+    <a href="https://conference.hitb.org/hitb-lockdown002/">
+        <img alt="HITB" src="https://img.shields.io/badge/HITB-Lockdown%20002-red">
+    </a>
+    <a href="https://www.rootcon.org/html/recoverymode/talks">
+        <img alt="rootcon" src="https://img.shields.io/badge/ROOTCON-2020-orange">
+    </a>
+    <a href="https://www.blueteamvillage.org/">
+        <img alt="defcon" src="https://img.shields.io/badge/DEFCON%2028-BTV-blue">
+    </a><br>
+    <a href="https://travis-ci.org/quark-engine/quark-engine.svg?branch=master">
+        <img alt="build status" src="https://travis-ci.org/quark-engine/quark-engine.svg?branch=master">
+    </a>
+    <a href="https://codecov.io/gh/quark-engine/quark-engine">
+        <img alt="codecov" src="https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg">
+    </a>
+    <a href="https://github.com/18z/quark-rules/blob/master/LICENSE">
+        <img alt="license" src="https://img.shields.io/badge/License-GPLv3-blue.svg">
+    </a>
+    <a href="https://www.python.org/downloads/release/python-360/">
+        <img alt="python version" src="https://img.shields.io/badge/python-3.8-blue.svg">
+    </a><br>
     <a href="https://t.me/joinchat/HrOyhhipvoFjOYc7mc941w">
         <img alt="Telegram" src="https://img.shields.io/badge/telegram-eff?logo=telegram">
     </a>
+    <img src="https://i.imgur.com/8GwkWei.png"/>
+    <b> An Obfuscation-Neglect Android Malware Scoring System</b>
 </p>
 
-An ```Obfuscation-Neglect``` Android Malware ```Scoring System```
-
-<img src="https://i.imgur.com/8GwkWei.png"/>
 
 Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html).
 :shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. https://twitter.com/quarkengine
