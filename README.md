@@ -21,8 +21,8 @@
         <img alt="python version" src="https://img.shields.io/badge/python-3.8-blue.svg">
     </a>
     <a href="https://pypi.org/project/quark-engine/">
-        <img alt="PyPi Download" src="https://img.shields.io/pypi/dm/quark-engine?style=social">
-    </a>
+        <img alt="PyPi Download" src="https://pepy.tech/badge/quark-engine">
+    </a><br>
     <a href="https://t.me/joinchat/HrOyhhipvoFjOYc7mc941w">
         <img alt="Telegram" src="https://img.shields.io/badge/telegram-eff?logo=telegram">
     </a><br>
