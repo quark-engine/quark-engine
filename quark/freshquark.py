@@ -55,7 +55,7 @@ def download():
                 download()
 
         if NETWORK_UNAVAILABLE in e.stderr:
-            print_warning(f"Your network is currently unavailable,"
+            print_warning(f"Your network is currently unavailable, "
                           f"you can use {green('freshquark')} "
                           "to update the quark-rules later!\n")
 
