@@ -371,7 +371,21 @@ class Quark:
         # add the score
         self.quark_analysis.score_sum += score
 
-    def show_summary_report(self, rule_obj):
+    def add_table_row(self, rule_obj, confidence, score, weight):
+
+        self.quark_analysis.summary_report_table.add_row([
+            green(rule_obj.crime),
+            yellow(confidence),
+            score,
+            red(weight),
+        ])
+
+        # add the weight
+        self.quark_analysis.weight_sum += weight
+        # add the score
+        self.quark_analysis.score_sum += score
+
+    def show_summary_report(self, rule_obj, threshold=None):
         """
         Show the summary report.
 
@@ -379,21 +393,18 @@ class Quark:
         :return: None
         """
         # Count the confidence
-        confidence = str(rule_obj.check_item.count(True) * 20) + "%"
+        confidence = f"{rule_obj.check_item.count(True) * 20}%"
         conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
         score = rule_obj.yscore
 
-        self.quark_analysis.summary_report_table.add_row([
-            green(rule_obj.crime), yellow(
-                confidence,
-            ), score, red(weight),
-        ])
+        if threshold:
 
-        # add the weight
-        self.quark_analysis.weight_sum += weight
-        # add the score
-        self.quark_analysis.score_sum += score
+            if rule_obj.check_item.count(True) * 20 >= int(threshold):
+                self.add_table_row(rule_obj, confidence, score, weight)
+
+        else:
+            self.add_table_row(rule_obj, confidence, score, weight)
 
     def show_detail_report(self, rule_obj):
         """

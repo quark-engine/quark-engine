@@ -51,7 +51,14 @@ logo()
     help="Show rules classification",
     required=False,
 )
-def entry_point(summary, detail, apk, rule, output, graph, classification):
+@click.option(
+    "-t",
+    "--threshold",
+    help="Set the confidence threshold",
+    type=click.Choice(["100", "80", "60", "40", "20"]),
+    required=False,
+)
+def entry_point(summary, detail, apk, rule, output, graph, classification, threshold):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     if summary:
@@ -70,7 +77,7 @@ def entry_point(summary, detail, apk, rule, output, graph, classification):
                 # Run the checker
                 data.run(rule_checker)
 
-                data.show_summary_report(rule_checker)
+                data.show_summary_report(rule_checker, threshold)
 
         w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
         print_warning(w.calculate())
