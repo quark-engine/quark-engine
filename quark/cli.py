@@ -6,11 +6,13 @@ from tqdm import tqdm
 
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
+from quark.freshquark import check_update
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 
 logo()
+check_update()
 
 
 @click.command(no_args_is_help=True)
