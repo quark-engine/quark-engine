@@ -13,7 +13,7 @@ from quark.utils.weight import Weight
 logo()
 
 
-@click.command()
+@click.command(no_args_is_help=True)
 @click.option("-s", "--summary", is_flag=True, help="Show summary report")
 @click.option("-d", "--detail", is_flag=True, help="Show detail report")
 @click.option(
