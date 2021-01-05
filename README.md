@@ -22,13 +22,12 @@
     </a>
     <a href="https://pypi.org/project/quark-engine/">
         <img alt="PyPi Download" src="https://img.shields.io/pypi/dm/quark-engine?style=social">
-    </a><br>
+    </a>
     <a href="https://t.me/joinchat/HrOyhhipvoFjOYc7mc941w">
         <img alt="Telegram" src="https://img.shields.io/badge/telegram-eff?logo=telegram">
-    </a>
-    <img src="https://i.imgur.com/8GwkWei.png"/>
-    
+    </a><br>
     <b> An Obfuscation-Neglect Android Malware Scoring System</b>
+    <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
 
