@@ -176,3 +176,12 @@ class Apkinfo:
         except AttributeError as error:
             # TODO Log the rule here
             pass
+
+    def get_strings(self):
+
+        all_strings = set()
+
+        for string_analysis in self.analysis.get_strings():
+            all_strings.add(str(string_analysis.get_orig_value()))
+
+        return all_strings
