@@ -136,6 +136,12 @@ class Quark:
                 if tools.contains(sequence_pattern_method, method_list_need_check):
                     state = True
 
+                    # Record the mapping between the parent function and the wrapper method
+                    self.quark_analysis.parent_wrapper_mapping[
+                        mutual_parent.full_name] = self.apkinfo.get_wrapper_smali(mutual_parent,
+                                                                                  first_call_method,
+                                                                                  second_call_method)
+
         return state
 
     def check_parameter(self, parent_function, first_method_list, second_method_list):
@@ -179,6 +185,13 @@ class Quark:
 
                             if first_method_pattern in c_func and second_method_pattern in c_func:
                                 state = True
+
+                                # Record the mapping between the parent function and the wrapper method
+                                self.quark_analysis.parent_wrapper_mapping[
+                                    parent_function.full_name] = self.apkinfo.get_wrapper_smali(
+                                    parent_function,
+                                    first_call_method,
+                                    second_call_method)
 
                 # Build for the call graph
                 if state:
@@ -341,16 +354,14 @@ class Quark:
         if self.quark_analysis.level_4_result and rule_obj.check_item[3]:
             for item4 in self.quark_analysis.level_4_result:
                 sequnce_show_up.append({
-                    "class": repr(item4.class_name),
-                    "method": repr(item4.name),
+                    repr(item4.full_name): self.quark_analysis.parent_wrapper_mapping[item4.full_name]
                 })
 
             # Check examination has passed level 5
             if self.quark_analysis.level_5_result and rule_obj.check_item[4]:
                 for item5 in self.quark_analysis.level_5_result:
                     same_operation_show_up.append({
-                        "class": repr(item5.class_name),
-                        "method": repr(item5.name),
+                        repr(item5.full_name): self.quark_analysis.parent_wrapper_mapping[item5.full_name]
                     })
 
         crime = {

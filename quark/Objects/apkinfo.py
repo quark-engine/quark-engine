@@ -176,3 +176,40 @@ class Apkinfo:
         except AttributeError as error:
             # TODO Log the rule here
             pass
+
+    def get_strings(self):
+
+        all_strings = set()
+
+        for string_analysis in self.analysis.get_strings():
+            all_strings.add(str(string_analysis.get_orig_value()))
+
+        return all_strings
+
+    @functools.lru_cache()
+    def get_wrapper_smali(self, method_analysis, first_method, second_method):
+        """
+        Return the dict of two method smali code from given method analysis object, only for self-defined
+        method.
+        :param method_analysis:
+        :return:
+
+        {
+        "first": "invoke-virtual v5, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;",
+        "second": "invoke-virtual v3, v0, v4, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String; Ljava/lang/String;)I"
+        }
+        """
+
+        result = {"first": None, "second": None}
+
+        first_method_pattern = f"{first_method.class_name}->{first_method.name}{first_method.descriptor}"
+        second_method_pattern = f"{second_method.class_name}->{second_method.name}{second_method.descriptor}"
+
+        for _, ins in method_analysis.get_method().get_instructions_idx():
+            ins = str(ins)
+            if first_method_pattern in ins:
+                result["first"] = ins
+            if second_method_pattern in ins:
+                result["second"] = ins
+
+        return result
