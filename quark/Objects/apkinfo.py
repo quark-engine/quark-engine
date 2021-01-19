@@ -209,6 +209,12 @@ class Apkinfo:
 
     @functools.lru_cache()
     def construct_bytecode_instruction(self, instruction):
+        """
+        Construct a list of strings from the given bytecode instructions.
+
+        :param instruction: instruction instance from androguard
+        :return: a list with bytecode instructions strings
+        """
         instruction_list = [instruction.get_name()]
         reg_list = []
 
