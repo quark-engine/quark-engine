@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# See the file 'LICENSE' for copying permission.
+
 import json
 import os
 
@@ -64,7 +68,8 @@ def entry_point(summary, detail, apk, rule, output, graph, classification, thres
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     if summary:
-        # show summary report
+        # Show summary report
+
         # Load APK
         data = Quark(apk)
 
@@ -92,7 +97,7 @@ def entry_point(summary, detail, apk, rule, output, graph, classification, thres
             data.show_call_graph()
 
     if detail:
-        # show summary report
+        # Show detail report
 
         # Load APK
         data = Quark(apk)
@@ -138,9 +143,9 @@ def entry_point(summary, detail, apk, rule, output, graph, classification, thres
 
         json_report = data.get_json_report()
 
-        with open(output, "w") as f:
-            json.dump(json_report, f, indent=4)
-            f.close()
+        with open(output, "w") as file:
+            json.dump(json_report, file, indent=4)
+            file.close()
 
 
 if __name__ == "__main__":
