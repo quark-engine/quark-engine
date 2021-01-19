@@ -1,12 +1,21 @@
 import os
 import pytest
+import requests
 
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 
+APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples" \
+             "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
+
+
 @pytest.fixture()
 def result(scope="function"):
-    apk_file = "quark/sample/14d9f1a92dd984d6040cc41ed06e273e.apk"
+    r = requests.get(APK_SOURCE, allow_redirects=True)
+    open(APK_FILENAME, "wb").write(r.content)
+
+    apk_file = APK_FILENAME
     data = Quark(apk_file)
     # rule
     rules = "quark/rules"

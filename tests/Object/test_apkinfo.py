@@ -1,12 +1,20 @@
 import pytest
+import requests
 from androguard.core.analysis.analysis import MethodAnalysis
 
 from quark.Objects.apkinfo import Apkinfo
 
+APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples" \
+             "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+
 
 @pytest.fixture()
 def apkinfo(scope="function"):
-    apk_file = "quark/sample/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+    r = requests.get(APK_SOURCE, allow_redirects=True)
+    open(APK_FILENAME, "wb").write(r.content)
+
+    apk_file = APK_FILENAME
     apkinfo = Apkinfo(apk_file)
     yield apkinfo
 
