@@ -15,38 +15,53 @@ SOURCE = "https://github.com/quark-engine/quark-rules"
 
 
 def logger():
+    """
+    Write today's date into a file to record whether it has been updated on that day.
+
+    :return: None
+    """
     # Write the current update time to file.
-    with open(CHECK_UP_TO_DATE, "w") as cu_f:
-        cu_f.write(datetime.date.today().isoformat())
+    with open(CHECK_UP_TO_DATE, "w") as file:
+        file.write(datetime.date.today().isoformat())
 
 
 def check_update():
-    # Check if CHECK_UP_TO_DATE file exists and the time is match or not.
-    if os.path.isfile(CHECK_UP_TO_DATE):
-        with open(CHECK_UP_TO_DATE) as f:
+    """
+    Check if the CHECK_UP_TO_DATE file exists and if the time matches,
+    if it is not the latest, it will download the latest quark-rules.
 
-            if f.readline() == datetime.date.today().isoformat():
-                # Your quark-rules is already up to date
+    :return: None
+    """
+    if os.path.isfile(CHECK_UP_TO_DATE):
+        with open(CHECK_UP_TO_DATE) as file:
+
+            if file.readline() == datetime.date.today().isoformat():
+                # quark-rules is already up to date
                 return
-            else:
-                download()
+
+            download()
 
     else:
         download()
 
 
 def download():
+    """
+    Download the latest quark-rules from https://github.com/quark-engine/quark-rules.
+
+    :return: None
+    """
     try:
         print_info(f"Download the latest rules from {SOURCE}")
         git.Repo.clone_from(url=SOURCE, to_path=DIR_PATH)
         print_success("Complete downloading the latest quark-rules")
 
-    except git.GitCommandError as e:
+    except git.GitCommandError as error:
 
-        DIR_EXISTS = "destination path 'quark-rules' already exists"
-        NETWORK_UNAVAILABLE = "unable to access"
+        dir_exists = "destination path 'quark-rules' already exists"
+        network_unavailable = "unable to access"
 
-        if DIR_EXISTS in e.stderr:
+        if dir_exists in error.stderr:
 
             print_warning("quark-rules directory already exists!")
 
@@ -54,15 +69,22 @@ def download():
                 shutil.rmtree(DIR_PATH)
                 download()
 
-        if NETWORK_UNAVAILABLE in e.stderr:
-            print_warning(f"Your network is currently unavailable, "
-                          f"you can use {green('freshquark')} "
-                          "to update the quark-rules later!\n")
+        if network_unavailable in error.stderr:
+            print_warning(
+                f"Your network is currently unavailable, "
+                f"you can use {green('freshquark')} "
+                "to update the quark-rules later!\n"
+            )
 
     logger()
 
 
 def entry_point():
+    """
+    The command-line entry point for freshquark. It will download the latest quark-rules.
+
+    :return: None
+    """
     download()
 
 
