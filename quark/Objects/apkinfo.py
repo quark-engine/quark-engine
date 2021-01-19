@@ -1,5 +1,7 @@
-# This file is part of Quark Engine - https://quark-engine.rtfd.io
-# See GPLv3 for copying permission.
+# -*- coding: utf-8 -*-
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# See the file 'LICENSE' for copying permission.
+
 import functools
 import hashlib
 import os
@@ -14,7 +16,14 @@ from quark.Objects.bytecodeobject import BytecodeObject
 class Apkinfo:
     """Information about apk based on androguard analysis"""
 
-    __slots__ = ["ret_type", "apk", "dalvikvmformat", "analysis", "apk_filename", "apk_filepath"]
+    __slots__ = [
+        "ret_type",
+        "apk",
+        "dalvikvmformat",
+        "analysis",
+        "apk_filename",
+        "apk_filepath",
+    ]
 
     def __init__(self, apk_filepath):
         """Information about apk based on androguard analysis"""
@@ -94,13 +103,19 @@ class Apkinfo:
         regex_method_name = f"^{re.escape(method_name)}$"
         regex_descriptor = re.escape(descriptor)
 
-        method_result = self.analysis.find_methods(classname=regex_class_name,
-                                                   methodname=regex_method_name,
-                                                   descriptor=regex_descriptor)
+        method_result = self.analysis.find_methods(
+            classname=regex_class_name,
+            methodname=regex_method_name,
+            descriptor=regex_descriptor,
+        )
         if list(method_result):
-            result, = list(self.analysis.find_methods(classname=regex_class_name,
-                                                      methodname=regex_method_name,
-                                                      descriptor=regex_descriptor))
+            (result,) = list(
+                self.analysis.find_methods(
+                    classname=regex_class_name,
+                    methodname=regex_method_name,
+                    descriptor=regex_descriptor,
+                )
+            )
 
             return result
         else:
@@ -142,7 +157,9 @@ class Apkinfo:
                 if length_operands == 0:
                     # No register, no parameter
                     bytecode_obj = BytecodeObject(
-                        ins.get_name(), None, None,
+                        ins.get_name(),
+                        None,
+                        None,
                     )
                 elif length_operands == 1:
                     # Only one register
@@ -151,7 +168,9 @@ class Apkinfo:
                         f"v{ins.get_operands()[length_operands - 1][1]}",
                     )
                     bytecode_obj = BytecodeObject(
-                        ins.get_name(), reg_list, None,
+                        ins.get_name(),
+                        reg_list,
+                        None,
                     )
                 elif length_operands >= 2:
                     # the last one is parameter, the other are registers.
@@ -169,7 +188,9 @@ class Apkinfo:
                         parameter = parameter[1]
 
                     bytecode_obj = BytecodeObject(
-                        ins.get_name(), reg_list, parameter,
+                        ins.get_name(),
+                        reg_list,
+                        parameter,
                     )
 
                 yield bytecode_obj
@@ -185,6 +206,51 @@ class Apkinfo:
             all_strings.add(str(string_analysis.get_orig_value()))
 
         return all_strings
+
+    @functools.lru_cache()
+    def construct_bytecode_instruction(self, instruction):
+        """
+        Construct a list of strings from the given bytecode instructions.
+
+        :param instruction: instruction instance from androguard
+        :return: a list with bytecode instructions strings
+        """
+        instruction_list = [instruction.get_name()]
+        reg_list = []
+
+        # count the number of the registers.
+        length_operands = len(instruction.get_operands())
+        if length_operands == 0:
+            # No register, no parameter
+            return instruction_list
+
+        elif length_operands == 1:
+            # Only one register
+
+            reg_list.append(f"v{instruction.get_operands()[length_operands - 1][1]}")
+
+            instruction_list.extend(reg_list)
+
+            return instruction_list
+        elif length_operands >= 2:
+            # the last one is parameter, the other are registers.
+
+            parameter = instruction.get_operands()[length_operands - 1]
+            for i in range(0, length_operands - 1):
+                reg_list.append(
+                    "v" + str(instruction.get_operands()[i][1]),
+                )
+            if len(parameter) == 3:
+                # method or value
+                parameter = parameter[2]
+            else:
+                # Operand.OFFSET
+                parameter = parameter[1]
+
+            instruction_list.extend(reg_list)
+            instruction_list.append(parameter)
+
+            return instruction_list
 
     @functools.lru_cache()
     def get_wrapper_smali(self, method_analysis, first_method, second_method):
@@ -206,10 +272,9 @@ class Apkinfo:
         second_method_pattern = f"{second_method.class_name}->{second_method.name}{second_method.descriptor}"
 
         for _, ins in method_analysis.get_method().get_instructions_idx():
-            ins = str(ins)
-            if first_method_pattern in ins:
-                result["first"] = ins
-            if second_method_pattern in ins:
-                result["second"] = ins
+            if first_method_pattern in str(ins):
+                result["first"] = self.construct_bytecode_instruction(ins)
+            if second_method_pattern in str(ins):
+                result["second"] = self.construct_bytecode_instruction(ins)
 
         return result
