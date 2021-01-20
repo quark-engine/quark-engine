@@ -1,5 +1,8 @@
-# Thanks for the description of Dalvik bytecode instruction from the following websites, some of our explanations or
-# comments will quote from it.
+# -*- coding: utf-8 -*-
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# See the file 'LICENSE' for copying permission.
+# Thanks for the description of Dalvik bytecode instruction from the following
+# websites, some of our explanations or comments will quote from it.
 # https://source.android.google.cn/devices/tech/dalvik/instruction-formats
 # http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html
 
