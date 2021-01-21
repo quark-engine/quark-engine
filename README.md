@@ -96,6 +96,11 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 <img src="https://i.imgur.com/kxPYeIO.png"/>
 
 ## QuickStart
+
+### Requirements
+-   Python 3.7+
+-   git
+
 ### Installation
 
 ```bash
