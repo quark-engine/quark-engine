@@ -39,9 +39,11 @@ check_update()
 @click.option(
     "-r",
     "--rule",
-    help="Rules folder need to be checked",
-    type=click.Path(exists=True, file_okay=False, dir_okay=True),
-    required=True,
+    help="Rules directory",
+    type=click.Path(exists=True, file_okay=True, dir_okay=True),
+    default="quark-rules",
+    required=False,
+    show_default=True
 )
 @click.option(
     "-g",
