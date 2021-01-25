@@ -1,11 +1,11 @@
 <p align="center">
-    <a href="https://conference.hitb.org/hitb-lockdown002/">
+    <a href="https://conference.hitb.org/hitb-lockdown002/sessions/quark-engine-an-obfuscation-neglect-android-malware-scoring-system/">
         <img alt="HITB" src="https://img.shields.io/badge/HITB-Lockdown%20002-red">
     </a>
-    <a href="https://www.rootcon.org/html/recoverymode/talks">
+    <a href="https://www.youtube.com/watch?v=SOH4eqrv9_g&ab_channel=ROOTCONHackingConference">
         <img alt="rootcon" src="https://img.shields.io/badge/ROOTCON-2020-orange">
     </a>
-    <a href="https://www.blueteamvillage.org/">
+    <a href="https://www.youtube.com/watch?v=XK-yqHPnsvc&ab_channel=DEFCONConference">
         <img alt="defcon" src="https://img.shields.io/badge/DEFCON%2028-BTV-blue">
     </a><br>
     <a href="https://travis-ci.org/quark-engine/quark-engine.svg?branch=master">
@@ -60,9 +60,7 @@ Quark is very easy to use and also provides flexible output formats. There are 3
 This is a how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
-$ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-                 -r rules/ \
-                 --detail
+$ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
 ```
 
 and the report will look like:
@@ -73,7 +71,7 @@ and the report will look like:
 You can add the `-g` option to the quark command, and you can
 get the call graph (only those rules match with 100% confidence)
 ```bash
-quark -a Ahmyth.apk -r quark-rules/ -s -g
+quark -a Ahmyth.apk -s -g
 ```
 <img src="https://i.imgur.com/5xcrcdN.png"/>
 
@@ -81,7 +79,7 @@ quark -a Ahmyth.apk -r quark-rules/ -s -g
 You can add the `-c` option to the quark command, and you can
 output the rules classification with mutual parent function (only those rules match with 100% confidence)
 ```bash
-quark -a Ahmyth.apk -r quark-rules/ -s -c
+quark -a Ahmyth.apk -s -c
 ```
 <img src="https://i.imgur.com/YTK8V1x.png"/>
 
@@ -89,9 +87,7 @@ quark -a Ahmyth.apk -r quark-rules/ -s -c
 Examine with rules.
 
 ```bash
-quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
-               -r rules/ \
-               --summary
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
 <img src="https://i.imgur.com/kxPYeIO.png"/>
 
@@ -100,6 +96,7 @@ quark -a sample/14d9f1a92dd984d6040cc41ed06e273e.apk \
 ### Requirements
 -   Python 3.7+
 -   git
+-   graphviz
 
 ### Installation
 
@@ -124,11 +121,3 @@ $ quark --help
 ### Test It Out
 
 You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
-
-## Analysis Reports of Real Malware
-
-Quark Engine will soon provide analysis reports of real malware! For your best experience of viewing the report, please use desktop web browser. We're planning to make a mobile version of report. If you really want to see the very first version of report please visit [here](https://quark-engine.github.io/reports/report_5751cfdf656f2a5ee021940c5448a77e5b921d1510d2abfa520a57d02c74821e0f5c2e4935bea2554c440072d32fc22bb8317a85dabbbc7c9cca9d1c077793c2.html)
-
-Also, we will soon give out our new detection rules! 
-
-![](https://i.imgur.com/Wi9mPtx.png)
