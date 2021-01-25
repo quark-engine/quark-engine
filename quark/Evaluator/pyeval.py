@@ -9,12 +9,13 @@
 import logging
 from datetime import datetime
 
-from quark.Objects.tableobject import TableObject
+from quark import config
 from quark.Objects.registerobject import RegisterObject
+from quark.Objects.tableobject import TableObject
 
 MAX_REG_COUNT = 40
 TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
-LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
+LOG_FILENAME = f"{config.HOME_DIR}{TIMESTAMPS}.quark.log"
 logging.basicConfig(
     level=logging.DEBUG,
     filename=LOG_FILENAME,

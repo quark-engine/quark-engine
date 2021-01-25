@@ -11,9 +11,10 @@ import git
 
 from quark.utils.colors import green
 from quark.utils.out import print_success, print_warning, print_info
+from quark import config
 
-DIR_PATH = "quark-rules"
-CHECK_UP_TO_DATE = ".up_to_date.quark"
+DIR_PATH = f"{config.HOME_DIR}quark-rules"
+CHECK_UP_TO_DATE = f"{config.HOME_DIR}.up_to_date.quark"
 
 SOURCE = "https://github.com/quark-engine/quark-rules"
 
@@ -62,7 +63,7 @@ def download():
 
     except git.GitCommandError as error:
 
-        dir_exists = "destination path 'quark-rules' already exists"
+        dir_exists = "fatal: destination path"
         network_unavailable = "unable to access"
 
         if dir_exists in error.stderr:
