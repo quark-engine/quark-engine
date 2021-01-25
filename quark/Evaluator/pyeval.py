@@ -8,17 +8,14 @@
 
 import logging
 from datetime import datetime
-from pathlib import Path
 
+from quark import config
 from quark.Objects.registerobject import RegisterObject
 from quark.Objects.tableobject import TableObject
 
-HOME_DIR = f"{Path.home()}/.quark-engine/"
-Path(HOME_DIR).mkdir(parents=True, exist_ok=True)
-
 MAX_REG_COUNT = 40
 TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
-LOG_FILENAME = f"{HOME_DIR}{TIMESTAMPS}.quark.log"
+LOG_FILENAME = f"{config.HOME_DIR}{TIMESTAMPS}.quark.log"
 logging.basicConfig(
     level=logging.DEBUG,
     filename=LOG_FILENAME,
