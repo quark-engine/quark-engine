@@ -44,10 +44,10 @@ quark.Objects.tableobject module
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.variableobject module
+quark.Objects.registerobject module
 -----------------------------------
 
-.. automodule:: quark.Objects.variableobject
+.. automodule:: quark.Objects.registerobject
    :members:
    :undoc-members:
    :show-inheritance:
