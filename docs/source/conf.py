@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('../../'))
 # -- Project information -----------------------------------------------------
 
 project = 'quark-engine'
-copyright = '2019, quark-engine team'
+copyright = 'Quark-Engine Team'
 author = 'KunYu Chen, JunWei Song'
 
 # The full version, including alpha/beta/rc tags
-release = 'v20.01'
+release = 'v21.01'
 
 # -- General configuration ---------------------------------------------------
 

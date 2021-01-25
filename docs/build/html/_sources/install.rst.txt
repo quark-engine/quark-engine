@@ -2,20 +2,15 @@
 Installing Quark-Engine
 +++++++++++++++++++++++
 
-Clone the project from Gitub::
+PIP::
+
+    $ pip install -U quark-engine
+
+Install from Source::
 
     $ git clone https://github.com/quark-engine/quark-engine.git
-
-Change directory to quark::
-
-    $ cd quark-engine/quark
-
-Install engine with pipenv::
-
+    $ cd quark-engine/
     $ pipenv install --skip-lock
-
-Launching subshell in virtual env::
-
     $ pipenv shell
 
 Run the help cmd of quark::
@@ -29,8 +24,16 @@ Once you see the following msg, then you're all set::
     Quark is an Obfuscation-Neglect Android Malware Scoring System
 
     Options:
-      -s, --summary         show summary report
-      -d, --detail          show detail report
-      -a, --apk FILE        APK file  [required]
-      -r, --rule DIRECTORY  Rules folder need to be checked  [required]
-      --help                Show this message and exit.
+      -s, --summary                   Show summary report
+      -d, --detail                    Show detail report
+      -o, --output FILE               Output report as json file
+      -a, --apk FILE                  APK file  [required]
+      -r, --rule PATH                 Rules directory  [default: /Users/nick/.quark-engine/quark-rules]
+
+      -g, --graph                     Creating call graph and save it to
+                                      call_graph_image directory
+
+      -c, --classification            Show rules classification
+      -t, --threshold [100|80|60|40|20]
+                                      Set the confidence threshold
+      --help                          Show this message and exit.
