@@ -18,7 +18,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    :maxdepth: 2
    :caption: Contents:
 
-   install
+   install_index
    addRules
    integration
    dev_index
