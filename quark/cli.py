@@ -14,6 +14,7 @@ from quark.freshquark import check_update
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
+from quark import config
 
 logo()
 check_update()
@@ -41,7 +42,7 @@ check_update()
     "--rule",
     help="Rules directory",
     type=click.Path(exists=True, file_okay=True, dir_okay=True),
-    default="quark-rules",
+    default=f"{config.HOME_DIR}quark-rules",
     required=False,
     show_default=True
 )

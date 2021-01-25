@@ -5,18 +5,16 @@
 import datetime
 import os
 import shutil
-from pathlib import Path
 
 import click
 import git
 
 from quark.utils.colors import green
 from quark.utils.out import print_success, print_warning, print_info
+from quark import config
 
-HOME_DIR = f"{Path.home()}/.quark-engine/"
-
-DIR_PATH = f"{HOME_DIR}quark-rules"
-CHECK_UP_TO_DATE = f"{HOME_DIR}.up_to_date.quark"
+DIR_PATH = f"{config.HOME_DIR}quark-rules"
+CHECK_UP_TO_DATE = f"{config.HOME_DIR}.up_to_date.quark"
 
 SOURCE = "https://github.com/quark-engine/quark-rules"
 
