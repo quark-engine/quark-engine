@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 black = "*"
 pytest = "*"
+sphinx = "*"
+sphinx-rtd-theme = "*"
 
 [packages]
 prettytable = "*"
