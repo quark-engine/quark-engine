@@ -6,12 +6,11 @@ import datetime
 import os
 import shutil
 
-import click
 import git
 
-from quark.utils.colors import green
-from quark.utils.out import print_success, print_warning, print_info
 from quark import config
+from quark.utils.colors import green
+from quark.utils.out import print_warning, print_info, print_success
 
 DIR_PATH = f"{config.HOME_DIR}quark-rules"
 CHECK_UP_TO_DATE = f"{config.HOME_DIR}.up_to_date.quark"
@@ -41,7 +40,7 @@ def check_update():
         with open(CHECK_UP_TO_DATE) as file:
 
             if file.readline() == datetime.date.today().isoformat():
-                # quark-rules is already up to date
+                # quark-rules is already up to date with daily checks
                 return
 
             download()
@@ -57,22 +56,17 @@ def download():
     :return: None
     """
     try:
-        print_info(f"Download the latest rules from {SOURCE}")
         git.Repo.clone_from(url=SOURCE, to_path=DIR_PATH)
-        print_success("Complete downloading the latest quark-rules")
 
     except git.GitCommandError as error:
 
-        dir_exists = "fatal: destination path"
+        dir_exists = "destination path"
         network_unavailable = "unable to access"
 
         if dir_exists in error.stderr:
-
-            print_warning("quark-rules directory already exists!")
-
-            if click.confirm("Do you want to download again?", default=True):
-                shutil.rmtree(DIR_PATH)
-                download()
+            # remove the entire quark-rules directory and then clone again
+            shutil.rmtree(DIR_PATH)
+            download()
 
         if network_unavailable in error.stderr:
             print_warning(
@@ -90,7 +84,9 @@ def entry_point():
 
     :return: None
     """
+    print_info(f"Download the latest rules from {SOURCE}")
     download()
+    print_success("Complete downloading the latest quark-rules")
 
 
 if __name__ == "__main__":
