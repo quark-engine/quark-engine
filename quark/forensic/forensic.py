@@ -95,29 +95,4 @@ class Forensic:
 
 
 if __name__ == "__main__":
-    # Usage
-
-    # fc = Forensic("../sample/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk")
-    # fc = Forensic("../sample/14d9f1a92dd984d6040cc41ed06e273e.apk")
-    # fc = Forensic("../sample/HippoSMS.apk")
-    fc = Forensic("../sample/obfuscation/com.cdim.driver.core.apk")
-
-    print("URL Found")
-    for i in fc.get_url():
-        print(i)
-
-    print("IP Found")
-    for i in fc.get_ip():
-        print(i)
-
-    print("Content Found")
-    for i in fc.get_content():
-        print(i)
-
-    print("FILE Found")
-    for i in fc.get_file():
-        print(i)
-
-    print("Base64 Found")
-    for i in fc.get_base64():
-        print(i)
+    pass
