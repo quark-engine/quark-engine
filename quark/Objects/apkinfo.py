@@ -266,7 +266,7 @@ class Apkinfo:
         }
         """
 
-        result = {"first": None, "second": None}
+        result = {"first": None, "first_hex": None, "second": None, "second_hex": None}
 
         first_method_pattern = f"{first_method.class_name}->{first_method.name}{first_method.descriptor}"
         second_method_pattern = f"{second_method.class_name}->{second_method.name}{second_method.descriptor}"
@@ -274,7 +274,9 @@ class Apkinfo:
         for _, ins in method_analysis.get_method().get_instructions_idx():
             if first_method_pattern in str(ins):
                 result["first"] = self.construct_bytecode_instruction(ins)
+                result["first_hex"] = ins.get_hex()
             if second_method_pattern in str(ins):
                 result["second"] = self.construct_bytecode_instruction(ins)
+                result["second_hex"] = ins.get_hex()
 
         return result
