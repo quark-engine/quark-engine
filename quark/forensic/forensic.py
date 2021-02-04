@@ -22,12 +22,15 @@ class Forensic:
     def get_all_strings(self):
         """
         Return all the strings inside the APK with a set.
+        :return: a set of strings containing all strings
         """
+
         return self.all_strings
 
     def get_url(self):
         """
         Return all the url strings inside the APK with a set.
+        :return: a set of strings containing the url
         """
 
         url = set()
@@ -43,8 +46,8 @@ class Forensic:
     def get_ip(self):
         """
         Return all the ip address strings inside the APK with a set.
+        :return: a set of strings containing the ip address
         """
-
         ip = set()
 
         for string in self.all_strings:
@@ -59,6 +62,7 @@ class Forensic:
     def get_content(self):
         """
         Return all the content strings inside the APK with a set.
+        :return: a set of strings containing "content://"
         """
         content = set()
 
@@ -71,8 +75,10 @@ class Forensic:
 
     def get_file(self):
         """
-        Return all the content strings inside the APK with a set.
+        Return all the file strings inside the APK with a set.
+        :return: a set of strings containing "file://"
         """
+
         file = set()
 
         for string in self.all_strings:
@@ -83,6 +89,10 @@ class Forensic:
         return file
 
     def get_base64(self):
+        """
+        Return all possible Base64-encoded strings in the APK.
+        :return: a set of strings containing possible Base64-encoded string
+        """
 
         base64 = set()
 
