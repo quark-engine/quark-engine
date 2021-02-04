@@ -32,7 +32,7 @@ class Forensic:
         Return all the url strings inside the APK with a set.
         :return: a set of strings containing the url
         """
-
+        
         url = set()
 
         for string in self.all_strings:
@@ -48,6 +48,7 @@ class Forensic:
         Return all the ip address strings inside the APK with a set.
         :return: a set of strings containing the ip address
         """
+
         ip = set()
 
         for string in self.all_strings:
@@ -64,6 +65,7 @@ class Forensic:
         Return all the content strings inside the APK with a set.
         :return: a set of strings containing "content://"
         """
+
         content = set()
 
         for string in self.all_strings:
