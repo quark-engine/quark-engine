@@ -37,3 +37,5 @@ Once you see the following msg, then you're all set::
       -t, --threshold [100|80|60|40|20]
                                       Set the confidence threshold
       --help                          Show this message and exit.
+
+To know how to run scans for a directory, please have a look at :ref:`Directory Scanning <dir_scan>`
