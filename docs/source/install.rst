@@ -38,4 +38,4 @@ Once you see the following msg, then you're all set::
                                       Set the confidence threshold
       --help                          Show this message and exit.
 
-To know how to run scans for a directory, please have a look at :ref:`Directory Scanning <dir_scan>`
+To learn how to scan multiple samples in a directory, please have a look at :ref:`Directory Scanning <dir_scan>`

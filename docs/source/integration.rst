@@ -100,13 +100,13 @@ Then you get the json report. :D
 Directory Scanning
 ------------------
 
-To run quark scans for an entire directory, a simple bash script can be used.
+To scan the entire directory with quark, you can use a simple bash script.
 
 .. code-block:: bash
 
     #!/bin/bash
     for apkFile in *.apk; do
-        quark -a ${apkFile} -d -o ${apkFile%%.*}_output.json;
+        quark -a ${apkFile} -o ${apkFile%%.*}_output.json;
     done;
 
 Alternatively, you can use the quark API as well.
