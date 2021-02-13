@@ -94,3 +94,35 @@ Then you get the json report. :D
                 }
             ]
         }
+
+.. _dir_scan:
+
+Directory Scanning
+------------------
+
+To scan the entire directory with quark, you can use a simple bash script.
+
+.. code-block:: bash
+
+    #!/bin/bash
+    for apkFile in *.apk; do
+        quark -a ${apkFile} -o ${apkFile%%.*}_output.json;
+    done;
+
+Alternatively, you can use the quark API as well.
+
+.. code-block:: python
+
+    #!/usr/bin/env python
+    from glob import glob
+
+    from quark.report import Report
+
+    RULE_PATH = "./quark-rules/00001.json"
+
+    report = Report()
+
+    for file in glob('*.apk'): 
+        report.analysis(file, RULE_PATH)
+        json_report = report.get_report("json")
+        print(json_report)
