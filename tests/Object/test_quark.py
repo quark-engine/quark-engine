@@ -11,13 +11,15 @@ APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
 @pytest.fixture()
-def result(scope="function"):
+def data(scope="function"):
     r = requests.get(APK_SOURCE, allow_redirects=True)
     open(APK_FILENAME, "wb").write(r.content)
 
-    apk_file = APK_FILENAME
-    data = Quark(apk_file)
-    # rule
+    return Quark(APK_FILENAME)
+
+
+@pytest.fixture
+def result(data, scope="function"):
     rules = "quark/rules"
     rules_list = os.listdir(rules)
     for single_rule in rules_list:
@@ -33,6 +35,17 @@ def result(scope="function"):
 
 
 class TestQuark():
+    def test_run(self, data):
+        RULE_PATH = "quark/rules/sendLocation_SMS.json"
+        rule_obj = QuarkRule(RULE_PATH)
+
+        assert data.quark_analysis.score_sum == 0
+        assert data.quark_analysis.weight_sum == 0
+
+        data.run(rule_obj)
+
+        assert data.quark_analysis.score_sum == 4
+        assert data.quark_analysis.weight_sum == 4
 
     def test_find_previous_method(self, result):
         # Test Case 1
