@@ -215,6 +215,15 @@ class Quark:
         :param rule_obj: the instance of the RuleObject.
         :return: None
         """
+
+        def update_sum():
+            weight = rule_obj.get_score(rule_obj.check_item.count(True))
+            score = rule_obj.yscore
+            # add the weight
+            self.quark_analysis.weight_sum += weight
+            # add the score
+            self.quark_analysis.score_sum += score
+
         self.quark_analysis.clean_result()
         self.quark_analysis.crime_description = rule_obj.crime
 
@@ -223,6 +232,7 @@ class Quark:
             rule_obj.check_item[0] = True
         else:
             # Exit if the level 1 stage check fails.
+            update_sum()
             return
 
         # Level 2: Single Native API Check
@@ -248,6 +258,7 @@ class Quark:
                 self.quark_analysis.level_2_result.append(second_api)
         else:
             # Exit if the level 2 stage check fails.
+            update_sum()
             return
 
         # Level 3: Both Native API Check
@@ -258,6 +269,7 @@ class Quark:
 
         else:
             # Exit if the level 3 stage check fails.
+            update_sum()
             return
 
         # Level 4: Sequence Check
@@ -287,7 +299,10 @@ class Quark:
 
         else:
             # Exit if the level 4 stage check fails.
+            update_sum()
             return
+
+        update_sum()
 
     def get_json_report(self):
         """
@@ -378,11 +393,6 @@ class Quark:
         }
         self.quark_analysis.json_report.append(crime)
 
-        # add the weight
-        self.quark_analysis.weight_sum += weight
-        # add the score
-        self.quark_analysis.score_sum += score
-
     def add_table_row(self, rule_obj, confidence, score, weight):
 
         self.quark_analysis.summary_report_table.add_row([
@@ -391,11 +401,6 @@ class Quark:
             score,
             red(weight),
         ])
-
-        # add the weight
-        self.quark_analysis.weight_sum += weight
-        # add the score
-        self.quark_analysis.score_sum += score
 
     def show_summary_report(self, rule_obj, threshold=None):
         """
