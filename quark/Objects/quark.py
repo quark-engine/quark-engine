@@ -392,11 +392,6 @@ class Quark:
             red(weight),
         ])
 
-        # add the weight
-        self.quark_analysis.weight_sum += weight
-        # add the score
-        self.quark_analysis.score_sum += score
-
     def show_summary_report(self, rule_obj, threshold=None):
         """
         Show the summary report.
@@ -417,6 +412,11 @@ class Quark:
 
         else:
             self.add_table_row(rule_obj, confidence, score, weight)
+
+        # add the weight
+        self.quark_analysis.weight_sum += weight
+        # add the score
+        self.quark_analysis.score_sum += score
 
     def show_detail_report(self, rule_obj):
         """
