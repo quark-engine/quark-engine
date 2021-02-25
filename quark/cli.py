@@ -8,13 +8,13 @@ import os
 import click
 from tqdm import tqdm
 
+from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from quark.freshquark import check_update
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
-from quark import config
 
 logo()
 check_update()
@@ -67,7 +67,16 @@ check_update()
     type=click.Choice(["100", "80", "60", "40", "20"]),
     required=False,
 )
-def entry_point(summary, detail, apk, rule, output, graph, classification, threshold):
+@click.option(
+    "-i",
+    "--list",
+    is_flag=True,
+    help="List classes, methods and descriptors",
+    required=False,
+)
+def entry_point(
+    summary, detail, apk, rule, output, graph, classification, threshold, list
+):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     # Load APK
@@ -134,6 +143,11 @@ def entry_point(summary, detail, apk, rule, output, graph, classification, thres
         with open(output, "w") as file:
             json.dump(json_report, file, indent=4)
             file.close()
+
+    if list:
+
+        for api in data.apkinfo.android_apis:
+            print(api.full_name)
 
 
 if __name__ == "__main__":
