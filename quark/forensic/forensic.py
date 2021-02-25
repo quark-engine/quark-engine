@@ -32,7 +32,7 @@ class Forensic:
         Return all the url strings inside the APK with a set.
         :return: a set of strings containing the url
         """
-        
+
         url = set()
 
         for string in self.all_strings:
@@ -104,6 +104,15 @@ class Forensic:
                 base64.add(string)
 
         return base64
+
+    def get_android_api(self):
+        """
+        Return all Android APIs in the APK.
+
+        :return: a list of MethodAnalysis which contains all Android API.
+        """
+
+        return self.apk.android_apis
 
 
 if __name__ == "__main__":
