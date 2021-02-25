@@ -87,6 +87,22 @@ class Apkinfo:
         if self.ret_type == "DEX":
             return []
 
+    @property
+    def android_apis(self):
+        """
+        Return all Android APIs from given APK.
+
+        :return: a set of all Android APIs MethodAnalysis
+        """
+        apis = set()
+
+        for external_cls in self.analysis.get_external_classes():
+            for meth_analysis in external_cls.get_methods():
+                if meth_analysis.is_android_api():
+                    apis.add(meth_analysis)
+
+        return apis
+
     @functools.lru_cache()
     def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
         """
