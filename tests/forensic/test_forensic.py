@@ -47,3 +47,10 @@ class TestForensic:
 
     def test_get_base64(self, forensic):
         assert len(forensic.get_base64()) == 102
+
+    def test_get_android_api(self, forensic):
+        assert len(forensic.get_android_api()) == 640
+
+        result = [str(x) for x in forensic.get_android_api()]
+        assert any("getCellLocation" in meth for meth in result)
+        assert any("sendTextMessage" in meth for meth in result)
