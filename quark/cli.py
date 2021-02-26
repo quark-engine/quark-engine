@@ -8,13 +8,13 @@ import os
 import click
 from tqdm import tqdm
 
+from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from quark.freshquark import check_update
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
-from quark import config
 
 logo()
 check_update()
@@ -26,7 +26,7 @@ check_update()
 @click.option(
     "-o",
     "--output",
-    help="Output report as json file",
+    help="Output report in JSON",
     type=click.Path(exists=False, file_okay=True, dir_okay=False),
     required=False,
 )
@@ -44,13 +44,13 @@ check_update()
     type=click.Path(exists=True, file_okay=True, dir_okay=True),
     default=f"{config.HOME_DIR}quark-rules",
     required=False,
-    show_default=True
+    show_default=True,
 )
 @click.option(
     "-g",
     "--graph",
     is_flag=True,
-    help="Creating call graph and save it to call_graph_image directory",
+    help="Create call graph to call_graph_image directory",
     required=False,
 )
 @click.option(
@@ -67,27 +67,35 @@ check_update()
     type=click.Choice(["100", "80", "60", "40", "20"]),
     required=False,
 )
-def entry_point(summary, detail, apk, rule, output, graph, classification, threshold):
+@click.option(
+    "-i",
+    "--list",
+    is_flag=True,
+    help="List classes, methods and descriptors",
+    required=False,
+)
+def entry_point(
+    summary, detail, apk, rule, output, graph, classification, threshold, list
+):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
+    # Load APK
+    data = Quark(apk)
+
+    # Load rules
+    rules_list = [x for x in os.listdir(rule) if x.endswith("json")]
+
+    # Show summary report
     if summary:
-        # Show summary report
-
-        # Load APK
-        data = Quark(apk)
-
-        # Load rules
-        rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            if single_rule.endswith("json"):
-                rulepath = os.path.join(rule, single_rule)
-                rule_checker = QuarkRule(rulepath)
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = QuarkRule(rulepath)
 
-                # Run the checker
-                data.run(rule_checker)
+            # Run the checker
+            data.run(rule_checker)
 
-                data.show_summary_report(rule_checker, threshold)
+            data.show_summary_report(rule_checker, threshold)
 
         w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
         print_warning(w.calculate())
@@ -99,56 +107,47 @@ def entry_point(summary, detail, apk, rule, output, graph, classification, thres
         if graph:
             data.show_call_graph()
 
+    # Show detail report
     if detail:
-        # Show detail report
-
-        # Load APK
-        data = Quark(apk)
-
-        # Load rules
-        rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            if single_rule.endswith("json"):
-                rulepath = os.path.join(rule, single_rule)
-                print(rulepath)
-                rule_checker = QuarkRule(rulepath)
+            rulepath = os.path.join(rule, single_rule)
+            print(rulepath)
+            rule_checker = QuarkRule(rulepath)
 
-                # Run the checker
-                data.run(rule_checker)
+            # Run the checker
+            data.run(rule_checker)
 
-                data.show_detail_report(rule_checker)
-                print_success("OK")
+            data.show_detail_report(rule_checker)
+            print_success("OK")
 
         if classification:
             data.show_rule_classification()
         if graph:
             data.show_call_graph()
 
+    # Show JSON report
     if output:
-        # show json report
-
-        # Load APK
-        data = Quark(apk)
-
-        # Load rules
-        rules_list = os.listdir(rule)
 
         for single_rule in tqdm(rules_list):
-            if single_rule.endswith("json"):
-                rulepath = os.path.join(rule, single_rule)
-                rule_checker = QuarkRule(rulepath)
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = QuarkRule(rulepath)
 
-                # Run the checker
-                data.run(rule_checker)
+            # Run the checker
+            data.run(rule_checker)
 
-                data.generate_json_report(rule_checker)
+            data.generate_json_report(rule_checker)
 
         json_report = data.get_json_report()
 
         with open(output, "w") as file:
             json.dump(json_report, file, indent=4)
             file.close()
+
+    if list:
+
+        for api in data.apkinfo.android_apis:
+            print(api.full_name)
 
 
 if __name__ == "__main__":
