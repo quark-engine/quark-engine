@@ -1,0 +1,5 @@
+lib usr/share/quark-engine/
+quark usr/share/quark-engine/
+templates usr/share/quark-engine/
+gadgetchains usr/share/quark-engine/
+debian/helper-script/quark-engine usr/bin/

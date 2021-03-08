@@ -1,0 +1,3 @@
+version=4
+opts=filenamemangle=s/.+\/v?(\d\S*)\.tar\.gz/quark-engine-$1\.tar\.gz/ \
+  https://github.com/quark-engine/quark-engine/tags .*/v?(\d\S*)\.tar\.gz
