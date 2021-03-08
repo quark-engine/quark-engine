@@ -13,13 +13,13 @@ Architecture: all
 Depends:
  ${python3:Depends},
  ${misc:Depends},
- python3-prettytable,
- python3-tqdm,
- python3-colorama,
- python3-androguard (>=3.4.0a1),
- python3-click (>=7.1.2),
- python3-graphviz,
- python3-gitpython
+ python-prettytable,
+ python-tqdm,
+ python-colorama,
+ python-androguard (>=3.4.0a1),
+ python-click (>=7.1.2),
+ python-graphviz,
+ python-gitpython
 Description: An Obfuscation-Neglect Android Malware Scoring System.
  Quark-Engine is a trust-worthy, practical tool
  that's ready to boost up your malware reverse engineering.
