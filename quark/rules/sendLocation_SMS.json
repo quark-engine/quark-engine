@@ -1,11 +1,11 @@
 {
     "crime": "Send Location via SMS",
-    "x1_permission": [
+    "permission": [
         "android.permission.SEND_SMS",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
     ],
-    "x2n3n4_comb": [
+    "api": [
         {
             "class": "Landroid/telephony/TelephonyManager",
             "method": "getCellLocation",
@@ -17,5 +17,5 @@
             "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
         }
     ],
-    "yscore": 4
+    "score": 4
 }

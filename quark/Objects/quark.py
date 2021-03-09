@@ -219,20 +219,20 @@ class Quark:
         self.quark_analysis.crime_description = rule_obj.crime
 
         # Level 1: Permission Check
-        if set(rule_obj.x1_permission).issubset(set(self.apkinfo.permissions)):
+        if set(rule_obj.permission).issubset(set(self.apkinfo.permissions)):
             rule_obj.check_item[0] = True
         else:
             # Exit if the level 1 stage check fails.
             return
 
         # Level 2: Single Native API Check
-        api_1_method_name = rule_obj.x2n3n4_comb[0]["method"]
-        api_1_class_name = rule_obj.x2n3n4_comb[0]["class"]
-        api_1_descriptor = rule_obj.x2n3n4_comb[0]["descriptor"]
+        api_1_method_name = rule_obj.api[0]["method"]
+        api_1_class_name = rule_obj.api[0]["class"]
+        api_1_descriptor = rule_obj.api[0]["descriptor"]
 
-        api_2_method_name = rule_obj.x2n3n4_comb[1]["method"]
-        api_2_class_name = rule_obj.x2n3n4_comb[1]["class"]
-        api_2_descriptor = rule_obj.x2n3n4_comb[1]["descriptor"]
+        api_2_method_name = rule_obj.api[1]["method"]
+        api_2_class_name = rule_obj.api[1]["class"]
+        api_2_descriptor = rule_obj.api[1]["descriptor"]
 
         first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name, api_1_descriptor)
         second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name, api_2_descriptor)
@@ -326,12 +326,12 @@ class Quark:
         confidence = str(rule_obj.check_item.count(True) * 20) + "%"
         conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
-        score = rule_obj.yscore
+        score = rule_obj.score
 
         # Assign level 1 examine result
         permissions = []
         if rule_obj.check_item[0]:
-            permissions = rule_obj.x1_permission
+            permissions = rule_obj.permission
 
         # Assign level 2 examine result
         api = []
@@ -345,7 +345,7 @@ class Quark:
         # Assign level 3 examine result
         combination = []
         if rule_obj.check_item[2]:
-            combination = rule_obj.x2n3n4_comb
+            combination = rule_obj.api
 
         # Assign level 4 - 5 examine result if exist
         sequnce_show_up = []
@@ -403,7 +403,7 @@ class Quark:
         confidence = f"{rule_obj.check_item.count(True) * 20}%"
         conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
-        score = rule_obj.yscore
+        score = rule_obj.score
 
         if threshold:
 
@@ -437,7 +437,7 @@ class Quark:
             print(green(bold("1.Permission Request")), end="")
             print("")
 
-            for permission in rule_obj.x1_permission:
+            for permission in rule_obj.permission:
                 print(f"\t\t {permission}")
         if rule_obj.check_item[1]:
             print(red(CHECK_LIST), end="")
@@ -452,10 +452,10 @@ class Quark:
 
             print("")
             print(
-                f"\t\t ({rule_obj.x2n3n4_comb[0]['class']}, {rule_obj.x2n3n4_comb[0]['method']})",
+                f"\t\t ({rule_obj.api[0]['class']}, {rule_obj.api[0]['method']})",
             )
             print(
-                f"\t\t ({rule_obj.x2n3n4_comb[1]['class']}, {rule_obj.x2n3n4_comb[1]['method']})",
+                f"\t\t ({rule_obj.api[1]['class']}, {rule_obj.api[1]['method']})",
             )
         if rule_obj.check_item[3]:
 
