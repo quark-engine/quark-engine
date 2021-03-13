@@ -17,7 +17,6 @@ quark-engine = {editable = true,path = "."}
 click = "*"
 androguard = "==3.4.0a1"
 graphviz = "*"
-gitpython = "*"
 requests = "*"
 
 [requires]
