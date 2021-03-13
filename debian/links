@@ -1,0 +1,2 @@
+usr/share/quark-engine/quark/cli.py usr/bin/quark
+usr/share/quark-engine/quark/freshquark.py usr/bin/freshquark

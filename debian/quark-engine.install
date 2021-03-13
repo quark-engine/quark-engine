@@ -1,2 +1,1 @@
-quark usr/share/quark-engine/
-debian/helper-script/quark-engine usr/bin/
+quark usr/share/quark-engine
