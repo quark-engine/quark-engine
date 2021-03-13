@@ -12,7 +12,7 @@ Build-Depends: debhelper-compat (= 12),
                python3-tqdm,
                python3-colorama,
                python3-click,
-               python3-graphviz,
+               python3-graphviz
 
 Standards-Version: 21.3.3
 Homepage: https://github.com/quark-engine/quark-engine
@@ -29,7 +29,7 @@ Depends: ${misc:Depends},
          python3-tqdm,
          python3-colorama,
          python3-click,
-         python3-graphviz,
+         python3-graphviz
 Description: Quark-Engine is a full-featured Android analysis framework written in Python for hunting threat intelligence inside the APK, DEX files. Since it is rule-based, you can use the ones built-in or customize as needed.
 
  With ideas decoded from criminal law, Quark-Engine has its unique angles for Android analysis. We developed a Dalvik bytecode loader that has tainted analysis inside but also defeats the obfuscation techniques used against reverse engineering. And surprisingly, the loader matches perfectly the design of our malware scoring system.
