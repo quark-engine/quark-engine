@@ -36,13 +36,13 @@ json format to construct the rule of the crime.
    {
         "crime": "Send Location via SMS",
 
-        "x1_permission": [
+        "permission": [
             "android.permission.SEND_SMS",
             "android.permission.ACCESS_COARSE_LOCATION",
             "android.permission.ACCESS_FINE_LOCATION"
         ],
 
-        "x2n3n4_comb": [
+        "api": [
             {
                 "class": "Landroid/telephony/TelephonyManager",
                 "method": "getCellLocation"
@@ -53,7 +53,7 @@ json format to construct the rule of the crime.
             }
         ],
 
-        "yscore": 4
+        "score": 4
    }
 
 
@@ -71,13 +71,13 @@ is Location info. Therefore, the crime of our first rule is defined as:
 
 .. code-block:: python
 
-  "x1_permission": [
+  "permission": [
         "android.permission.SEND_SMS",
         "android.permission.ACCESS_COARSE_LOCATION",
         "android.permission.ACCESS_FINE_LOCATION"
   ]
 
-``x1_permission`` is where we fill in permission requested by the apk to
+``permission`` is where we fill in permission requested by the apk to
 practice the crime. For instance, we need permission
 ``android.permission.SEND_SMS`` to send information through SMS. We also need
 permission ``android.permission.ACCESS_COARSE_LOCATION`` and
@@ -85,7 +85,7 @@ permission ``android.permission.ACCESS_COARSE_LOCATION`` and
 
 .. code-block:: python
 
-  "x2n3n4_comb": [
+  "api": [
         {
             "class": "Landroid/telephony/TelephonyManager",
             "method": "getCellLocation"
@@ -96,7 +96,7 @@ permission ``android.permission.ACCESS_COARSE_LOCATION`` and
         }
   ]
 
-``x2n3n4_comb`` means this field can be used to practice analysis from
+``api`` means this field can be used to practice analysis from
 stage 2 to stage 4.
 
 In stage 2, we need to find key native APIs that do
@@ -109,7 +109,7 @@ API class name and method name.
 In stage 3, we will find the combination of the native APIs we define
 in stage 2. Further, we will check whether they're called in the same method.
 If so, we will say that the combination of crime is caught!
-And we don't need to do anything to adjust the ``x2n3n4_comb`` field.
+And we don't need to do anything to adjust the ``api`` field.
 
 .. note:: We know that the native API might be wrapped in other methods. We use XREF to solve this problem.
 
@@ -121,5 +121,5 @@ If so, we have more confidence that the crime is practiced.
 In stage 5, we will check whether the native APIs are operating the same parameter.
 If so, we are 100% sure that the crime is practiced.
 
-As for the field ``yscore``, we will be updating our principles of weight defining.
+As for the field ``score``, we will be updating our principles of weight defining.
 please check that part later.

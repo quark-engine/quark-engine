@@ -190,37 +190,37 @@ weights and thresholds for calculating the threat level of a malware.</p>
 crimes and corresponding five stages.</p>
 <p>An example of defining crime “Send Location via SMS” is shown below. We use
 json format to construct the rule of the crime.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
      <span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span><span class="p">,</span>
 
-     <span class="s2">&quot;x1_permission&quot;</span><span class="p">:</span> <span class="p">[</span>
+     <span class="s2">&quot;permission&quot;</span><span class="p">:</span> <span class="p">[</span>
          <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
          <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
          <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
      <span class="p">],</span>
 
-     <span class="s2">&quot;x2n3n4_comb&quot;</span><span class="p">:</span> <span class="p">[</span>
+     <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="p">[</span>
          <span class="p">{</span>
              <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
              <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
@@ -231,7 +231,7 @@ json format to construct the rule of the crime.</p>
          <span class="p">}</span>
      <span class="p">],</span>
 
-     <span class="s2">&quot;yscore&quot;</span><span class="p">:</span> <span class="mi">4</span>
+     <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mi">4</span>
 <span class="p">}</span>
 </pre></div>
 </td></tr></table></div>
@@ -243,19 +243,19 @@ json format to construct the rule of the crime.</p>
 <code class="docutils literal notranslate"><span class="pre">Action</span> <span class="pre">+</span> <span class="pre">Target</span></code>. In this example, the action is “Send SMS” and the target
 is Location info. Therefore, the crime of our first rule is defined as:
 “Send Location via SMS”.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;x1_permission&quot;</span><span class="p">:</span> <span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;permission&quot;</span><span class="p">:</span> <span class="p">[</span>
       <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
       <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
       <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
 <span class="p">]</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">x1_permission</span></code> is where we fill in permission requested by the apk to
+<p><code class="docutils literal notranslate"><span class="pre">permission</span></code> is where we fill in permission requested by the apk to
 practice the crime. For instance, we need permission
 <code class="docutils literal notranslate"><span class="pre">android.permission.SEND_SMS</span></code> to send information through SMS. We also need
 permission <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_COARSE_LOCATION</span></code> and
 <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_FINE_LOCATION</span></code> to practice the crime.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;x2n3n4_comb&quot;</span><span class="p">:</span> <span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="p">[</span>
       <span class="p">{</span>
           <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
           <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
@@ -267,7 +267,7 @@ permission <code class="docutils literal notranslate"><span class="pre">android.
 <span class="p">]</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">x2n3n4_comb</span></code> means this field can be used to practice analysis from
+<p><code class="docutils literal notranslate"><span class="pre">api</span></code> means this field can be used to practice analysis from
 stage 2 to stage 4.</p>
 <p>In stage 2, we need to find key native APIs that do
 the <code class="docutils literal notranslate"><span class="pre">Action</span></code> and <code class="docutils literal notranslate"><span class="pre">Target</span></code>. And since the API method name can be used by
@@ -280,7 +280,7 @@ API class name and method name.</p>
 <p>In stage 3, we will find the combination of the native APIs we define
 in stage 2. Further, we will check whether they’re called in the same method.
 If so, we will say that the combination of crime is caught!
-And we don’t need to do anything to adjust the <code class="docutils literal notranslate"><span class="pre">x2n3n4_comb</span></code> field.</p>
+And we don’t need to do anything to adjust the <code class="docutils literal notranslate"><span class="pre">api</span></code> field.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We know that the native API might be wrapped in other methods. We use XREF to solve this problem.</p>
@@ -293,7 +293,7 @@ If so, we have more confidence that the crime is practiced.</p>
 </div>
 <p>In stage 5, we will check whether the native APIs are operating the same parameter.
 If so, we are 100% sure that the crime is practiced.</p>
-<p>As for the field <code class="docutils literal notranslate"><span class="pre">yscore</span></code>, we will be updating our principles of weight defining.
+<p>As for the field <code class="docutils literal notranslate"><span class="pre">score</span></code>, we will be updating our principles of weight defining.
 please check that part later.</p>
 </div>
 

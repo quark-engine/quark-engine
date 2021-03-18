@@ -2,7 +2,7 @@
 Installing Quark-Engine
 +++++++++++++++++++++++
 
-PIP::
+PyPi::
 
     $ pip install -U quark-engine
 
@@ -26,16 +26,19 @@ Once you see the following msg, then you're all set::
     Options:
       -s, --summary                   Show summary report
       -d, --detail                    Show detail report
-      -o, --output FILE               Output report as json file
+      -o, --output FILE               Output report in JSON
       -a, --apk FILE                  APK file  [required]
-      -r, --rule PATH                 Rules directory  [default: /Users/nick/.quark-engine/quark-rules]
+      -r, --rule PATH                 Rules directory  [default:
+                                      /Users/nick/.quark-engine/quark-rules]
 
-      -g, --graph                     Creating call graph and save it to
-                                      call_graph_image directory
+      -g, --graph                     Create call graph to call_graph_image directory
 
       -c, --classification            Show rules classification
       -t, --threshold [100|80|60|40|20]
                                       Set the confidence threshold
+      -i, --list                      List the usage of Android native API with
+                                      classes, methods and descriptors
+
       --help                          Show this message and exit.
 
 To learn how to scan multiple samples in a directory, please have a look at :ref:`Directory Scanning <dir_scan>`
