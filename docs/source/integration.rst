@@ -9,7 +9,7 @@ First Step: Installation
 
 ::
 
-    $ pip3 install quark-engine
+    $ pip3 install -U quark-engine
 
 Second Step: Code Snippet As You Go
 -----------------------------------
