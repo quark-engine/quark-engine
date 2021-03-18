@@ -71,7 +71,7 @@ check_update()
     "-i",
     "--list",
     is_flag=True,
-    help="List classes, methods and descriptors",
+    help="List the usage of Android native API with classes, methods and descriptors",
     required=False,
 )
 def entry_point(
