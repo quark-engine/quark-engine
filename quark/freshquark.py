@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
+"""
+Freshquark is a command-line interface to download the latest Quark rules
+"""
 
 import datetime
 import os
@@ -19,6 +22,11 @@ SOURCE = "https://github.com/quark-engine/quark-rules"
 
 
 def set_rw(operation, name, exc):
+    """
+    A specific helper function to make the Windows Git directory deletable.
+
+    :return: True
+    """
     os.chmod(name, stat.S_IWRITE)
     return True
 
@@ -63,7 +71,8 @@ def download():
     try:
         result = subprocess.run(["git", "clone", "https://github.com/quark-engine/quark-rules", DIR_PATH],
                                 stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE)
+                                stderr=subprocess.PIPE,
+                                check=True)
 
         if result.returncode != 0:
             # Download failed
@@ -85,9 +94,9 @@ def download():
 
         print_warning("FileNotFoundError with git clone")
 
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError as error:
 
-        print_warning(f"CalledProcessError with git clone, error: {e}")
+        print_warning(f"CalledProcessError with git clone, error: {error}")
 
     logger()
 
