@@ -15,11 +15,6 @@ from quark import config
 from quark.utils.colors import green
 from quark.utils.out import print_warning, print_info, print_success
 
-DIR_PATH = f"{config.HOME_DIR}quark-rules"
-CHECK_UP_TO_DATE = f"{config.HOME_DIR}.up_to_date.quark"
-
-SOURCE = "https://github.com/quark-engine/quark-rules"
-
 
 def set_rw(operation, name, exc):
     """
@@ -38,7 +33,7 @@ def logger():
     :return: None
     """
     # Write the current update time to file.
-    with open(CHECK_UP_TO_DATE, "w") as file:
+    with open(config.CHECK_UP_TO_DATE, "w") as file:
         file.write(datetime.date.today().isoformat())
 
 
@@ -49,8 +44,8 @@ def check_update():
 
     :return: None
     """
-    if os.path.isfile(CHECK_UP_TO_DATE):
-        with open(CHECK_UP_TO_DATE) as file:
+    if os.path.isfile(config.CHECK_UP_TO_DATE):
+        with open(config.CHECK_UP_TO_DATE) as file:
 
             if file.readline() == datetime.date.today().isoformat():
                 # quark-rules is already up to date with daily checks
@@ -69,18 +64,27 @@ def download():
     :return: None
     """
     try:
-        result = subprocess.run(["git", "clone", "https://github.com/quark-engine/quark-rules", DIR_PATH],
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                check=True)
+        result = subprocess.run(
+            [
+                "git",
+                "clone",
+                "https://github.com/quark-engine/quark-rules",
+                config.DIR_PATH,
+            ],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if result.returncode == 0:
+            # Download successful
+            print_success("Complete downloading the latest quark-rules")
 
-        if result.returncode != 0:
+        else:
             # Download failed
             dir_exists = "destination path"
             network_unavailable = "unable to access"
 
             if dir_exists in result.stderr.decode("utf-8"):
-                shutil.rmtree(DIR_PATH, onerror=set_rw)
+                shutil.rmtree(config.DIR_PATH, onerror=set_rw)
                 download()
 
             if network_unavailable in result.stderr.decode("utf-8"):
@@ -107,9 +111,8 @@ def entry_point():
 
     :return: None
     """
-    print_info(f"Download the latest rules from {SOURCE}")
+    print_info(f"Download the latest rules from {config.SOURCE}")
     download()
-    print_success("Complete downloading the latest quark-rules")
 
 
 if __name__ == "__main__":
