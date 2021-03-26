@@ -7,7 +7,6 @@
 # http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html
 
 import logging
-from logging import FileHandler
 from datetime import datetime
 from pathlib import Path
 
@@ -21,8 +20,9 @@ TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
 LOG_FILENAME = f"{config.HOME_DIR}{TIMESTAMPS}.quark.log"
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler = FileHandler(LOG_FILENAME, mode='w')
-formatter = logging.Formatter('%(asctime)s %(levelname)s [%(lineno)d]: %(message)s')
+handler = logging.FileHandler(LOG_FILENAME, mode='w')
+formatter = logging.Formatter('%(asctime)s %(levelname)s 
+                              [%(lineno)d]: %(message)s')
 handler.setFormatter(formatter)
 log.addHandler(handler)
 
