@@ -5,24 +5,11 @@
 Freshquark is a command-line interface to download the latest Quark rules
 """
 
-import os
-import shutil
-import stat
 import subprocess
 
 from quark import config
 from quark.utils.colors import green
 from quark.utils.out import print_warning, print_info, print_success
-
-
-def set_rw(operation, name, exc):
-    """
-    A specific helper function to make the Windows Git directory deletable.
-
-    :return: True
-    """
-    os.chmod(name, stat.S_IWRITE)
-    return True
 
 
 def download():
