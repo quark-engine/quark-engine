@@ -72,8 +72,24 @@ logo()
     type=click.Choice(["all", "native", "custom"]),
     required=False,
 )
+@click.option(
+    "-p",
+    "--permission",
+    help="List Android permissions",
+    is_flag=True,
+    required=False,
+)
 def entry_point(
-    summary, detail, apk, rule, output, graph, classification, threshold, list
+    summary,
+    detail,
+    apk,
+    rule,
+    output,
+    graph,
+    classification,
+    threshold,
+    list,
+    permission,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
@@ -153,6 +169,11 @@ def entry_point(
         if list == "custom":
             for custom_method in data.apkinfo.custom_methods:
                 print(custom_method.full_name)
+
+    if permission:
+
+        for p in data.apkinfo.permissions:
+            print(p)
 
 
 if __name__ == "__main__":
