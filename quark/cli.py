@@ -8,6 +8,7 @@ import os
 import click
 from tqdm import tqdm
 
+from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from quark.logo import logo
@@ -39,7 +40,7 @@ logo()
     "--rule",
     help="Rules directory",
     type=click.Path(exists=True, file_okay=True, dir_okay=True),
-    default="quark-rules",
+    default=f"{config.HOME_DIR}quark-rules",
     required=False,
     show_default=True,
 )
