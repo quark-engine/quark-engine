@@ -5,7 +5,6 @@
 Freshquark is a command-line interface to download the latest Quark rules
 """
 
-import datetime
 import os
 import shutil
 import stat
@@ -26,17 +25,6 @@ def set_rw(operation, name, exc):
     return True
 
 
-def logger():
-    """
-    Write today's date into a file to record whether it has been updated on that day.
-
-    :return: None
-    """
-    # Write the current update time to file.
-    with open(config.CHECK_UP_TO_DATE, "w") as file:
-        file.write(datetime.date.today().isoformat())
-
-
 def download():
     """
     Download the latest quark-rules from https://github.com/quark-engine/quark-rules.
@@ -49,30 +37,14 @@ def download():
                 "git",
                 "clone",
                 "https://github.com/quark-engine/quark-rules",
-                config.DIR_PATH,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            check=True,
         )
         if result.returncode == 0:
             # Download successful
             print_success("Complete downloading the latest quark-rules")
-
-        else:
-            # Download failed
-            dir_exists = "destination path"
-            network_unavailable = "unable to access"
-
-            if dir_exists in result.stderr.decode("utf-8"):
-                shutil.rmtree(config.DIR_PATH, onerror=set_rw)
-                download()
-
-            if network_unavailable in result.stderr.decode("utf-8"):
-                print_warning(
-                    f"Your network is currently unavailable, "
-                    f"you can use {green('freshquark')} "
-                    "to update the quark-rules later!\n"
-                )
 
     except FileNotFoundError:
 
@@ -80,9 +52,20 @@ def download():
 
     except subprocess.CalledProcessError as error:
 
-        print_warning(f"CalledProcessError with git clone, error: {error}")
+        # Download failed
+        dir_exists = "destination path"
+        network_unavailable = "unable to access"
 
-    logger()
+        if dir_exists in error.stderr.decode("utf-8"):
+            shutil.rmtree("quark-rules", onerror=set_rw)
+            download()
+
+        if network_unavailable in error.stderr.decode("utf-8"):
+            print_warning(
+                f"Your network is currently unavailable, "
+                f"you can use {green('freshquark')} "
+                "to update the quark-rules later!\n"
+            )
 
 
 def entry_point():
