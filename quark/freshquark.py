@@ -37,6 +37,7 @@ def download():
                 "git",
                 "clone",
                 "https://github.com/quark-engine/quark-rules",
+                config.DIR_PATH,
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
@@ -57,8 +58,11 @@ def download():
         network_unavailable = "unable to access"
 
         if dir_exists in error.stderr.decode("utf-8"):
-            shutil.rmtree("quark-rules", onerror=set_rw)
-            download()
+            print_warning(
+                f"quark-rules already exists in {config.DIR_PATH}, "
+                f"you can use {green('git pull')} "
+                "to update the quark-rules!\n"
+            )
 
         if network_unavailable in error.stderr.decode("utf-8"):
             print_warning(
