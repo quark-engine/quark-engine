@@ -34,8 +34,12 @@
 </p>
 
 
-Quark-Engine is also bundled with [BlackArch](https://blackarch.org/mobile.html).
+Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-listing), [BlackArch](https://blackarch.org/mobile.html).
 :shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. https://twitter.com/quarkengine
+
+## Available In
+
+<img src="https://i.imgur.com/oQcqRXy.png"/>
 
 <img src="https://i.imgur.com/nz4m8kr.png"/>
 
@@ -124,3 +128,16 @@ $ quark --help
 ### Test It Out
 
 You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
+
+## Acknowledgments
+
+#### The Honeynet Project
+<a href="https://www.honeynet.org"> <img style="border: 0.2px solid black" width=115 height=150 src="static_intel/honeynet_logo.png" alt="Honeynet.org logo"> </a>
+
+#### Google Summer Of Code
+
+Quark-Engine has been participating in the GSoC under the Honeynet Project!
+
+* 2021: Join us! [Projects available](https://www.honeynet.org/gsoc/gsoc-2021/google-summer-of-code-2021-project-ideas/)
+
+Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
