@@ -132,7 +132,7 @@ You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io
 ## Acknowledgments
 
 #### The Honeynet Project
-<a href="https://www.honeynet.org"> <img style="border: 0.2px solid black" width=115 height=150 src="static_intel/honeynet_logo.png" alt="Honeynet.org logo"> </a>
+<a href="https://www.honeynet.org"> <img style="border: 0.2px solid black" width=115 height=150 src="https://i.imgur.com/znu7cMJ.png" alt="Honeynet.org logo"> </a>
 
 #### Google Summer Of Code
 
