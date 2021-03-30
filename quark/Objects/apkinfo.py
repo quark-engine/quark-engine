@@ -90,9 +90,9 @@ class Apkinfo:
     @property
     def android_apis(self):
         """
-        Return all Android APIs from given APK.
+        Return all Android native APIs from given APK.
 
-        :return: a set of all Android APIs MethodAnalysis
+        :return: a set of all Android native APIs MethodAnalysis
         """
         apis = set()
 
@@ -102,6 +102,37 @@ class Apkinfo:
                     apis.add(meth_analysis)
 
         return apis
+
+    @property
+    def custom_methods(self):
+        """
+        Return all custom methods from given APK.
+
+        :return: a set of all custom methods MethodAnalysis
+        """
+        custom_methods = set()
+
+        for meth_analysis in self.analysis.get_methods():
+            if meth_analysis.is_external():
+                continue
+            custom_methods.add(meth_analysis)
+
+        return custom_methods
+
+    @property
+    def all_methods(self):
+        """
+        Return all methods including Android native API and custom methods from given APK.
+
+        :return: a set of all method MethodAnalysis
+        """
+
+        all_methods = set()
+
+        for meth_analysis in self.analysis.get_methods():
+            all_methods.add(meth_analysis)
+
+        return all_methods
 
     @functools.lru_cache()
     def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
@@ -284,7 +315,9 @@ class Apkinfo:
 
         result = {"first": None, "first_hex": None, "second": None, "second_hex": None}
 
-        first_method_pattern = f"{first_method.class_name}->{first_method.name}{first_method.descriptor}"
+        first_method_pattern = (
+            f"{first_method.class_name}->{first_method.name}{first_method.descriptor}"
+        )
         second_method_pattern = f"{second_method.class_name}->{second_method.name}{second_method.descriptor}"
 
         for _, ins in method_analysis.get_method().get_instructions_idx():

@@ -67,8 +67,8 @@ logo()
 @click.option(
     "-i",
     "--list",
-    is_flag=True,
-    help="List the usage of Android native API with classes, methods and descriptors",
+    help="List classes, methods and descriptors",
+    type=click.Choice(["all", "native", "custom"]),
     required=False,
 )
 def entry_point(
@@ -143,8 +143,15 @@ def entry_point(
 
     if list:
 
-        for api in data.apkinfo.android_apis:
-            print(api.full_name)
+        if list == "all":
+            for all_method in data.apkinfo.all_methods:
+                print(all_method.full_name)
+        if list == "native":
+            for api in data.apkinfo.android_apis:
+                print(api.full_name)
+        if list == "custom":
+            for custom_method in data.apkinfo.custom_methods:
+                print(custom_method.full_name)
 
 
 if __name__ == "__main__":
