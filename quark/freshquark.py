@@ -37,26 +37,6 @@ def logger():
         file.write(datetime.date.today().isoformat())
 
 
-def check_update():
-    """
-    Check if the CHECK_UP_TO_DATE file exists and if the time matches,
-    if it is not the latest, it will download the latest quark-rules.
-
-    :return: None
-    """
-    if os.path.isfile(config.CHECK_UP_TO_DATE):
-        with open(config.CHECK_UP_TO_DATE) as file:
-
-            if file.readline() == datetime.date.today().isoformat():
-                # quark-rules is already up to date with daily checks
-                return
-
-            download()
-
-    else:
-        download()
-
-
 def download():
     """
     Download the latest quark-rules from https://github.com/quark-engine/quark-rules.
