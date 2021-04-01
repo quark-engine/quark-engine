@@ -15,13 +15,12 @@ from quark.Objects.tableobject import TableObject
 MAX_REG_COUNT = 40
 TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
 LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename=LOG_FILENAME,
-    filemode='w',
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
 log = logging.getLogger(__name__)
+log.setLevel(logging.DEBUG)
+handler = logging.FileHandler(LOG_FILENAME, mode='w')
+format_str = '%(asctime)s %(levelname)s [%(lineno)d]: %(message)s'
+handler.setFormatter(logging.Formatter(format_str))
+log.addHandler(handler)
 
 
 def logger(func):
