@@ -18,7 +18,8 @@ LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
 handler = logging.FileHandler(LOG_FILENAME, mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s [%(lineno)d]: %(message)s'))
+format_str = '%(asctime)s %(levelname)s [%(lineno)d]: %(message)s'
+handler.setFormatter(logging.Formatter(format_str))
 log.addHandler(handler)
 
 

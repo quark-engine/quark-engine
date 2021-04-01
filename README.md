@@ -111,9 +111,9 @@ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 $ pip install -U quark-engine
 ```
 
-Quark now has a sweet feature that helps users to get the latest detection rules daily.
-
 ### Get the latest quark rules from our [quark-rules](https://github.com/quark-engine/quark-rules) repo
+
+Now you can download the quark-rules to your home directory with a simple command.
 
 ```bash
 $ freshquark
