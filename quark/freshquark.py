@@ -5,6 +5,7 @@
 Freshquark is a command-line interface to download the latest Quark rules
 """
 
+import os
 import subprocess
 
 from quark import config
@@ -18,45 +19,67 @@ def download():
 
     :return: None
     """
-    try:
-        result = subprocess.run(
-            [
-                "git",
-                "clone",
-                "https://github.com/quark-engine/quark-rules",
-                config.DIR_PATH,
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            check=True,
-        )
-        if result.returncode == 0:
-            # Download successful
-            print_success("Complete downloading the latest quark-rules")
 
-    except FileNotFoundError:
+    if not os.path.isdir(config.DIR_PATH):
 
-        print_warning("FileNotFoundError with git clone")
+        try:
+            result = subprocess.run(
+                [
+                    "git",
+                    "clone",
+                    "https://github.com/quark-engine/quark-rules",
+                    config.DIR_PATH,
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+            if result.returncode == 0:
+                # Download successful
+                print_success("Complete downloading the latest quark-rules")
 
-    except subprocess.CalledProcessError as error:
+        except FileNotFoundError:
 
-        # Download failed
-        dir_exists = "destination path"
-        network_unavailable = "unable to access"
+            print_warning("FileNotFoundError with git clone")
 
-        if dir_exists in error.stderr.decode("utf-8"):
-            print_warning(
-                f"quark-rules already exists in {config.DIR_PATH}, "
-                f"you can use {green('git pull')} "
-                "to update the quark-rules!\n"
+        except subprocess.CalledProcessError as error:
+
+            network_unavailable = "unable to access"
+
+            if network_unavailable in error.stderr.decode("utf-8"):
+                print_warning(
+                    f"Your network is currently unavailable, "
+                    f"you can use {green('freshquark')} "
+                    "to update the quark-rules later!\n"
+                )
+    else:
+        try:
+            result = subprocess.run(
+                [
+                    "git",
+                    "-C",
+                    config.DIR_PATH,
+                    "pull",
+                ],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
             )
 
-        if network_unavailable in error.stderr.decode("utf-8"):
-            print_warning(
-                f"Your network is currently unavailable, "
-                f"you can use {green('freshquark')} "
-                "to update the quark-rules later!\n"
-            )
+            if result.returncode == 0:
+                # Download successful
+                print_success("Complete downloading the latest quark-rules")
+
+        except subprocess.CalledProcessError as error:
+
+            network_unavailable = "unable to access"
+
+            if network_unavailable in error.stderr.decode("utf-8"):
+                print_warning(
+                    f"Your network is currently unavailable, "
+                    f"you can use {green('freshquark')} "
+                    "to update the quark-rules later!\n"
+                )
 
 
 def entry_point():
