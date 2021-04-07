@@ -1,4 +1,1 @@
-quark/cli.py usr/share/quark-engine/
-quark/cli usr/share/quark-engine/
-quark/freshquark.py usr/share/quark-engine/
-quark/freshquark usr/share/quark-engine/
+quark usr/share/quark-engine
