@@ -30,7 +30,9 @@ Depends: ${misc:Depends},
          python3-colorama,
          python3-click,
          python3-graphviz
-Description: Quark-Engine is a full-featured Android analysis framework written in Python for hunting threat intelligence inside the APK, DEX files. Since it is rule-based, you can use the ones built-in or customize as needed.
+Description: Android Malware (Analysis | Scoring System)
+
+ Quark-Engine is a full-featured Android analysis framework written in Python for hunting threat intelligence inside the APK, DEX files. Since it is rule-based, you can use the ones built-in or customize as needed.
 
  With ideas decoded from criminal law, Quark-Engine has its unique angles for Android analysis. We developed a Dalvik bytecode loader that has tainted analysis inside but also defeats the obfuscation techniques used against reverse engineering. And surprisingly, the loader matches perfectly the design of our malware scoring system.
 
