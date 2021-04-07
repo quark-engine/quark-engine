@@ -16,8 +16,8 @@ Build-Depends: debhelper-compat (= 12),
 
 Standards-Version: 21.3.3
 Homepage: https://github.com/quark-engine/quark-engine
-Vcs-Browser: https://gitlab.com/kalilinux/quark-engine
-Vcs-Git: https://gitlab.com/kalilinux/quark-engine/quark-engine
+Vcs-Browser: https://github.com/quark-engine/quark-engine
+Vcs-Git: https://github.com/quark-engine/quark-engine
 
 Package: quark-engine
 Architecture: all
