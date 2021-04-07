@@ -6,6 +6,7 @@ Uploaders: JunWei Song <sungboss2004@gmail.com>
 Build-Depends: debhelper-compat (= 12),
                dh-python,
                python3-all,
+               python3-setuptools,
                python3-requests,
                python3-prettytable,
                python3-androguard,
