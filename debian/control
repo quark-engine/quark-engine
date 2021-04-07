@@ -6,6 +6,7 @@ Uploaders: JunWei Song <sungboss2004@gmail.com>
 Build-Depends: debhelper-compat (= 12),
                dh-python,
                python3-all,
+               androguard,
                python3-setuptools,
                python3-requests,
                python3-prettytable,
@@ -22,6 +23,7 @@ Package: quark-engine
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
+         androguard,
          python3-requests,
          python3-prettytable,
          python3-tqdm,
