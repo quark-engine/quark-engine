@@ -120,6 +120,10 @@ class Apkinfo:
         return custom_methods
 
     @property
+    def all_classes(self):
+        return set(self.analysis.get_classes())
+
+    @property
     def all_methods(self):
         """
         Return all methods including Android native API and custom methods from given APK.
