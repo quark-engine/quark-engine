@@ -38,17 +38,25 @@ class TestQuark():
         # Test Case 1
         expect_list = {
             result.apkinfo.find_method(
-                'Lcom/google/progress/GetInfomation;', 'getInfo', '()Ljava/lang/String;'),
+                'Lcom/google/progress/GetInfomation;',
+                'getInfo',
+                '()Ljava/lang/String;'),
             result.apkinfo.find_method(
-                'Lcom/google/progress/FileList;', 'getInfo', '()Ljava/lang/String;'),
+                'Lcom/google/progress/FileList;',
+                'getInfo', '()Ljava/lang/String;'),
             result.apkinfo.find_method(
-                'Lcom/google/progress/GetCallLog;', 'getInfo', '()Ljava/lang/String;'),
+                'Lcom/google/progress/GetCallLog;',
+                'getInfo', '()Ljava/lang/String;'),
             result.apkinfo.find_method(
-                'Lcom/google/progress/SMSHelper;', 'getInfo', '()Ljava/lang/String;')
+                'Lcom/google/progress/SMSHelper;',
+                'getInfo',
+                '()Ljava/lang/String;')
         }
 
         api_usage_list = set(result.find_api_usage(
-            'Lcom/google/progress/GetInfomation;', 'getInfo', '()Ljava/lang/String;'))
+            'Lcom/google/progress/GetInfomation;',
+            'getInfo',
+            '()Ljava/lang/String;'))
 
         assert api_usage_list == expect_list
 

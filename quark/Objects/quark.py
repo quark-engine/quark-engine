@@ -71,7 +71,8 @@ class Quark:
                             continue
 
                         signature = str(cla_method.get_descriptor())
-                        if signature[:signature.index(')')] == origin_parameters:
+                        if signature[:signature.index(')')]\
+                                == origin_parameters:
                             method_list.append(cla_method)
 
         return [method for method in method_list if method]
