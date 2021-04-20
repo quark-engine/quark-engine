@@ -81,7 +81,10 @@ class PyEval:
             obj_stack = self.table_obj.get_obj_list(index)
             if obj_stack:
                 var_obj = self.table_obj.pop(index)
-                value_of_reg_list.append(var_obj.value)
+                if var_obj.is_instance() and var_obj.called_by_func:
+                    value_of_reg_list.append(var_obj.called_by_func[-1])
+                else:
+                    value_of_reg_list.append(var_obj.value)
 
         # insert the function and the parameter into called_by_func
         for reg in reg_list:
