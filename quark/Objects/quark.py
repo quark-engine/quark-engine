@@ -49,18 +49,30 @@ class Quark:
             origin_parameters = origin_parameters[:origin_parameters.index(
                 ')')]
 
-            for cla in self.apkinfo.all_classes:
-                if not (class_name == str(cla.extends) or class_name in cla.implements):
-                    continue
+            set_updated = True
+            class_name_set = {class_name}
 
-                # Check override
-                for cla_method in cla.get_methods():
-                    if not cla_method.name == method_name:
+            while set_updated:
+                set_updated = False
+                for cla in self.apkinfo.all_classes:
+                    if str(cla.name) in class_name_set:
+                        continue
+                    elif str(cla.extends) not in class_name_set and not\
+                            [interface for interface in cla.implements
+                                if str(interface) in class_name_set]:
                         continue
 
-                    signature = str(cla_method.get_descriptor())
-                    if signature[:signature.index(')')] == origin_parameters:
-                        method_list.append(cla_method)
+                    class_name_set.add(str(cla.name))
+                    set_updated = True
+
+                    # Check override
+                    for cla_method in cla.get_methods():
+                        if not cla_method.name == method_name:
+                            continue
+
+                        signature = str(cla_method.get_descriptor())
+                        if signature[:signature.index(')')] == origin_parameters:
+                            method_list.append(cla_method)
 
         return [method for method in method_list if method]
 
