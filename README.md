@@ -141,3 +141,8 @@ Quark-Engine has been participating in the GSoC under the Honeynet Project!
 * 2021: Join us! [Projects available](https://www.honeynet.org/gsoc/gsoc-2021/google-summer-of-code-2021-project-ideas/)
 
 Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
+
+## Core Values of Quark Engine Team
+
+* We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think. 
+And the most important of all, we benefit ourselves by benefit others **first**.
