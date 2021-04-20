@@ -35,6 +35,35 @@ class Quark:
 
         self.quark_analysis = QuarkAnalysis()
 
+    def find_api_usage(self, class_name, method_name, descriptor_name):
+        method_list = []
+        # origin class
+        method = self.apkinfo.find_method(
+            class_name, method_name, descriptor_name)
+        method_list.append(method)
+
+        # child class
+        if method or ')' in descriptor_name:
+            origin_parameters = str(
+                method.get_descriptor()) if method else descriptor_name
+            origin_parameters = origin_parameters[:origin_parameters.index(
+                ')')]
+
+            for cla in self.apkinfo.all_classes:
+                if not (class_name == str(cla.extends) or class_name in cla.implements):
+                    continue
+
+                # Check override
+                for cla_method in cla.get_methods():
+                    if not cla_method.name == method_name:
+                        continue
+
+                    signature = str(cla_method.get_descriptor())
+                    if signature[:signature.index(')')] == origin_parameters:
+                        method_list.append(cla_method)
+
+        return [method for method in method_list if method]
+
     def find_previous_method(self, base_method, parent_function, wrapper, visited_methods=None):
         """
         Find the method under the parent function, based on base_method before to parent_function.
