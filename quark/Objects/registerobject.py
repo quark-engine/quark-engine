@@ -96,6 +96,8 @@ class RegisterObject:
         """
         return int(self.register_name[1:])
 
+    def is_instance(self):
+        return self.value.startswith('L') and self.value.endswith(';')
 
 if __name__ == "__main__":
     pass
