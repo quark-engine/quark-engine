@@ -263,26 +263,26 @@ class Quark:
         api_2_class_name = rule_obj.api[1]["class"]
         api_2_descriptor = rule_obj.api[1]["descriptor"]
 
-        first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name, api_1_descriptor)
-        second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name, api_2_descriptor)
+        first_api_list = self.find_api_usage(
+            api_1_class_name, api_1_method_name, api_1_descriptor)
+        second_api_list = self.find_api_usage(
+            api_2_class_name, api_2_method_name, api_2_descriptor)
 
-        if first_api is not None or second_api is not None:
+        if first_api_list or second_api_list:
             rule_obj.check_item[1] = True
 
-            if first_api is not None:
-                first_api = self.apkinfo.find_method(api_1_class_name, api_1_method_name, api_1_descriptor)
-                self.quark_analysis.level_2_result.append(first_api)
-            if second_api is not None:
-                second_api = self.apkinfo.find_method(api_2_class_name, api_2_method_name, api_2_descriptor)
-                self.quark_analysis.level_2_result.append(second_api)
+            if first_api_list:
+                self.quark_analysis.level_2_result.extend(first_api_list)
+            if second_api_list:
+                self.quark_analysis.level_2_result.extend(second_api_list)
         else:
             # Exit if the level 2 stage check fails.
             return
 
         # Level 3: Both Native API Check
-        if first_api is not None and second_api is not None:
-            self.quark_analysis.first_api = first_api
-            self.quark_analysis.second_api = second_api
+        if first_api_list and second_api_list:
+            self.quark_analysis.first_api = first_api_list[0]
+            self.quark_analysis.second_api = second_api_list[0]
             rule_obj.check_item[2] = True
 
         else:
@@ -291,32 +291,39 @@ class Quark:
 
         # Level 4: Sequence Check
         # Looking for the first layer of the upper function
-        first_api_xref_from = self.apkinfo.upperfunc(first_api)
-        second_api_xref_from = self.apkinfo.upperfunc(second_api)
+        for first_api in first_api_list:
+            for second_api in second_api_list:
+                first_api_xref_from = self.apkinfo.upperfunc(first_api)
+                second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
-        mutual_parent_function_list = self.find_intersection(first_api_xref_from, second_api_xref_from)
+                mutual_parent_function_list = self.find_intersection(
+                    first_api_xref_from, second_api_xref_from)
 
-        if mutual_parent_function_list is not None:
+                if mutual_parent_function_list is not None:
 
-            for parent_function in mutual_parent_function_list:
-                first_wrapper = []
-                second_wrapper = []
+                    for parent_function in mutual_parent_function_list:
+                        first_wrapper = []
+                        second_wrapper = []
 
-                self.find_previous_method(first_api, parent_function, first_wrapper)
-                self.find_previous_method(second_api, parent_function, second_wrapper)
+                        self.find_previous_method(
+                            first_api, parent_function, first_wrapper)
+                        self.find_previous_method(
+                            second_api, parent_function, second_wrapper)
 
-                if self.check_sequence(parent_function, first_wrapper, second_wrapper):
-                    rule_obj.check_item[3] = True
-                    self.quark_analysis.level_4_result.append(parent_function)
+                        if self.check_sequence(parent_function, first_wrapper, second_wrapper):
+                            rule_obj.check_item[3] = True
+                            self.quark_analysis.level_4_result.append(
+                                parent_function)
 
-                    # Level 5: Handling The Same Register Check
-                    if self.check_parameter(parent_function, first_wrapper, second_wrapper):
-                        rule_obj.check_item[4] = True
-                        self.quark_analysis.level_5_result.append(parent_function)
+                            # Level 5: Handling The Same Register Check
+                            if self.check_parameter(parent_function, first_wrapper, second_wrapper):
+                                rule_obj.check_item[4] = True
+                                self.quark_analysis.level_5_result.append(
+                                    parent_function)
 
-        else:
-            # Exit if the level 4 stage check fails.
-            return
+                else:
+                    # Exit if the level 4 stage check fails.
+                    continue
 
     def get_json_report(self):
         """
