@@ -333,10 +333,10 @@ class PyEval:
         try:
 
             array_obj = self.table_obj.get_obj_list(
-                int(instruction[2][1]),
+                int(instruction[2][1:]),
             ).pop()
             array_index = self.table_obj.get_obj_list(
-                int(instruction[3][1]),
+                int(instruction[3]),
             ).pop()
 
             variable_object = RegisterObject(
