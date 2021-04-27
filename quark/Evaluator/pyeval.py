@@ -7,6 +7,7 @@
 # http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html
 
 import logging
+import re
 from datetime import datetime
 
 from quark.Objects.registerobject import RegisterObject
@@ -333,10 +334,10 @@ class PyEval:
         try:
 
             array_obj = self.table_obj.get_obj_list(
-                int(instruction[2][1:]),
+                int(re.sub("[^0-9]", "", instruction[2][1:])),
             ).pop()
             array_index = self.table_obj.get_obj_list(
-                int(instruction[3]),
+                int(re.sub("[^0-9]", "", instruction[3])),
             ).pop()
 
             variable_object = RegisterObject(
