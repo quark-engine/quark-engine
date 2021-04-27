@@ -219,7 +219,9 @@ class Quark:
         self.quark_analysis.crime_description = rule_obj.crime
 
         # Level 1: Permission Check
-        if set(rule_obj.permission).issubset(set(self.apkinfo.permissions)):
+        if self.apkinfo.ret_type == "DEX":
+            rule_obj.check_item[0] = True
+        elif set(rule_obj.permission).issubset(set(self.apkinfo.permissions)):
             rule_obj.check_item[0] = True
         else:
             # Exit if the level 1 stage check fails.
