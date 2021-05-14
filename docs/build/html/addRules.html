@@ -4,15 +4,18 @@
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Add Rules &mdash; quark-engine v21.01 documentation</title>
+  <title>Add Rules &mdash; quark-engine v21.4.3 documentation</title>
   
 
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +32,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -163,7 +167,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="add-rules">
+  <section id="add-rules">
 <h1>Add Rules<a class="headerlink" href="#add-rules" title="Permalink to this headline">¶</a></h1>
 <p>Android malware analysis engine is not a new story. Every antivirus company has
 their own secrets to build it. With curiosity, we develop a malware scoring
@@ -190,51 +194,30 @@ weights and thresholds for calculating the threat level of a malware.</p>
 crimes and corresponding five stages.</p>
 <p>An example of defining crime “Send Location via SMS” is shown below. We use
 json format to construct the rule of the crime.</p>
-<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 1</span>
-<span class="normal"> 2</span>
-<span class="normal"> 3</span>
-<span class="normal"> 4</span>
-<span class="normal"> 5</span>
-<span class="normal"> 6</span>
-<span class="normal"> 7</span>
-<span class="normal"> 8</span>
-<span class="normal"> 9</span>
-<span class="normal">10</span>
-<span class="normal">11</span>
-<span class="normal">12</span>
-<span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="p">{</span>
-     <span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span><span class="p">,</span>
-
-     <span class="s2">&quot;permission&quot;</span><span class="p">:</span> <span class="p">[</span>
-         <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
-         <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
-     <span class="p">],</span>
-
-     <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="p">[</span>
-         <span class="p">{</span>
-             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
-         <span class="p">},</span>
-         <span class="p">{</span>
-             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
-             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span>
-         <span class="p">}</span>
-     <span class="p">],</span>
-
-     <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mi">4</span>
-<span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="p">{</span>
+<span class="linenos"> 2</span>     <span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span><span class="p">,</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span>     <span class="s2">&quot;permission&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="linenos"> 5</span>         <span class="s2">&quot;android.permission.SEND_SMS&quot;</span><span class="p">,</span>
+<span class="linenos"> 6</span>         <span class="s2">&quot;android.permission.ACCESS_COARSE_LOCATION&quot;</span><span class="p">,</span>
+<span class="linenos"> 7</span>         <span class="s2">&quot;android.permission.ACCESS_FINE_LOCATION&quot;</span>
+<span class="linenos"> 8</span>     <span class="p">],</span>
+<span class="linenos"> 9</span>
+<span class="linenos">10</span>     <span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="p">[</span>
+<span class="linenos">11</span>         <span class="p">{</span>
+<span class="linenos">12</span>             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
+<span class="linenos">13</span>             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
+<span class="linenos">14</span>         <span class="p">},</span>
+<span class="linenos">15</span>         <span class="p">{</span>
+<span class="linenos">16</span>             <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
+<span class="linenos">17</span>             <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span>
+<span class="linenos">18</span>         <span class="p">}</span>
+<span class="linenos">19</span>     <span class="p">],</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span>     <span class="s2">&quot;score&quot;</span><span class="p">:</span> <span class="mi">4</span>
+<span class="linenos">22</span><span class="p">}</span>
 </pre></div>
-</td></tr></table></div>
+</div>
 <p>So let me walk you through the json file.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;crime&quot;</span><span class="p">:</span> <span class="s2">&quot;Send Location via SMS&quot;</span>
 </pre></div>
@@ -295,7 +278,7 @@ If so, we have more confidence that the crime is practiced.</p>
 If so, we are 100% sure that the crime is practiced.</p>
 <p>As for the field <code class="docutils literal notranslate"><span class="pre">score</span></code>, we will be updating our principles of weight defining.
 please check that part later.</p>
-</div>
+</section>
 
 
            </div>

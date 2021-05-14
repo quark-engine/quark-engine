@@ -4,7 +4,7 @@ Installing Quark-Engine
 
 PyPi::
 
-    $ pip install -U quark-engine
+    $ pip3 install -U quark-engine
 
 Install from Source::
 
@@ -31,14 +31,14 @@ Once you see the following msg, then you're all set::
       -r, --rule PATH                 Rules directory  [default:
                                       /Users/nick/.quark-engine/quark-rules]
 
-      -g, --graph                     Create call graph to call_graph_image directory
+      -g, --graph                     Create call graph to call_graph_image
+                                      directory
 
       -c, --classification            Show rules classification
       -t, --threshold [100|80|60|40|20]
                                       Set the confidence threshold
-      -i, --list                      List the usage of Android native API with
-                                      classes, methods and descriptors
-
+      -i, --list [all|native|custom]  List classes, methods and descriptors
+      -p, --permission                List Android permissions
       --help                          Show this message and exit.
 
 To learn how to scan multiple samples in a directory, please have a look at :ref:`Directory Scanning <dir_scan>`
