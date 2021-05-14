@@ -18,6 +18,8 @@ from quark.utils.graph import call_graph
 from quark.utils.out import print_info, print_success
 from quark.utils.output import output_parent_function_table, output_parent_function_json
 from quark.utils.weight import Weight
+import pandas as pd
+import os
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
@@ -419,6 +421,32 @@ class Quark:
         self.quark_analysis.weight_sum += weight
         # add the score
         self.quark_analysis.score_sum += score
+
+    def show_label_report(self, rule_path, all_labels):
+        """
+        Show the report based on label, last column represents max score for that label
+        :param rule_path: the path where may be present the file label_desc.csv.
+        :param all_labels: dictionary containing label:<array of score associated to that label>
+        :return: None
+        """
+        label_desc = {}
+        if os.path.isfile(os.path.join(rule_path, "label_desc.csv")):
+            # associate to each label a description
+            col_list = ["label", "description"]
+            # csv file on form <label,description>
+            # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
+            df = pd.read_csv(os.path.join(rule_path, "label_desc.csv"), usecols=col_list)
+            label_desc = dict(zip(df["label"], df["description"]))
+        
+        for label_name in all_labels:
+            scores = all_labels[label_name]
+            self.quark_analysis.label_report_table.add_row([
+                green(label_name),
+                yellow(label_desc.get(label_name, "-")),
+                (len(scores)),
+                red(max(scores)),
+            ])
+            
 
     def show_detail_report(self, rule_obj):
         """

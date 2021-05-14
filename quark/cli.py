@@ -14,6 +14,7 @@ from quark.Objects.quarkrule import QuarkRule
 from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
+from quark.utils.colors import yellow
 
 logo()
 
@@ -79,6 +80,13 @@ logo()
     is_flag=True,
     required=False,
 )
+@click.option(
+    "-l",
+    "--label",
+    help="Show report based on label of rules",
+    type=click.Choice(["max", "detailed"]),
+    required=False,
+)
 def entry_point(
     summary,
     detail,
@@ -90,6 +98,7 @@ def entry_point(
     threshold,
     list,
     permission,
+    label,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
@@ -98,6 +107,42 @@ def entry_point(
 
     # Load rules
     rules_list = [x for x in os.listdir(rule) if x.endswith("json")]
+
+    if label:
+        all_labels = {}
+        # dictionary containing
+        # key: label
+        # value: list of scores
+        # $ print(all_rules["accessibility service"])
+        # > [60, 40, 60, 40, 60, 40]
+
+        for single_rule in tqdm(rules_list):
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = QuarkRule(rulepath)
+            # Run the checker
+            data.run(rule_checker)
+            score = rule_checker.check_item.count(True) * 20
+            labels = rule_checker._label # array type, e.g. ['network', 'collection']
+            for label in labels:
+                if label in all_labels:
+                    all_labels[label].append(score)
+                else:
+                    all_labels[label] = [score]
+            
+        # get how many label with max score >= 80%
+        counter_high_score = 0
+        for label in all_labels:
+            if max(all_labels[label]) >= 80:
+                counter_high_score += 1
+
+        print_info("Total Label found: " + yellow(str(len(all_labels))))
+        print_info("Rules with label which max score >= 80%: " + yellow(str(counter_high_score)))
+        
+        if label == "max":
+            data.show_label_report(rule, all_labels)
+            print(data.quark_analysis.label_report_table)
+        else:
+            print("TODO")
 
     # Show summary report
     if summary:
