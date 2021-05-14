@@ -32,5 +32,6 @@ setuptools.setup(
         "colorama",
         "click==7.1.2",
         "graphviz",
+        "pandas", 
     ],
 )

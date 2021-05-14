@@ -14,11 +14,19 @@ def init_pretty_table():
     tb.align = "l"
     return tb
 
+def init_label_report_table():
+    # Pretty Table Output
+    tb = PrettyTable()
+    tb.field_names = ["Label", "Description", "Number of rules", "MAX Score %"]
+    tb.align = "l"
+    tb.sortby = "Number of rules"
+    tb.reversesort = True
+    return tb
 
 class QuarkAnalysis:
     __slots__ = ["crime_description", "first_api", "second_api", "level_1_result", "level_2_result", "level_3_result",
                  "level_4_result", "level_5_result", "json_report", "weight_sum", "score_sum", "summary_report_table",
-                 "call_graph_analysis_list", "parent_wrapper_mapping"]
+                 "label_report_table", "call_graph_analysis_list", "parent_wrapper_mapping"]
 
     def __init__(self):
         self.crime_description = ""
@@ -37,6 +45,8 @@ class QuarkAnalysis:
         # Sum of the each rule
         self.score_sum = 0
         self.summary_report_table = init_pretty_table()
+        # label report
+        self.label_report_table = init_label_report_table()
         # Call graph analysis
         self.call_graph_analysis_list = []
 
