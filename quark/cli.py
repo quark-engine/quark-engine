@@ -123,26 +123,23 @@ def entry_point(
             data.run(rule_checker)
             score = rule_checker.check_item.count(True) * 20
             labels = rule_checker._label # array type, e.g. ['network', 'collection']
-            for label in labels:
-                if label in all_labels:
-                    all_labels[label].append(score)
+            for single_label in labels:
+                if single_label in all_labels:
+                    all_labels[single_label].append(score)
                 else:
-                    all_labels[label] = [score]
+                    all_labels[single_label] = [score]
             
         # get how many label with max score >= 80%
         counter_high_score = 0
-        for label in all_labels:
-            if max(all_labels[label]) >= 80:
+        for single_label in all_labels:
+            if max(all_labels[single_label]) >= 80:
                 counter_high_score += 1
 
         print_info("Total Label found: " + yellow(str(len(all_labels))))
         print_info("Rules with label which max score >= 80%: " + yellow(str(counter_high_score)))
         
-        if label == "max":
-            data.show_label_report(rule, all_labels)
-            print(data.quark_analysis.label_report_table)
-        else:
-            print("TODO")
+        data.show_label_report(rule, all_labels, label)
+        print(data.quark_analysis.label_report_table)
 
     # Show summary report
     if summary:
