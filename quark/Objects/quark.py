@@ -13,6 +13,9 @@ from quark.utils.colors import (
     bold,
     yellow,
     green,
+    lightblue,
+    magenta,
+    lightyellow,
 )
 from quark.utils.graph import call_graph
 from quark.utils.out import print_info, print_success
@@ -20,6 +23,7 @@ from quark.utils.output import output_parent_function_table, output_parent_funct
 from quark.utils.weight import Weight
 import pandas as pd
 import os
+import numpy as np
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
@@ -422,7 +426,7 @@ class Quark:
         # add the score
         self.quark_analysis.score_sum += score
 
-    def show_label_report(self, rule_path, all_labels):
+    def show_label_report(self, rule_path, all_labels, table_version):
         """
         Show the report based on label, last column represents max score for that label
         :param rule_path: the path where may be present the file label_desc.csv.
@@ -430,6 +434,9 @@ class Quark:
         :return: None
         """
         label_desc = {}
+        # clear table to manage max/detail version
+        self.quark_analysis.label_report_table.clear()
+        
         if os.path.isfile(os.path.join(rule_path, "label_desc.csv")):
             # associate to each label a description
             col_list = ["label", "description"]
@@ -437,16 +444,29 @@ class Quark:
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
             df = pd.read_csv(os.path.join(rule_path, "label_desc.csv"), usecols=col_list)
             label_desc = dict(zip(df["label"], df["description"]))
-        
+
         for label_name in all_labels:
-            scores = all_labels[label_name]
-            self.quark_analysis.label_report_table.add_row([
+            scores = np.array(all_labels[label_name])
+
+            if table_version == "max":
+                self.quark_analysis.label_report_table.field_names = ["Label", "Description", "Number of rules", "MAX Score %"]
+                self.quark_analysis.label_report_table.add_row([
                 green(label_name),
                 yellow(label_desc.get(label_name, "-")),
                 (len(scores)),
-                red(max(scores)),
-            ])
-            
+                red(np.max(scores)),
+                ])
+            else:
+                self.quark_analysis.label_report_table.field_names = ["Label", "Description", "Number of rules", "MAX Score %", "AVG score", "Std Deviation", "# of Rules with Score >= 80%"]                
+                self.quark_analysis.label_report_table.add_row([
+                green(label_name),
+                yellow(label_desc.get(label_name, "-")),
+                (len(scores)),
+                red(np.max(scores)),
+                magenta(round(np.mean(scores), 2)),
+                lightblue(round(np.std(scores), 2)),
+                lightyellow(np.count_nonzero(scores >= 80))
+                ])  
 
     def show_detail_report(self, rule_obj):
         """
