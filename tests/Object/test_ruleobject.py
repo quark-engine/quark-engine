@@ -25,7 +25,11 @@ def rule_obj(scope="function"):
                 "method": "sendTextMessage"
             }
         ],
-        "score": 4
+        "score": 4,
+        "label": [
+        "location",
+        "collection"
+    ]
     }
     """
 
@@ -67,7 +71,6 @@ class TestRuleObject:
         assert rule_obj.score == 4
 
     def test_get_score(self, rule_obj):
-
         confidence = [1, 2, 3, 4, 5]
         expected_value = [0.25, 0.5, 1.0, 2.0, 4.0]
         for idx, value in enumerate(expected_value):
