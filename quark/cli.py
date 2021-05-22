@@ -157,7 +157,7 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            print(rulepath)
+            print("Rulepath: " + rulepath)
             rule_checker = QuarkRule(rulepath)
 
             print("Rule crime: " + rule_checker._crime)
