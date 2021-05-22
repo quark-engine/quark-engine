@@ -157,10 +157,8 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            print("Rulepath: " + rulepath)
             rule_checker = QuarkRule(rulepath)
 
-            print("Rule crime: " + rule_checker._crime)
             labels = rule_checker._label
             if label_flag :
                 if detail not in labels :
@@ -169,6 +167,8 @@ def entry_point(
             # Run the checker
             data.run(rule_checker)
 
+            print("Rulepath: " + rulepath)
+            print("Rule crime: " + rule_checker._crime)
             data.show_detail_report(rule_checker)
             print_success("OK")
 
