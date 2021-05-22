@@ -10,7 +10,7 @@ from prettytable import PrettyTable
 def init_pretty_table():
     # Pretty Table Output
     tb = PrettyTable()
-    tb.field_names = ["Rule", "Confidence", "Score", "Weight"]
+    tb.field_names = ["Filename", "Rule", "Confidence", "Score", "Weight"]
     tb.align = "l"
     return tb
 

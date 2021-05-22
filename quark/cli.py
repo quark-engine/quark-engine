@@ -19,8 +19,18 @@ logo()
 
 
 @click.command(no_args_is_help=True)
-@click.option("-s", "--summary", is_flag=True, help="Show summary report")
-@click.option("-d", "--detail", is_flag=True, help="Show detail report")
+@click.option(
+    "-s", 
+    "--summary", 
+    is_flag=False, 
+    flag_value="all_rules",
+    help="Show summary report")
+@click.option(
+    "-d", 
+    "--detail", 
+    is_flag=False, 
+    flag_value="all_rules", 
+    help="Show detail report")
 @click.option(
     "-o",
     "--output",
@@ -102,9 +112,22 @@ def entry_point(
     # Show summary report
     if summary:
 
+        if summary=="all_rules" :
+            label_flag = False
+        elif summary.endswith("json") :
+            rules_list = [summary]
+            label_flag = False
+        else :
+            label_flag = True
+
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
             rule_checker = QuarkRule(rulepath)
+
+            labels = rule_checker._label
+            if label_flag :
+                if summary not in labels :
+                    continue
 
             # Run the checker
             data.run(rule_checker)
@@ -124,10 +147,24 @@ def entry_point(
     # Show detail report
     if detail:
 
+        if detail=="all_rules" :
+            label_flag = False
+        elif detail.endswith("json") :
+            rules_list = [detail]
+            label_flag = False
+        else :
+            label_flag = True
+
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
             print(rulepath)
             rule_checker = QuarkRule(rulepath)
+
+            print("Rule crime: " + rule_checker._crime)
+            labels = rule_checker._label
+            if label_flag :
+                if detail not in labels :
+                    continue
 
             # Run the checker
             data.run(rule_checker)
