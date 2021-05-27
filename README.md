@@ -73,7 +73,7 @@ $ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
 
 and the report will look like:
 
-<img src="https://i.imgur.com/TFle3dL.png"/>
+<img src="https://i.imgur.com/g28N7qk.png"/>
 
 ### Call Graph for Every Potential Malicious Activity
 You can add the `-g` option to the quark command, and you can
@@ -97,7 +97,7 @@ Examine with rules.
 ```bash
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
-<img src="https://i.imgur.com/kxPYeIO.png"/>
+<img src="https://i.imgur.com/v7ehRW0.png"/>
 
 ### Label-based Report
 Check which topic (indicated by [labels](https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv)) of the malware is more aggressive.
