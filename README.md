@@ -103,7 +103,7 @@ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 Check which topic (indicated by [labels](https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv)) of the malware is more aggressive.
 
 ```bash
-quark -a Ahmyth.apk -l detailed | max
+quark -a Ahmyth.apk -l detailed
 ```
 <img src="https://i.imgur.com/0GbBDfn.png"/>
 
