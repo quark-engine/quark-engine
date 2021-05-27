@@ -112,7 +112,7 @@ def entry_point(
         all_labels = {}
         # dictionary containing
         # key: label
-        # value: list of scores
+        # value: list of confidence values
         # $ print(all_rules["accessibility service"])
         # > [60, 40, 60, 40, 60, 40]
 
@@ -121,23 +121,26 @@ def entry_point(
             rule_checker = QuarkRule(rulepath)
             # Run the checker
             data.run(rule_checker)
-            score = rule_checker.check_item.count(True) * 20
-            labels = rule_checker._label # array type, e.g. ['network', 'collection']
+            confidence = rule_checker.check_item.count(True) * 20
+            labels = rule_checker._label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label in all_labels:
-                    all_labels[single_label].append(score)
+                    all_labels[single_label].append(confidence)
                 else:
-                    all_labels[single_label] = [score]
-            
-        # get how many label with max score >= 80%
-        counter_high_score = 0
+                    all_labels[single_label] = [confidence]
+
+        # get how many label with max confidence >= 80%
+        counter_high_confidence = 0
         for single_label in all_labels:
             if max(all_labels[single_label]) >= 80:
-                counter_high_score += 1
+                counter_high_confidence += 1
 
         print_info("Total Label found: " + yellow(str(len(all_labels))))
-        print_info("Rules with label which max score >= 80%: " + yellow(str(counter_high_score)))
-        
+        print_info(
+            "Rules with label which max confidence >= 80%: "
+            + yellow(str(counter_high_confidence))
+        )
+
         data.show_label_report(rule, all_labels, label)
         print(data.quark_analysis.label_report_table)
 
