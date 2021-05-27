@@ -18,6 +18,7 @@ click = "*"
 androguard = "==3.4.0a1"
 graphviz = "*"
 requests = "*"
+pandas = "*"
 
 [requires]
 python_version = "3.8"
