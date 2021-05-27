@@ -9,7 +9,16 @@ import os
 class QuarkRule:
     """RuleObject is used to store the rule from json file"""
 
-    __slots__ = ["check_item", "_json_obj", "_crime", "_permission", "_api", "_score", "rule_filename", "_label"]
+    __slots__ = [
+        "check_item",
+        "_json_obj",
+        "_crime",
+        "_permission",
+        "_api",
+        "_score",
+        "rule_filename",
+        "_label",
+    ]
 
     def __init__(self, json_filename):
         """

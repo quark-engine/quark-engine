@@ -17,7 +17,12 @@ def init_pretty_table():
 def init_label_report_table():
     # Pretty Table Output
     tb = PrettyTable()
-    tb.field_names = ["Label", "Description", "Number of rules", "MAX Score %"]
+    tb.field_names = [
+        "Label",
+        "Description",
+        "Number of rules",
+        "MAX Confidence %",
+    ]
     tb.align = "l"
     tb.sortby = "Number of rules"
     tb.reversesort = True

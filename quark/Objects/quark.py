@@ -428,45 +428,63 @@ class Quark:
 
     def show_label_report(self, rule_path, all_labels, table_version):
         """
-        Show the report based on label, last column represents max score for that label
+        Show the report based on label, last column represents max confidence for that label
         :param rule_path: the path where may be present the file label_desc.csv.
-        :param all_labels: dictionary containing label:<array of score associated to that label>
+        :param all_labels: dictionary containing label:<array of confidence values associated to that label>
         :return: None
         """
         label_desc = {}
         # clear table to manage max/detail version
         self.quark_analysis.label_report_table.clear()
-        
         if os.path.isfile(os.path.join(rule_path, "label_desc.csv")):
             # associate to each label a description
             col_list = ["label", "description"]
             # csv file on form <label,description>
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
-            df = pd.read_csv(os.path.join(rule_path, "label_desc.csv"), usecols=col_list)
+            df = pd.read_csv(
+                os.path.join(rule_path, "label_desc.csv"), usecols=col_list
+            )
             label_desc = dict(zip(df["label"], df["description"]))
 
         for label_name in all_labels:
-            scores = np.array(all_labels[label_name])
+            confidences = np.array(all_labels[label_name])
 
             if table_version == "max":
-                self.quark_analysis.label_report_table.field_names = ["Label", "Description", "Number of rules", "MAX Score %"]
-                self.quark_analysis.label_report_table.add_row([
-                green(label_name),
-                yellow(label_desc.get(label_name, "-")),
-                (len(scores)),
-                red(np.max(scores)),
-                ])
+                self.quark_analysis.label_report_table.field_names = [
+                    "Label",
+                    "Description",
+                    "Number of rules",
+                    "MAX Confidence %",
+                ]
+                self.quark_analysis.label_report_table.add_row(
+                    [
+                        green(label_name),
+                        yellow(label_desc.get(label_name, "-")),
+                        (len(confidences)),
+                        red(np.max(confidences)),
+                    ]
+                )
             else:
-                self.quark_analysis.label_report_table.field_names = ["Label", "Description", "Number of rules", "MAX Score %", "AVG score", "Std Deviation", "# of Rules with Score >= 80%"]                
-                self.quark_analysis.label_report_table.add_row([
-                green(label_name),
-                yellow(label_desc.get(label_name, "-")),
-                (len(scores)),
-                red(np.max(scores)),
-                magenta(round(np.mean(scores), 2)),
-                lightblue(round(np.std(scores), 2)),
-                lightyellow(np.count_nonzero(scores >= 80))
-                ])  
+                self.quark_analysis.label_report_table.field_names = [
+                    "Label",
+                    "Description",
+                    "Number of rules",
+                    "MAX Confidence %",
+                    "AVG Confidence",
+                    "Std Deviation",
+                    "# of Rules with Confidence >= 80%",
+                ]
+                self.quark_analysis.label_report_table.add_row(
+                    [
+                        green(label_name),
+                        yellow(label_desc.get(label_name, "-")),
+                        (len(confidences)),
+                        red(np.max(confidences)),
+                        magenta(round(np.mean(confidences), 2)),
+                        lightblue(round(np.std(confidences), 2)),
+                        lightyellow(np.count_nonzero(confidences >= 80)),
+                    ]
+                )
 
     def show_detail_report(self, rule_obj):
         """
