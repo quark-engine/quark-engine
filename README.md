@@ -57,14 +57,15 @@ Malware evolved with new techniques to gain difficulties for reverse engineering
 
 Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross reference and calling sequence of the native API. 2. Tracing the bytecode register. The combination of these functionalities (yes, the order theory) not only can neglect obfuscation but also match perfectly to the design of our malware scoring system.
 
-### Easy to Use and Reading Friendly Report
+## Easy to Use and Reading Friendly Report
 
-Quark is very easy to use and also provides flexible output formats. There are 3 types of output report: detail report, call graph, and summary report. Please see below for more details.
+Quark is very easy to use and also provides flexible output formats. There are 5 types of output reports: detail report,
+call graph, rules classification, summary report, and label-based report. Please see below for more details.
 
 
-#### Detail Report
+### Detail Report
 
-This is a how we examine a real android malware (candy corn) with one single rule (crime).
+This is how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
 $ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
@@ -84,7 +85,7 @@ quark -a Ahmyth.apk -s -g
 
 ### Rules Classification
 You can add the `-c` option to the quark command, and you can
-output the rules classification with mutual parent function (only those rules match with 100% confidence).
+output the rules classification with the mutual parent function (only those rules match with 100% confidence).
 ```bash
 quark -a Ahmyth.apk -s -c
 ```
@@ -97,6 +98,15 @@ Examine with rules.
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
 <img src="https://i.imgur.com/kxPYeIO.png"/>
+
+### Label-based Report
+Check which topic (indicated by [labels](https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv)) of the malware is more aggressive.
+
+```bash
+quark -a Ahmyth.apk -l detailed | max
+```
+<img src="https://i.imgur.com/0GbBDfn.png"/>
+
 
 ## QuickStart
 
