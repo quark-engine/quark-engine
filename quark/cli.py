@@ -164,7 +164,7 @@ def entry_point(
         elif summary.endswith("json"):
             rules_list = [summary]
             label_flag = False
-        else :
+        else:
             label_flag = True
 
         for single_rule in tqdm(rules_list):
