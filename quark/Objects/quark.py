@@ -391,9 +391,10 @@ class Quark:
         # add the score
         self.quark_analysis.score_sum += score
 
-    def add_table_row(self, rule_obj, confidence, score, weight):
+    def add_table_row(self, name, rule_obj, confidence, score, weight):
 
         self.quark_analysis.summary_report_table.add_row([
+            name,
             green(rule_obj.crime),
             yellow(confidence),
             score,
@@ -412,14 +413,15 @@ class Quark:
         conf = rule_obj.check_item.count(True)
         weight = rule_obj.get_score(conf)
         score = rule_obj.score
+        name = rule_obj.rule_filename
 
         if threshold:
 
             if rule_obj.check_item.count(True) * 20 >= int(threshold):
-                self.add_table_row(rule_obj, confidence, score, weight)
+                self.add_table_row(name, rule_obj, confidence, score, weight)
 
         else:
-            self.add_table_row(rule_obj, confidence, score, weight)
+            self.add_table_row(name, rule_obj, confidence, score, weight)
 
         # add the weight
         self.quark_analysis.weight_sum += weight
