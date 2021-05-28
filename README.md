@@ -43,7 +43,7 @@ Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-list
 
 <img src="https://i.imgur.com/nz4m8kr.png"/>
 
-[![asciicast](https://asciinema.org/a/376166.svg)](https://asciinema.org/a/376166)
+[![asciicast](https://asciinema.org/a/416810.svg)](https://asciinema.org/a/416810)
 
 ## Why Quark?
 
