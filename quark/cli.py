@@ -16,6 +16,10 @@ from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 from quark.utils.colors import yellow
 
+from simple_term_menu import TerminalMenu
+import plotly.graph_objects as go
+import numpy as np
+
 logo()
 
 
@@ -35,6 +39,7 @@ logo()
     help="APK file",
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
     required=True,
+    multiple=True,
 )
 @click.option(
     "-r",
@@ -87,6 +92,13 @@ logo()
     type=click.Choice(["max", "detailed"]),
     required=False,
 )
+@click.option(
+    "-C",
+    "--comparison",
+    help="Malware comparison based on rule labels max confidence",
+    required=False,
+    is_flag=True,
+)
 def entry_point(
     summary,
     detail,
@@ -99,14 +111,107 @@ def entry_point(
     list,
     permission,
     label,
+    comparison,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     # Load APK
-    data = Quark(apk)
+    data = Quark(apk[0])
 
     # Load rules
     rules_list = [x for x in os.listdir(rule) if x.endswith("json")]
+    
+    if comparison:
+
+        # selection of labels on which it will be done the comparison on radare chart
+        # first look for all label found in the rule list
+        all_labels = []
+        for single_rule in tqdm(rules_list):
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = QuarkRule(rulepath)
+            labels = rule_checker._label  # array type, e.g. ['network', 'collection']
+            for single_label in labels:
+                if single_label not in all_labels:
+                    all_labels.append(single_label)
+
+        # let user choose a list of label on which it will be performed the analysis
+        terminal_menu = TerminalMenu(
+            all_labels,
+            multi_select=True,
+            show_multi_select_hint=False,
+            )
+        max_labels = 10
+        min_labels = 5
+        while True:
+            menu_entry_indices = terminal_menu.show()
+            if len(menu_entry_indices) in range (min_labels, max_labels + 1):
+                break
+            print("Select numbers of labels in range [" + str(min_labels) + "," + str(max_labels) + "]\n")
+        selected_label = np.array(terminal_menu.chosen_menu_entries)
+
+        # initialize Figure object used to build the graph
+        fig = go.Figure()
+
+        # perform label based analysis on the apk_ 
+        for apk_ in apk:
+            data = Quark(apk_)
+            all_labels = {}
+            # dictionary containing
+            # key: label
+            # value: list of confidence values
+            # $ print(all_rules["accessibility service"])
+            # > [60, 40, 60, 40, 60, 40]
+
+            for single_rule in tqdm(rules_list):
+                rulepath = os.path.join(rule, single_rule)
+                rule_checker = QuarkRule(rulepath)
+
+                # analyse malware only on rules where appears label selected
+                labels = np.array(rule_checker._label)
+                if len(np.intersect1d(labels, selected_label)) == 0:
+                    continue
+
+                # Run the checker
+                data.run(rule_checker)
+                confidence = rule_checker.check_item.count(True) * 20
+                labels = rule_checker._label  # array type, e.g. ['network', 'collection']
+                for single_label in labels:
+                    if single_label in all_labels:
+                        all_labels[single_label].append(confidence)
+                    else:
+                        all_labels[single_label] = [confidence]
+
+            # extrapolate data used to plot radare chart 
+            radare_data = {}          
+            for _label in selected_label:
+                confidences = np.array(all_labels[_label])
+                # on radare data use the maximum confidence for a certain label
+                radare_data[_label] = np.max(confidences)
+            
+            radare_confidence = []
+            for _label in radare_data:
+                radare_confidence.append(radare_data[_label])
+            
+            fig.add_trace(go.Scatterpolar(
+                r=radare_confidence,
+                theta=selected_label,
+                fill='toself',
+                name=apk_.split('/')[-1],
+                line=dict(
+                    width=4,
+                )
+            ))
+            print ("hey")
+        # plot the graph with specific layout
+        fig.update_layout(
+        polar=dict(
+            radialaxis=dict(
+            visible=True,
+            range=[0, 100]
+            )),
+        showlegend=True
+        )
+        fig.show()
 
     if label:
         all_labels = {}
