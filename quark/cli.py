@@ -129,7 +129,9 @@ def entry_point(
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
             rule_checker = QuarkRule(rulepath)
-            labels = rule_checker._label  # array type, e.g. ['network', 'collection']
+            labels = (
+                rule_checker._label
+            )  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label not in all_labels:
                     all_labels.append(single_label)
@@ -139,20 +141,26 @@ def entry_point(
             all_labels,
             multi_select=True,
             show_multi_select_hint=False,
-            )
+        )
         max_labels = 10
         min_labels = 5
         while True:
             menu_entry_indices = terminal_menu.show()
-            if len(menu_entry_indices) in range (min_labels, max_labels + 1):
+            if len(menu_entry_indices) in range(min_labels, max_labels + 1):
                 break
-            print("Select numbers of labels in range [" + str(min_labels) + "," + str(max_labels) + "]\n")
+            print(
+                "Select numbers of labels in range ["
+                + str(min_labels)
+                + ","
+                + str(max_labels)
+                + "]\n"
+            )
         selected_label = np.array(terminal_menu.chosen_menu_entries)
 
         # initialize Figure object used to build the graph
         fig = go.Figure()
 
-        # perform label based analysis on the apk_ 
+        # perform label based analysis on the apk_
         for apk_ in apk:
             data = Quark(apk_)
             all_labels = {}
@@ -174,42 +182,41 @@ def entry_point(
                 # Run the checker
                 data.run(rule_checker)
                 confidence = rule_checker.check_item.count(True) * 20
-                labels = rule_checker._label  # array type, e.g. ['network', 'collection']
+                labels = (
+                    rule_checker._label
+                )  # array type, e.g. ['network', 'collection']
                 for single_label in labels:
                     if single_label in all_labels:
                         all_labels[single_label].append(confidence)
                     else:
                         all_labels[single_label] = [confidence]
 
-            # extrapolate data used to plot radare chart 
-            radare_data = {}          
+            # extrapolate data used to plot radare chart
+            radare_data = {}
             for _label in selected_label:
                 confidences = np.array(all_labels[_label])
                 # on radare data use the maximum confidence for a certain label
                 radare_data[_label] = np.max(confidences)
-            
+
             radare_confidence = []
             for _label in radare_data:
                 radare_confidence.append(radare_data[_label])
-            
-            fig.add_trace(go.Scatterpolar(
-                r=radare_confidence,
-                theta=selected_label,
-                fill='toself',
-                name=apk_.split('/')[-1],
-                line=dict(
-                    width=4,
+
+            fig.add_trace(
+                go.Scatterpolar(
+                    r=radare_confidence,
+                    theta=selected_label,
+                    fill="toself",
+                    name=apk_.split("/")[-1],
+                    line=dict(
+                        width=4,
+                    ),
                 )
-            ))
-            print ("hey")
+            )
         # plot the graph with specific layout
         fig.update_layout(
-        polar=dict(
-            radialaxis=dict(
-            visible=True,
-            range=[0, 100]
-            )),
-        showlegend=True
+            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
+            showlegend=True,
         )
         fig.show()
 
