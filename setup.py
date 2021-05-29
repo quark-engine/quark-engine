@@ -30,7 +30,7 @@ setuptools.setup(
         "androguard==3.4.0a1",
         "tqdm",
         "colorama",
-        "click",
+        "click==8.0.1",
         "graphviz",
         "pandas",
         "simple_term_menu",
