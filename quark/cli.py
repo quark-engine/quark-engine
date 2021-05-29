@@ -123,7 +123,7 @@ def entry_point(
     
     if comparison:
 
-        # selection of labels on which it will be done the comparison on radare chart
+        # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
         all_labels = []
         for single_rule in tqdm(rules_list):
@@ -191,20 +191,20 @@ def entry_point(
                     else:
                         all_labels[single_label] = [confidence]
 
-            # extrapolate data used to plot radare chart
-            radare_data = {}
+            # extrapolate data used to plot radar chart
+            radar_data = {}
             for _label in selected_label:
                 confidences = np.array(all_labels[_label])
-                # on radare data use the maximum confidence for a certain label
-                radare_data[_label] = np.max(confidences)
+                # on radar data use the maximum confidence for a certain label
+                radar_data[_label] = np.max(confidences)
 
-            radare_confidence = []
-            for _label in radare_data:
-                radare_confidence.append(radare_data[_label])
+            radar_confidence = []
+            for _label in radar_data:
+                radar_confidence.append(radar_data[_label])
 
             fig.add_trace(
                 go.Scatterpolar(
-                    r=radare_confidence,
+                    r=radar_confidence,
                     theta=selected_label,
                     fill="toself",
                     name=apk_.split("/")[-1],
