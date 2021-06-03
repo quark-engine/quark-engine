@@ -135,9 +135,11 @@ def entry_point(
                 if single_label not in all_labels:
                     all_labels.append(single_label)
 
-        # let user choose a list of label on which it will be performed the analysis        
-        selected_label = np.array(select_label_menu(all_labels, min_labels = 5, max_labels = 15))
-        
+        # let user choose a list of label on which it will be performed the analysis
+        selected_label = np.array(
+            select_label_menu(all_labels, min_labels=5, max_labels=15)
+        )
+
         # perform label based analysis on the apk_
         malware_confidences = {}
         for apk_ in apk:
@@ -182,11 +184,15 @@ def entry_point(
                 radar_confidence.append(radar_data[_label])
 
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
-        
-        show_comparison_graph(  title="Malicious Actions Comparison Between " + str(len(apk)) + " Malwares", 
-                                lables=selected_label,
-                                malware_confidences=malware_confidences,
-                                font_size=22)
+
+        show_comparison_graph(
+            title="Malicious Actions Comparison Between "
+            + str(len(apk))
+            + " Malwares",
+            lables=selected_label,
+            malware_confidences=malware_confidences,
+            font_size=22,
+        )
 
     if label:
         all_labels = {}

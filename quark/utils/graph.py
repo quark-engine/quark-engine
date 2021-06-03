@@ -209,43 +209,47 @@ def call_graph(call_graph_analysis):
 
     dot.render(f"call_graph_image/{parent_function.name}_{first_call.name}_{second_call.name}")
 
-def show_comparison_graph(title, lables, malware_confidences, font_size=22):# initialize Figure object used to build the graph
-        """
-        show rarad chart based on max label confidence of several malwares
-        :param title: title of the graph to be displayed
-        :param labels: labels to be shown on the radar chart
-        :param malware_confidences: dictionary with structure 
-            malware_name=[array of confidences to be shown on radar chart]
-        :return: None
-        """
-        fig = go.Figure()
-        # plot the graph with specific layout
-        fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 100], dtick=20)),
-            showlegend=True,
-            title={
-                'text': "<b>" + title + "</b>",},
-            font=dict(size=font_size),
-            title_x=0.5,
-            legend=dict(
-                y=0.5,
-                x=0.8,
-                traceorder='normal',
-                )
+def show_comparison_graph(
+    title, lables, malware_confidences, font_size=22
+):  # initialize Figure object used to build the graph
+    """
+    show rarad chart based on max label confidence of several malwares
+    :param title: title of the graph to be displayed
+    :param labels: labels to be shown on the radar chart
+    :param malware_confidences: dictionary with structure
+        malware_name=[array of confidences to be shown on radar chart]
+    :return: None
+    """
+    fig = go.Figure()
+    # plot the graph with specific layout
+    fig.update_layout(
+        polar=dict(radialaxis=dict(visible=True, range=[0, 100], dtick=20)),
+        showlegend=True,
+        title={
+            "text": "<b>" + title + "</b>",
+        },
+        font=dict(size=font_size),
+        title_x=0.5,
+        legend=dict(
+            y=0.5,
+            x=0.8,
+            traceorder="normal",
+        ),
+    )
+    for malware_name in malware_confidences:
+        fig.add_trace(
+            go.Scatterpolar(
+                r=malware_confidences[malware_name],
+                theta=lables,
+                fill="toself",
+                name=malware_name,
+                line=dict(
+                    width=4,
+                ),
             )
-        for malware_name in malware_confidences:
-            fig.add_trace(
-                go.Scatterpolar(
-                    r=malware_confidences[malware_name],
-                    theta=lables,
-                    fill="toself",
-                    name=malware_name,
-                    line=dict(
-                        width=4,
-                    ),
-                )
-            )
-        fig.show()
+        )
+    fig.show()
+
 
 def select_label_menu(all_labels, min_labels=5, max_labels=10):
     """
@@ -256,10 +260,10 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
     :return: label selected
     """
     terminal_menu = TerminalMenu(
-            all_labels,
-            multi_select=True,
-            show_multi_select_hint=False,
-        )
+        all_labels,
+        multi_select=True,
+        show_multi_select_hint=False,
+    )
     while True:
         menu_entry_indices = terminal_menu.show()
         if len(menu_entry_indices) in range(min_labels, max_labels + 1):
