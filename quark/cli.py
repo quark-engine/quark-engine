@@ -17,8 +17,6 @@ from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
-
-from simple_term_menu import TerminalMenu
 import numpy as np
 
 logo()
