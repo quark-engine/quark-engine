@@ -6,6 +6,7 @@ import json
 import os
 
 import click
+from numpy.core.fromnumeric import size
 from tqdm import tqdm
 
 from quark import config
@@ -15,9 +16,9 @@ from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 from quark.utils.colors import yellow
+from quark.utils.graph import show_comparison_graph, select_label_menu
 
 from simple_term_menu import TerminalMenu
-import plotly.graph_objects as go
 import numpy as np
 
 logo()
@@ -95,7 +96,7 @@ logo()
 @click.option(
     "-C",
     "--comparison",
-    help="Malware comparison based on rule labels max confidence",
+    help="Behaviors comparison based on max confidence of rule labels",
     required=False,
     is_flag=True,
 )
@@ -136,31 +137,11 @@ def entry_point(
                 if single_label not in all_labels:
                     all_labels.append(single_label)
 
-        # let user choose a list of label on which it will be performed the analysis
-        terminal_menu = TerminalMenu(
-            all_labels,
-            multi_select=True,
-            show_multi_select_hint=False,
-        )
-        max_labels = 10
-        min_labels = 5
-        while True:
-            menu_entry_indices = terminal_menu.show()
-            if len(menu_entry_indices) in range(min_labels, max_labels + 1):
-                break
-            print(
-                "Select numbers of labels in range ["
-                + str(min_labels)
-                + ","
-                + str(max_labels)
-                + "]\n"
-            )
-        selected_label = np.array(terminal_menu.chosen_menu_entries)
-
-        # initialize Figure object used to build the graph
-        fig = go.Figure()
-
+        # let user choose a list of label on which it will be performed the analysis        
+        selected_label = np.array(select_label_menu(all_labels, min_labels = 5, max_labels = 15))
+        
         # perform label based analysis on the apk_
+        malware_confidences = {}
         for apk_ in apk:
             data = Quark(apk_)
             all_labels = {}
@@ -202,23 +183,12 @@ def entry_point(
             for _label in radar_data:
                 radar_confidence.append(radar_data[_label])
 
-            fig.add_trace(
-                go.Scatterpolar(
-                    r=radar_confidence,
-                    theta=selected_label,
-                    fill="toself",
-                    name=apk_.split("/")[-1],
-                    line=dict(
-                        width=4,
-                    ),
-                )
-            )
-        # plot the graph with specific layout
-        fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 100])),
-            showlegend=True,
-        )
-        fig.show()
+            malware_confidences[apk_.split("/")[-1]] = radar_confidence
+        
+        show_comparison_graph(  title="Malicious Actions Comparison Between " + str(len(apk)) + " Malwares", 
+                                lables=selected_label,
+                                malware_confidences=malware_confidences,
+                                font_size=22)
 
     if label:
         all_labels = {}
