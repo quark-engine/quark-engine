@@ -75,6 +75,17 @@ and the report will look like:
 
 <img src="https://i.imgur.com/g28N7qk.png"/>
 
+There is the possibility to select only one label to filter the rules:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d network
+```
+There is also the possibility to select only one rule:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d 00058.json
+```
+
 ### Call Graph for Every Potential Malicious Activity
 You can add the `-g` option to the quark command, and you can
 get the call graph (only those rules match with 100% confidence)
@@ -98,6 +109,17 @@ Examine with rules.
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
 <img src="https://i.imgur.com/v7ehRW0.png"/>
+
+There is the possibility to select only one label to filter the rules:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s network
+```
+There is also the possibility to select only one rule:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s 00058.json
+```
 
 ### Label-based Report
 Check which topic (indicated by [labels](https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv)) of the malware is more aggressive.
