@@ -178,9 +178,3 @@ Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-sl
 
 * We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think. 
 And the most important of all, we benefit ourselves by benefit others **first**.
-
-## Contributors
-
-<a href="https://github.com/quark-engine/quark-engine/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=quark-engine/quark-engine" />
-</a>
