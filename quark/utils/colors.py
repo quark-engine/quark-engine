@@ -37,10 +37,6 @@ def green(text):
     return color(text, 92)
 
 
-def yel(text):
-    return color(text, 33)
-
-
 def blue(text):
     return color(text, 34)
 
