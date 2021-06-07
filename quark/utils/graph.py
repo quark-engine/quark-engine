@@ -2,10 +2,10 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from graphviz import Digraph
-
 import plotly.graph_objects as go
+from graphviz import Digraph
 from simple_term_menu import TerminalMenu
+
 
 def wrapper_lookup(wrapper, top_method, native_api):
     next_level = []
