@@ -4,7 +4,7 @@
 
 from enum import Enum
 
-from quark.utils.colors import green, yellow, yel, red
+from quark.utils.colors import green, yellow, red
 
 
 class LEVEL_INFO(Enum):
@@ -43,7 +43,7 @@ class Weight:
             return yellow(LEVEL_INFO.Moderate.value)
 
         elif level_three_threshold < total_weight <= level_four_threshold:
-            return yel(LEVEL_INFO.Moderate.value)
+            return yellow(LEVEL_INFO.Moderate.value)
 
         elif level_four_threshold < total_weight <= level_five_threshold:
             return red(LEVEL_INFO.High.value)
