@@ -32,6 +32,8 @@ setuptools.setup(
         "colorama",
         "click==8.0.1",
         "graphviz",
-        "pandas", 
+        "pandas",
+        "simple_term_menu",
+        "plotly",
     ],
 )

@@ -6,6 +6,7 @@ import json
 import os
 
 import click
+from numpy.core.fromnumeric import size
 from tqdm import tqdm
 
 from quark import config
@@ -15,6 +16,8 @@ from quark.logo import logo
 from quark.utils.out import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 from quark.utils.colors import yellow
+from quark.utils.graph import show_comparison_graph, select_label_menu
+import numpy as np
 
 logo()
 
@@ -49,6 +52,7 @@ logo()
     help="APK file",
     type=click.Path(exists=True, file_okay=True, dir_okay=False),
     required=True,
+    multiple=True,
 )
 @click.option(
     "-r",
@@ -101,6 +105,13 @@ logo()
     type=click.Choice(["max", "detailed"]),
     required=False,
 )
+@click.option(
+    "-C",
+    "--comparison",
+    help="Behaviors comparison based on max confidence of rule labels",
+    required=False,
+    is_flag=True,
+)
 def entry_point(
     summary,
     detail,
@@ -113,14 +124,89 @@ def entry_point(
     list,
     permission,
     label,
+    comparison,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     # Load APK
-    data = Quark(apk)
+    data = Quark(apk[0])
 
     # Load rules
     rules_list = [x for x in os.listdir(rule) if x.endswith("json")]
+    
+    if comparison:
+
+        # selection of labels on which it will be done the comparison on radar chart
+        # first look for all label found in the rule list
+        all_labels = []
+        for single_rule in tqdm(rules_list):
+            rulepath = os.path.join(rule, single_rule)
+            rule_checker = QuarkRule(rulepath)
+            labels = (
+                rule_checker._label
+            )  # array type, e.g. ['network', 'collection']
+            for single_label in labels:
+                if single_label not in all_labels:
+                    all_labels.append(single_label)
+
+        # let user choose a list of label on which it will be performed the analysis
+        selected_label = np.array(
+            select_label_menu(all_labels, min_labels=5, max_labels=15)
+        )
+
+        # perform label based analysis on the apk_
+        malware_confidences = {}
+        for apk_ in apk:
+            data = Quark(apk_)
+            all_labels = {}
+            # dictionary containing
+            # key: label
+            # value: list of confidence values
+            # $ print(all_rules["accessibility service"])
+            # > [60, 40, 60, 40, 60, 40]
+
+            for single_rule in tqdm(rules_list):
+                rulepath = os.path.join(rule, single_rule)
+                rule_checker = QuarkRule(rulepath)
+
+                # analyse malware only on rules where appears label selected
+                labels = np.array(rule_checker._label)
+                if len(np.intersect1d(labels, selected_label)) == 0:
+                    continue
+
+                # Run the checker
+                data.run(rule_checker)
+                confidence = rule_checker.check_item.count(True) * 20
+                labels = (
+                    rule_checker._label
+                )  # array type, e.g. ['network', 'collection']
+                for single_label in labels:
+                    if single_label in all_labels:
+                        all_labels[single_label].append(confidence)
+                    else:
+                        all_labels[single_label] = [confidence]
+
+            # extrapolate data used to plot radar chart
+            radar_data = {}
+            for _label in selected_label:
+                confidences = np.array(all_labels[_label])
+                # on radar data use the maximum confidence for a certain label
+                radar_data[_label] = np.max(confidences)
+
+            radar_confidence = []
+            for _label in radar_data:
+                radar_confidence.append(radar_data[_label])
+
+            malware_confidences[apk_.split("/")[-1]] = radar_confidence
+
+        show_comparison_graph(
+            title="Malicious Actions Comparison Between "
+            + str(len(apk))
+            + " Malwares",
+            lables=selected_label,
+            malware_confidences=malware_confidences,
+            font_size=22,
+        )
 
     if label:
         all_labels = {}
