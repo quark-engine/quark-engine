@@ -85,16 +85,18 @@ permission ``android.permission.ACCESS_COARSE_LOCATION`` and
 
 .. code-block:: python
 
-  "api": [
+    "api": [
         {
             "class": "Landroid/telephony/TelephonyManager",
-            "method": "getCellLocation"
+            "method": "getCellLocation",
+            "descriptor": "()Landroid/telephony/CellLocation;"
         },
         {
             "class": "Landroid/telephony/SmsManager",
-            "method": "sendTextMessage"
+            "method": "sendTextMessage",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
         }
-  ]
+    ]
 
 ``api`` means this field can be used to practice analysis from
 stage 2 to stage 4.
