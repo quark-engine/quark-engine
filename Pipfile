@@ -14,11 +14,13 @@ prettytable = "*"
 tqdm = "*"
 colorama = "*"
 quark-engine = {editable = true,path = "."}
-click = "*"
+click = "8.0.1"
 androguard = "==3.4.0a1"
 graphviz = "*"
 requests = "*"
 pandas = "*"
+plotly = "*"
+simple-term-menu = "*"
 
 [requires]
 python_version = "3.8"
