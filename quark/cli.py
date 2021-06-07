@@ -6,18 +6,17 @@ import json
 import os
 
 import click
-from numpy.core.fromnumeric import size
+import numpy as np
 from tqdm import tqdm
 
 from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from quark.logo import logo
-from quark.utils.out import print_success, print_info, print_warning
-from quark.utils.weight import Weight
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
-import numpy as np
+from quark.utils.out import print_success, print_info, print_warning
+from quark.utils.weight import Weight
 
 logo()
 

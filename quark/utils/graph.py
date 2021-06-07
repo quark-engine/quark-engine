@@ -2,10 +2,10 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from graphviz import Digraph
-
 import plotly.graph_objects as go
+from graphviz import Digraph
 from simple_term_menu import TerminalMenu
+
 
 def wrapper_lookup(wrapper, top_method, native_api):
     next_level = []
@@ -187,7 +187,6 @@ def call_graph(call_graph_analysis):
     if second_call != second_api:
         dot.edge(
             f"{parent_function.full_name}",
-
             f"{second_wrapper[-1].full_name}",
             "Second Call",
             fontname="Courier New",
@@ -207,13 +206,15 @@ def call_graph(call_graph_analysis):
             fontname="Courier New",
         )
 
-    dot.render(f"call_graph_image/{parent_function.name}_{first_call.name}_{second_call.name}")
+    dot.render(
+        f"call_graph_image/{parent_function.name}_{first_call.name}_{second_call.name}"
+    )
 
-def show_comparison_graph(
-    title, lables, malware_confidences, font_size=22
-):  # initialize Figure object used to build the graph
+
+def show_comparison_graph(title, lables, malware_confidences, font_size=22):
+    # initialize Figure object used to build the graph
     """
-    show rarad chart based on max label confidence of several malwares
+    show radar chart based on max label confidence of several malwares
     :param title: title of the graph to be displayed
     :param labels: labels to be shown on the radar chart
     :param malware_confidences: dictionary with structure
@@ -226,7 +227,7 @@ def show_comparison_graph(
         polar=dict(radialaxis=dict(visible=True, range=[0, 100], dtick=20)),
         showlegend=True,
         title={
-            "text": "<b>" + title + "</b>",
+            "text": f"<b>{title}</b>",
         },
         font=dict(size=font_size),
         title_x=0.5,
@@ -268,11 +269,5 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
         menu_entry_indices = terminal_menu.show()
         if len(menu_entry_indices) in range(min_labels, max_labels + 1):
             break
-        print(
-            "Select numbers of labels in range ["
-            + str(min_labels)
-            + ","
-            + str(max_labels)
-            + "]\n"
-        )
+        print(f"Select numbers of labels in range [{min_labels},{max_labels}]\n")
     return terminal_menu.chosen_menu_entries

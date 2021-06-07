@@ -3,6 +3,10 @@
 # See the file 'LICENSE' for copying permission.
 
 import operator
+import os
+
+import numpy as np
+import pandas as pd
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
@@ -21,9 +25,6 @@ from quark.utils.graph import call_graph
 from quark.utils.out import print_info, print_success
 from quark.utils.output import output_parent_function_table, output_parent_function_json
 from quark.utils.weight import Weight
-import pandas as pd
-import os
-import numpy as np
 
 MAX_SEARCH_LAYER = 3
 CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])

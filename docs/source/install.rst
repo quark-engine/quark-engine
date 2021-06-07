@@ -24,12 +24,14 @@ Once you see the following msg, then you're all set::
     Quark is an Obfuscation-Neglect Android Malware Scoring System
 
     Options:
-      -s, --summary TEXT              Show summary report
-      -d, --detail TEXT               Show detail report
+      -s, --summary TEXT              Show summary report. Optionally specify the
+                                      filename of a rule or a label
+      -d, --detail TEXT               Show detail report. Optionally specify the
+                                      filename of a rule or a label
       -o, --output FILE               Output report in JSON
       -a, --apk FILE                  APK file  [required]
       -r, --rule PATH                 Rules directory  [default:
-                                      /Users/nick/.quark-engine/quark-rules]
+                                      /Users/$USER/.quark-engine/quark-rules]
       -g, --graph                     Create call graph to call_graph_image
                                       directory
       -c, --classification            Show rules classification
@@ -38,6 +40,8 @@ Once you see the following msg, then you're all set::
       -i, --list [all|native|custom]  List classes, methods and descriptors
       -p, --permission                List Android permissions
       -l, --label [max|detailed]      Show report based on label of rules
+      -C, --comparison                Behaviors comparison based on max confidence
+                                      of rule labels
       --help                          Show this message and exit.
 
 To learn how to scan multiple samples in a directory, please have a look at :ref:`Directory Scanning <dir_scan>`

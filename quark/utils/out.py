@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 from prettytable import PrettyTable
+
 from quark.utils.colors import bold, cyan, yellow, red, green
 
 

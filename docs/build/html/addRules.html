@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Add Rules &mdash; quark-engine v21.5.1 documentation</title>
+  <title>Add Rules &mdash; quark-engine v21.6.1 documentation</title>
   
 
   
@@ -238,14 +238,16 @@ practice the crime. For instance, we need permission
 permission <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_COARSE_LOCATION</span></code> and
 <code class="docutils literal notranslate"><span class="pre">android.permission.ACCESS_FINE_LOCATION</span></code> to practice the crime.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="p">[</span>
-      <span class="p">{</span>
-          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span>
-      <span class="p">},</span>
-      <span class="p">{</span>
-          <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
-          <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span>
-      <span class="p">}</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/TelephonyManager&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;getCellLocation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;descriptor&quot;</span><span class="p">:</span> <span class="s2">&quot;()Landroid/telephony/CellLocation;&quot;</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="s2">&quot;Landroid/telephony/SmsManager&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="s2">&quot;sendTextMessage&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;descriptor&quot;</span><span class="p">:</span> <span class="s2">&quot;(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V&quot;</span>
+    <span class="p">}</span>
 <span class="p">]</span>
 </pre></div>
 </div>

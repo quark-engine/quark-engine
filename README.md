@@ -59,8 +59,8 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 
 ## Easy to Use and Reading Friendly Report
 
-Quark is very easy to use and also provides flexible output formats. There are 5 types of output reports: detail report,
-call graph, rules classification, summary report, and label-based report. Please see below for more details.
+Quark is very easy to use and also provides flexible output formats. There are 6 types of output reports: detail report,
+call graph, rules classification, summary report, label-based report, behaviors comparison radar chart. Please see below for more details.
 
 
 ### Detail Report
@@ -128,6 +128,16 @@ Check which topic (indicated by [labels](https://github.com/quark-engine/quark-r
 quark -a Ahmyth.apk -l detailed
 ```
 <img src="https://i.imgur.com/0GbBDfn.png"/>
+
+### Behaviors Comparison Radar Chart
+With the following command, you can compare different APK actions based on the max confidence of rule labels and generate
+a radar chart.
+
+```bash
+quark -a first.apk -a second.apk -C
+```
+
+<img src="https://i.imgur.com/I303zwk.png"/>
 
 
 ## QuickStart

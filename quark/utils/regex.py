@@ -2,9 +2,9 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import base64
 import ipaddress
 import re
-import base64
 
 IP_ADDRESS_REGEX = r"(?:\d{1,3}\.)+(?:\d{1,3})"
 
