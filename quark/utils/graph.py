@@ -271,7 +271,7 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
     while True:
         results_array = checkboxlist_dialog(
             title="Label-base Report",
-            text=f"Select numbers of labels in range {min_labels}~{max_labels}",
+            text=f"Select number of labels between {min_labels} and {max_labels}",
             values=value_pair,
         ).run()
 
