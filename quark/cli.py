@@ -2,13 +2,14 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import click
 import json
-import numpy as np
 import os
+
+import click
+import numpy as np
 from tqdm import tqdm
 
-import quark
+from quark import __version__
 from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
@@ -21,7 +22,7 @@ from quark.utils.weight import Weight
 logo()
 
 
-@click.version_option(version=quark.__version__)
+@click.version_option(version=__version__)
 @click.command(no_args_is_help=True)
 @click.option(
     "-s",
