@@ -2,6 +2,8 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import sys
+
 import plotly.graph_objects as go
 from graphviz import Digraph
 from prompt_toolkit.shortcuts import checkboxlist_dialog
@@ -57,7 +59,8 @@ def call_graph(call_graph_analysis):
     )
     dot.attr(compound="true")
 
-    with dot.subgraph(name="cluster_mutual") as mutual_parent_function_description:
+    with dot.subgraph(
+            name="cluster_mutual") as mutual_parent_function_description:
         mutual_parent_function_description.attr(
             style="rounded",
             penwidth="1",
@@ -81,7 +84,8 @@ def call_graph(call_graph_analysis):
 
     with dot.subgraph(name="cluster_0") as wrapper:
         wrapper.attr(label="Wrapped Functions", fontname="Courier New Bold")
-        wrapper.attr(style="rounded", penwidth="1", fillcolor="red", shape="box")
+        wrapper.attr(style="rounded", penwidth="1", fillcolor="red",
+                     shape="box")
         # Build the first call nodes
 
         if first_call != first_api:
@@ -141,7 +145,8 @@ def call_graph(call_graph_analysis):
             fontname="Courier New",
             shape="box",
         )
-        native_call_subgraph.attr(label="Native API Calls", fontname="Courier New Bold")
+        native_call_subgraph.attr(label="Native API Calls",
+                                  fontname="Courier New Bold")
         # Native API Calls
 
         native_call_subgraph.node(
@@ -266,7 +271,7 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
     while True:
         results_array = checkboxlist_dialog(
             title="Label-base Report",
-            text=f"Select numbers of labels in range [{min_labels},{max_labels}]\n",
+            text=f"Select numbers of labels in range {min_labels}~{max_labels}",
             values=value_pair,
         ).run()
 
@@ -276,8 +281,6 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
                 break
         else:
             # user selects "Cancel" to leave the program.
-            import sys
-
             print("Canceled!")
             sys.exit()
 
