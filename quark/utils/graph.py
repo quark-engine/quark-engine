@@ -217,13 +217,12 @@ def call_graph(call_graph_analysis):
 
 
 def show_comparison_graph(title, lables, malware_confidences, font_size=22):
-    # initialize Figure object used to build the graph
     """
     show radar chart based on max label confidence of several malwares
     :param title: title of the graph to be displayed
     :param labels: labels to be shown on the radar chart
-    :param malware_confidences: dictionary with structure
-        malware_name=[array of confidences to be shown on radar chart]
+    :param malware_confidences: dictionary with structure, malware_name=[
+    array of confidences to be shown on radar chart]
     :return: None
     """
     fig = go.Figure()
