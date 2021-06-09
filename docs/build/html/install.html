@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing Quark-Engine &mdash; quark-engine v21.6.1 documentation</title>
+  <title>Installing Quark-Engine &mdash; quark-engine v21.6.2 documentation</title>
   
 
   
@@ -190,30 +190,28 @@ $ pipenv shell
 </pre></div>
 </div>
 <p>Once you see the following msg, then you’re all set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Usage: quark [OPTIONS]
-
-Quark is an Obfuscation-Neglect Android Malware Scoring System
-
-Options:
-  -s, --summary TEXT              Show summary report. Optionally specify the
-                                  filename of a rule or a label
-  -d, --detail TEXT               Show detail report. Optionally specify the
-                                  filename of a rule or a label
-  -o, --output FILE               Output report in JSON
-  -a, --apk FILE                  APK file  [required]
-  -r, --rule PATH                 Rules directory  [default:
-                                  /Users/$USER/.quark-engine/quark-rules]
-  -g, --graph                     Create call graph to call_graph_image
-                                  directory
-  -c, --classification            Show rules classification
-  -t, --threshold [100|80|60|40|20]
-                                  Set the confidence threshold
-  -i, --list [all|native|custom]  List classes, methods and descriptors
-  -p, --permission                List Android permissions
-  -l, --label [max|detailed]      Show report based on label of rules
-  -C, --comparison                Behaviors comparison based on max confidence
-                                  of rule labels
-  --help                          Show this message and exit.
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Options</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">summary</span> <span class="n">TEXT</span>              <span class="n">Show</span> <span class="n">summary</span> <span class="n">report</span><span class="o">.</span> <span class="n">Optionally</span> <span class="n">specify</span> <span class="n">the</span>
+                                  <span class="n">name</span> <span class="n">of</span> <span class="n">a</span> <span class="n">rule</span><span class="o">/</span><span class="n">label</span>
+  <span class="o">-</span><span class="n">d</span><span class="p">,</span> <span class="o">--</span><span class="n">detail</span> <span class="n">TEXT</span>               <span class="n">Show</span> <span class="n">detail</span> <span class="n">report</span><span class="o">.</span> <span class="n">Optionally</span> <span class="n">specify</span> <span class="n">the</span>
+                                  <span class="n">name</span> <span class="n">of</span> <span class="n">a</span> <span class="n">rule</span><span class="o">/</span><span class="n">label</span>
+  <span class="o">-</span><span class="n">o</span><span class="p">,</span> <span class="o">--</span><span class="n">output</span> <span class="n">FILE</span>               <span class="n">Output</span> <span class="n">report</span> <span class="ow">in</span> <span class="n">JSON</span>
+  <span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="o">--</span><span class="n">apk</span> <span class="n">FILE</span>                  <span class="n">APK</span> <span class="n">file</span>  <span class="p">[</span><span class="n">required</span><span class="p">]</span>
+  <span class="o">-</span><span class="n">r</span><span class="p">,</span> <span class="o">--</span><span class="n">rule</span> <span class="n">PATH</span>                 <span class="n">Rules</span> <span class="n">directory</span>  <span class="p">[</span><span class="n">default</span><span class="p">:</span>
+                                  <span class="o">/</span><span class="n">Users</span><span class="o">/</span><span class="n">nick</span><span class="o">/.</span><span class="n">quark</span><span class="o">-</span><span class="n">engine</span><span class="o">/</span><span class="n">quark</span><span class="o">-</span><span class="n">rules</span><span class="p">]</span>
+  <span class="o">-</span><span class="n">g</span><span class="p">,</span> <span class="o">--</span><span class="n">graph</span>                     <span class="n">Create</span> <span class="n">call</span> <span class="n">graph</span> <span class="n">to</span> <span class="n">call_graph_image</span>
+                                  <span class="n">directory</span>
+  <span class="o">-</span><span class="n">c</span><span class="p">,</span> <span class="o">--</span><span class="n">classification</span>            <span class="n">Show</span> <span class="n">rules</span> <span class="n">classification</span>
+  <span class="o">-</span><span class="n">t</span><span class="p">,</span> <span class="o">--</span><span class="n">threshold</span> <span class="p">[</span><span class="mi">100</span><span class="o">|</span><span class="mi">80</span><span class="o">|</span><span class="mi">60</span><span class="o">|</span><span class="mi">40</span><span class="o">|</span><span class="mi">20</span><span class="p">]</span>
+                                  <span class="n">Set</span> <span class="n">the</span> <span class="n">lower</span> <span class="n">limit</span> <span class="n">of</span> <span class="n">the</span> <span class="n">confidence</span>
+                                  <span class="n">threshold</span>
+  <span class="o">-</span><span class="n">i</span><span class="p">,</span> <span class="o">--</span><span class="nb">list</span> <span class="p">[</span><span class="nb">all</span><span class="o">|</span><span class="n">native</span><span class="o">|</span><span class="n">custom</span><span class="p">]</span>  <span class="n">List</span> <span class="n">classes</span><span class="p">,</span> <span class="n">methods</span> <span class="ow">and</span> <span class="n">descriptors</span>
+  <span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="o">--</span><span class="n">permission</span>                <span class="n">List</span> <span class="n">Android</span> <span class="n">permissions</span>
+  <span class="o">-</span><span class="n">l</span><span class="p">,</span> <span class="o">--</span><span class="n">label</span> <span class="p">[</span><span class="nb">max</span><span class="o">|</span><span class="n">detailed</span><span class="p">]</span>      <span class="n">Show</span> <span class="n">report</span> <span class="n">based</span> <span class="n">on</span> <span class="n">label</span> <span class="n">of</span> <span class="n">rules</span>
+  <span class="o">-</span><span class="n">C</span><span class="p">,</span> <span class="o">--</span><span class="n">comparison</span>                <span class="n">Behaviors</span> <span class="n">comparison</span> <span class="n">based</span> <span class="n">on</span> <span class="nb">max</span> <span class="n">confidence</span>
+                                  <span class="n">of</span> <span class="n">rule</span> <span class="n">labels</span>
+  <span class="o">--</span><span class="n">version</span>                       <span class="n">Show</span> <span class="n">the</span> <span class="n">version</span> <span class="ow">and</span> <span class="n">exit</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">help</span>                          <span class="n">Show</span> <span class="n">this</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span><span class="o">.</span>
 </pre></div>
 </div>
 <p>To learn how to scan multiple samples in a directory, please have a look at <a class="reference internal" href="integration.html#dir-scan"><span class="std std-ref">Directory Scanning</span></a></p>

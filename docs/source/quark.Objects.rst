@@ -4,6 +4,14 @@ quark.Objects package
 Submodules
 ----------
 
+quark.Objects.analysis module
+-----------------------------
+
+.. automodule:: quark.Objects.analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 quark.Objects.apkinfo module
 ----------------------------
 
@@ -36,18 +44,18 @@ quark.Objects.quarkrule module
    :undoc-members:
    :show-inheritance:
 
-quark.Objects.tableobject module
---------------------------------
-
-.. automodule:: quark.Objects.tableobject
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 quark.Objects.registerobject module
 -----------------------------------
 
 .. automodule:: quark.Objects.registerobject
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.Objects.tableobject module
+--------------------------------
+
+.. automodule:: quark.Objects.tableobject
    :members:
    :undoc-members:
    :show-inheritance:

@@ -12,10 +12,34 @@ quark.utils.colors module
    :undoc-members:
    :show-inheritance:
 
-quark.utils.out module
-----------------------
+quark.utils.graph module
+------------------------
 
-.. automodule:: quark.utils.out
+.. automodule:: quark.utils.graph
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.utils.output module
+-------------------------
+
+.. automodule:: quark.utils.output
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.utils.pprint module
+-------------------------
+
+.. automodule:: quark.utils.pprint
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.utils.regex module
+------------------------
+
+.. automodule:: quark.utils.regex
    :members:
    :undoc-members:
    :show-inheritance:
