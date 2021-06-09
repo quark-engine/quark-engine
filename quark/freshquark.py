@@ -10,7 +10,7 @@ import subprocess
 
 from quark import config
 from quark.utils.colors import green
-from quark.utils.out import print_warning, print_info, print_success
+from quark.utils.pprint import print_warning, print_info, print_success
 
 
 def download():

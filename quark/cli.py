@@ -15,7 +15,7 @@ from quark.Objects.quarkrule import QuarkRule
 from quark.logo import logo
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
-from quark.utils.out import print_success, print_info, print_warning
+from quark.utils.pprint import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 
 logo()
