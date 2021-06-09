@@ -78,7 +78,7 @@ logo()
 @click.option(
     "-t",
     "--threshold",
-    help="Set the confidence threshold",
+    help="Set the lower limit of the confidence threshold",
     type=click.Choice(["100", "80", "60", "40", "20"]),
     required=False,
 )
