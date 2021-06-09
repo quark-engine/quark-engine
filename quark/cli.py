@@ -28,14 +28,14 @@ logo()
     "--summary",
     is_flag=False,
     flag_value="all_rules",
-    help="Show summary report. Optionally specify the filename of a rule/label",
+    help="Show summary report. Optionally specify the name of a rule/label",
 )
 @click.option(
     "-d",
     "--detail",
     is_flag=False,
     flag_value="all_rules",
-    help="Show detail report. Optionally specify the filename of a rule/label",
+    help="Show detail report. Optionally specify the name of a rule/label",
 )
 @click.option(
     "-o",
