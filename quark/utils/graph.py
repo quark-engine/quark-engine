@@ -4,7 +4,7 @@
 
 import plotly.graph_objects as go
 from graphviz import Digraph
-from simple_term_menu import TerminalMenu
+from prompt_toolkit.shortcuts import checkboxlist_dialog
 
 
 def wrapper_lookup(wrapper, top_method, native_api):
@@ -260,14 +260,25 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
     :param max_labels: max label to be shown on radar chart (default 10)
     :return: label selected
     """
-    terminal_menu = TerminalMenu(
-        all_labels,
-        multi_select=True,
-        show_multi_select_hint=False,
-    )
+
+    value_pair = [(label, label) for label in all_labels]
+
     while True:
-        menu_entry_indices = terminal_menu.show()
-        if len(menu_entry_indices) in range(min_labels, max_labels + 1):
-            break
-        print(f"Select numbers of labels in range [{min_labels},{max_labels}]\n")
-    return terminal_menu.chosen_menu_entries
+        results_array = checkboxlist_dialog(
+            title="Label-base Report",
+            text=f"Select numbers of labels in range [{min_labels},{max_labels}]\n",
+            values=value_pair,
+        ).run()
+
+        if results_array:
+
+            if min_labels <= len(results_array) <= max_labels:
+                break
+        else:
+            # user selects "Cancel" to leave the program.
+            import sys
+
+            print("Canceled!")
+            sys.exit()
+
+    return results_array
