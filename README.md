@@ -137,7 +137,7 @@ a radar chart.
 quark -a first.apk -a second.apk -C
 ```
 
-<img src="https://i.imgur.com/I303zwk.png"/>
+<img src="https://i.imgur.com/ClRWOei.png"/>
 
 
 ## QuickStart
