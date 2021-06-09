@@ -2,9 +2,11 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import sys
+
 import plotly.graph_objects as go
 from graphviz import Digraph
-from simple_term_menu import TerminalMenu
+from prompt_toolkit.shortcuts import checkboxlist_dialog
 
 
 def wrapper_lookup(wrapper, top_method, native_api):
@@ -57,7 +59,8 @@ def call_graph(call_graph_analysis):
     )
     dot.attr(compound="true")
 
-    with dot.subgraph(name="cluster_mutual") as mutual_parent_function_description:
+    with dot.subgraph(
+            name="cluster_mutual") as mutual_parent_function_description:
         mutual_parent_function_description.attr(
             style="rounded",
             penwidth="1",
@@ -81,7 +84,8 @@ def call_graph(call_graph_analysis):
 
     with dot.subgraph(name="cluster_0") as wrapper:
         wrapper.attr(label="Wrapped Functions", fontname="Courier New Bold")
-        wrapper.attr(style="rounded", penwidth="1", fillcolor="red", shape="box")
+        wrapper.attr(style="rounded", penwidth="1", fillcolor="red",
+                     shape="box")
         # Build the first call nodes
 
         if first_call != first_api:
@@ -141,7 +145,8 @@ def call_graph(call_graph_analysis):
             fontname="Courier New",
             shape="box",
         )
-        native_call_subgraph.attr(label="Native API Calls", fontname="Courier New Bold")
+        native_call_subgraph.attr(label="Native API Calls",
+                                  fontname="Courier New Bold")
         # Native API Calls
 
         native_call_subgraph.node(
@@ -212,13 +217,12 @@ def call_graph(call_graph_analysis):
 
 
 def show_comparison_graph(title, lables, malware_confidences, font_size=22):
-    # initialize Figure object used to build the graph
     """
     show radar chart based on max label confidence of several malwares
     :param title: title of the graph to be displayed
     :param labels: labels to be shown on the radar chart
-    :param malware_confidences: dictionary with structure
-        malware_name=[array of confidences to be shown on radar chart]
+    :param malware_confidences: dictionary with structure, malware_name=[
+    array of confidences to be shown on radar chart]
     :return: None
     """
     fig = go.Figure()
@@ -260,14 +264,23 @@ def select_label_menu(all_labels, min_labels=5, max_labels=10):
     :param max_labels: max label to be shown on radar chart (default 10)
     :return: label selected
     """
-    terminal_menu = TerminalMenu(
-        all_labels,
-        multi_select=True,
-        show_multi_select_hint=False,
-    )
+
+    value_pair = [(label, label) for label in all_labels]
+
     while True:
-        menu_entry_indices = terminal_menu.show()
-        if len(menu_entry_indices) in range(min_labels, max_labels + 1):
-            break
-        print(f"Select numbers of labels in range [{min_labels},{max_labels}]\n")
-    return terminal_menu.chosen_menu_entries
+        results_array = checkboxlist_dialog(
+            title="Label-base Report",
+            text=f"Select number of labels between {min_labels} and {max_labels}",
+            values=value_pair,
+        ).run()
+
+        if results_array:
+
+            if min_labels <= len(results_array) <= max_labels:
+                break
+        else:
+            # user selects "Cancel" to leave the program.
+            print("Canceled!")
+            sys.exit()
+
+    return results_array

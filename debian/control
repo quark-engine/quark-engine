@@ -15,6 +15,7 @@ Build-Depends: debhelper-compat (= 12),
                python3-click,
                python3-graphviz,
                python3-pandas
+               python3-prompt-toolkit
 
 Standards-Version: 21.4.3
 Homepage: https://github.com/quark-engine/quark-engine
@@ -32,6 +33,7 @@ Depends: ${misc:Depends},
          python3-click,
          python3-graphviz,
          python3-pandas
+         python3-prompt-toolkit
 Description: Android Malware (Analysis | Scoring System)
  Quark-Engine is a full-featured Android analysis framework written in
  Python for hunting threat intelligence inside the APK, DEX files.

@@ -36,7 +36,7 @@ setuptools.setup(
         "click==8.0.1",
         "graphviz",
         "pandas",
-        "simple_term_menu",
+        "prompt-toolkit",
         "plotly",
     ],
 )

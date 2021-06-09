@@ -22,7 +22,7 @@ from quark.utils.colors import (
     lightyellow,
 )
 from quark.utils.graph import call_graph
-from quark.utils.out import print_info, print_success
+from quark.utils.pprint import print_info, print_success
 from quark.utils.output import output_parent_function_table, output_parent_function_json
 from quark.utils.weight import Weight
 

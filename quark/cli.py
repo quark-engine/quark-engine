@@ -9,34 +9,34 @@ import click
 import numpy as np
 from tqdm import tqdm
 
+from quark import __version__
 from quark import config
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 from quark.logo import logo
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
-from quark.utils.out import print_success, print_info, print_warning
+from quark.utils.pprint import print_success, print_info, print_warning
 from quark.utils.weight import Weight
 
 logo()
 
 
+@click.version_option(version=__version__)
 @click.command(no_args_is_help=True)
 @click.option(
     "-s",
     "--summary",
     is_flag=False,
     flag_value="all_rules",
-    help="Show summary report. Optionally specify the filename "
-    "of a rule or a label",
+    help="Show summary report. Optionally specify the name of a rule/label",
 )
 @click.option(
     "-d",
     "--detail",
     is_flag=False,
     flag_value="all_rules",
-    help="Show detail report. Optionally specify the filename "
-    "of a rule or a label",
+    help="Show detail report. Optionally specify the name of a rule/label",
 )
 @click.option(
     "-o",
@@ -79,7 +79,7 @@ logo()
 @click.option(
     "-t",
     "--threshold",
-    help="Set the confidence threshold",
+    help="Set the lower limit of the confidence threshold",
     type=click.Choice(["100", "80", "60", "40", "20"]),
     required=False,
 )
@@ -131,22 +131,19 @@ def entry_point(
     data = Quark(apk[0])
 
     # Load rules
-    rules_list = [x for x in os.listdir(rule) if x.endswith("json")]
-    
+    rules_list = [file for file in os.listdir(rule) if file.endswith("json")]
+
     if comparison:
 
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
-        all_labels = []
+        all_labels = set()
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
             rule_checker = QuarkRule(rulepath)
-            labels = (
-                rule_checker._label
-            )  # array type, e.g. ['network', 'collection']
+            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
-                if single_label not in all_labels:
-                    all_labels.append(single_label)
+                all_labels.add(single_label)
 
         # let user choose a list of label on which it will be performed the analysis
         selected_label = np.array(
@@ -169,7 +166,7 @@ def entry_point(
                 rule_checker = QuarkRule(rulepath)
 
                 # analyse malware only on rules where appears label selected
-                labels = np.array(rule_checker._label)
+                labels = np.array(rule_checker.label)
                 if len(np.intersect1d(labels, selected_label)) == 0:
                     continue
 
@@ -177,7 +174,7 @@ def entry_point(
                 data.run(rule_checker)
                 confidence = rule_checker.check_item.count(True) * 20
                 labels = (
-                    rule_checker._label
+                    rule_checker.label
                 )  # array type, e.g. ['network', 'collection']
                 for single_label in labels:
                     if single_label in all_labels:
@@ -199,9 +196,7 @@ def entry_point(
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
 
         show_comparison_graph(
-            title="Malicious Actions Comparison Between "
-            + str(len(apk))
-            + " Malwares",
+            title=f"Malicious Actions Comparison Between {len(apk)} Malwares",
             lables=selected_label,
             malware_confidences=malware_confidences,
             font_size=22,
@@ -221,7 +216,7 @@ def entry_point(
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
-            labels = rule_checker._label  # array type, e.g. ['network', 'collection']
+            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label in all_labels:
                     all_labels[single_label].append(confidence)
@@ -234,10 +229,9 @@ def entry_point(
             if max(all_labels[single_label]) >= 80:
                 counter_high_confidence += 1
 
-        print_info("Total Label found: " + yellow(str(len(all_labels))))
+        print_info(f"Total Label found: {yellow(len(all_labels))}")
         print_info(
-            "Rules with label which max confidence >= 80%: "
-            + yellow(str(counter_high_confidence))
+            f"Rules with label which max confidence >= 80%: {yellow(counter_high_confidence)}"
         )
 
         data.show_label_report(rule, all_labels, label)
@@ -258,7 +252,7 @@ def entry_point(
             rulepath = os.path.join(rule, single_rule)
             rule_checker = QuarkRule(rulepath)
 
-            labels = rule_checker._label
+            labels = rule_checker.label
             if label_flag:
                 if summary not in labels:
                     continue
@@ -270,7 +264,7 @@ def entry_point(
 
         w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
         print_warning(w.calculate())
-        print_info("Total Score: " + str(data.quark_analysis.score_sum))
+        print_info(f"Total Score: {data.quark_analysis.score_sum}")
         print(data.quark_analysis.summary_report_table)
 
         if classification:
@@ -293,7 +287,7 @@ def entry_point(
             rulepath = os.path.join(rule, single_rule)
             rule_checker = QuarkRule(rulepath)
 
-            labels = rule_checker._label
+            labels = rule_checker.label
             if label_flag:
                 if detail not in labels:
                     continue
@@ -301,8 +295,8 @@ def entry_point(
             # Run the checker
             data.run(rule_checker)
 
-            print("Rulepath: " + rulepath)
-            print("Rule crime: " + rule_checker._crime)
+            print(f"Rulepath: {rulepath}")
+            print(f"Rule crime: {rule_checker.crime}")
             data.show_detail_report(rule_checker)
             print_success("OK")
 

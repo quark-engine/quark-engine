@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing Quark-Engine &mdash; quark-engine v21.6.1 documentation</title>
+  <title>Installing Quark-Engine &mdash; quark-engine v21.6.2 documentation</title>
   
 
   
@@ -190,15 +190,11 @@ $ pipenv shell
 </pre></div>
 </div>
 <p>Once you see the following msg, then you’re all set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Usage: quark [OPTIONS]
-
-Quark is an Obfuscation-Neglect Android Malware Scoring System
-
-Options:
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Options:
   -s, --summary TEXT              Show summary report. Optionally specify the
-                                  filename of a rule or a label
+                                  name of a rule/label
   -d, --detail TEXT               Show detail report. Optionally specify the
-                                  filename of a rule or a label
+                                  name of a rule/label
   -o, --output FILE               Output report in JSON
   -a, --apk FILE                  APK file  [required]
   -r, --rule PATH                 Rules directory  [default:
@@ -207,12 +203,14 @@ Options:
                                   directory
   -c, --classification            Show rules classification
   -t, --threshold [100|80|60|40|20]
-                                  Set the confidence threshold
+                                  Set the lower limit of the confidence
+                                  threshold
   -i, --list [all|native|custom]  List classes, methods and descriptors
   -p, --permission                List Android permissions
   -l, --label [max|detailed]      Show report based on label of rules
   -C, --comparison                Behaviors comparison based on max confidence
                                   of rule labels
+  --version                       Show the version and exit.
   --help                          Show this message and exit.
 </pre></div>
 </div>

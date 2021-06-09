@@ -69,6 +69,15 @@ class QuarkRule:
         return self._api
 
     @property
+    def label(self):
+        """
+        A list contains various lebels described in https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv
+
+        :return: a label list defined in rules
+        """
+        return self._label
+
+    @property
     def score(self):
         """
         The value used to calculate the weighted score
