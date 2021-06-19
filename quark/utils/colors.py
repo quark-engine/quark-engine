@@ -5,6 +5,8 @@
 import os
 import sys
 
+CHECK_LIST = "".join(["\t[" + "\u2713" + "]"])
+
 
 def color(text, color_code):
     """Colorize text.
@@ -63,3 +65,9 @@ def lightyellow(text):
 
 def lightblue(text):
     return color(text, 94)
+
+
+def colorful_report(arg0):
+    print(red(CHECK_LIST), end="")
+    print(green(bold(arg0)), end="")
+    print("")

@@ -110,14 +110,11 @@ class Apkinfo:
 
         :return: a set of all custom methods MethodAnalysis
         """
-        custom_methods = set()
-
-        for meth_analysis in self.analysis.get_methods():
-            if meth_analysis.is_external():
-                continue
-            custom_methods.add(meth_analysis)
-
-        return custom_methods
+        return {
+            meth_analysis
+            for meth_analysis in self.analysis.get_methods()
+            if not meth_analysis.is_external()
+        }
 
     @property
     def all_methods(self):
@@ -127,12 +124,7 @@ class Apkinfo:
         :return: a set of all method MethodAnalysis
         """
 
-        all_methods = set()
-
-        for meth_analysis in self.analysis.get_methods():
-            all_methods.add(meth_analysis)
-
-        return all_methods
+        return {meth_analysis for meth_analysis in self.analysis.get_methods()}
 
     @functools.lru_cache()
     def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
@@ -176,14 +168,7 @@ class Apkinfo:
         :param method_analysis: the method analysis in androguard
         :return: a set of all xref from functions
         """
-        upperfunc_result = set()
-
-        for _, call, _ in method_analysis.get_xref_from():
-            # Call is the MethodAnalysis in the androguard
-            # call.class_name, call.name, call.descriptor
-            upperfunc_result.add(call)
-
-        return upperfunc_result
+        return {call for _, call, _ in method_analysis.get_xref_from()}
 
     def get_method_bytecode(self, method_analysis):
         """
@@ -223,17 +208,11 @@ class Apkinfo:
                     # the last one is parameter, the other are registers.
 
                     parameter = ins.get_operands()[length_operands - 1]
-                    for i in range(0, length_operands - 1):
+                    for i in range(length_operands - 1):
                         reg_list.append(
                             "v" + str(ins.get_operands()[i][1]),
                         )
-                    if len(parameter) == 3:
-                        # method or value
-                        parameter = parameter[2]
-                    else:
-                        # Operand.OFFSET
-                        parameter = parameter[1]
-
+                    parameter = parameter[2] if len(parameter) == 3 else parameter[1]
                     bytecode_obj = BytecodeObject(
                         ins.get_name(),
                         reg_list,
@@ -247,12 +226,10 @@ class Apkinfo:
 
     def get_strings(self):
 
-        all_strings = set()
-
-        for string_analysis in self.analysis.get_strings():
-            all_strings.add(str(string_analysis.get_orig_value()))
-
-        return all_strings
+        return {
+            str(string_analysis.get_orig_value())
+            for string_analysis in self.analysis.get_strings()
+        }
 
     @functools.lru_cache()
     def construct_bytecode_instruction(self, instruction):
@@ -283,17 +260,11 @@ class Apkinfo:
             # the last one is parameter, the other are registers.
 
             parameter = instruction.get_operands()[length_operands - 1]
-            for i in range(0, length_operands - 1):
+            for i in range(length_operands - 1):
                 reg_list.append(
                     "v" + str(instruction.get_operands()[i][1]),
                 )
-            if len(parameter) == 3:
-                # method or value
-                parameter = parameter[2]
-            else:
-                # Operand.OFFSET
-                parameter = parameter[1]
-
+            parameter = parameter[2] if len(parameter) == 3 else parameter[1]
             instruction_list.extend(reg_list)
             instruction_list.append(parameter)
 

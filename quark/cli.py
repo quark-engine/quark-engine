@@ -189,10 +189,7 @@ def entry_point(
                 # on radar data use the maximum confidence for a certain label
                 radar_data[_label] = np.max(confidences)
 
-            radar_confidence = []
-            for _label in radar_data:
-                radar_confidence.append(radar_data[_label])
-
+            radar_confidence = [value_ for _label, value_ in radar_data.items()]
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
 
         show_comparison_graph(
@@ -224,10 +221,9 @@ def entry_point(
                     all_labels[single_label] = [confidence]
 
         # get how many label with max confidence >= 80%
-        counter_high_confidence = 0
-        for single_label in all_labels:
-            if max(all_labels[single_label]) >= 80:
-                counter_high_confidence += 1
+        counter_high_confidence = sum(
+            max(value) >= 80 for single_label, value in all_labels.items()
+        )
 
         print_info(f"Total Label found: {yellow(len(all_labels))}")
         print_info(
@@ -253,9 +249,8 @@ def entry_point(
             rule_checker = QuarkRule(rulepath)
 
             labels = rule_checker.label
-            if label_flag:
-                if summary not in labels:
-                    continue
+            if label_flag and summary not in labels:
+                continue
 
             # Run the checker
             data.run(rule_checker)
@@ -288,9 +283,8 @@ def entry_point(
             rule_checker = QuarkRule(rulepath)
 
             labels = rule_checker.label
-            if label_flag:
-                if detail not in labels:
-                    continue
+            if label_flag and detail not in labels:
+                continue
 
             # Run the checker
             data.run(rule_checker)
