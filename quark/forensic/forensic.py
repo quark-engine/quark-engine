@@ -94,5 +94,4 @@ class Forensic:
         return self.apk.android_apis
 
 
-if __name__ == "__main__":
-    pass
+pass

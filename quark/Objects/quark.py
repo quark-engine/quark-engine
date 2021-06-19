@@ -579,5 +579,4 @@ class Quark:
         output_parent_function_json(self.quark_analysis.call_graph_analysis_list)
 
 
-if __name__ == "__main__":
-    pass
+pass
