@@ -66,14 +66,7 @@ class Forensic:
         :return: a set of strings containing "content://"
         """
 
-        content = set()
-
-        for string in self.all_strings:
-
-            if extract_content(string):
-                content.add(string)
-
-        return content
+        return {string for string in self.all_strings if extract_content(string)}
 
     def get_file(self):
         """
@@ -81,14 +74,7 @@ class Forensic:
         :return: a set of strings containing "file://"
         """
 
-        file = set()
-
-        for string in self.all_strings:
-
-            if extract_file(string):
-                file.add(string)
-
-        return file
+        return {string for string in self.all_strings if extract_file(string)}
 
     def get_base64(self):
         """
@@ -96,14 +82,7 @@ class Forensic:
         :return: a set of strings containing possible Base64-encoded string
         """
 
-        base64 = set()
-
-        for string in self.all_strings:
-
-            if validate_base64(string):
-                base64.add(string)
-
-        return base64
+        return {string for string in self.all_strings if validate_base64(string)}
 
     def get_android_api(self):
         """

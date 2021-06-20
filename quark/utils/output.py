@@ -25,15 +25,11 @@ def output_parent_function_table(call_graph_analysis_list):
         tb.field_names = ["Parent Function", f"{green(parent)}"]
         tb.align = "l"
 
-        count = 1
-
-        for crime in set(crimes):
+        for count, crime in enumerate(set(crimes), start=1):
             if count == 1:
                 tb.add_row(["Crime Description", red(f"* {crime}")])
             else:
                 tb.add_row(["", red(f"* {crime}")])
-            count += 1
-
         print(tb)
 
 
@@ -50,10 +46,12 @@ def output_parent_function_json(call_graph_analysis_list):
     data = {"rules_classification": []}
 
     for parent, crimes in dd.items():
-        data["rules_classification"].append({
-            "parent": parent,
-            "crime": crimes,
-        })
+        data["rules_classification"].append(
+            {
+                "parent": parent,
+                "crime": crimes,
+            }
+        )
 
-    with open('rules_classification.json', 'w') as outfile:
+    with open("rules_classification.json", "w") as outfile:
         json.dump(data, outfile)
