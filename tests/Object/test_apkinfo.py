@@ -1,7 +1,9 @@
+import os
+import zipfile
+
 import pytest
 import requests
 from androguard.core.analysis.analysis import MethodAnalysis
-
 from quark.Objects.apkinfo import Apkinfo
 
 APK_SOURCE = (
@@ -11,17 +13,67 @@ APK_SOURCE = (
 APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
 
-@pytest.fixture()
-def apkinfo(scope="function"):
+@pytest.fixture(scope="function")
+def apk_path():
     r = requests.get(APK_SOURCE, allow_redirects=True)
-    open(APK_FILENAME, "wb").write(r.content)
+    file = open(APK_FILENAME, "wb")
+    file.write(r.content)
 
-    apk_file = APK_FILENAME
-    apkinfo = Apkinfo(apk_file)
+    return APK_FILENAME
+
+
+@pytest.fixture(scope="function")
+def apkinfo(apk_path):
+    apkinfo = Apkinfo(apk_path)
+
     yield apkinfo
 
 
+@pytest.fixture(scope="function")
+def dex_file():
+    APK_SOURCE = (
+        "https://github.com/quark-engine/apk-malware-samples/raw/master/Ahmyth.apk"
+    )
+    APK_NAME = "Ahmyth.apk"
+    DEX_NAME = "classes.dex"
+
+    r = requests.get(APK_SOURCE, allow_redirects=True)
+    file = open(APK_NAME, "wb")
+    file.write(r.content)
+    file.close()
+
+    with zipfile.ZipFile(APK_NAME, "r") as zip:
+        zip.extract(DEX_NAME)
+
+    yield DEX_NAME
+
+    os.remove(DEX_NAME)
+    os.remove(APK_NAME)
+
+
 class TestApkinfo:
+    def test_init_with_invalid_type(self):
+        filepath = None
+
+        with pytest.raises(TypeError):
+            _ = Apkinfo(filepath)
+
+    def test_init_with_non_exist_file(self):
+        filepath = "PATH_TO_NON_EXIST_FILE"
+
+        with pytest.raises(FileNotFoundError):
+            _ = Apkinfo(filepath)
+
+    def test_init_with_apk(self, apk_path):
+        apkinfo = Apkinfo(apk_path)
+
+        assert apkinfo.ret_type == "APK"
+
+    def test_init_with_dex(self, dex_file):
+        apkinfo = Apkinfo(dex_file)
+
+        assert apkinfo.ret_type == "DEX"
+
     def test_filename(self, apkinfo):
         assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 

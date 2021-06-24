@@ -5,13 +5,15 @@ import requests
 from quark.Objects.quark import Quark
 from quark.Objects.quarkrule import QuarkRule
 
-APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples" \
-             "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+APK_SOURCE = (
+    "https://github.com/quark-engine/apk-malware-samples"
+    "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+)
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
 @pytest.fixture()
-def result(scope="function"):
+def quark_obj(scope="function"):
     r = requests.get(APK_SOURCE, allow_redirects=True)
     open(APK_FILENAME, "wb").write(r.content)
 
@@ -32,55 +34,88 @@ def result(scope="function"):
     yield data
 
 
-class TestQuark():
+class TestQuark:
+    @pytest.mark.skip(reason="discussion needed.")
+    def test_find_previous_method_with_invalid_types(self, quark_obj):
+        with pytest.raises(TypeError):
+            quark_obj.find_previous_method(None, None, None)
 
-    def test_find_previous_method(self, result):
-        # Test Case 1
+    def test_find_previous_method_without_result(self, quark_obj):
+        parent_function = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/ContactsCollecter;",
+            "getContactList",
+            "()Ljava/lang/String;",
+        )
+        base_method = quark_obj.apkinfo.find_method(
+            "Landroid/telephony/TelephonyManager",
+            "getCellLocation",
+            "()Landroid/telephony/CellLocation;",
+        )
+        wrapper = []
 
-        parent_function = result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage", "()V")
-        expect_method_analysis = result.apkinfo.find_method("Lcom/google/progress/SMSHelper;", "sendSms",
-                                                            "(Ljava/lang/String; Ljava/lang/String;)I")
+        quark_obj.find_previous_method(base_method, parent_function, wrapper)
 
-        first_base_method = result.apkinfo.find_method("Lcom/google/progress/SMSHelper;", "sendSms",
-                                                       "(Ljava/lang/String; Ljava/lang/String;)I")
+        assert wrapper == list()
 
-        expected_list = [expect_method_analysis]
+    def test_find_previous_method_with_result(self, quark_obj):
+        parent_function = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
 
         wrapper = []
 
-        result.find_previous_method(first_base_method, parent_function, wrapper=wrapper)
+        base_method = quark_obj.apkinfo.find_method(
+            "Landroid/telephony/TelephonyManager",
+            "getCellLocation",
+            "()Landroid/telephony/CellLocation;",
+        )
 
-        assert wrapper == expected_list
-
-        # Test Case 2
-
-        wrapper = []
-
-        second_base_method = result.apkinfo.find_method("Landroid/telephony/TelephonyManager", "getCellLocation",
-                                                        "()Landroid/telephony/CellLocation;")
-
-        expect_method_analysis = result.apkinfo.find_method("Lcom/google/progress/Locate;", "getLocation",
-                                                            "()Ljava/lang/String;")
+        expect_method_analysis = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+        )
 
         expected_list = [expect_method_analysis]
 
-        result.find_previous_method(second_base_method, parent_function, wrapper=wrapper)
+        quark_obj.find_previous_method(base_method, parent_function, wrapper=wrapper)
 
         assert wrapper == expected_list
 
-    def test_find_intersection(self, result):
-        location_api = result.apkinfo.find_method("Lcom/google/progress/Locate;", "getLocation",
-                                                  "()Ljava/lang/String;")
-        location_api_upper = result.apkinfo.upperfunc(location_api)
+    def test_find_intersection_with_invalid_type(self, quark_obj):
+        with pytest.raises(ValueError):
+            quark_obj.find_intersection(None, None)
 
-        sms_api = result.apkinfo.find_method("Lcom/google/progress/SMSHelper;", "sendSms",
-                                             "(Ljava/lang/String; Ljava/lang/String;)I")
-        sms_api_upper = result.apkinfo.upperfunc(sms_api)
+    def test_find_intersection_with_empty_set(self, quark_obj):
+        first_method_set = set()
+        second_method_set = set()
+
+        with pytest.raises(ValueError):
+            quark_obj.find_intersection(first_method_set, second_method_set)
+
+    @pytest.mark.skip(reason="discussion needed.")
+    def test_find_intersection_with_set_containing_invalid_type(self, quark_obj):
+        first_method_set = {1, 2, 3}
+        second_method_set = {4, 5, 6}
+
+        with pytest.raises(TypeError):
+            quark_obj.find_intersection(first_method_set, second_method_set)
+
+    def test_find_intersection_with_result(self, quark_obj):
+        location_api = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+        )
+        location_api_upper = quark_obj.apkinfo.upperfunc(location_api)
+
+        sms_api = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/SMSHelper;",
+            "sendSms",
+            "(Ljava/lang/String; Ljava/lang/String;)I",
+        )
+        sms_api_upper = quark_obj.apkinfo.upperfunc(sms_api)
 
         with pytest.raises(ValueError, match="Set is Null"):
-            result.find_intersection(set(), set())
-            result.find_intersection(set(), {1})
-            result.find_intersection({1}, set())
+            quark_obj.find_intersection(set(), set())
+            quark_obj.find_intersection(set(), {1})
+            quark_obj.find_intersection({1}, set())
 
         assert len(location_api_upper & sms_api_upper) == 3
 
@@ -89,65 +124,192 @@ class TestQuark():
 
         # Send Location via SMS
         expected_result_location = {
-            result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "doByte", "([B)V"),
-            result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"),
-            result.apkinfo.find_method("Lcom/google/progress/AndroidClientService$2;", "run", "()V"),
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/AndroidClientService;", "doByte", "([B)V"
+            ),
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+            ),
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
+            ),
         }
 
-        assert result.find_intersection(location_api_upper, sms_api_upper) == expected_result_location
-
-    def test_check_sequence(self, result):
-        # Send Location via SMS
-
-        location_method = result.apkinfo.find_method("Lcom/google/progress/Locate;", "getLocation",
-                                                     "()Ljava/lang/String;")
-        sendSms_method = result.apkinfo.find_method("Lcom/google/progress/SMSHelper;", "sendSms",
-                                                    "(Ljava/lang/String; Ljava/lang/String;)I")
-
-        mutual_parent_true = result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage",
-                                                        "()V")
-
-        mutual_parent_false = result.apkinfo.find_method("Lcom/google/progress/AndroidClientService$2;", "run", "()V")
-
-        # # Send contact via SMS
-
-        contact_method = result.apkinfo.find_method(
-            "Lcom/google/progress/ContactsCollecter;",
-            "getContactList",
-            "()Ljava/lang/String;"
+        assert (
+            quark_obj.find_intersection(location_api_upper, sms_api_upper)
+            == expected_result_location
         )
 
-        assert result.check_sequence(
+    @pytest.mark.skip(reason="discussion needed.")
+    def test_check_sequence_with_invalid_type(self, quark_obj):
+        mutual_parent = None
+        first_method_list = None
+        second_method_list = None
+
+        with pytest.raises(TypeError):
+            quark_obj.check_sequence(
+                mutual_parent, first_method_list, second_method_list
+            )
+
+    @pytest.mark.skip(reason="discussion needed.")
+    def test_check_sequence_with_lists_containing_invalid_type(self, quark_obj):
+        mutual_parent = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
+        first_method_list = [1, 2, 3]
+        second_method_list = [4, 5, 6]
+
+        with pytest.raises(TypeError):
+            quark_obj.check_sequence(
+                mutual_parent, first_method_list, second_method_list
+            )
+
+    def test_check_sequence_is_true(self, quark_obj):
+        # Send Location via SMS
+
+        location_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+        )
+        sendSms_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/SMSHelper;",
+            "sendSms",
+            "(Ljava/lang/String; Ljava/lang/String;)I",
+        )
+
+        mutual_parent_true = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
+
+        result = quark_obj.check_sequence(
             mutual_parent_true,
             [location_method],
             [sendSms_method],
+        )
 
-        ) is True
+        assert result is True
 
-        assert result.check_sequence(
+    def test_check_sequence_with_contact_method(self, quark_obj):
+        sendSms_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/SMSHelper;",
+            "sendSms",
+            "(Ljava/lang/String; Ljava/lang/String;)I",
+        )
+
+        mutual_parent_true = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
+
+        contact_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/ContactsCollecter;",
+            "getContactList",
+            "()Ljava/lang/String;",
+        )
+
+        result = quark_obj.check_sequence(
             mutual_parent_true,
             [contact_method],
             [sendSms_method],
+        )
 
-        ) is True
+        assert result is True
 
-        assert result.check_sequence(
+    def test_check_sequence_is_false(self, quark_obj):
+        # Send Location via SMS
+        sendSms_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
+        )
+
+        mutual_parent_false = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
+        )
+
+        # # Send contact via SMS
+
+        contact_method = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/ContactsCollecter;",
+            "getContactList",
+            "()Ljava/lang/String;",
+        )
+
+        result = quark_obj.check_sequence(
             mutual_parent_false,
             [contact_method],
             [sendSms_method],
-        ) is False
+        )
 
-    def test_check_parameter(self, result):
-        second_method = [result.apkinfo.find_method("Lcom/google/progress/SMSHelper;", "sendSms",
-                                                    "(Ljava/lang/String; Ljava/lang/String;)I")]
+        assert result is False
+
+    def test_check_parameter_with_invalid_type(self, quark_obj):
+        mutual_parent = None
+        first_method_list = None
+        second_method_list = None
+
+        with pytest.raises(TypeError):
+            quark_obj.check_parameter(
+                mutual_parent, first_method_list, second_method_list
+            )
+
+    @pytest.mark.skip(reason="discussion needed.")
+    def test_check_parameter_with_lists_containing_invalid_type(self, quark_obj):
+        mutual_parent = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
+        first_method_list = [1, 2, 3]
+        second_method_list = [4, 5, 6]
+
+        with pytest.raises(TypeError):
+            quark_obj.check_sequence(
+                mutual_parent, first_method_list, second_method_list
+            )
+
+    def test_check_parameter_is_True(self, quark_obj):
+        second_method = [
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/SMSHelper;",
+                "sendSms",
+                "(Ljava/lang/String; Ljava/lang/String;)I",
+            )
+        ]
         first_method = [
-            result.apkinfo.find_method("Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;")]
-        mutual_parent = result.apkinfo.find_method("Lcom/google/progress/AndroidClientService;", "sendMessage", "()V")
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+            )
+        ]
+        mutual_parent = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
 
-        assert result.check_parameter(mutual_parent, first_method, second_method) == True
+        assert (
+            quark_obj.check_parameter(mutual_parent, first_method, second_method)
+            == True
+        )
 
-    def test_get_json_report(self, result):
-        json_report = result.get_json_report()
+    def test_check_parameter_is_False(self, quark_obj):
+        first_method_list = [
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
+            )
+        ]
+
+        second_method_list = [
+            quark_obj.apkinfo.find_method(
+                "Lcom/google/progress/ContactsCollecter;",
+                "getContactList",
+                "()Ljava/lang/String;",
+            )
+        ]
+        mutual_parent = quark_obj.apkinfo.find_method(
+            "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+        )
+
+        result = quark_obj.check_parameter(
+            mutual_parent, first_method_list, second_method_list
+        )
+
+        assert result is False
+
+    def test_get_json_report(self, quark_obj):
+        json_report = quark_obj.get_json_report()
         # Check if proper dict object
         assert isinstance(json_report, dict)
         assert json_report.get("md5") == "14d9f1a92dd984d6040cc41ed06e273e"

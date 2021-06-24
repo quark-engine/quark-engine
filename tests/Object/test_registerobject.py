@@ -1,48 +1,53 @@
 import pytest
-
 from quark.Objects.registerobject import RegisterObject
 
 
 @pytest.fixture()
-def variable_obj():
-    variable_obj = RegisterObject("v3", "append()", None)
+def standard_register_obj():
+    register_obj = RegisterObject("v1", "value", "func")
+    yield register_obj
 
-    yield variable_obj
-
-    del variable_obj
+    del register_obj
 
 
-class TestVariableObject:
+class TestRegisterObject:
+    def test_init_without_called_by_func(self):
+        register_obj = RegisterObject("v1", "value")
 
-    def test_init(self, variable_obj):
-        with pytest.raises(TypeError):
-            variable_obj_with_no_argu = RegisterObject()
+        assert register_obj._register_name == "v1"
+        assert register_obj._value == "value"
+        assert register_obj._called_by_func == []
 
-        assert isinstance(variable_obj, RegisterObject)
-        assert variable_obj.register_name == "v3"
-        assert variable_obj.value == "append()"
-        assert variable_obj.called_by_func == []
+    def test_init_with_called_by_func(self):
+        register_obj = RegisterObject("v1", "value", "func")
 
-    def test_called_by_func(self, variable_obj):
-        variable_obj_with_called_by_func = RegisterObject(
-            "v3", "append()", "toString()",
-        )
+        assert register_obj._register_name == "v1"
+        assert register_obj._value == "value"
+        assert register_obj._called_by_func == ["func"]
 
-        assert variable_obj_with_called_by_func.called_by_func == [
-            "toString()",
-        ]
+    def test_called_by_func(self, standard_register_obj):
+        value = "func1"
 
-        variable_obj.called_by_func = "file_list"
-        variable_obj.called_by_func = "file_delete"
+        standard_register_obj.called_by_func = value
 
-        assert variable_obj.called_by_func == ["file_list", "file_delete"]
+        assert len(standard_register_obj.called_by_func) == 2
+        assert standard_register_obj.called_by_func[-1] == value
 
-    def test_get_all(self, variable_obj):
-        variable_obj.called_by_func = "file_list"
-        variable_obj.called_by_func = "file_delete"
-        assert repr(
-            variable_obj,
-        ) == "<VarabileObject-register:v3, value:append(), called_by_func:file_list,file_delete>"
+    def test_register_name(self):
+        value = "v1"
 
-    def test_hash_index(self, variable_obj):
-        assert variable_obj.hash_index == 3
+        standard_register_obj.register_name = value
+
+        assert standard_register_obj.register_name == value
+
+    def test_value(self):
+        value = "value"
+
+        standard_register_obj.value = value
+
+        assert standard_register_obj.value == value
+
+    def test_hash_index(self, standard_register_obj):
+        standard_register_obj._register_name = "v5"
+
+        assert standard_register_obj.hash_index == 5
