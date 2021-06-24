@@ -96,7 +96,7 @@ class TestPyEval:
             "some_function()Lclass;(Lcom/google/progress/SMSHelper;,some_string)"
         ]
 
-    @pytest.mark.skip(reasopytn="discussion needed.")
+    @pytest.mark.skip(reason="discussion needed.")
     def test_invoke_with_func_not_returning_value(self, pyeval):
         instruction = ["invoke-kind", "v4", "v9", "some_function()V"]
 
@@ -340,7 +340,7 @@ class TestPyEval:
         first_instruction = [
             "invoke-virtual",
             "v6",
-            "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;",
+            "Lcom/google/progress/ContactsCollector;->getContactList()Ljava/lang/String;",
         ]
 
         second_instruction = ["move-result-object", "v1"]
@@ -351,6 +351,6 @@ class TestPyEval:
         assert pyeval.table_obj.pop(1).register_name == "v1"
         assert (
             pyeval.table_obj.pop(1).value
-            == "Lcom/google/progress/ContactsCollecter;->getContactList()Ljava/lang/String;(some_string)"
+            == "Lcom/google/progress/ContactsCollector;->getContactList()Ljava/lang/String;(some_string)"
         )
         assert pyeval.table_obj.pop(1).called_by_func == []
