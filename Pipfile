@@ -20,7 +20,7 @@ graphviz = "*"
 requests = "*"
 pandas = "*"
 plotly = "*"
-prompt-toolkit = "*"
+prompt-toolkit = "==3.0.19"
 
 [requires]
 python_version = "3.8"
