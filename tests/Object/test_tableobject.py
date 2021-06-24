@@ -48,7 +48,10 @@ class TestTableObject:
     def test_insert_with_num_beyond_max(self, table_obj):
         index, data = 6, "Max value"
 
-        table_obj.insert(6, data)
+        try:
+            table_obj.insert(index, data)
+        except Exception:
+            pytest.fail('Should not raise exceptions.')
 
     def test_get_obj_list_before_insertion(self, table_obj):
         assert table_obj.get_obj_list(3) == []
