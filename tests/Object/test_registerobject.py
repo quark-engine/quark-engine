@@ -31,7 +31,7 @@ class TestRegisterObject:
         standard_register_obj.called_by_func = value
 
         assert len(standard_register_obj.called_by_func) == 2
-        assert list(standard_register_obj.called_by_func)[-1] == value
+        assert standard_register_obj.called_by_func[-1] == value
 
     def test_register_name(self):
         value = "v1"
