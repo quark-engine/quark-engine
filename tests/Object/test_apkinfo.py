@@ -1,7 +1,5 @@
 import os
-import os.path
 import zipfile
-from posixpath import basename
 
 import pytest
 import requests
@@ -60,8 +58,8 @@ class TestApkinfo:
         with pytest.raises(TypeError):
             _ = Apkinfo(filepath)
 
-    def test_init_with_unexist_file(self):
-        filepath = "UNEXIST_FILE"
+    def test_init_with_non_exist_file(self):
+        filepath = "PATH_TO_NON_EXIST_FILE"
 
         with pytest.raises(FileNotFoundError):
             _ = Apkinfo(filepath)
