@@ -32,20 +32,10 @@ class TestQuarkAnalysis:
         assert analysis.json_report == []
         assert analysis.weight_sum == 0
         assert analysis.score_sum == 0
-        assert all(
-            [
-                label
-                for label in summary_table_field_list
-                if label in analysis.summary_report_table
-            ]
-        )
-        assert all(
-            [
-                label
-                for label in label_table_field_list
-                if label in analysis.label_report_table
-            ]
-        )
+        assert all(label for label in summary_table_field_list
+                    if label in analysis.summary_report_table)
+        assert all(label for label in label_table_field_list
+                    if label in analysis.label_report_table)
 
         assert analysis.call_graph_analysis_list == []
         assert isinstance(analysis.parent_wrapper_mapping, defaultdict)

@@ -22,10 +22,8 @@ def sample_apk_file():
 
     # Download apk
     request = requests.get(APK_SOURCE)
-    apk_file = open(APK_NAME, "wb")
-    apk_file.write(request.content)
-    apk_file.close()
-
+    with open(APK_NAME, "wb") as apk_file:
+        apk_file.write(request.content)
     yield APK_NAME
 
     os.remove(APK_NAME)
