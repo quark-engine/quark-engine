@@ -2,7 +2,7 @@ import os.path
 
 import pytest
 import requests
-from androguard.misc import AnalyzeAPK
+from quark.Objects.apkinfo import Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
 
 
@@ -18,63 +18,53 @@ def analysis_object(tmp_path_factory):
     request = requests.get(APK_SOURCE)
     apk_file = tmp_path_factory.getbasetemp() / APK_NAME
     apk_file.write_bytes(request.content)
-    _, _, analysis = AnalyzeAPK(apk_file)
+    analysis = Apkinfo(apk_file)
 
     yield analysis
 
 
 @pytest.fixture(scope="function")
 def parent_method(analysis_object):
-    return next(
-        analysis_object.find_methods(
-            "Lahmyth/mine/king/ahmyth/ConnectionManager;",
-            "sendReq",
-            "\\(\\)V",
-        )
+    return analysis_object.find_method(
+        "Lahmyth/mine/king/ahmyth/ConnectionManager;",
+        "sendReq",
+        "()V",
     )
 
 
 @pytest.fixture(scope="function")
 def connect_method_1(analysis_object):
-    return next(
-        analysis_object.find_methods(
-            "Lio/socket/client/Socket;",
-            "connect",
-            "\\(\\)Lio/socket/client/Socket;",
-        )
+    return analysis_object.find_method(
+        "Lio/socket/client/Socket;",
+        "connect",
+        "()Lio/socket/client/Socket;",
     )
 
 
 @pytest.fixture(scope="function")
 def connect_method_2(analysis_object):
-    return next(
-        analysis_object.find_methods(
-            "Lahmyth/mine/king/ahmyth/ConnectionManager\\$1;",
-            "<init>",
-            "\\(\\)V",
-        )
+    return analysis_object.find_method(
+        "Lahmyth/mine/king/ahmyth/ConnectionManager$1;",
+        "<init>",
+        "()V",
     )
 
 
 @pytest.fixture(scope="function")
 def leaf_method_1(analysis_object):
-    return next(
-        analysis_object.find_methods(
-            "Lio/socket/client/Socket;",
-            "open",
-            "\\(\\)Lio/socket/client/Socket;",
-        )
+    return analysis_object.find_method(
+        "Lio/socket/client/Socket;",
+        "open",
+        "()Lio/socket/client/Socket;",
     )
 
 
 @pytest.fixture(scope="function")
 def leaf_method_2(analysis_object):
-    return next(
-        analysis_object.find_methods(
-            "Ljava/lang/Object;",
-            "<init>",
-            "\\(\\)V",
-        )
+    return analysis_object.find_method(
+        "Ljava/lang/Object;",
+        "<init>",
+        "()V",
     )
 
 
@@ -96,7 +86,6 @@ def test_wrapper_lookup_with_no_result(leaf_method_1, parent_method):
     assert path == []
 
 
-@pytest.mark.usefixture("remove_call_graph_directory")
 def test_call_graph(
     parent_method,
     connect_method_1,

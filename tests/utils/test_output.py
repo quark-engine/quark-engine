@@ -3,7 +3,7 @@ import os
 
 import pytest
 import requests
-from androguard.misc import AnalyzeAPK
+from quark.Objects.apkinfo import Apkinfo
 from quark.utils.output import (
     output_parent_function_json,
     output_parent_function_table,
@@ -29,14 +29,12 @@ def sample_apk():
 
 @pytest.fixture(scope="module")
 def method_object(sample_apk):
-    _, _, analysis_object = AnalyzeAPK(sample_apk)
+    analysis_object = Apkinfo(sample_apk)
 
-    return next(
-        analysis_object.find_methods(
-            "Lcom/google/progress/Locate;",
-            "getLocation",
-            "\\(\\)Ljava/lang/String;",
-        )
+    return analysis_object.find_method(
+        "Lcom/google/progress/Locate;",
+        "getLocation",
+        "()Ljava/lang/String;",
     )
 
 
