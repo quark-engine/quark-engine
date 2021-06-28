@@ -3,6 +3,9 @@ language: python
 
 python: 3.8
 
+before-install:
+  - sudo apt-get -y install graphviz
+
 # Installation
 install:
   - pipenv install -e . --skip-lock
