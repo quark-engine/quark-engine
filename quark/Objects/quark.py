@@ -575,8 +575,12 @@ class Quark:
 
     def show_rule_classification(self):
         print_info("Rules Classification")
-        output_parent_function_table(self.quark_analysis.call_graph_analysis_list)
-        output_parent_function_json(self.quark_analysis.call_graph_analysis_list)
+        output_parent_function_table(
+            self.quark_analysis.call_graph_analysis_list, MAX_SEARCH_LAYER
+        )
+        output_parent_function_json(
+            self.quark_analysis.call_graph_analysis_list, MAX_SEARCH_LAYER
+        )
 
 
 if __name__ == "__main__":
