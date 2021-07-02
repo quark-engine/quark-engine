@@ -22,7 +22,12 @@ from quark.utils.colors import (
     colorful_report,
 )
 from quark.utils.graph import call_graph
-from quark.utils.output import output_parent_function_table, output_parent_function_json
+from quark.utils.output import (
+    get_rule_classification_data,
+    output_parent_function_graph,
+    output_parent_function_table,
+    output_parent_function_json,
+)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -575,8 +580,14 @@ class Quark:
 
     def show_rule_classification(self):
         print_info("Rules Classification")
-        output_parent_function_table(self.quark_analysis.call_graph_analysis_list)
-        output_parent_function_json(self.quark_analysis.call_graph_analysis_list)
+
+        data_bundle = get_rule_classification_data(
+            self.quark_analysis.call_graph_analysis_list, MAX_SEARCH_LAYER
+        )
+
+        output_parent_function_table(data_bundle)
+        output_parent_function_json(data_bundle)
+        output_parent_function_graph(data_bundle)
 
 
 if __name__ == "__main__":
