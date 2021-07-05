@@ -56,6 +56,7 @@ def analysis_element_1(analysis_object):
     return {
         "crime": "The Crime",
         "parent": parent,
+        "apkinfo": analysis_object,
         "first_call": first_api,
         "first_api": first_api,
         "second_call": second_api,
@@ -84,6 +85,7 @@ def analysis_element_2(analysis_object):
     return {
         "crime": "Another Crime",
         "parent": parent,
+        "apkinfo": analysis_object,
         "first_call": first_api,
         "first_api": first_api,
         "second_call": second_api,
