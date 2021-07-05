@@ -4,9 +4,9 @@ import zipfile
 import pytest
 import requests
 from quark.Objects.apkinfo import AndroguardImp as Apkinfo
-from quark.Objects.baseapkinfo import BaseApkinfo
-from quark.Objects.bytecodeobject import BytecodeObject
-from quark.Objects.methodobject import MethodObject
+from quark.Objects.interface.baseapkinfo import BaseApkinfo
+from quark.Objects.struct.bytecodeobject import BytecodeObject
+from quark.Objects.struct.methodobject import MethodObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"

@@ -10,7 +10,7 @@ import pandas as pd
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp as Apkinfo
 from quark.utils import tools
 from quark.utils.colors import (
     red,
