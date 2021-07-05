@@ -21,6 +21,7 @@ requests = "*"
 pandas = "*"
 plotly = "*"
 prompt-toolkit = "==3.0.19"
+rzpipe = "*"
 
 [requires]
 python_version = "3.8"
