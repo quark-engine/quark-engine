@@ -3,8 +3,10 @@ import zipfile
 
 import pytest
 import requests
-from androguard.core.analysis.analysis import MethodAnalysis
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp as Apkinfo
+from quark.Objects.baseapkinfo import BaseApkinfo
+from quark.Objects.bytecodeobject import BytecodeObject
+from quark.Objects.methodobject import MethodObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"
@@ -31,16 +33,13 @@ def apkinfo(apk_path):
 
 @pytest.fixture(scope="function")
 def dex_file():
-    APK_SOURCE = (
-        "https://github.com/quark-engine/apk-malware-samples/raw/master/Ahmyth.apk"
-    )
+    APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples/raw/master/Ahmyth.apk"
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
 
     r = requests.get(APK_SOURCE, allow_redirects=True)
-    file = open(APK_NAME, "wb")
-    file.write(r.content)
-    file.close()
+    with open(APK_NAME, "wb") as file:
+        file.write(r.content)
 
     with zipfile.ZipFile(APK_NAME, "r") as zip:
         zip.extract(DEX_NAME)
@@ -56,26 +55,28 @@ class TestApkinfo:
         filepath = None
 
         with pytest.raises(TypeError):
-            _ = Apkinfo(filepath)
+            _ = BaseApkinfo(filepath)
 
     def test_init_with_non_exist_file(self):
         filepath = "PATH_TO_NON_EXIST_FILE"
 
         with pytest.raises(FileNotFoundError):
-            _ = Apkinfo(filepath)
+            _ = BaseApkinfo(filepath)
 
     def test_init_with_apk(self, apk_path):
-        apkinfo = Apkinfo(apk_path)
+        apkinfo = BaseApkinfo(apk_path)
 
         assert apkinfo.ret_type == "APK"
 
     def test_init_with_dex(self, dex_file):
-        apkinfo = Apkinfo(dex_file)
+        apkinfo = BaseApkinfo(dex_file)
 
         assert apkinfo.ret_type == "DEX"
 
     def test_filename(self, apkinfo):
-        assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        assert (
+            apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        )
 
     def test_filesize(self, apkinfo):
         assert apkinfo.filesize == 266155
@@ -98,15 +99,15 @@ class TestApkinfo:
 
     def test_android_apis(self, apkinfo):
         api = {
-            apkinfo.find_method(
-                class_name="Landroid/telephony/SmsMessage;",
-                method_name="getDisplayOriginatingAddress",
-                descriptor="()Ljava/lang/String;",
+            MethodObject(
+                "Landroid/telephony/SmsMessage;",
+                "getDisplayOriginatingAddress",
+                "()Ljava/lang/String;",
             ),
-            apkinfo.find_method(
-                class_name="Ljava/io/File;",
-                method_name="mkdir",
-                descriptor="()Z",
+            MethodObject(
+                "Ljava/io/File;",
+                "mkdir",
+                "()Z",
             ),
         }
 
@@ -115,15 +116,15 @@ class TestApkinfo:
 
     def test_custom_methods(self, apkinfo):
         test_custom_method = {
-            apkinfo.find_method(
-                class_name="Lcom/example/google/service/ContactsHelper;",
-                method_name="getPhoneContacts",
-                descriptor="()V",
+            MethodObject(
+                "Lcom/example/google/service/ContactsHelper;",
+                "getPhoneContacts",
+                "()V",
             ),
-            apkinfo.find_method(
-                class_name="Lcom/example/google/service/ContactsHelper;",
-                method_name="getSIMContacts",
-                descriptor="()V",
+            MethodObject(
+                "Lcom/example/google/service/ContactsHelper;",
+                "getSIMContacts",
+                "()V",
             ),
         }
         assert len(apkinfo.custom_methods) == 3999
@@ -131,15 +132,15 @@ class TestApkinfo:
 
     def test_all_methods(self, apkinfo):
         test_custom_method = {
-            apkinfo.find_method(
-                class_name="Lcom/example/google/service/ContactsHelper;",
-                method_name="getPhoneContacts",
-                descriptor="()V",
+            MethodObject(
+                "Lcom/example/google/service/ContactsHelper;",
+                "getPhoneContacts",
+                "()V",
             ),
-            apkinfo.find_method(
-                class_name="Lcom/example/google/service/ContactsHelper;",
-                method_name="getSIMContacts",
-                descriptor="()V",
+            MethodObject(
+                "Lcom/example/google/service/ContactsHelper;",
+                "getSIMContacts",
+                "()V",
             ),
         }
         assert len(apkinfo.all_methods) == 5452
@@ -147,28 +148,77 @@ class TestApkinfo:
 
     def test_find_method(self, apkinfo):
         result = apkinfo.find_method(
-            "Ljava/lang/reflect/Field", "setAccessible", "(Z)V"
+            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
         )
 
-        assert isinstance(result, MethodAnalysis)
+        assert isinstance(result, MethodObject)
         assert str(result.class_name) == "Ljava/lang/reflect/Field;"
         assert str(result.name) == "setAccessible"
         assert str(result.descriptor) == "(Z)V"
 
     def test_upperfunc(self, apkinfo):
-        api = apkinfo.find_method("Ljava/lang/reflect/Field", "setAccessible", "(Z)V")
-
-        expect_upperfunc = apkinfo.upperfunc(api)
-        (check_method,) = expect_upperfunc
-        expect_class_name = (
-            "Landroid/support/v4/widget/SlidingPaneLayout$SlidingPanelLayoutImplJB;"
+        api = apkinfo.find_method(
+            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
         )
-        expect_name = "<init>"
-        expect_descriptor = "()V"
 
-        assert str(check_method.class_name) == expect_class_name
-        assert str(check_method.name) == expect_name
-        assert str(check_method.descriptor) == expect_descriptor
+        expect_function = MethodObject(
+            (
+                "Landroid/support/v4/widget/SlidingPaneLayout$"
+                "SlidingPanelLayoutImplJB;"
+            ),
+            "<init>",
+            "()V",
+        )
+
+        upper = list(apkinfo.upperfunc(api))[0]
+
+        assert upper == expect_function
+
+    def test_lowerfunc(self, apkinfo):
+        method = apkinfo.find_method(
+            "Lcom/example/google/service/WebServiceCalling;",
+            "Send",
+            "(Landroid/os/Handler; Ljava/lang/String;)V",
+        )
+
+        expect_method = MethodObject(
+            "Ljava/lang/StringBuilder;",
+            "append",
+            "(Ljava/lang/String;)Ljava/lang/StringBuilder;",
+        )
+        expect_offset = 42
+
+        upper_methods = apkinfo.lowerfunc(method)
+
+        assert (expect_method, expect_offset) in upper_methods
+
+    def test_get_method_bytecode(self, apkinfo):
+        expected_bytecode_list = [
+            BytecodeObject(
+                "iput-object",
+                ["v1", "v0"],
+                "Lcom/example/google/service/WebServiceCalling$1;->this$0 Lcom/example/google/service/WebServiceCalling;",
+            ),
+            BytecodeObject(
+                "invoke-direct", ["v0"], "Landroid/os/Handler;-><init>()V"
+            ),
+            BytecodeObject("return-void", None, None),
+        ]
+
+        method = apkinfo.find_method(
+            class_name="Lcom/example/google/service/WebServiceCalling$1;",
+            method_name="<init>",
+            descriptor="(Lcom/example/google/service/WebServiceCalling;)V",
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        for bytecode, expected_bytecode in zip(
+            bytecodes, expected_bytecode_list
+        ):
+            assert bytecode.mnemonic == expected_bytecode.mnemonic
+            assert bytecode.registers == expected_bytecode.registers
+            assert bytecode.parameter == expected_bytecode.parameter
 
     def test_lowerfunc(self, apkinfo):
         method = apkinfo.find_method(
