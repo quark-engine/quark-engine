@@ -1,0 +1,22 @@
+# Base Type
+pf.axml_ResChunk_header n2n2n4 type headersize size
+pf.axml_Res_value n2n1n1n4 size res0 datatype data
+
+# String Pool
+pf.axml_ResStringPool_ref n4 index
+pf.axml_ResStringPool_header ?n4n4n4n4n4 (axml_ResChunk_header)header stringCount styleCount flags stringStart styleStart
+
+# XML Part
+pf.axml_ResXMLTree_header ? (axml_ResChunk_header)header
+pf.axml_ResXMLTree_node ?n4? (axml_ResChunk_header)header lineNumber (axml_ResStringPool_ref)comment
+
+pf.axml_ResXMLTree_cdataExt ?? (axml_ResStringPool_ref)data (axml_Res_value)typedData
+pf.axml_ResXMLTree_namespaceExt ?? (axml_ResStringPool_ref)prefix (axml_ResStringPool_ref)uri
+pf.axml_ResXMLTree_endElementExt ?? (axml_ResStringPool_ref)ns (axml_ResStringPool_ref)name
+pf.axml_ResXMLTree_attrExt ??n2n2n2n2n2n2 (axml_ResStringPool_ref)ns (axml_ResStringPool_ref)name attributeStart attributeSize attributeCount idIndex classIndex styleIndex
+
+pf.axml_ResXMLTree_attribute ???? (axml_ResStringPool_ref)ns (axml_ResStringPool_ref)name (axml_ResStringPool_ref)rawValue (axml_Res_value)typedValue
+
+# Resource Table
+pf.axml_ResTable_header ?n4 (axml_ResChunk_header)header packageCount
+pf.axml_ResTable_package ?n4[128]n2n4n4n4n4n4 (axml_ResChunk_header)header id name typeStrings lastPublicType keyStrings lastPublicKey typeIdOffset
