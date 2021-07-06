@@ -38,5 +38,6 @@ setuptools.setup(
         "pandas",
         "prompt-toolkit==3.0.19",
         "plotly",
+        "rzpipe",
     ],
 )
