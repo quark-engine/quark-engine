@@ -38,10 +38,8 @@ def dex_file():
     DEX_NAME = "classes.dex"
 
     r = requests.get(APK_SOURCE, allow_redirects=True)
-    file = open(APK_NAME, "wb")
-    file.write(r.content)
-    file.close()
-
+    with open(APK_NAME, "wb") as file:
+        file.write(r.content)
     with zipfile.ZipFile(APK_NAME, "r") as zip:
         zip.extract(DEX_NAME)
 
