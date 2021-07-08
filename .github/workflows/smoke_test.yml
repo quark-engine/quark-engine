@@ -28,9 +28,9 @@ jobs:
       # Runs a single command using the runners shell
       - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          python3 setup.py install
-          
+          python -m pip install --upgrade pip
+          python -m pip install pipenv
+          pipenv install --skip-lock --dev
           sudo apt-get -y install graphviz
       # Download the latest rule set
       - name: Download rule from https://github.com/quark-engine/quark-rules
@@ -41,8 +41,8 @@ jobs:
       - name: Run a multi-line script
         run: |
           git clone https://github.com/quark-engine/apk-malware-samples
-          quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s
-          quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d
-          quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -g
-          quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d -g
-          quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -c
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -g
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d -g
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -c
