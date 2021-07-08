@@ -35,7 +35,7 @@ jobs:
       # Download the latest rule set
       - name: Download rule from https://github.com/quark-engine/quark-rules
         run: |
-          freshquark
+          pipenv run freshquark
           
       # Runs a set of commands using the quark-engine
       - name: Run a multi-line script
