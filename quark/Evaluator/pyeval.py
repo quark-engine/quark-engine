@@ -352,5 +352,4 @@ class PyEval:
         return self.table_obj.get_table()
 
 
-if __name__ == "__main__":
-    pass
+pass
