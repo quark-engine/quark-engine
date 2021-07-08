@@ -4,8 +4,8 @@ from abc import abstractmethod
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
 
-from quark.Objects.bytecodeobject import BytecodeObject
-from quark.Objects.methodobject import MethodObject
+from quark.Objects.struct.bytecodeobject import BytecodeObject
+from quark.Objects.struct.methodobject import MethodObject
 
 
 class BaseApkinfo:

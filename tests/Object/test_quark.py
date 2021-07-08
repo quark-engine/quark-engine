@@ -3,7 +3,7 @@ import pytest
 import requests
 
 from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
+from quark.Objects.struct.ruleobject import RuleObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"
@@ -25,7 +25,7 @@ def quark_obj(scope="function"):
     for single_rule in rules_list:
         if single_rule.endswith("json"):
             rulepath = os.path.join(rules, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
 
             # Run the checker
             data.run(rule_checker)

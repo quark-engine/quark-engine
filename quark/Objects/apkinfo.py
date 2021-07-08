@@ -10,7 +10,7 @@ import re
 from androguard.core import androconf
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.Objects.bytecodeobject import BytecodeObject
+from quark.Objects.struct.bytecodeobject import BytecodeObject
 
 
 class Apkinfo:

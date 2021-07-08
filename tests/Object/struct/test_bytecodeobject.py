@@ -1,6 +1,5 @@
 import pytest
-
-from quark.Objects.bytecodeobject import BytecodeObject
+from quark.Objects.struct.bytecodeobject import BytecodeObject
 
 
 @pytest.fixture()
@@ -17,7 +16,6 @@ def bytecode_obj():
 
 
 class TestBytecodeObject:
-
     def test_init(self, bytecode_obj):
         with pytest.raises(TypeError):
             bytecode_obj_with_no_argu = BytecodeObject()

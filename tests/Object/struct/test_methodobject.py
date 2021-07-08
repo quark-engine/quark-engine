@@ -1,4 +1,4 @@
-from quark.Objects.methodobject import MethodObject
+from quark.Objects.struct.methodobject import MethodObject
 
 
 class TestMethodObject:

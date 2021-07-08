@@ -6,7 +6,7 @@ import json
 import os
 
 
-class QuarkRule:
+class RuleObject:
     """RuleObject is used to store the rule from json file"""
 
     __slots__ = [

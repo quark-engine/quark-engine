@@ -1,9 +1,9 @@
-import pytest
 from unittest.mock import patch
 
-from quark.Evaluator.pyeval import PyEval, MAX_REG_COUNT
-from quark.Objects.tableobject import TableObject
-from quark.Objects.registerobject import RegisterObject
+import pytest
+from quark.Evaluator.pyeval import MAX_REG_COUNT, PyEval
+from quark.Objects.struct.registerobject import RegisterObject
+from quark.Objects.struct.tableobject import TableObject
 
 
 @pytest.fixture()
