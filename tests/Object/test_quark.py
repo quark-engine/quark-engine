@@ -3,7 +3,7 @@ import pytest
 import requests
 
 from quark.Objects.quark import Quark
-from quark.Objects.ruleobject import RuleObject
+from quark.Objects.struct.ruleobject import RuleObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"

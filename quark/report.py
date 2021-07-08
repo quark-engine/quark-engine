@@ -5,7 +5,7 @@
 import os
 
 from quark.Objects.quark import Quark
-from quark.Objects.ruleobject import RuleObject
+from quark.Objects.struct.ruleobject import RuleObject
 
 
 class Report:

@@ -12,7 +12,7 @@ from tqdm import tqdm
 from quark import __version__
 from quark import config
 from quark.Objects.quark import Quark
-from quark.Objects.ruleobject import RuleObject
+from quark.Objects.struct.ruleobject import RuleObject
 from quark.logo import logo
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
