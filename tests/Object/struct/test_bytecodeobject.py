@@ -1,6 +1,5 @@
 import pytest
-
-from quark.Objects.bytecodeobject import BytecodeObject
+from quark.Objects.struct.bytecodeobject import BytecodeObject
 
 
 @pytest.fixture()
