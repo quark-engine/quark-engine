@@ -51,7 +51,7 @@ class TestTableObject:
         try:
             table_obj.insert(index, data)
         except Exception:
-            pytest.fail('Should not raise exceptions.')
+            pytest.fail("Should not raise exceptions.")
 
     def test_get_obj_list_before_insertion(self, table_obj):
         assert table_obj.get_obj_list(3) == []
