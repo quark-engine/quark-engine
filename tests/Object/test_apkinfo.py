@@ -169,3 +169,21 @@ class TestApkinfo:
         assert str(check_method.class_name) == expect_class_name
         assert str(check_method.name) == expect_name
         assert str(check_method.descriptor) == expect_descriptor
+
+    def test_lowerfunc(self, apkinfo):
+        method = apkinfo.find_method(
+            "Lcom/example/google/service/WebServiceCalling;",
+            "Send",
+            "(Landroid/os/Handler; Ljava/lang/String;)V",
+        )
+
+        expect_method = apkinfo.find_method(
+            "Ljava/lang/StringBuilder;",
+            "append",
+            "(Ljava/lang/String;)Ljava/lang/StringBuilder;",
+        )
+        expect_offset = 42
+
+        upper_methods = apkinfo.lowerfunc(method)
+
+        assert (expect_method, expect_offset) in upper_methods

@@ -69,25 +69,28 @@ def leaf_method_2(analysis_object):
 
 
 def test_wrapper_lookup_with_result(
-    parent_method, connect_method_1, leaf_method_1
+    analysis_object, parent_method, connect_method_1, leaf_method_1
 ):
     path = []
 
-    wrapper_lookup(path, parent_method, leaf_method_1)
+    wrapper_lookup(analysis_object, path, parent_method, leaf_method_1)
 
     assert path == [connect_method_1]
 
 
-def test_wrapper_lookup_with_no_result(leaf_method_1, parent_method):
+def test_wrapper_lookup_with_no_result(
+    analysis_object, leaf_method_1, parent_method
+):
     path = []
 
-    wrapper_lookup(path, leaf_method_1, parent_method)
+    wrapper_lookup(analysis_object, path, leaf_method_1, parent_method)
 
     assert path == []
 
 
 def test_call_graph(
     parent_method,
+    analysis_object,
     connect_method_1,
     connect_method_2,
     leaf_method_1,
@@ -95,13 +98,17 @@ def test_call_graph(
 ):
     call_graph_analysis = {
         "parent": parent_method,
+        "apkinfo": analysis_object,
         "first_call": connect_method_1,
         "second_call": connect_method_2,
         "first_api": leaf_method_1,
         "second_api": leaf_method_2,
         "crime": "For test only.",
     }
-    expected_file_name = f"call_graph_image/{parent_method.name}_{connect_method_1.name}_{connect_method_2.name}"
+    expected_file_name = (
+        f"call_graph_image/{parent_method.name}_{connect_method_1.name}"
+        f"_{connect_method_2.name}"
+    )
 
     call_graph(call_graph_analysis)
 

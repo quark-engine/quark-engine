@@ -137,7 +137,7 @@ class Quark:
 
                 seq_table = [
                     (call, number)
-                    for _, call, number in mutual_parent.get_xref_to()
+                    for call, number in self.apkinfo.lowerfunc(mutual_parent)
                     if call in (first_call_method, second_call_method)
                 ]
 

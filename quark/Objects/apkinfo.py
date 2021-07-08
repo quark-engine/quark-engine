@@ -170,6 +170,18 @@ class Apkinfo:
         """
         return {call for _, call, _ in method_analysis.get_xref_from()}
 
+    @functools.lru_cache()
+    def lowerfunc(self, method_analysis):
+        """
+        Return the xref from method from given method analysis instance.
+
+        :param method_analysis: the method analysis in androguard
+        :return: a set of all xref from functions
+        """
+        return {
+            (call, offset) for _, call, offset in method_analysis.get_xref_to()
+        }
+
     def get_method_bytecode(self, method_analysis):
         """
         Return the corresponding bytecode according to the

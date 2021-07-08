@@ -9,10 +9,10 @@ from graphviz import Digraph
 from prompt_toolkit.shortcuts import checkboxlist_dialog
 
 
-def wrapper_lookup(wrapper, top_method, native_api):
+def wrapper_lookup(apkinfo, wrapper, top_method, native_api):
     next_level = []
 
-    for _, method, _ in top_method.get_xref_to():
+    for method, _ in apkinfo.lowerfunc(top_method):
         if method == native_api:
             wrapper.append(top_method)
             return
@@ -22,7 +22,7 @@ def wrapper_lookup(wrapper, top_method, native_api):
             next_level.append(method)
 
     for next_level_method in next_level:
-        wrapper_lookup(wrapper, next_level_method, native_api)
+        wrapper_lookup(apkinfo, wrapper, next_level_method, native_api)
 
 
 def call_graph(call_graph_analysis):
@@ -31,6 +31,7 @@ def call_graph(call_graph_analysis):
     """
 
     parent_function = call_graph_analysis["parent"]
+    apkinfo = call_graph_analysis["apkinfo"]
     first_call = call_graph_analysis["first_call"]
     second_call = call_graph_analysis["second_call"]
     first_api = call_graph_analysis["first_api"]
@@ -41,9 +42,9 @@ def call_graph(call_graph_analysis):
     second_wrapper = []
 
     if first_call != first_api:
-        wrapper_lookup(first_wrapper, first_call, first_api)
+        wrapper_lookup(apkinfo, first_wrapper, first_call, first_api)
     if second_call != second_api:
-        wrapper_lookup(second_wrapper, second_call, second_api)
+        wrapper_lookup(apkinfo, second_wrapper, second_call, second_api)
 
     # Initialize the Digraph object
     dot = Digraph(
