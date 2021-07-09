@@ -3,7 +3,7 @@ import os
 
 import pytest
 import requests
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp as Apkinfo
 from quark.Objects.quark import MAX_SEARCH_LAYER
 from quark.utils.output import (
     get_rule_classification_data,

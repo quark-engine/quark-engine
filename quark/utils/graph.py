@@ -77,7 +77,7 @@ def call_graph(call_graph_analysis):
         p, r = str(parent_function.descriptor).split(")")
         mutual_parent_function_description.node(
             f"{parent_function.full_name}",
-            label=f"Access: {parent_function.access}\nClass: {parent_function.class_name}\nMethod: {parent_function.name}\n Parameter: {p})\n Return: {r}",
+            label=f"Access: {parent_function.access_flags}\nClass: {parent_function.class_name}\nMethod: {parent_function.name}\n Parameter: {p})\n Return: {r}",
             shape="none",
             fontcolor="blue",
             fontname="Courier New",
@@ -96,7 +96,7 @@ def call_graph(call_graph_analysis):
 
                 wrapper.node(
                     f"{wp_func.full_name}",
-                    label=f"Access: {wp_func.access}\nClass: {wp_func.class_name}\nMethod: {wp_func.name}\n Parameter: {p})\n Return: {r}",
+                    label=f"Access: {wp_func.access_flags}\nClass: {wp_func.class_name}\nMethod: {wp_func.name}\n Parameter: {p})\n Return: {r}",
                     style="rounded",
                     fontcolor="blue",
                     penwidth="1",
@@ -120,7 +120,7 @@ def call_graph(call_graph_analysis):
                 p, r = str(wp_func.descriptor).split(")")
                 wrapper.node(
                     f"{wp_func.full_name}",
-                    label=f"Access: {wp_func.access}\nClass: {wp_func.class_name}\nMethod: {wp_func.name}\n Parameter: {p})\n Return: {r}",
+                    label=f"Access: {wp_func.access_flags}\nClass: {wp_func.class_name}\nMethod: {wp_func.name}\n Parameter: {p})\n Return: {r}",
                     style="rounded",
                     fontcolor="blue",
                     penwidth="1",
