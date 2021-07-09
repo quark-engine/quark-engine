@@ -309,6 +309,10 @@ class Quark:
         first_api_xref_from = self.apkinfo.upperfunc(first_api)
         second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
+        if not (first_api_xref_from and second_api_xref_from):
+            # Exit if the upper function is not found (for Rizin library).
+            return
+
         mutual_parent_function_list = self.find_intersection(
             first_api_xref_from, second_api_xref_from
         )
