@@ -6,9 +6,17 @@
 class RegisterObject:
     """The RegisterObject is used to record the state of each register"""
 
-    __slots__ = ["_register_name", "_value", "_called_by_func"]
+    __slots__ = [
+        "_register_name",
+        "_value",
+        "_called_by_func",
+        "_current_type",
+        "_type_history",
+    ]
 
-    def __init__(self, register_name, value, called_by_func=None):
+    def __init__(
+        self, register_name, value, called_by_func=None, value_type=None
+    ):
         """
         A data structure for creating the bytecode variable object, which
         used to record the state of each register.
@@ -23,12 +31,14 @@ class RegisterObject:
         """
         self._register_name = register_name
         self._value = value
+        self._current_type = value_type
+        self._type_history = []
         self._called_by_func = []
         if called_by_func is not None:
             self._called_by_func.append(called_by_func)
 
     def __repr__(self):
-        return f"<VarabileObject-register:{self._register_name}, value:{self._value}, called_by_func:{','.join(self._called_by_func)}>"
+        return f"<VarabileObject-register:{self._register_name}, value:{self._value}, called_by_func:{','.join(self._called_by_func)}, current_type:{self._value_type}>"
 
     def __eq__(self, obj):
         return (
@@ -36,6 +46,7 @@ class RegisterObject:
             and obj.called_by_func == self.called_by_func
             and obj.register_name == self.register_name
             and obj.value == self.value
+            and obj.current_type == self.current_type
         )
 
     @property
@@ -56,6 +67,7 @@ class RegisterObject:
         :return: None
         """
         self._called_by_func.append(called_by_func)
+        self._type_history.append(self._current_type)
 
     @property
     def register_name(self):
@@ -94,6 +106,24 @@ class RegisterObject:
         :return: None
         """
         self._value = value
+
+    @property
+    def current_type(self):
+        """
+        Get the type of the value in the register
+
+        :return: a plant text that describes a data type
+        :rtype: str
+        """
+        return self._current_type
+
+    @current_type.setter
+    def current_type(self, value):
+        self._current_type = value
+
+    @property
+    def type_histroy(self):
+        return self._type_history
 
     @property
     def hash_index(self):
