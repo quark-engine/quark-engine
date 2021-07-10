@@ -209,28 +209,27 @@ class TestApkinfo:
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
-                ["v15", "v14"],
-                (
-                    "Lcom/example/google/service/SMSReceiver;->"
-                    "_Context Landroid/content/Context;"
-                ),
+                ["v5", "v8"],
+                "Landroid/support/v4/app/FragmentManagerImpl;->mTmpActions [Ljava/lang/Runnable;",
             ),
             BytecodeObject(
                 "invoke-direct",
-                ["v14", "v8"],
-                (
-                    "Lcom/example/google/service/SMSReceiver;"
-                    "->isContact(Ljava/lang/String;)Ljava/lang/Boolean;"
-                ),
+                ["v5", "v6"],
+                "Ljava/lang/IllegalStateException;-><init>(Ljava/lang/String;)V",
             ),
-            BytecodeObject("array-length", ["v10", "v6"], None),
-            BytecodeObject("return-void", None, None),
+            BytecodeObject("array-length", ["v5", "v5"], None),
+            BytecodeObject(
+                "invoke-static",
+                [],
+                "Landroid/os/Looper;->myLooper()Landroid/os/Looper;",
+            ),
+            BytecodeObject("return", ["v0"], None),
         ]
 
         method = apkinfo.find_method(
-            class_name="Lcom/example/google/service/SMSReceiver;",
-            method_name="onReceive",
-            descriptor="(Landroid/content/Context; Landroid/content/Intent;)V",
+            class_name="Landroid/support/v4/app/FragmentManagerImpl;",
+            method_name="execPendingActions",
+            descriptor="()Z",
         )
 
         bytecodes = list(apkinfo.get_method_bytecode(method))
