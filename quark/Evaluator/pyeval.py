@@ -50,6 +50,7 @@ class PyEval:
             "move-result-object": self.MOVE_RESULT_OBJECT,
             # instance-kind
             "new-instance": self.NEW_INSTANCE,
+            "new-array": self.NEW_ARRAY,
             # const-kind
             "const-string": self.CONST_STRING,
             "const-string/jumbo": self.CONST_STRING,
@@ -75,12 +76,12 @@ class PyEval:
             self.eval[ins] = self.FILLED_NEW_ARRAY_KIND
 
         # aget-kind
-        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+        for postfix in ("", "-object", "-boolean", "-byte", "-char", "-short"):
             self.eval[f"aget{postfix}"] = self.AGET_KIND
             self.eval["aget-wide"] = self.AGET_WIDE_KIND
 
         # aput-kind
-        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+        for postfix in ("", "-object", "-boolean", "-byte", "-char", "-short"):
             self.eval[f"aput{postfix}"] = self.APUT_KIND
             self.eval["aput-wide"] = self.APUT_WIDE_KIND
 
@@ -119,8 +120,10 @@ class PyEval:
         self.eval["move-exception"] = lambda ins: self._assign_value(
             (ins[0], ins[1], "Exception")
         )
-        self.eval["fill-array-data"] = lambda ins: self._assign_value(
-            (ins[0], ins[1], "Embedded-array-data")
+        self.eval[
+            "fill-array-data"
+        ] = lambda ins: self._move_value_and_data_to_register(
+            (ins[0], ins[1], ins[1], ins[2]), "Embedded-array-data()["
         )
 
         self.type_mapping = {
@@ -145,7 +148,7 @@ class PyEval:
         """
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1: len(instruction) - 1]
+        reg_list = instruction[1 : len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -320,6 +323,17 @@ class PyEval:
         self._assign_value(instruction)
 
     @logger
+    def NEW_ARRAY(self, instruction):
+        try:
+            self._move_value_to_register(
+                instruction[:-1],
+                "new-array()[({src0})",
+                value_type=instruction[-1],
+            )
+        except IndexError as e:
+            log.exception(f"{e} in NEW_ARRAY")
+
+    @logger
     def CONST_STRING(self, instruction):
         """
         const-string vx,string_id
@@ -417,9 +431,19 @@ class PyEval:
 
         It means vx = vy[vz].
         """
+
         try:
+            if "-" in instruction[0] and "object" not in instruction[0]:
+                index = instruction[0].index("-") + 1
+                value_type = self.type_mapping[instruction[0][index:]]
+            else:
+                array_reg_index = int(instruction[2][1:])
+                value_type = self.table_obj.pop(array_reg_index).current_type[
+                    1:
+                ]
+
             self._move_value_to_register(
-                instruction, "{src0}[{src1}]", wide=True
+                instruction, "{src0}[{src1}]", wide=True, value_type=value_type
             )
         except IndexError as e:
             log.exception(f"{e} in AGET_OBJECT")
@@ -434,20 +458,33 @@ class PyEval:
 
     @logger
     def FILLED_NEW_ARRAY_KIND(self, instruction):
+        value_type = instruction[-1]
+
         try:
-            self._invoke([instruction] + ["new-array["])
+            self._invoke([instruction] + [f"new-array(){value_type}"])
         except IndexError as e:
             log.exception(f"{e} in MOVE_KIND")
 
     @logger
     def AGET_WIDE_KIND(self, instruction):
+        array_reg_index = int(instruction[2][1:])
+        value_type = self.table_obj.pop(array_reg_index).current_type[1:]
+
         try:
             destination = int(instruction[1][1:])
             source_list = [int(reg[1:]) for reg in instruction[2:]]
 
-            self._transfer_register(source_list, destination, "{src0}[{src1}]")
             self._transfer_register(
-                source_list, destination + 1, "{src0}[{src1}]"
+                source_list,
+                destination,
+                "{src0}[{src1}]",
+                value_type=value_type,
+            )
+            self._transfer_register(
+                source_list,
+                destination + 1,
+                "{src0}[{src1}]",
+                value_type=value_type,
             )
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
