@@ -10,7 +10,8 @@ import pandas as pd
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
-from quark.Objects.apkinfo import AndroguardImp as Apkinfo
+from quark.Objects.apkinfo import AndroguardImp
+from quark.Objects.rzapkinfo import RizinImp
 from quark.utils import tools
 from quark.utils.colors import (
     red,
@@ -37,12 +38,20 @@ MAX_SEARCH_LAYER = 3
 class Quark:
     """Quark module is used to check quark's five-stage theory"""
 
-    def __init__(self, apk):
+    def __init__(self, apk, core_library="androguard"):
         """
 
         :param apk: the filename of the apk.
         """
-        self.apkinfo = Apkinfo(apk)
+        core_library = core_library.lower()
+        if core_library == "rizin":
+            self.apkinfo = RizinImp(apk)
+        elif core_library == "androguard":
+            self.apkinfo = AndroguardImp(apk)
+        else:
+            raise ValueError(
+                f"Unsupported core library for Quark: {core_library}"
+            )
 
         self.quark_analysis = QuarkAnalysis()
 
@@ -299,6 +308,10 @@ class Quark:
         # Looking for the first layer of the upper function
         first_api_xref_from = self.apkinfo.upperfunc(first_api)
         second_api_xref_from = self.apkinfo.upperfunc(second_api)
+
+        if not (first_api_xref_from and second_api_xref_from):
+            # Exit if the upper function is not found (for Rizin library).
+            return
 
         mutual_parent_function_list = self.find_intersection(
             first_api_xref_from, second_api_xref_from

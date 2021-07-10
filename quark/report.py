@@ -16,7 +16,7 @@ class Report:
     def __init__(self):
         self.quark = None
 
-    def analysis(self, apk, rule):
+    def analysis(self, apk, rule, core_library="androguard"):
         """
         The main function of Quark-Engine analysis, the analysis is based on the provided APK file.
 
@@ -25,7 +25,7 @@ class Report:
         :return: None
         """
 
-        self.quark = Quark(apk)
+        self.quark = Quark(apk, core_library)
 
         if os.path.isdir(rule):
 

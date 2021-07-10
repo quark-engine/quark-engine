@@ -3,8 +3,9 @@ import zipfile
 
 import pytest
 import requests
-from quark.Objects.apkinfo import AndroguardImp as Apkinfo
+from quark.Objects.apkinfo import AndroguardImp
 from quark.Objects.interface.baseapkinfo import BaseApkinfo
+from quark.Objects.rzapkinfo import RizinImp
 from quark.Objects.struct.bytecodeobject import BytecodeObject
 from quark.Objects.struct.methodobject import MethodObject
 
@@ -24,8 +25,12 @@ def apk_path():
     return APK_FILENAME
 
 
-@pytest.fixture(scope="function")
-def apkinfo(apk_path):
+@pytest.fixture(
+    scope="function",
+    params=((AndroguardImp), (RizinImp)),
+)
+def apkinfo(request, apk_path):
+    Apkinfo, apk_path = request.param, apk_path
     apkinfo = Apkinfo(apk_path)
 
     yield apkinfo
@@ -33,7 +38,10 @@ def apkinfo(apk_path):
 
 @pytest.fixture(scope="function")
 def dex_file():
-    APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples/raw/master/Ahmyth.apk"
+    APK_SOURCE = (
+        "https://github.com/quark-engine/apk-malware-samples"
+        "/raw/master/Ahmyth.apk"
+    )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
 
@@ -143,7 +151,12 @@ class TestApkinfo:
                 "()V",
             ),
         }
-        assert len(apkinfo.all_methods) == 5452
+
+        if apkinfo.core_library == "androguard":
+            assert len(apkinfo.all_methods) == 5452
+        elif apkinfo.core_library == "rizin":
+            assert len(apkinfo.all_methods) == 5273
+
         assert test_custom_method.issubset(apkinfo.all_methods)
 
     def test_find_method(self, apkinfo):
