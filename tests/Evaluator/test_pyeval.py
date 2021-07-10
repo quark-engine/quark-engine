@@ -296,6 +296,32 @@ class TestPyEval:
         )
         assert pyeval.table_obj.pop(8).called_by_func == []
 
+    def test_const_string_jumbo(self, pyeval):
+        instruction = [
+            "const-string/jumbo",
+            "v8",
+            "https://github.com/quark-engine/quark-engine",
+        ]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(8) == RegisterObject(
+            "v8", "https://github.com/quark-engine/quark-engine"
+        )
+
+    def test_const_class(self, pyeval):
+        instruction = [
+            "const-class",
+            "v8",
+            "Ljava/lang/Object;->toString()",
+        ]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(8) == RegisterObject(
+            "v8", "Ljava/lang/Object;->toString()"
+        )
+
     # Tests for const
     def test_const(self, pyeval):
         instruction = ["const", "v1", "string value"]

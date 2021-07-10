@@ -53,6 +53,8 @@ class PyEval:
             "new-instance": self.NEW_INSTANCE,
             # const-kind
             "const-string": self.CONST_STRING,
+            "const-string/jumbo": self.CONST_STRING,
+            "const-class": self.CONST,
             "const": self.CONST,
             "const/4": self.CONST_FOUR,
             "const/16": self.CONST_SIXTEEN,
