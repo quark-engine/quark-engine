@@ -4,6 +4,7 @@
 
 import functools
 import re
+from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
 
@@ -252,6 +253,18 @@ class AndroguardImp(BaseApkinfo):
                 result["second_hex"] = ins.get_hex()
 
         return result
+
+    @property
+    def class_hierarchy(self) -> Dict[str, Set[str]]:
+        hierarchy_dict = defaultdict(set)
+
+        for _class in self.analysis.get_classes():
+            hierarchy_dict[str(_class.name)].add(str(_class.extends))
+            hierarchy_dict[str(_class.name)].union(
+                str(implements) for implements in _class.implements
+            )
+
+        return hierarchy_dict
 
     @staticmethod
     @functools.lru_cache

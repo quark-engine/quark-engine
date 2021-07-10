@@ -331,6 +331,28 @@ class RizinImp(BaseApkinfo):
 
         return result
 
+    @property
+    def class_hierarchy(self) -> Dict[str, Set[str]]:
+        hierarchy_dict = defaultdict(set)
+
+        for dex_index in range(self._number_of_dex):
+
+            rz = self._get_rz(dex_index)
+
+            hierarchy_graph = rz.cmd("icg").split("\n")
+
+            for element in hierarchy_graph:
+                if element.startswith("age"):
+                    element_part = element.split()
+                    for index, class_name in enumerate(element_part):
+                        if not class_name.endswith(";"):
+                            element_part[index] = class_name + ";"
+
+                    for subclass in element_part[2:]:
+                        hierarchy_dict[subclass].add(element_part[1])
+
+        return hierarchy_dict
+
     def _get_method_by_address(self, address: int) -> MethodObject:
         if address < 0:
             return None
