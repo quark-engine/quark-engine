@@ -118,7 +118,7 @@ class PyEval:
                     self.eval[f"{prefix}-{_type}{postfix}"] = self.BINOP_KIND
 
         self.eval["move-exception"] = lambda ins: self._assign_value(
-            (ins[0], ins[1], "Exception")
+            (ins[0], ins[1], "Exception"), value_type="Ljava/lang/Throwable;"
         )
         self.eval[
             "fill-array-data"
@@ -539,13 +539,20 @@ class PyEval:
     def CAST_TYPE(self, instruction):
         try:
             part = instruction[0].split("-")
+            value_type = self.type_mapping[part[1]]
+
             if part[0] in ("double", "long"):
                 self._move_value_to_register(
                     instruction + [f"v{int(instruction[2][1:])+1}"],
                     "casting({src0}, {src1})",
+                    value_type=value_type,
                 )
             elif part[1] in ("double", "long"):
-                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    instruction,
+                    "casting({src0})",
+                    value_type=value_type,
+                )
                 self._move_value_to_register(
                     [
                         instruction[0],
@@ -553,30 +560,50 @@ class PyEval:
                         instruction[2],
                     ],
                     "casting({src0})",
+                    value_type=value_type,
                 )
             else:
-                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    instruction,
+                    "casting({src0})",
+                    value_type=value_type,
+                )
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
 
     @logger
     def BINOP_KIND(self, instruction):
+        mnemonic = instruction[0]
+        index = mnemonic.index("-") + 1
+        if "/" in mnemonic:
+            r_index = mnemonic.index("/")
+            value_type = self.type_mapping[mnemonic[index:r_index]]
+        else:
+            value_type = self.type_mapping[mnemonic[index:]]
+
         try:
-            wide = any(
-                wide_type in instruction[0] for wide_type in ("double", "long")
-            )
+            wide = value_type in ("D", "J")
 
             if "/2addr" in instruction[0]:
                 self._combine_value_to_register(
-                    instruction, "binop({src0}, {src1})", wide
+                    instruction,
+                    "binop({src0}, {src1})",
+                    wide,
+                    value_type=value_type,
                 )
             elif "/lit" in instruction[0]:
                 self._move_value_and_data_to_register(
-                    instruction, "binop({src0}, {data})", wide
+                    instruction,
+                    "binop({src0}, {data})",
+                    wide,
+                    value_type=value_type,
                 )
             else:
                 self._move_value_to_register(
-                    instruction, "binop({src0}, {src1})", wide
+                    instruction,
+                    "binop({src0}, {src1})",
+                    wide,
+                    value_type=value_type,
                 )
         except IndexError as e:
             log.exception(f"{e} in BINOP_KIND")
