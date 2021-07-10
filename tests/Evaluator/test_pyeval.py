@@ -58,6 +58,24 @@ def pyeval():
     del pyeval
 
 
+MOVE_KIND = [
+    prefix + postfix
+    for prefix, postfix in itertools.product(
+        ["move", "move-object"], ["", "/from16", "/16"]
+    )
+] + ["array-length"]
+MOVE_WIDE_KIND = ["move-wide" + postfix for postfix in ["", "/from16", "/16"]]
+
+
+@pytest.fixture(scope="module", params=MOVE_KIND)
+def move_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=MOVE_WIDE_KIND)
+def move_wide_kind(request):
+    return request.param
+
 class TestPyEval:
     def test_init(self):
         pyeval = PyEval()
@@ -358,8 +376,26 @@ class TestPyEval:
             pyeval.CONST_HIGHSIXTEEN(instruction)
             mock.assert_called_once_with(instruction)
 
-    # Tests for aget-object
-    def test_aget_object(self, pyeval):
+    # Tests for move-kind
+    def test_move_kind(self, pyeval, move_kind):
+        instruction = [move_kind, "v1", "v4"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "Lcom/google/progress/SMSHelper;"
+        )
+
+    def test_move_wide_kind(self, pyeval, move_wide_kind):
+        instruction = [move_wide_kind, "v1", "v4"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "Lcom/google/progress/SMSHelper;"
+        )
+        assert pyeval.table_obj.pop(2) == RegisterObject("v2", "some_number")
+
         """
         aget-object vx,vy,vz
 

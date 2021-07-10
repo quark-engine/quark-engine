@@ -7,7 +7,6 @@
 # http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html
 
 import logging
-import re
 from datetime import datetime
 
 from quark.Objects.struct.registerobject import RegisterObject
@@ -66,6 +65,12 @@ class PyEval:
             # array
             "aget-object": self.AGET_KIND,
         }
+
+        # move-kind
+        for prefix in ("move", "move-object", "move-wide"):
+            for postfix in ("", "/from16", "/16"):
+                self.eval[f"{prefix}{postfix}"] = self.MOVE_KIND
+        self.eval["array-length"] = self.MOVE_KIND
 
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
@@ -338,8 +343,14 @@ class PyEval:
         It means vx = vy[vz].
         """
 
-        reg = instruction[1]
-        index = int(reg[1:])
+    @logger
+    def MOVE_KIND(self, instruction):
+        try:
+            wide = "wide" in instruction[0]
+            self._move_value_to_register(instruction, "{src0}", wide=wide)
+        except IndexError as e:
+            log.exception(f"{e} in MOVE_KIND")
+
 
         try:
 
@@ -360,6 +371,62 @@ class PyEval:
 
     def show_table(self):
         return self.table_obj.get_table()
+
+    def _move_value_to_register(self, instruction, str_format, wide=False):
+        destination = int(instruction[1][1:])
+        source_list = [int(reg[1:]) for reg in instruction[2:]]
+        self._transfer_register(source_list, destination, str_format)
+
+        if wide:
+            pair_source_list = [src + 1 for src in source_list]
+            pair_destination = destination + 1
+            self._transfer_register(
+                pair_source_list, pair_destination, str_format
+            )
+
+    def _move_value_and_data_to_register(
+        self, instruction, str_format, wide=False
+    ):
+        destination = int(instruction[1][1:])
+        source_list = [int(reg[1:]) for reg in instruction[2:-1]]
+        data = instruction[-1]
+
+        self._transfer_register(
+            source_list, destination, str_format, data=data
+        )
+
+        if wide:
+            self._transfer_register(
+                source_list, destination + 1, str_format, data=data
+            )
+
+    def _combine_value_to_register(self, instruction, str_format, wide=False):
+        self._move_value_to_register(
+            instruction[0:2] + instruction[1:], str_format, wide
+        )
+
+    def _transfer_register(
+        self,
+        source_list,
+        destination,
+        str_format,
+        data=None,
+    ):
+        source_register_list = [
+            self.table_obj.pop(index) for index in source_list
+        ]
+
+        value_dict = {
+            f"src{index}": register.value
+            for index, register in enumerate(source_register_list)
+        }
+        value_dict["data"] = data
+
+        new_register = RegisterObject(
+            f"v{destination}", str_format.format(**value_dict)
+        )
+
+        self.table_obj.insert(destination, new_register)
 
 
 if __name__ == "__main__":
