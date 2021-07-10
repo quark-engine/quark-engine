@@ -54,7 +54,7 @@ class PyEval:
             # const-kind
             "const-string": self.CONST_STRING,
             "const-string/jumbo": self.CONST_STRING,
-            "const-class": self.CONST,
+            "const-class": self.CONST_CLASS,
             "const": self.CONST,
             "const/4": self.CONST_FOUR,
             "const/16": self.CONST_SIXTEEN,
@@ -191,16 +191,16 @@ class PyEval:
 
             log.exception(f"{e} in _move_result")
 
-    def _assign_value(self, instruction):
+    def _assign_value(self, instruction, value_type=""):
 
         reg = instruction[1]
         value = instruction[2]
         index = int(reg[1:])
 
-        variable_object = RegisterObject(reg, value)
+        variable_object = RegisterObject(reg, value, value_type=value_type)
         self.table_obj.insert(index, variable_object)
 
-    def _assign_value_wide(self, instruction):
+    def _assign_value_wide(self, instruction, value_type=""):
         """
         For 64 bit, it has two register, which is vx and vx+1
         """
@@ -209,8 +209,10 @@ class PyEval:
         index = int(reg[1:])
         reg_plus_one = f"v{index + 1}"
 
-        variable_object = RegisterObject(reg, value)
-        variable_object2 = RegisterObject(reg_plus_one, value)
+        variable_object = RegisterObject(reg, value, value_type=value_type)
+        variable_object2 = RegisterObject(
+            reg_plus_one, value, value_type=value_type
+        )
         self.table_obj.insert(index, variable_object)
         self.table_obj.insert(index + 1, variable_object2)
 
@@ -320,7 +322,8 @@ class PyEval:
         Store variables to vx, and then insert the VariableObject into table.
         """
 
-        self._assign_value(instruction)
+        self._assign_value(instruction, value_type=instruction[2])
+
 
     @logger
     def NEW_ARRAY(self, instruction):
@@ -343,7 +346,11 @@ class PyEval:
         Store string variable to vx, and then insert the VariableObject into table.
         """
 
-        self._assign_value(instruction)
+        self._assign_value(instruction, value_type="Ljava/lang/String;")
+
+    @logger
+    def CONST_CLASS(self, instruction):
+        self._assign_value(instruction, value_type="Ljava/lang/Class;")
 
     @logger
     def CONST(self, instruction):

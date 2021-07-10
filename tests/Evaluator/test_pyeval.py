@@ -437,34 +437,27 @@ class TestPyEval:
         override_original_instruction = [
             "new-instance",
             "v4",
-            "override_value",
+            "Ljava/lang/Object;",
         ]
 
         pyeval.NEW_INSTANCE(instruction)
 
-        assert pyeval.table_obj.pop(3).register_name == "v3"
-        assert (
-            pyeval.table_obj.pop(
-                3,
-            ).value
-            == "Lcom/google/progress/SMSHelper;"
+        assert pyeval.table_obj.pop(3) == RegisterObject(
+            "v3",
+            "Lcom/google/progress/SMSHelper;",
+            value_type="Lcom/google/progress/SMSHelper;",
         )
-        assert pyeval.table_obj.pop(3).called_by_func == []
-
-        assert pyeval.table_obj.pop(4).register_name == "v4"
-        assert (
-            pyeval.table_obj.pop(
-                4,
-            ).value
-            == "Lcom/google/progress/SMSHelper;"
+        assert pyeval.table_obj.pop(4) == RegisterObject(
+            "v4",
+            "Lcom/google/progress/SMSHelper;",
+            value_type="Lcom/google/progress/SMSHelper;",
         )
-        assert pyeval.table_obj.pop(4).called_by_func == []
 
         pyeval.NEW_INSTANCE(override_original_instruction)
 
-        assert pyeval.table_obj.pop(4).register_name == "v4"
-        assert pyeval.table_obj.pop(4).value == "override_value"
-        assert pyeval.table_obj.pop(4).called_by_func == []
+        assert pyeval.table_obj.pop(4) == RegisterObject(
+            "v4", "Ljava/lang/Object;", value_type="Ljava/lang/Object;"
+        )
 
     # Tests for const_string
     def test_const_string(self, pyeval):
@@ -476,12 +469,11 @@ class TestPyEval:
 
         pyeval.CONST_STRING(instruction)
 
-        assert pyeval.table_obj.pop(8).register_name == "v8"
-        assert (
-            pyeval.table_obj.pop(8).value
-            == "https://github.com/quark-engine/quark-engine"
+        assert pyeval.table_obj.pop(8) == RegisterObject(
+            "v8",
+            "https://github.com/quark-engine/quark-engine",
+            value_type="Ljava/lang/String;",
         )
-        assert pyeval.table_obj.pop(8).called_by_func == []
 
     def test_const_string_jumbo(self, pyeval):
         instruction = [
@@ -493,20 +485,24 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.table_obj.pop(8) == RegisterObject(
-            "v8", "https://github.com/quark-engine/quark-engine"
+            "v8",
+            "https://github.com/quark-engine/quark-engine",
+            value_type="Ljava/lang/String;",
         )
 
     def test_const_class(self, pyeval):
         instruction = [
             "const-class",
             "v8",
-            "Ljava/lang/Object;->toString()",
+            "Landroid/telephony/SmsMessage;",
         ]
 
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.table_obj.pop(8) == RegisterObject(
-            "v8", "Ljava/lang/Object;->toString()"
+            "v8",
+            "Landroid/telephony/SmsMessage;",
+            value_type="Ljava/lang/Class;",
         )
 
     # Tests for const
