@@ -318,7 +318,7 @@ class TestPyEval:
 
         instruction = ["aget-object", "v1", "v2", "v3"]
 
-        pyeval.AGET_OBJECT(instruction)
+        pyeval.AGET_KIND(instruction)
 
         pyeval.table_obj.pop(1).register_name == "v1"
         pyeval.table_obj.pop(1).value = "some_list_like[1,2,3,4][2]"

@@ -60,7 +60,7 @@ class PyEval:
             "const-wide/32": self.CONST_WIDE_THIRTY_TWO,
             "const-wide/high16": self.CONST_WIDE_HIGHSIXTEEN,
             # array
-            "aget-object": self.AGET_OBJECT,
+            "aget-object": self.AGET_KIND,
         }
 
         self.table_obj = TableObject(MAX_REG_COUNT)
@@ -318,9 +318,9 @@ class PyEval:
         self._assign_value_wide(instruction)
 
     @logger
-    def AGET_OBJECT(self, instruction):
+    def AGET_KIND(self, instruction):
         """
-        aget-object vx,vy,vz
+        aget-kind vx,vy,vz
 
         Gets an object reference value of an object reference array into vx. The array is referenced by vy and is
         indexed by vz.
@@ -346,7 +346,7 @@ class PyEval:
             self.table_obj.insert(index, variable_object)
 
         except IndexError as e:
-            log.exception(f"{e} in AGET_OBJECT")
+            log.exception(f"{e} in AGET_KIND")
 
     def show_table(self):
         return self.table_obj.get_table()
