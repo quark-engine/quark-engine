@@ -619,7 +619,10 @@ class TestPyEval:
 
         assert pyeval.table_obj.pop(6) == RegisterObject(
             "v6",
-            "an_array[some_number]:(Lcom/google/progress/SMSHelper;, some_number)",
+            (
+                "an_array[some_number]:"
+                "(Lcom/google/progress/SMSHelper;, some_number)"
+            ),
         )
 
     # Tests for neg-kind and not-kind

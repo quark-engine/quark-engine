@@ -13,12 +13,12 @@ from quark.Objects.struct.registerobject import RegisterObject
 from quark.Objects.struct.tableobject import TableObject
 
 MAX_REG_COUNT = 40
-TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
+TIMESTAMPS = datetime.now().strftime("%Y-%m-%d")
 LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler = logging.FileHandler(LOG_FILENAME, mode='w')
-format_str = '%(asctime)s %(levelname)s [%(lineno)d]: %(message)s'
+handler = logging.FileHandler(LOG_FILENAME, mode="w")
+format_str = "%(asctime)s %(levelname)s [%(lineno)d]: %(message)s"
 handler.setFormatter(logging.Formatter(format_str))
 log.addHandler(handler)
 
@@ -151,7 +151,9 @@ class PyEval:
             if obj_stack:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
-                var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"
+                var_obj.called_by_func = (
+                    f"{executed_fuc}({','.join(value_of_reg_list)})"
+                )
 
         # push the return value into ret_stack
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")

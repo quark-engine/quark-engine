@@ -197,12 +197,18 @@ class TestApkinfo:
             BytecodeObject(
                 "iput-object",
                 ["v15", "v14"],
-                "Lcom/example/google/service/SMSReceiver;->_Context Landroid/content/Context;",
+                (
+                    "Lcom/example/google/service/SMSReceiver;->"
+                    "_Context Landroid/content/Context;"
+                ),
             ),
             BytecodeObject(
                 "invoke-direct",
                 ["v14", "v8"],
-                "Lcom/example/google/service/SMSReceiver;->isContact(Ljava/lang/String;)Ljava/lang/Boolean;",
+                (
+                    "Lcom/example/google/service/SMSReceiver;"
+                    "->isContact(Ljava/lang/String;)Ljava/lang/Boolean;"
+                ),
             ),
             BytecodeObject("array-length", ["v10", "v6"], None),
             BytecodeObject("return-void", None, None),
