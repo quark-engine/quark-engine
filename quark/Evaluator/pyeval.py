@@ -7,19 +7,18 @@
 # http://pallergabor.uw.hu/androidblog/dalvik_opcodes.html
 
 import logging
-import re
 from datetime import datetime
 
 from quark.Objects.struct.registerobject import RegisterObject
 from quark.Objects.struct.tableobject import TableObject
 
 MAX_REG_COUNT = 40
-TIMESTAMPS = datetime.now().strftime('%Y-%m-%d')
+TIMESTAMPS = datetime.now().strftime("%Y-%m-%d")
 LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler = logging.FileHandler(LOG_FILENAME, mode='w')
-format_str = '%(asctime)s %(levelname)s [%(lineno)d]: %(message)s'
+handler = logging.FileHandler(LOG_FILENAME, mode="w")
+format_str = "%(asctime)s %(levelname)s [%(lineno)d]: %(message)s"
 handler.setFormatter(logging.Formatter(format_str))
 log.addHandler(handler)
 
@@ -43,6 +42,8 @@ class PyEval:
             "invoke-static": self.INVOKE_STATIC,
             "invoke-virtual/range": self.INVOKE_VIRTUAL_RANGE,
             "invoke-interface": self.INVOKE_INTERFACE,
+            "invoke-polymorphic": self.INVOKE_POLYMORPHIC,
+            "invoke-custom": self.INVOKE_CUSTOM,
             # move-result-kind
             "move-result": self.MOVE_RESULT,
             "move-result-wide": self.MOVE_RESULT_WIDE,
@@ -51,6 +52,8 @@ class PyEval:
             "new-instance": self.NEW_INSTANCE,
             # const-kind
             "const-string": self.CONST_STRING,
+            "const-string/jumbo": self.CONST_STRING,
+            "const-class": self.CONST,
             "const": self.CONST,
             "const/4": self.CONST_FOUR,
             "const/16": self.CONST_SIXTEEN,
@@ -59,9 +62,66 @@ class PyEval:
             "const-wide/16": self.CONST_WIDE_SIXTEEN,
             "const-wide/32": self.CONST_WIDE_THIRTY_TWO,
             "const-wide/high16": self.CONST_WIDE_HIGHSIXTEEN,
-            # array
-            "aget-object": self.AGET_OBJECT,
         }
+
+        # move-kind
+        for prefix in ("move", "move-object", "move-wide"):
+            for postfix in ("", "/from16", "/16"):
+                self.eval[f"{prefix}{postfix}"] = self.MOVE_KIND
+        self.eval["array-length"] = self.MOVE_KIND
+
+        # filled-array-kind
+        for ins in ("filled-new-array", "filled-new-array/range"):
+            self.eval[ins] = self.FILLED_NEW_ARRAY_KIND
+
+        # aget-kind
+        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+            self.eval[f"aget{postfix}"] = self.AGET_KIND
+            self.eval["aget-wide"] = self.AGET_WIDE_KIND
+
+        # aput-kind
+        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+            self.eval[f"aput{postfix}"] = self.APUT_KIND
+            self.eval["aput-wide"] = self.APUT_WIDE_KIND
+
+        # neg-kind and not-kind
+        for prefix in ("neg", "not"):
+            self.eval[f"{prefix}-int"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-long"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-float"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-double"] = self.NEG_AND_NOT_KIND
+
+        # type casting
+        for first_type in ("int", "long", "float", "double"):
+            for second_type in ("int", "long", "float", "double"):
+                if first_type == second_type:
+                    continue
+                self.eval[f"{first_type}-{second_type}"] = self.CAST_TYPE
+
+        # binop_kind
+        for prefix in (
+            "add",
+            "sub",
+            "mul",
+            "div",
+            "rem",
+            "and",
+            "or",
+            "xor",
+            "shl",
+            "shr",
+            "ushr",
+        ):
+            for _type in ("int", "float", "double", "long"):
+                for postfix in ("", "/2addr", "/lit16", "/lit8"):
+                    self.eval[f"{prefix}-{_type}{postfix}"] = self.BINOP_KIND
+
+        self.eval["move-exception"] = lambda ins: self._assign_value(
+            (ins[0], ins[1], "Exception")
+        )
+        self.eval["fill-array-data"] = lambda ins: self._assign_value(
+            (ins[0], ins[1], "Embedded-array-data")
+        )
 
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
@@ -91,12 +151,14 @@ class PyEval:
             if obj_stack:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
-                var_obj.called_by_func = f"{executed_fuc}({','.join(value_of_reg_list)})"
+                var_obj.called_by_func = (
+                    f"{executed_fuc}({','.join(value_of_reg_list)})"
+                )
 
         # push the return value into ret_stack
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
-    def _move(self, instruction):
+    def _move_result(self, instruction):
 
         reg = instruction[1]
         index = int(reg[1:])
@@ -106,7 +168,7 @@ class PyEval:
             self.table_obj.insert(index, variable_object)
         except IndexError as e:
 
-            log.exception(f"{e} in _move")
+            log.exception(f"{e} in _move_result")
 
     def _assign_value(self, instruction):
 
@@ -174,6 +236,12 @@ class PyEval:
         """
         self._invoke(instruction)
 
+    def INVOKE_POLYMORPHIC(self, instruction):
+        self._invoke(instruction)
+
+    def INVOKE_CUSTOM(self, instruction):
+        self._invoke(instruction)
+
     @logger
     def MOVE_RESULT(self, instruction):
         """
@@ -184,7 +252,7 @@ class PyEval:
         Save the value returned by the previous function call to the vx register,and then insert the VariableObject
         into table.
         """
-        self._move(instruction)
+        self._move_result(instruction)
 
     @logger
     def MOVE_RESULT_WIDE(self, instruction):
@@ -215,7 +283,7 @@ class PyEval:
         into table.
         """
 
-        self._move(instruction)
+        self._move_result(instruction)
 
     @logger
     def NEW_INSTANCE(self, instruction):
@@ -318,38 +386,193 @@ class PyEval:
         self._assign_value_wide(instruction)
 
     @logger
-    def AGET_OBJECT(self, instruction):
+    def AGET_KIND(self, instruction):
         """
-        aget-object vx,vy,vz
+        aget-kind vx,vy,vz
 
         Gets an object reference value of an object reference array into vx. The array is referenced by vy and is
         indexed by vz.
 
         It means vx = vy[vz].
         """
-
-        reg = instruction[1]
-        index = int(reg[1:])
-
         try:
-
-            array_obj = self.table_obj.get_obj_list(
-                int(re.sub("[^0-9]", "", instruction[2][1:])),
-            ).pop()
-            array_index = self.table_obj.get_obj_list(
-                int(re.sub("[^0-9]", "", instruction[3])),
-            ).pop()
-
-            variable_object = RegisterObject(
-                reg, f"{array_obj.value}[{array_index.value}]",
+            self._move_value_to_register(
+                instruction, "{src0}[{src1}]", wide=True
             )
-            self.table_obj.insert(index, variable_object)
-
         except IndexError as e:
             log.exception(f"{e} in AGET_OBJECT")
 
+    @logger
+    def MOVE_KIND(self, instruction):
+        try:
+            wide = "wide" in instruction[0]
+            self._move_value_to_register(instruction, "{src0}", wide=wide)
+        except IndexError as e:
+            log.exception(f"{e} in MOVE_KIND")
+
+    @logger
+    def FILLED_NEW_ARRAY_KIND(self, instruction):
+        try:
+            self._invoke([instruction] + ["new-array["])
+        except IndexError as e:
+            log.exception(f"{e} in MOVE_KIND")
+
+    @logger
+    def AGET_WIDE_KIND(self, instruction):
+        try:
+            destination = int(instruction[1][1:])
+            source_list = [int(reg[1:]) for reg in instruction[2:]]
+
+            self._transfer_register(source_list, destination, "{src0}[{src1}]")
+            self._transfer_register(
+                source_list, destination + 1, "{src0}[{src1}]"
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def APUT_KIND(self, instruction):
+        try:
+            value, array_reference, index = instruction[1:]
+            self._move_value_to_register(
+                (None, array_reference, array_reference, index, value),
+                "{src0}[{src1}]:{src2}",
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def APUT_WIDE_KIND(self, instruction):
+        try:
+            value, array_reference, index = instruction[1:]
+            self._move_value_to_register(
+                (
+                    None,
+                    array_reference,
+                    array_reference,
+                    index,
+                    value,
+                    f"v{int(value[1:])+1}",
+                ),
+                "{src0}[{src1}]:({src2}, {src3})",
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def NEG_AND_NOT_KIND(self, instruction):
+        try:
+            wide = any(
+                wide_type in instruction[0] for wide_type in ("double", "long")
+            )
+            self._move_value_to_register(instruction, "{src0}", wide)
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def CAST_TYPE(self, instruction):
+        try:
+            part = instruction[0].split("-")
+            if part[0] in ("double", "long"):
+                self._move_value_to_register(
+                    instruction + [f"v{int(instruction[2][1:])+1}"],
+                    "casting({src0}, {src1})",
+                )
+            elif part[1] in ("double", "long"):
+                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    [
+                        instruction[0],
+                        f"v{int(instruction[1][1:])+1}",
+                        instruction[2],
+                    ],
+                    "casting({src0})",
+                )
+            else:
+                self._move_value_to_register(instruction, "casting({src0})")
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def BINOP_KIND(self, instruction):
+        try:
+            wide = any(
+                wide_type in instruction[0] for wide_type in ("double", "long")
+            )
+
+            if "/2addr" in instruction[0]:
+                self._combine_value_to_register(
+                    instruction, "binop({src0}, {src1})", wide
+                )
+            elif "/lit" in instruction[0]:
+                self._move_value_and_data_to_register(
+                    instruction, "binop({src0}, {data})", wide
+                )
+            else:
+                self._move_value_to_register(
+                    instruction, "binop({src0}, {src1})", wide
+                )
+        except IndexError as e:
+            log.exception(f"{e} in BINOP_KIND")
+
     def show_table(self):
         return self.table_obj.get_table()
+
+    def _move_value_to_register(self, instruction, str_format, wide=False):
+        destination = int(instruction[1][1:])
+        source_list = [int(reg[1:]) for reg in instruction[2:]]
+        self._transfer_register(source_list, destination, str_format)
+
+        if wide:
+            pair_source_list = [src + 1 for src in source_list]
+            pair_destination = destination + 1
+            self._transfer_register(
+                pair_source_list, pair_destination, str_format
+            )
+
+    def _move_value_and_data_to_register(
+        self, instruction, str_format, wide=False
+    ):
+        destination = int(instruction[1][1:])
+        source_list = [int(reg[1:]) for reg in instruction[2:-1]]
+        data = instruction[-1]
+
+        self._transfer_register(
+            source_list, destination, str_format, data=data
+        )
+
+        if wide:
+            self._transfer_register(
+                source_list, destination + 1, str_format, data=data
+            )
+
+    def _combine_value_to_register(self, instruction, str_format, wide=False):
+        self._move_value_to_register(
+            instruction[0:2] + instruction[1:], str_format, wide
+        )
+
+    def _transfer_register(
+        self,
+        source_list,
+        destination,
+        str_format,
+        data=None,
+    ):
+        source_register_list = [
+            self.table_obj.pop(index) for index in source_list
+        ]
+
+        value_dict = {
+            f"src{index}": register.value
+            for index, register in enumerate(source_register_list)
+        }
+        value_dict["data"] = data
+
+        new_register = RegisterObject(
+            f"v{destination}", str_format.format(**value_dict)
+        )
+
+        self.table_obj.insert(destination, new_register)
 
 
 if __name__ == "__main__":

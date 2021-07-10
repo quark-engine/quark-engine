@@ -72,9 +72,9 @@ jobs:
           fi
           
       - name: Check 14d9f1a92dd984d6040cc41ed06e273e.apk Result
-        # This sample should have 12 behaviors with 100% confidence
+        # This sample should have 14 behaviors with 100% confidence
         run: |
-          if [ "${{ env.e273e_RESULT }}" == "12" ]; then
+          if [ "${{ env.e273e_RESULT }}" == "14" ]; then
             exit 0
           else
             exit 1

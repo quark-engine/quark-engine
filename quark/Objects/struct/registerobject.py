@@ -30,6 +30,14 @@ class RegisterObject:
     def __repr__(self):
         return f"<VarabileObject-register:{self._register_name}, value:{self._value}, called_by_func:{','.join(self._called_by_func)}>"
 
+    def __eq__(self, obj):
+        return (
+            isinstance(obj, RegisterObject)
+            and obj.called_by_func == self.called_by_func
+            and obj.register_name == self.register_name
+            and obj.value == self.value
+        )
+
     @property
     def called_by_func(self):
         """

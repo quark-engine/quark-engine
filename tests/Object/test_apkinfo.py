@@ -209,29 +209,34 @@ class TestApkinfo:
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
-                ["v1", "v0"],
-                "Lcom/example/google/service/WebServiceCalling$1;->this$0 Lcom/example/google/service/WebServiceCalling;",
+                ["v15", "v14"],
+                (
+                    "Lcom/example/google/service/SMSReceiver;->"
+                    "_Context Landroid/content/Context;"
+                ),
             ),
             BytecodeObject(
-                "invoke-direct", ["v0"], "Landroid/os/Handler;-><init>()V"
+                "invoke-direct",
+                ["v14", "v8"],
+                (
+                    "Lcom/example/google/service/SMSReceiver;"
+                    "->isContact(Ljava/lang/String;)Ljava/lang/Boolean;"
+                ),
             ),
+            BytecodeObject("array-length", ["v10", "v6"], None),
             BytecodeObject("return-void", None, None),
         ]
 
         method = apkinfo.find_method(
-            class_name="Lcom/example/google/service/WebServiceCalling$1;",
-            method_name="<init>",
-            descriptor="(Lcom/example/google/service/WebServiceCalling;)V",
+            class_name="Lcom/example/google/service/SMSReceiver;",
+            method_name="onReceive",
+            descriptor="(Landroid/content/Context; Landroid/content/Intent;)V",
         )
 
         bytecodes = list(apkinfo.get_method_bytecode(method))
 
-        for bytecode, expected_bytecode in zip(
-            bytecodes, expected_bytecode_list
-        ):
-            assert bytecode.mnemonic == expected_bytecode.mnemonic
-            assert bytecode.registers == expected_bytecode.registers
-            assert bytecode.parameter == expected_bytecode.parameter
+        for expected in expected_bytecode_list:
+            assert expected in bytecodes
 
     def test_lowerfunc(self, apkinfo):
         method = apkinfo.find_method(

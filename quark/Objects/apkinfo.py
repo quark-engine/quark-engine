@@ -8,6 +8,7 @@ from os import PathLike
 from typing import Dict, List, Optional, Set, Union
 
 from androguard.core.analysis.analysis import MethodAnalysis
+from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
 from quark.Objects.interface.baseapkinfo import BaseApkinfo
@@ -146,20 +147,28 @@ class AndroguardImp(BaseApkinfo):
                         None,
                     )
                 elif length_operands >= 2:
-                    # the last one is parameter, the other are registers.
-
-                    parameter = ins.get_operands()[length_operands - 1]
-                    for i in range(length_operands - 1):
-                        reg_list.append(
-                            "v" + str(ins.get_operands()[i][1]),
+                    # if the last one's type is not Operand, it is a parameter.
+                    if not isinstance(ins.get_operands()[-1][0], Operand):
+                        parameter = ins.get_operands()[-1]
+                        parameter = (
+                            parameter[2]
+                            if len(parameter) == 3
+                            else parameter[1]
                         )
-                    parameter = (
-                        parameter[2] if len(parameter) == 3 else parameter[1]
-                    )
+
+                        for i in range(length_operands - 1):
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]),
+                            )
+                    else:
+                        parameter = None
+                        for i in range(length_operands):
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]),
+                            )
+
                     bytecode_obj = BytecodeObject(
-                        ins.get_name(),
-                        reg_list,
-                        parameter,
+                        ins.get_name(), reg_list, parameter
                     )
 
                 yield bytecode_obj
