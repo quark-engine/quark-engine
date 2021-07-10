@@ -96,7 +96,7 @@ class RizinImp(BaseApkinfo):
             argument_string = re.sub(r"\[ ", "[", argument_string)
 
             return_value = method_descriptor[
-                method_descriptor.index(")") + 1:
+                method_descriptor.index(")") + 1 :
             ]
             descriptor = argument_string + return_value
 
@@ -364,7 +364,7 @@ class RizinImp(BaseApkinfo):
             if mnemonic.startswith("invoke"):
                 parameter = re.sub(r"\.", ";->", parameter, count=1)
 
-        register_list = None
+        register_list = []
         # Ranged registers
         if len(args) == 1 and (":" in args[0] or ".." in args[0]):
             register_list = args[0]
@@ -384,7 +384,6 @@ class RizinImp(BaseApkinfo):
                     f"Cannot parse bytecode. Unknown smali {smali}."
                 )
 
-        if register_list:
-            register_list = [f"v{index}" for index in register_list]
+        register_list = [f"v{index}" for index in register_list]
 
         return BytecodeObject(mnemonic, register_list, parameter)
