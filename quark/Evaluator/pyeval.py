@@ -43,6 +43,8 @@ class PyEval:
             "invoke-static": self.INVOKE_STATIC,
             "invoke-virtual/range": self.INVOKE_VIRTUAL_RANGE,
             "invoke-interface": self.INVOKE_INTERFACE,
+            "invoke-polymorphic": self.INVOKE_POLYMORPHIC,
+            "invoke-custom": self.INVOKE_CUSTOM,
             # move-result-kind
             "move-result": self.MOVE_RESULT,
             "move-result-wide": self.MOVE_RESULT_WIDE,
@@ -172,6 +174,12 @@ class PyEval:
         invoke-interface { parameters }, methodtocall
         Invokes a interface method with parameters.
         """
+        self._invoke(instruction)
+
+    def INVOKE_POLYMORPHIC(self, instruction):
+        self._invoke(instruction)
+
+    def INVOKE_CUSTOM(self, instruction):
         self._invoke(instruction)
 
     @logger

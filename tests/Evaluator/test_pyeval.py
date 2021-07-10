@@ -1,3 +1,4 @@
+import itertools
 from unittest.mock import patch
 
 import pytest
@@ -23,7 +24,7 @@ def instructions():
     del ins
 
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def pyeval():
     pyeval = PyEval()
 
@@ -34,12 +35,22 @@ def pyeval():
         "Lcom/google/progress/SMSHelper;",
         None,
     )
+    v5_mock_variable_obj = RegisterObject(
+        "v5", "some_number", "java.lang.String.toString()"
+    )
+    v6_mock_variable_obj = RegisterObject(
+        "v6", "an_array", "java.lang.Collection.toArray()"
+    )
+    v7_mock_variable_obj = RegisterObject("v7", "a_float")
     v9_mock_variable_obj = RegisterObject(
         "v9",
         "some_string",
         "java.io.file.close()",
     )
     pyeval.table_obj.insert(4, v4_mock_variable_obj)
+    pyeval.table_obj.insert(5, v5_mock_variable_obj)
+    pyeval.table_obj.insert(6, v6_mock_variable_obj)
+    pyeval.table_obj.insert(7, v7_mock_variable_obj)
     pyeval.table_obj.insert(9, v9_mock_variable_obj)
 
     yield pyeval
@@ -151,6 +162,27 @@ class TestPyEval:
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_INTERFACE(instruction)
+            mock.assert_called_once_with(instruction)
+
+    # Tests for invoke polymorphic
+    def test_invoke_polymorphic_with_valid_mnemonic(self, pyeval):
+        instruction = [
+            "invoke-polymorphic",
+            "v4",
+            "v9",
+            "some_function()V",
+            "prototype_idx",
+        ]
+
+        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+            pyeval.INVOKE_POLYMORPHIC(instruction)
+            mock.assert_called_once_with(instruction)
+
+    # Tests for invoke-custom
+    def test_invoke_custom_with_valid_mnemonic(self, pyeval):
+        instruction = ["invoke-custom", "v4", "v9", "method"]
+        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+            pyeval.INVOKE_CUSTOM(instruction)
             mock.assert_called_once_with(instruction)
 
     # Tests for _move_result
