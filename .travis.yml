@@ -4,6 +4,13 @@ language: python
 python: 3.8
 
 before-install:
+  - RIZIN_LATEST=https://github.com/rizinorg/rizin/releases/latest
+  - DOWNLOAD_URL='https://github.com'`curl -sfL $RIZIN_LATEST | grep 'href=\"/rizinorg/rizin/releases/'| grep 'static-x86_64'| cut -d \" -f 2`
+  - curl -sSfL --retry 5 -o rizin.tar.xz $DOWNLOAD_URL
+  - sudo mkdir -p /opt/rizin
+  - sudo tar -Jxf rizin.tar.xz --directory /opt/rizin
+  - PATH="/opt/rizin/bin:$PATH"
+  - export PATH
   - sudo apt-get -y install graphviz
 
 # Installation
