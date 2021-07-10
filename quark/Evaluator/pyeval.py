@@ -84,6 +84,45 @@ class PyEval:
             self.eval[f"aput{postfix}"] = self.APUT_KIND
             self.eval["aput-wide"] = self.APUT_WIDE_KIND
 
+        # neg-kind and not-kind
+        for prefix in ("neg", "not"):
+            self.eval[f"{prefix}-int"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-long"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-float"] = self.NEG_AND_NOT_KIND
+            self.eval[f"{prefix}-double"] = self.NEG_AND_NOT_KIND
+
+        # type casting
+        for first_type in ("int", "long", "float", "double"):
+            for second_type in ("int", "long", "float", "double"):
+                if first_type == second_type:
+                    continue
+                self.eval[f"{first_type}-{second_type}"] = self.CAST_TYPE
+
+        # binop_kind
+        for prefix in (
+            "add",
+            "sub",
+            "mul",
+            "div",
+            "rem",
+            "and",
+            "or",
+            "xor",
+            "shl",
+            "shr",
+            "ushr",
+        ):
+            for _type in ("int", "float", "double", "long"):
+                for postfix in ("", "/2addr", "/lit16", "/lit8"):
+                    self.eval[f"{prefix}-{_type}{postfix}"] = self.BINOP_KIND
+
+        self.eval["move-exception"] = lambda ins: self._assign_value(
+            (ins[0], ins[1], "Exception")
+        )
+        self.eval["fill-array-data"] = lambda ins: self._assign_value(
+            (ins[0], ins[1], "Embedded-array-data")
+        )
+
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
 
@@ -418,14 +457,61 @@ class PyEval:
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
 
-
-            variable_object = RegisterObject(
-                reg, f"{array_obj.value}[{array_index.value}]",
+    @logger
+    def NEG_AND_NOT_KIND(self, instruction):
+        try:
+            wide = any(
+                wide_type in instruction[0] for wide_type in ("double", "long")
             )
-            self.table_obj.insert(index, variable_object)
-
+            self._move_value_to_register(instruction, "{src0}", wide)
         except IndexError as e:
-            log.exception(f"{e} in AGET_KIND")
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def CAST_TYPE(self, instruction):
+        try:
+            part = instruction[0].split("-")
+            if part[0] in ("double", "long"):
+                self._move_value_to_register(
+                    instruction + [f"v{int(instruction[2][1:])+1}"],
+                    "casting({src0}, {src1})",
+                )
+            elif part[1] in ("double", "long"):
+                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    [
+                        instruction[0],
+                        f"v{int(instruction[1][1:])+1}",
+                        instruction[2],
+                    ],
+                    "casting({src0})",
+                )
+            else:
+                self._move_value_to_register(instruction, "casting({src0})")
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def BINOP_KIND(self, instruction):
+        try:
+            wide = any(
+                wide_type in instruction[0] for wide_type in ("double", "long")
+            )
+
+            if "/2addr" in instruction[0]:
+                self._combine_value_to_register(
+                    instruction, "binop({src0}, {src1})", wide
+                )
+            elif "/lit" in instruction[0]:
+                self._move_value_and_data_to_register(
+                    instruction, "binop({src0}, {data})", wide
+                )
+            else:
+                self._move_value_to_register(
+                    instruction, "binop({src0}, {src1})", wide
+                )
+        except IndexError as e:
+            log.exception(f"{e} in BINOP_KIND")
 
     def show_table(self):
         return self.table_obj.get_table()

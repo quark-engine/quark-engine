@@ -118,6 +118,128 @@ def aput_kind(request):
 def aput_wide_kind(request):
     return request.param
 
+
+NEG_NOT_KIND = [
+    prefix + postfix
+    for prefix, postfix in itertools.product(
+        ["neg-", "not-"], ["int", "long", "float"]
+    )
+]
+
+NEG_NOT_WIDE_KIND = ("neg-double", "not-double")
+
+
+@pytest.fixture(scope="module", params=NEG_NOT_KIND)
+def neg_not_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=NEG_NOT_WIDE_KIND)
+def neg_not_wide_kind(request):
+    return request.param
+
+
+ALL_CAST_KIND = list(
+    {
+        prefix + "-" + postfix
+        for prefix, postfix in itertools.product(
+            ("int", "long", "float", "double"),
+            ("int", "long", "float", "double"),
+        )
+    }.difference(
+        {
+            "int-int",
+            "long-long",
+            "float-float",
+            "double-double",
+            "double-long",
+            "long-double",
+        }
+    )
+)
+
+CAST_KIND = [
+    ins for ins in ALL_CAST_KIND if "double" not in ins and "long" not in ins
+]
+CAST_SIMPLE_TO_WIDE_KIND = [
+    ins
+    for ins in ALL_CAST_KIND
+    if ins.endswith("double") or ins.endswith("long")
+]
+CAST_WIDE_TO_SIMPLE_KIND = [
+    ins
+    for ins in ALL_CAST_KIND
+    if ins.startswith("double") or ins.startswith("long")
+]
+
+
+@pytest.fixture(scope="module", params=CAST_KIND)
+def cast_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=CAST_SIMPLE_TO_WIDE_KIND)
+def cast_simple_to_wide_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=CAST_WIDE_TO_SIMPLE_KIND)
+def cast_wide_to_simple_kind(request):
+    return request.param
+
+
+_BINOP_PREFIX = (
+    "add",
+    "sub",
+    "mul",
+    "div",
+    "rem",
+    "and",
+    "or",
+    "xor",
+    "shl",
+    "shr",
+    "ushr",
+)
+
+SIMPLE_BINOP_KIND = [
+    prefix + "-" + type_str
+    for prefix, type_str in itertools.product(
+        _BINOP_PREFIX, ("int", "float", "long")
+    )
+]
+
+BINOP_WIDE_KIND = [prefix + "-" + "double" for prefix in _BINOP_PREFIX]
+
+BINOP_2ADDR_KIND = [ins + "/2addr" for ins in SIMPLE_BINOP_KIND]
+BINOP_LIT_KIND = [
+    ins + postfix
+    for ins, postfix in itertools.product(
+        SIMPLE_BINOP_KIND, ("/lit8", "/lit16")
+    )
+]
+
+
+@pytest.fixture(scope="module", params=SIMPLE_BINOP_KIND)
+def simple_binop_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=BINOP_WIDE_KIND)
+def binop_wide_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=BINOP_2ADDR_KIND)
+def binop_2addr_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=BINOP_LIT_KIND)
+def binop_lit_kind(request):
+    return request.param
+
+
 class TestPyEval:
     def test_init(self):
         pyeval = PyEval()
@@ -500,6 +622,104 @@ class TestPyEval:
             "an_array[some_number]:(Lcom/google/progress/SMSHelper;, some_number)",
         )
 
+    # Tests for neg-kind and not-kind
+    def test_neg_and_not_kind(self, pyeval, neg_not_kind):
+        instruction = [neg_not_kind, "v1", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject("v1", "some_number")
+
+    def test_neg_and_not_wide_kind(self, pyeval, neg_not_wide_kind):
+        instruction = [neg_not_wide_kind, "v1", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject("v1", "some_number")
+        assert pyeval.table_obj.pop(2) == RegisterObject("v2", "an_array")
+
+    # Tests for type-casting
+    def test_type_casting_without_wide_type(self, pyeval, cast_kind):
+        instruction = [cast_kind, "v1", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "casting(some_number)"
+        )
+
+    def test_type_casting_with_wide_type_to_simple_type(
+        self, pyeval, cast_wide_to_simple_kind
+    ):
+        instruction = [cast_wide_to_simple_kind, "v1", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "casting(some_number, an_array)"
+        )
+
+    def test_type_casting_with_simple_type_to_wide_type(
+        self, pyeval, cast_simple_to_wide_kind
+    ):
+        instruction = [cast_simple_to_wide_kind, "v1", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "casting(some_number)"
+        )
+        assert pyeval.table_obj.pop(2) == RegisterObject(
+            "v2", "casting(some_number)"
+        )
+
+    # Tests for binop-kind
+    def test_simple_binop_kind(self, pyeval, simple_binop_kind):
+        instruction = [simple_binop_kind, "v1", "v5", "v6"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "binop(some_number, an_array)"
+        )
+
+    def test_binop_kind_with_wide_type(self, pyeval, binop_wide_kind):
+        instruction = [binop_wide_kind, "v1", "v4", "v6"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "binop(Lcom/google/progress/SMSHelper;, an_array)"
+        )
+        assert pyeval.table_obj.pop(2) == RegisterObject(
+            "v2", "binop(some_number, a_float)"
+        )
+
+    def test_binop_kind_in_place(self, pyeval, binop_2addr_kind):
+        instruction = [binop_2addr_kind, "v4", "v6"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(4) == RegisterObject(
+            "v4", "binop(Lcom/google/progress/SMSHelper;, an_array)"
+        )
+
+    def test_binop_kind_with_literal(self, pyeval, binop_lit_kind):
+        instruction = [binop_lit_kind, "v1", "v5", "literal_number"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "binop(some_number, literal_number)"
+        )
+
+    # Tests for move-exception
+    def test_move_exception(self, pyeval):
+        instruction = ["move-exception", "v1"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject("v1", "Exception")
 
     # Tests for fill-array-data
     def test_fill_array_data(self, pyeval):
