@@ -33,19 +33,20 @@ def pyeval():
     v4_mock_variable_obj = RegisterObject(
         "v4",
         "Lcom/google/progress/SMSHelper;",
-        None,
+        value_type="Lcom/google/progress/SMSHelper;",
     )
     v5_mock_variable_obj = RegisterObject(
-        "v5", "some_number", "java.lang.String.toString()"
+        "v5", "some_number", "java.lang.String.toString()", value_type="I"
     )
     v6_mock_variable_obj = RegisterObject(
-        "v6", "an_array", "java.lang.Collection.toArray()"
+        "v6", "an_array", "java.lang.Collection.toArray()", value_type="[I"
     )
-    v7_mock_variable_obj = RegisterObject("v7", "a_float")
+    v7_mock_variable_obj = RegisterObject("v7", "a_float", value_type="F")
     v9_mock_variable_obj = RegisterObject(
         "v9",
         "some_string",
         "java.io.file.close()",
+        value_type="Ljava/lang/String;",
     )
     pyeval.table_obj.insert(4, v4_mock_variable_obj)
     pyeval.table_obj.insert(5, v5_mock_variable_obj)
@@ -288,6 +289,7 @@ class TestPyEval:
         assert pyeval.ret_stack == [
             "some_function()Lclass;(Lcom/google/progress/SMSHelper;,some_string)"
         ]
+        assert pyeval.ret_type == "Lclass;"
 
     @pytest.mark.skip(reason="discussion needed.")
     def test_invoke_with_func_not_returning_value(self, pyeval):
@@ -391,12 +393,15 @@ class TestPyEval:
         expected_return_value = (
             "some_function()V(used_register_1, used_register_2)"
         )
+        expected_return_type = "Lclass;"
         pyeval.ret_stack.append(expected_return_value)
+        pyeval.ret_type = expected_return_type
 
         pyeval._move_result(instruction)
 
-        assert pyeval.table_obj.pop(1).value == expected_return_value
-        assert pyeval.table_obj.pop(1).called_by_func == []
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", expected_return_value, None, value_type=expected_return_type
+        )
 
     # Tests for move_result
     def test_move_result_with_valid_mnemonic(self, pyeval):
@@ -547,7 +552,9 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.table_obj.pop(1) == RegisterObject(
-            "v1", "Lcom/google/progress/SMSHelper;"
+            "v1",
+            "Lcom/google/progress/SMSHelper;",
+            value_type="Lcom/google/progress/SMSHelper;",
         )
 
     def test_move_wide_kind(self, pyeval, move_wide_kind):
@@ -556,9 +563,14 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.table_obj.pop(1) == RegisterObject(
-            "v1", "Lcom/google/progress/SMSHelper;"
+            "v1",
+            "Lcom/google/progress/SMSHelper;",
+            value_type="Lcom/google/progress/SMSHelper;",
         )
-        assert pyeval.table_obj.pop(2) == RegisterObject("v2", "some_number")
+        assert pyeval.table_obj.pop(2) == RegisterObject(
+            "v2", "some_number", value_type="I"
+        )
+
 
     # Tests for filled-array-kind
     def test_filled_array_kind(self, pyeval, filled_array_kind):
@@ -743,13 +755,15 @@ class TestPyEval:
         assert isinstance(pyeval.show_table()[9][0], RegisterObject)
 
     def test_invoke_and_move(self, pyeval):
-        v6_mock_variable_obj = RegisterObject("v6", "some_string", None)
+        v6_mock_variable_obj = RegisterObject(
+            "v6", "some_string", None, value_type="Ljava/lang/String;"
+        )
 
         pyeval.table_obj.insert(6, v6_mock_variable_obj)
 
-        assert pyeval.table_obj.pop(6).register_name == "v6"
-        assert pyeval.table_obj.pop(6).value == "some_string"
-        assert pyeval.table_obj.pop(6).called_by_func == []
+        assert pyeval.table_obj.pop(6) == RegisterObject(
+            "v6", "some_string", value_type="Ljava/lang/String;"
+        )
 
         first_instruction = [
             "invoke-virtual",
@@ -762,9 +776,8 @@ class TestPyEval:
         pyeval.INVOKE_VIRTUAL(first_instruction)
         pyeval.MOVE_RESULT_OBJECT(second_instruction)
 
-        assert pyeval.table_obj.pop(1).register_name == "v1"
-        assert (
-            pyeval.table_obj.pop(1).value
-            == "Lcom/google/progress/ContactsCollector;->getContactList()Ljava/lang/String;(some_string)"
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1",
+            "Lcom/google/progress/ContactsCollector;->getContactList()Ljava/lang/String;(some_string)",
+            value_type="Ljava/lang/String;",
         )
-        assert pyeval.table_obj.pop(1).called_by_func == []

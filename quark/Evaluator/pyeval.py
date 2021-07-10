@@ -123,8 +123,20 @@ class PyEval:
             (ins[0], ins[1], "Embedded-array-data")
         )
 
+        self.type_mapping = {
+            "boolean": "Z",
+            "byte": "B",
+            "char": "C",
+            "short": "S",
+            "int": "I",
+            "long": "J",
+            "float": "F",
+            "double": "D",
+        }
+
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
+        self.ret_type = ""
 
     def _invoke(self, instruction):
         """
@@ -158,14 +170,20 @@ class PyEval:
         # push the return value into ret_stack
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
+        # Extract the type of return value
+        self.ret_type = executed_fuc[executed_fuc.index(")") + 1 :]
+
     def _move_result(self, instruction):
 
         reg = instruction[1]
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(reg, pre_ret)
+            variable_object = RegisterObject(
+                reg, pre_ret, value_type=self.ret_type
+            )
             self.table_obj.insert(index, variable_object)
+            self.ret_type = ""
         except IndexError as e:
 
             log.exception(f"{e} in _move_result")
@@ -265,8 +283,12 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(reg, pre_ret)
-            variable_object2 = RegisterObject(f"v{index + 1}", pre_ret)
+            variable_object = RegisterObject(
+                reg, pre_ret, value_type=self.ret_type
+            )
+            variable_object2 = RegisterObject(
+                f"v{index + 1}", pre_ret, value_type=self.ret_type
+            )
             self.table_obj.insert(index, variable_object)
             self.table_obj.insert(index + 1, variable_object2)
         except IndexError as e:
@@ -518,49 +540,68 @@ class PyEval:
     def show_table(self):
         return self.table_obj.get_table()
 
-    def _move_value_to_register(self, instruction, str_format, wide=False):
+    def _move_value_to_register(
+        self, instruction, str_format, wide=False, value_type=None
+    ):
         destination = int(instruction[1][1:])
         source_list = [int(reg[1:]) for reg in instruction[2:]]
-        self._transfer_register(source_list, destination, str_format)
+
+        self._transfer_register(
+            source_list, destination, str_format, value_type=value_type
+        )
 
         if wide:
             pair_source_list = [src + 1 for src in source_list]
             pair_destination = destination + 1
             self._transfer_register(
-                pair_source_list, pair_destination, str_format
+                pair_source_list,
+                pair_destination,
+                str_format,
+                value_type=value_type,
             )
 
     def _move_value_and_data_to_register(
-        self, instruction, str_format, wide=False
+        self, instruction, str_format, wide=False, value_type=None
     ):
         destination = int(instruction[1][1:])
         source_list = [int(reg[1:]) for reg in instruction[2:-1]]
         data = instruction[-1]
 
         self._transfer_register(
-            source_list, destination, str_format, data=data
+            source_list,
+            destination,
+            str_format,
+            data=data,
+            value_type=value_type,
         )
 
         if wide:
             self._transfer_register(
-                source_list, destination + 1, str_format, data=data
+                source_list,
+                destination + 1,
+                str_format,
+                data=data,
+                value_type=value_type,
             )
 
-    def _combine_value_to_register(self, instruction, str_format, wide=False):
+    def _combine_value_to_register(
+        self, instruction, str_format, wide=False, value_type=""
+    ):
         self._move_value_to_register(
-            instruction[0:2] + instruction[1:], str_format, wide
+            instruction[0:2] + instruction[1:],
+            str_format,
+            wide,
+            value_type=value_type,
         )
 
     def _transfer_register(
-        self,
-        source_list,
-        destination,
-        str_format,
-        data=None,
+        self, source_list, destination, str_format, data=None, value_type=None
     ):
         source_register_list = [
             self.table_obj.pop(index) for index in source_list
         ]
+        if not value_type:
+            value_type = source_register_list[0].current_type
 
         value_dict = {
             f"src{index}": register.value
@@ -569,7 +610,9 @@ class PyEval:
         value_dict["data"] = data
 
         new_register = RegisterObject(
-            f"v{destination}", str_format.format(**value_dict)
+            f"v{destination}",
+            str_format.format(**value_dict),
+            value_type=value_type,
         )
 
         self.table_obj.insert(destination, new_register)
