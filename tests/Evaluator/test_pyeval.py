@@ -116,7 +116,9 @@ class TestPyEval:
 
         pyeval._invoke(instruction)
 
-        assert pyeval.table_obj.pop(9).called_by_func == ["java.io.file.close()"]
+        assert pyeval.table_obj.pop(9).called_by_func == [
+            "java.io.file.close()"
+        ]
         assert pyeval.ret_stack == ["some-func()Lclass;()"]
 
     # Tests for invoke_virtual
@@ -151,31 +153,33 @@ class TestPyEval:
             pyeval.INVOKE_INTERFACE(instruction)
             mock.assert_called_once_with(instruction)
 
-    # Tests for _move
+    # Tests for _move_result
     def test_move_with_non_list_object(self, pyeval):
         instruction = None
 
         with pytest.raises(TypeError):
-            pyeval._move(instruction)
+            pyeval._move_result(instruction)
 
     def test_move_with_empty_list(self, pyeval):
         instruction = []
 
         with pytest.raises(IndexError):
-            pyeval._move(instruction)
+            pyeval._move_result(instruction)
 
     def test_move_with_invalid_instrcution(self, pyeval):
         instruction = ["move-kind", "", ""]
 
         with pytest.raises(ValueError):
-            pyeval._move(instruction)
+            pyeval._move_result(instruction)
 
     def test_move_with_valid_instrcution(self, pyeval):
         instruction = ["move-result-object", "v1"]
-        expected_return_value = "some_function()V(used_register_1, used_register_2)"
+        expected_return_value = (
+            "some_function()V(used_register_1, used_register_2)"
+        )
         pyeval.ret_stack.append(expected_return_value)
 
-        pyeval._move(instruction)
+        pyeval._move_result(instruction)
 
         assert pyeval.table_obj.pop(1).value == expected_return_value
         assert pyeval.table_obj.pop(1).called_by_func == []
@@ -184,7 +188,7 @@ class TestPyEval:
     def test_move_result_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move") as mock:
+        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -203,7 +207,7 @@ class TestPyEval:
     def test_move_result_object_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result-object", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move") as mock:
+        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT_OBJECT(instruction)
             mock.assert_called_once_with(instruction)
 

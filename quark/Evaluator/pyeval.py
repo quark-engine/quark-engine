@@ -96,7 +96,7 @@ class PyEval:
         # push the return value into ret_stack
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
-    def _move(self, instruction):
+    def _move_result(self, instruction):
 
         reg = instruction[1]
         index = int(reg[1:])
@@ -106,7 +106,7 @@ class PyEval:
             self.table_obj.insert(index, variable_object)
         except IndexError as e:
 
-            log.exception(f"{e} in _move")
+            log.exception(f"{e} in _move_result")
 
     def _assign_value(self, instruction):
 
@@ -184,7 +184,7 @@ class PyEval:
         Save the value returned by the previous function call to the vx register,and then insert the VariableObject
         into table.
         """
-        self._move(instruction)
+        self._move_result(instruction)
 
     @logger
     def MOVE_RESULT_WIDE(self, instruction):
@@ -215,7 +215,7 @@ class PyEval:
         into table.
         """
 
-        self._move(instruction)
+        self._move_result(instruction)
 
     @logger
     def NEW_INSTANCE(self, instruction):
