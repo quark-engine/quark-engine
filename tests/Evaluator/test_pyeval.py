@@ -76,6 +76,48 @@ def move_kind(request):
 def move_wide_kind(request):
     return request.param
 
+
+FILLED_ARRAY_KIND = ("filled-new-array", "filled-new-array/range")
+
+
+@pytest.fixture(scope="module", params=FILLED_ARRAY_KIND)
+def filled_array_kind(request):
+    return request.param
+
+
+AGET_KIND = [
+    "aget" + postfix
+    for postfix in ("-object", "-byte", "-char", "-short", "-boolean")
+]
+AGET_WIDE_KIND = "aget-wide"
+
+
+@pytest.fixture(scope="module", params=AGET_KIND)
+def aget_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=AGET_KIND)
+def aget_wide_kind(request):
+    return request.param
+
+
+APUT_KIND = [
+    "aput" + postfix
+    for postfix in ("-object", "-byte", "-char", "-short", "-boolean")
+]
+APUT_WIDE_KIND = ("aput-wide",)
+
+
+@pytest.fixture(scope="module", params=APUT_KIND)
+def aput_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=APUT_WIDE_KIND)
+def aput_wide_kind(request):
+    return request.param
+
 class TestPyEval:
     def test_init(self):
         pyeval = PyEval()
@@ -396,6 +438,16 @@ class TestPyEval:
         )
         assert pyeval.table_obj.pop(2) == RegisterObject("v2", "some_number")
 
+    # Tests for filled-array-kind
+    def test_filled_array_kind(self, pyeval, filled_array_kind):
+        instruction = [filled_array_kind, "v1", "type_idx"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.ret_stack == ["new-array[()"]
+
+    # Tests for aget-kind
+    def test_aget_kind(self, pyeval, aget_kind):
         """
         aget-object vx,vy,vz
 
@@ -410,13 +462,54 @@ class TestPyEval:
         pyeval.table_obj.insert(2, v2_mock_variable_obj)
         pyeval.table_obj.insert(3, v3_mock_variable_obj)
 
-        instruction = ["aget-object", "v1", "v2", "v3"]
+        instruction = [aget_kind, "v1", "v2", "v3"]
 
-        pyeval.AGET_KIND(instruction)
+        pyeval.eval[instruction[0]](instruction)
 
-        pyeval.table_obj.pop(1).register_name == "v1"
-        pyeval.table_obj.pop(1).value = "some_list_like[1,2,3,4][2]"
-        assert pyeval.table_obj.pop(1).called_by_func == []
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "some_list_like[1,2,3,4][2]"
+        )
+
+    def test_aget_wide_kind(self, pyeval, aget_wide_kind):
+        instruction = [aget_wide_kind, "v1", "v6", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "an_array[some_number]"
+        )
+
+    # Tests for aput-kind
+    def test_aput_kind(self, pyeval, aput_kind):
+        instruction = [aput_kind, "v4", "v6", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(6) == RegisterObject(
+            "v6",
+            "an_array[some_number]:Lcom/google/progress/SMSHelper;",
+        )
+
+    def test_aput_wide_kind(self, pyeval, aput_wide_kind):
+        instruction = [aput_wide_kind, "v4", "v6", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(6) == RegisterObject(
+            "v6",
+            "an_array[some_number]:(Lcom/google/progress/SMSHelper;, some_number)",
+        )
+
+
+    # Tests for fill-array-data
+    def test_fill_array_data(self, pyeval):
+        instruction = ["fill-array-data", "v1", "array-data-address"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.table_obj.pop(1) == RegisterObject(
+            "v1", "Embedded-array-data"
+        )
 
     def test_show_table(self, pyeval):
         assert len(pyeval.show_table()[4]) == 1

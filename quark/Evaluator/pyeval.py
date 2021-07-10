@@ -62,8 +62,6 @@ class PyEval:
             "const-wide/16": self.CONST_WIDE_SIXTEEN,
             "const-wide/32": self.CONST_WIDE_THIRTY_TWO,
             "const-wide/high16": self.CONST_WIDE_HIGHSIXTEEN,
-            # array
-            "aget-object": self.AGET_KIND,
         }
 
         # move-kind
@@ -71,6 +69,20 @@ class PyEval:
             for postfix in ("", "/from16", "/16"):
                 self.eval[f"{prefix}{postfix}"] = self.MOVE_KIND
         self.eval["array-length"] = self.MOVE_KIND
+
+        # filled-array-kind
+        for ins in ("filled-new-array", "filled-new-array/range"):
+            self.eval[ins] = self.FILLED_NEW_ARRAY_KIND
+
+        # aget-kind
+        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+            self.eval[f"aget{postfix}"] = self.AGET_KIND
+            self.eval["aget-wide"] = self.AGET_WIDE_KIND
+
+        # aput-kind
+        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+            self.eval[f"aput{postfix}"] = self.APUT_KIND
+            self.eval["aput-wide"] = self.APUT_WIDE_KIND
 
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
@@ -342,6 +354,12 @@ class PyEval:
 
         It means vx = vy[vz].
         """
+        try:
+            self._move_value_to_register(
+                instruction, "{src0}[{src1}]", wide=True
+            )
+        except IndexError as e:
+            log.exception(f"{e} in AGET_OBJECT")
 
     @logger
     def MOVE_KIND(self, instruction):
@@ -351,15 +369,55 @@ class PyEval:
         except IndexError as e:
             log.exception(f"{e} in MOVE_KIND")
 
-
+    @logger
+    def FILLED_NEW_ARRAY_KIND(self, instruction):
         try:
+            self._invoke([instruction] + ["new-array["])
+        except IndexError as e:
+            log.exception(f"{e} in MOVE_KIND")
 
-            array_obj = self.table_obj.get_obj_list(
-                int(re.sub("[^0-9]", "", instruction[2][1:])),
-            ).pop()
-            array_index = self.table_obj.get_obj_list(
-                int(re.sub("[^0-9]", "", instruction[3])),
-            ).pop()
+    @logger
+    def AGET_WIDE_KIND(self, instruction):
+        try:
+            destination = int(instruction[1][1:])
+            source_list = [int(reg[1:]) for reg in instruction[2:]]
+
+            self._transfer_register(source_list, destination, "{src0}[{src1}]")
+            self._transfer_register(
+                source_list, destination + 1, "{src0}[{src1}]"
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def APUT_KIND(self, instruction):
+        try:
+            value, array_reference, index = instruction[1:]
+            self._move_value_to_register(
+                (None, array_reference, array_reference, index, value),
+                "{src0}[{src1}]:{src2}",
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
+    @logger
+    def APUT_WIDE_KIND(self, instruction):
+        try:
+            value, array_reference, index = instruction[1:]
+            self._move_value_to_register(
+                (
+                    None,
+                    array_reference,
+                    array_reference,
+                    index,
+                    value,
+                    f"v{int(value[1:])+1}",
+                ),
+                "{src0}[{src1}]:({src2}, {src3})",
+            )
+        except IndexError as e:
+            log.exception(f"{e} in {instruction[0]}")
+
 
             variable_object = RegisterObject(
                 reg, f"{array_obj.value}[{array_index.value}]",
