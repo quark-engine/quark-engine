@@ -33,7 +33,7 @@ def logger(func):
 
 
 class PyEval:
-    def __init__(self):
+    def __init__(self, apkinfo):
         # Main switch for executing the bytecode instruction.
         self.eval = {
             # invoke-kind
@@ -42,6 +42,7 @@ class PyEval:
             "invoke-static": self.INVOKE_STATIC,
             "invoke-virtual/range": self.INVOKE_VIRTUAL_RANGE,
             "invoke-interface": self.INVOKE_INTERFACE,
+            "invoke-super": self.INVOKE_SUPER,
             "invoke-polymorphic": self.INVOKE_POLYMORPHIC,
             "invoke-custom": self.INVOKE_CUSTOM,
             # move-result-kind
@@ -140,12 +141,25 @@ class PyEval:
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
         self.ret_type = ""
+        self.apkinfo = apkinfo
 
-    def _invoke(self, instruction):
+    def _invoke(self, instruction, look_up=False, skip_self=False):
         """
         Function call in Android smali code. It will check if the corresponding table field has a value, if it does,
         inserts its own function name into called_by_func column.
         """
+
+        if look_up:
+            try:
+                instruction[-1] = self._lookup_implement(
+                    self.table_obj.pop(int(instruction[1][1:])).current_type,
+                    instruction[-1],
+                    skip_self=skip_self,
+                )
+            except ValueError as e:
+                log.exception(e)
+            except IndexError:
+                pass
 
         executed_fuc = instruction[-1]
         reg_list = instruction[1 : len(instruction) - 1]
@@ -223,7 +237,7 @@ class PyEval:
 
         Invokes a virtual method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
 
     @logger
     def INVOKE_DIRECT(self, instruction):
@@ -249,7 +263,7 @@ class PyEval:
         invoke-virtual/range { parameters }, methodtocall
         Invokes a virtual-range method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
 
     @logger
     def INVOKE_INTERFACE(self, instruction):
@@ -257,7 +271,15 @@ class PyEval:
         invoke-interface { parameters }, methodtocall
         Invokes a interface method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
+
+    @logger
+    def INVOKE_SUPER(self, instruction):
+        """
+        invoke-interface { parameters }, methodtocall
+        Invokes a interface method with parameters.
+        """
+        self._invoke(instruction, look_up=True, skip_self=True)
 
     def INVOKE_POLYMORPHIC(self, instruction):
         self._invoke(instruction)
@@ -323,7 +345,6 @@ class PyEval:
         """
 
         self._assign_value(instruction, value_type=instruction[2])
-
 
     @logger
     def NEW_ARRAY(self, instruction):
@@ -630,6 +651,42 @@ class PyEval:
                 str_format,
                 value_type=value_type,
             )
+
+    def _lookup_implement(
+        self, instance_type, method_full_name, skip_self=False
+    ):
+        class_name, signature = method_full_name.split("->")
+        index = signature.index("(")
+        method_name, descriptor = signature[:index], signature[index:]
+
+        class_pool = (
+            self.apkinfo.class_hierarchy[instance_type]
+            if skip_self
+            else {instance_type}
+        )
+        next_class_pool = set()
+        while class_pool and not (
+            len(class_pool) == 1 and "Ljava/lang/Object;" in class_pool
+        ):
+            next_class_pool.clear()
+            for class_name in class_pool:
+                method = self.apkinfo.find_method(
+                    class_name, method_name, descriptor
+                )
+
+                if method:
+                    return f"{method.class_name}->{method.name}{method.descriptor}"
+
+                next_class_pool.update(
+                    (self.apkinfo.class_hierarchy[class_name])
+                )
+                next_class_pool.difference_update(class_pool)
+
+            class_pool = set(next_class_pool)
+
+        raise ValueError(
+            "The implement of method {signature} was not found. Instance type: {instance_type}"
+        )
 
     def _move_value_and_data_to_register(
         self, instruction, str_format, wide=False, value_type=None

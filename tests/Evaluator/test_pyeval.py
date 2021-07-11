@@ -2,7 +2,9 @@ import itertools
 from unittest.mock import patch
 
 import pytest
+import requests
 from quark.Evaluator.pyeval import MAX_REG_COUNT, PyEval
+from quark.Objects.apkinfo import AndroguardImp
 from quark.Objects.struct.registerobject import RegisterObject
 from quark.Objects.struct.tableobject import TableObject
 
@@ -24,9 +26,27 @@ def instructions():
     del ins
 
 
+APK_SOURCE = (
+    "https://github.com/quark-engine/apk-malware-samples"
+    "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+)
+APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+
+
+@pytest.fixture(scope="module")
+def apkinfo():
+    r = requests.get(APK_SOURCE, allow_redirects=True)
+    file = open(APK_FILENAME, "wb")
+    file.write(r.content)
+
+    apkinfo = AndroguardImp(APK_FILENAME)
+
+    yield apkinfo
+
+
 @pytest.fixture(scope="function")
-def pyeval():
-    pyeval = PyEval()
+def pyeval(apkinfo):
+    pyeval = PyEval(apkinfo)
 
     # mock_hash_table = [...[], [v4_mock_variable_obj], [], [],
     # [v9_mock_variable_obj]....]
@@ -42,6 +62,11 @@ def pyeval():
         "v6", "an_array", "java.lang.Collection.toArray()", value_type="[I"
     )
     v7_mock_variable_obj = RegisterObject("v7", "a_float", value_type="F")
+    v8_mock_variable_obj = RegisterObject(
+        "v8",
+        "ArrayMap object",
+        value_type="Landroid/support/v4/util/ArrayMap;",
+    )
     v9_mock_variable_obj = RegisterObject(
         "v9",
         "some_string",
@@ -52,6 +77,7 @@ def pyeval():
     pyeval.table_obj.insert(5, v5_mock_variable_obj)
     pyeval.table_obj.insert(6, v6_mock_variable_obj)
     pyeval.table_obj.insert(7, v7_mock_variable_obj)
+    pyeval.table_obj.insert(8, v8_mock_variable_obj)
     pyeval.table_obj.insert(9, v9_mock_variable_obj)
 
     yield pyeval
@@ -242,8 +268,8 @@ def binop_lit_kind(request):
 
 
 class TestPyEval:
-    def test_init(self):
-        pyeval = PyEval()
+    def test_init(self, apkinfo):
+        pyeval = PyEval(apkinfo)
 
         assert len(pyeval.table_obj.hash_table) == MAX_REG_COUNT
         assert isinstance(pyeval.table_obj, TableObject)
@@ -318,15 +344,39 @@ class TestPyEval:
 
     # Tests for invoke_virtual
     def test_invoke_virtual_with_valid_mnemonic(self, pyeval):
-        instruction = ["invoke-virtual", "v4", "v9", "some_function()V"]
+        instruction = [
+            "invoke-virtual",
+            "v4",
+            "v9",
+            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+        ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_VIRTUAL(instruction)
-            mock.assert_called_once_with(instruction)
+            mock.assert_called_once_with(instruction, look_up=True)
+
+    def test_invoke_virtual_with_class_inheritance(self, pyeval):
+        instruction = [
+            "invoke-virtual",
+            "v8",
+            "Landroid/support/v4/util/ArrayMap;->isEmpty()Z",
+        ]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.ret_stack == [
+            "Landroid/support/v4/util/SimpleArrayMap;->isEmpty()Z(ArrayMap object)"
+        ]
+        assert pyeval.ret_type == "Z"
 
     # Tests for invoke_direct
     def test_invoke_direct_with_valid_mnemonic(self, pyeval):
-        instruction = ["invoke-direct", "v4", "v9", "some_function()V"]
+        instruction = [
+            "invoke-direct",
+            "v4",
+            "v9",
+            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+        ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_DIRECT(instruction)
@@ -334,7 +384,12 @@ class TestPyEval:
 
     # Tests for invoke_static
     def test_invoke_static_with_valid_mnemonic(self, pyeval):
-        instruction = ["invoke-static", "v4", "v9", "some_function()V"]
+        instruction = [
+            "invoke-static",
+            "v4",
+            "v9",
+            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+        ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_STATIC(instruction)
@@ -342,11 +397,54 @@ class TestPyEval:
 
     # Tests for invoke-interface
     def test_invoke_interface_with_valid_mnemonic(self, pyeval):
-        instruction = ["invoke-interface", "v4", "v9", "some_function()V"]
+        instruction = [
+            "invoke-interface",
+            "v4",
+            "v9",
+            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+        ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_INTERFACE(instruction)
-            mock.assert_called_once_with(instruction)
+            mock.assert_called_once_with(instruction, look_up=True)
+
+    def test_invoke_interface_with_class_inheritance(self, pyeval):
+        instruction = [
+            "invoke-interface",
+            "v8",
+            "Ljava/util/Map;->entrySet()Ljava/util/Set;",
+        ]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.ret_stack == [
+            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)"
+        ]
+        assert pyeval.ret_type == "Ljava/util/Set;"
+
+    # Tests for invoke-super
+    def test_invoke_super_with_valid_mnemonic(self, pyeval):
+        instruction = ["invoke-super", "v4", "v9", "some_function()V"]
+
+        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+            pyeval.INVOKE_SUPER(instruction)
+            mock.assert_called_once_with(
+                instruction, look_up=True, skip_self=True
+            )
+
+    def test_invoke_super_with_class_inheritance(self, pyeval):
+        instruction = [
+            "invoke-super",
+            "v8",
+            "Landroid/support/v4/app/Fragment;->toString()Ljava/lang/String;",
+        ]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert pyeval.ret_stack == [
+            "Landroid/support/v4/util/SimpleArrayMap;->toString()Ljava/lang/String;(ArrayMap object)"
+        ]
+        assert pyeval.ret_type == "Ljava/lang/String;"
 
     # Tests for invoke polymorphic
     def test_invoke_polymorphic_with_valid_mnemonic(self, pyeval):
