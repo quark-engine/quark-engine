@@ -162,7 +162,7 @@ class PyEval:
                 pass
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1 : len(instruction) - 1]
+        reg_list = instruction[1: len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -188,7 +188,7 @@ class PyEval:
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
         # Extract the type of return value
-        self.ret_type = executed_fuc[executed_fuc.index(")") + 1 :]
+        self.ret_type = executed_fuc[executed_fuc.index(")") + 1:]
 
     def _move_result(self, instruction):
 
@@ -675,7 +675,10 @@ class PyEval:
                 )
 
                 if method:
-                    return f"{method.class_name}->{method.name}{method.descriptor}"
+                    return (
+                        f"{method.class_name}->"
+                        "{method.name}{method.descriptor}"
+                    )
 
                 next_class_pool.update(
                     (self.apkinfo.class_hierarchy[class_name])
@@ -685,7 +688,8 @@ class PyEval:
             class_pool = set(next_class_pool)
 
         raise ValueError(
-            "The implement of method {signature} was not found. Instance type: {instance_type}"
+            "The implement of method {signature} was"
+            "not found. Instance type: {instance_type}"
         )
 
     def _move_value_and_data_to_register(

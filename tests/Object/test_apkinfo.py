@@ -210,12 +210,18 @@ class TestApkinfo:
             BytecodeObject(
                 "iput-object",
                 ["v5", "v8"],
-                "Landroid/support/v4/app/FragmentManagerImpl;->mTmpActions [Ljava/lang/Runnable;",
+                (
+                    "Landroid/support/v4/app/FragmentManagerImpl;"
+                    "->mTmpActions [Ljava/lang/Runnable;"
+                ),
             ),
             BytecodeObject(
                 "invoke-direct",
                 ["v5", "v6"],
-                "Ljava/lang/IllegalStateException;-><init>(Ljava/lang/String;)V",
+                (
+                    "Ljava/lang/IllegalStateException;"
+                    "-><init>(Ljava/lang/String;)V"
+                ),
             ),
             BytecodeObject("array-length", ["v5", "v5"], None),
             BytecodeObject(

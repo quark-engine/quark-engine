@@ -96,7 +96,7 @@ class RizinImp(BaseApkinfo):
             argument_string = re.sub(r"\[ ", "[", argument_string)
 
             return_value = method_descriptor[
-                method_descriptor.index(")") + 1 :
+                method_descriptor.index(")") + 1:
             ]
             descriptor = argument_string + return_value
 

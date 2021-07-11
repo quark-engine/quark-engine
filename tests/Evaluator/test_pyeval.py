@@ -348,7 +348,10 @@ class TestPyEval:
             "invoke-virtual",
             "v4",
             "v9",
-            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+            (
+                "Landroid/support/v4/util/ArrayMap;"
+                "->entrySet()Ljava/util/Set;(ArrayMap object)"
+            ),
         ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
@@ -365,7 +368,10 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.ret_stack == [
-            "Landroid/support/v4/util/SimpleArrayMap;->isEmpty()Z(ArrayMap object)"
+            (
+                "Landroid/support/v4/util/SimpleArrayMap;"
+                "->isEmpty()Z(ArrayMap object)"
+            )
         ]
         assert pyeval.ret_type == "Z"
 
@@ -375,7 +381,10 @@ class TestPyEval:
             "invoke-direct",
             "v4",
             "v9",
-            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+            (
+                "Landroid/support/v4/util/ArrayMap;"
+                "->entrySet()Ljava/util/Set;(ArrayMap object)"
+            ),
         ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
@@ -388,7 +397,10 @@ class TestPyEval:
             "invoke-static",
             "v4",
             "v9",
-            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+            (
+                "Landroid/support/v4/util/ArrayMap;"
+                "->entrySet()Ljava/util/Set;(ArrayMap object)"
+            ),
         ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
@@ -401,7 +413,10 @@ class TestPyEval:
             "invoke-interface",
             "v4",
             "v9",
-            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)",
+            (
+                "Landroid/support/v4/util/ArrayMap;"
+                "->entrySet()Ljava/util/Set;(ArrayMap object)"
+            ),
         ]
 
         with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
@@ -418,7 +433,10 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.ret_stack == [
-            "Landroid/support/v4/util/ArrayMap;->entrySet()Ljava/util/Set;(ArrayMap object)"
+            (
+                "Landroid/support/v4/util/ArrayMap;"
+                "->entrySet()Ljava/util/Set;(ArrayMap object)"
+            )
         ]
         assert pyeval.ret_type == "Ljava/util/Set;"
 
@@ -442,7 +460,10 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.ret_stack == [
-            "Landroid/support/v4/util/SimpleArrayMap;->toString()Ljava/lang/String;(ArrayMap object)"
+            (
+                "Landroid/support/v4/util/SimpleArrayMap;"
+                "->toString()Ljava/lang/String;(ArrayMap object)"
+            )
         ]
         assert pyeval.ret_type == "Ljava/lang/String;"
 
@@ -951,6 +972,9 @@ class TestPyEval:
 
         assert pyeval.table_obj.pop(1) == RegisterObject(
             "v1",
-            "Lcom/google/progress/ContactsCollector;->getContactList()Ljava/lang/String;(some_string)",
+            (
+                "Lcom/google/progress/ContactsCollector;"
+                "->getContactList()Ljava/lang/String;(some_string)"
+            ),
             value_type="Ljava/lang/String;",
         )
