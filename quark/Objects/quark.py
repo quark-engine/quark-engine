@@ -172,7 +172,13 @@ class Quark:
 
         return state
 
-    def check_parameter(self, parent_function, first_method_list, second_method_list):
+    def check_parameter(
+        self,
+        parent_function,
+        first_method_list,
+        second_method_list,
+        keyword_item_list=None,
+    ):
         """
         Check the usage of the same parameter between two method.
 
@@ -189,7 +195,9 @@ class Quark:
                 pyeval = PyEval()
                 # Check if there is an operation of the same register
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(parent_function):
+                for bytecode_obj in self.apkinfo.get_method_bytecode(
+                    parent_function
+                ):
                     # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
                     instruction = [bytecode_obj.mnemonic]
                     if bytecode_obj.registers is not None:
@@ -217,6 +225,18 @@ class Quark:
                             ):
                                 state = True
 
+                                if keyword_item_list and any(
+                                    keyword_item_list
+                                ):
+                                    self.check_parameter_values(
+                                        c_func,
+                                        (
+                                            first_method_pattern,
+                                            second_method_pattern,
+                                        ),
+                                        keyword_item_list,
+                                    )
+
                                 # Record the mapping between the parent function and the wrapper method
                                 self.quark_analysis.parent_wrapper_mapping[
                                     parent_function.full_name
@@ -242,6 +262,35 @@ class Quark:
                     )
 
         return state
+
+    def check_parameter_values(
+        self, source_str, pattern_list, keyword_item_list
+    ):
+        for pattern, keyword_item in zip(pattern_list, keyword_item_list):
+            if keyword_item is None:
+                continue
+
+            start_index = source_str.index(pattern) + len(pattern)
+
+            end_index = -1
+            brackets_count = 1
+            for idx, char in enumerate(source_str[start_index:]):
+                if char == "(":
+                    brackets_count += 1
+                elif char == ")":
+                    brackets_count -= 1
+
+                if brackets_count == 0:
+                    end_index = idx + start_index
+                    break
+
+            parameter_str = source_str[start_index:end_index]
+
+            for keyword in keyword_item:
+                if str(keyword) not in parameter_str:
+                    return False
+
+        return True
 
     def run(self, rule_obj):
         """
@@ -331,8 +380,18 @@ class Quark:
                 rule_obj.check_item[3] = True
                 self.quark_analysis.level_4_result.append(parent_function)
 
+                keyword_item_list = (
+                    rule_obj.api[i].get("match_keywords", None)
+                    for i in range(2)
+                )
+
                 # Level 5: Handling The Same Register Check
-                if self.check_parameter(parent_function, first_wrapper, second_wrapper):
+                if self.check_parameter(
+                    parent_function,
+                    first_wrapper,
+                    second_wrapper,
+                    keyword_item_list=keyword_item_list,
+                ):
                     rule_obj.check_item[4] = True
                     self.quark_analysis.level_5_result.append(parent_function)
 

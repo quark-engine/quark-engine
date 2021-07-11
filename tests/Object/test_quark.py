@@ -1,7 +1,9 @@
+import base64
 import os
+from unittest.mock import patch
+
 import pytest
 import requests
-
 from quark.Objects.quark import Quark
 from quark.Objects.struct.ruleobject import RuleObject
 
@@ -12,13 +14,18 @@ APK_SOURCE = (
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
-@pytest.fixture()
-def quark_obj(scope="function"):
+@pytest.fixture(scope="function")
+def simple_quark_obj():
     r = requests.get(APK_SOURCE, allow_redirects=True)
     open(APK_FILENAME, "wb").write(r.content)
 
     apk_file = APK_FILENAME
-    data = Quark(apk_file)
+    return Quark(apk_file)
+
+
+@pytest.fixture(scope="function")
+def quark_obj(simple_quark_obj):
+    data = simple_quark_obj
     # rule
     rules = "quark/rules"
     rules_list = os.listdir(rules)
@@ -32,6 +39,47 @@ def quark_obj(scope="function"):
             data.generate_json_report(rule_checker)
 
     yield data
+
+
+@pytest.fixture(scope="function")
+def rule_without_keyword(tmp_path):
+    rule_file = tmp_path / "rule_without_keyword.json"
+
+    data = base64.b64decode(
+        """eyAiY3JpbWUiOiAiUmVhZCBzZW5zaXRpdmUgZGF0YShTTVMsIENBTExMT0csIGV0YykiLCAicGVy
+bWlzc2lvbiI6IFtdLCAiYXBpIjogWyB7ICJkZXNjcmlwdG9yIjogIigpTGFuZHJvaWQvY29udGVu
+dC9Db250ZW50UmVzb2x2ZXI7IiwgImNsYXNzIjogIkxhbmRyb2lkL2NvbnRlbnQvQ29udGV4dDsi
+LCAibWV0aG9kIjogImdldENvbnRlbnRSZXNvbHZlciIgfSwgeyAiZGVzY3JpcHRvciI6ICIoTGFu
+ZHJvaWQvbmV0L1VyaTsgW0xqYXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzsgW0xq
+YXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzspTGFuZHJvaWQvZGF0YWJhc2UvQ3Vy
+c29yOyIsICJjbGFzcyI6ICJMYW5kcm9pZC9jb250ZW50L0NvbnRlbnRSZXNvbHZlcjsiLCAibWV0
+aG9kIjogInF1ZXJ5IiB9IF0sICJzY29yZSI6IDEsICJsYWJlbCI6IFsgImNvbGxlY3Rpb24iLCAi
+c21zIiwgImNhbGxsb2ciLCAiY2FsZW5kYXIiIF0gfQ=="""
+    ).decode()
+
+    rule_file.write_text(data)
+    return rule_file
+
+
+@pytest.fixture(scope="function")
+def rule_with_one_keyword(tmp_path):
+    rule_file = tmp_path / "rule_without_keyword.json"
+
+    data = base64.b64decode(
+        """eyAiY3JpbWUiOiAiUmVhZCBzZW5zaXRpdmUgZGF0YShTTVMsIENBTExMT0csIGV0YykiLCAicGVy
+bWlzc2lvbiI6IFtdLCAiYXBpIjogWyB7ICJkZXNjcmlwdG9yIjogIigpTGFuZHJvaWQvY29udGVu
+dC9Db250ZW50UmVzb2x2ZXI7IiwgImNsYXNzIjogIkxhbmRyb2lkL2NvbnRlbnQvQ29udGV4dDsi
+LCAibWV0aG9kIjogImdldENvbnRlbnRSZXNvbHZlciIgfSwgeyAiZGVzY3JpcHRvciI6ICIoTGFu
+ZHJvaWQvbmV0L1VyaTsgW0xqYXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzsgW0xq
+YXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzspTGFuZHJvaWQvZGF0YWJhc2UvQ3Vy
+c29yOyIsICJjbGFzcyI6ICJMYW5kcm9pZC9jb250ZW50L0NvbnRlbnRSZXNvbHZlcjsiLCAibWV0
+aG9kIjogInF1ZXJ5IiwgIm1hdGNoX2tleXdvcmRzIjogWyAiY29udGVudDovL2NhbGxfbG9nL2Nh
+bGxzIiBdIH0gXSwgInNjb3JlIjogMSwgImxhYmVsIjogWyAiY29sbGVjdGlvbiIsICJzbXMiLCAi
+Y2FsbGxvZyIsICJjYWxlbmRhciIgXSB9"""
+    ).decode()
+
+    rule_file.write_text(data)
+    return rule_file
 
 
 class TestQuark:
@@ -307,6 +355,78 @@ class TestQuark:
         )
 
         assert result is False
+
+    def test_check_parameter_values_with_no_keyword_rule(
+        self, simple_quark_obj, rule_without_keyword
+    ):
+        rule_object = RuleObject(rule_without_keyword)
+
+        with patch("quark.Objects.quark.Quark.check_parameter_values") as mock:
+            simple_quark_obj.run(rule_object)
+            mock.assert_not_called()
+
+    def test_check_parameter_values_with_one_keyword_rule(
+        self, simple_quark_obj, rule_with_one_keyword
+    ):
+        rule_object = RuleObject(rule_with_one_keyword)
+
+        with patch("quark.Objects.quark.Quark.check_parameter_values") as mock:
+            simple_quark_obj.run(rule_object)
+            mock.assert_called()
+
+    def test_check_parameter_values_without_matched_str(
+        self, simple_quark_obj
+    ):
+        source_str = (
+            "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
+            " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
+            " Ljava/lang/String;)Landroid/database/Cursor;"
+            "(Landroid/content/Context;"
+            "->getContentResolver()Landroid/content/ContentResolver;"
+            "(Lahmyth/mine/king/ahmyth/MainService;->getContextOfApplication()"
+            "Landroid/content/Context;()),Landroid/net/Uri;"
+            "->parse(Ljava/lang/String;)"
+            "Landroid/net/Uri;(file://usr/bin/su),v0,v0,v0,v0)"
+        )
+        pattern_list = (
+            (
+                "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
+                " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
+                " Ljava/lang/String;)Landroid/database/Cursor;"
+            ),
+        )
+        keyword_item_list = [("content://call_log/calls")]
+
+        result = simple_quark_obj.check_parameter_values(
+            source_str, pattern_list, keyword_item_list
+        )
+
+        assert result is False
+
+    def test_check_parameter_values_with_matched_str(self, simple_quark_obj):
+        source_str = (
+            "Landroid/database/Cursor;->getColumnIndex"
+            "(Ljava/lang/String;)I(Landroid/content/ContentResolver;"
+            "->query(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String;"
+            " [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;"
+            "(Landroid/content/Context;->getContentResolver()"
+            "Landroid/content/ContentResolver;(Lahmyth/mine/king/ahmyth"
+            "/MainService;->getContextOfApplication()Landroid/content/"
+            "Context;()),Landroid/net/Uri;->parse(Ljava/lang/String;)"
+            "Landroid/net/Uri;(content://call_log/calls),v0,v0,v0,v0),number)"
+        )
+        pattern_list = (
+            "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
+            " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
+            " Ljava/lang/String;)Landroid/database/Cursor;",
+        )
+        keyword_item_list = [("content://call_log/calls")]
+
+        result = simple_quark_obj.check_parameter_values(
+            source_str, pattern_list, keyword_item_list
+        )
+
+        assert result is True
 
     def test_get_json_report(self, quark_obj):
         json_report = quark_obj.get_json_report()
