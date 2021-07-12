@@ -33,7 +33,7 @@ def logger(func):
 
 
 class PyEval:
-    def __init__(self):
+    def __init__(self, apkinfo):
         # Main switch for executing the bytecode instruction.
         self.eval = {
             # invoke-kind
@@ -42,6 +42,7 @@ class PyEval:
             "invoke-static": self.INVOKE_STATIC,
             "invoke-virtual/range": self.INVOKE_VIRTUAL_RANGE,
             "invoke-interface": self.INVOKE_INTERFACE,
+            "invoke-super": self.INVOKE_SUPER,
             "invoke-polymorphic": self.INVOKE_POLYMORPHIC,
             "invoke-custom": self.INVOKE_CUSTOM,
             # move-result-kind
@@ -50,10 +51,11 @@ class PyEval:
             "move-result-object": self.MOVE_RESULT_OBJECT,
             # instance-kind
             "new-instance": self.NEW_INSTANCE,
+            "new-array": self.NEW_ARRAY,
             # const-kind
             "const-string": self.CONST_STRING,
             "const-string/jumbo": self.CONST_STRING,
-            "const-class": self.CONST,
+            "const-class": self.CONST_CLASS,
             "const": self.CONST,
             "const/4": self.CONST_FOUR,
             "const/16": self.CONST_SIXTEEN,
@@ -75,12 +77,12 @@ class PyEval:
             self.eval[ins] = self.FILLED_NEW_ARRAY_KIND
 
         # aget-kind
-        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+        for postfix in ("", "-object", "-boolean", "-byte", "-char", "-short"):
             self.eval[f"aget{postfix}"] = self.AGET_KIND
             self.eval["aget-wide"] = self.AGET_WIDE_KIND
 
         # aput-kind
-        for postfix in ("-object", "-boolean", "-byte", "-char", "-short"):
+        for postfix in ("", "-object", "-boolean", "-byte", "-char", "-short"):
             self.eval[f"aput{postfix}"] = self.APUT_KIND
             self.eval["aput-wide"] = self.APUT_WIDE_KIND
 
@@ -117,20 +119,47 @@ class PyEval:
                     self.eval[f"{prefix}-{_type}{postfix}"] = self.BINOP_KIND
 
         self.eval["move-exception"] = lambda ins: self._assign_value(
-            (ins[0], ins[1], "Exception")
+            (ins[0], ins[1], "Exception"), value_type="Ljava/lang/Throwable;"
         )
-        self.eval["fill-array-data"] = lambda ins: self._assign_value(
-            (ins[0], ins[1], "Embedded-array-data")
+        self.eval[
+            "fill-array-data"
+        ] = lambda ins: self._move_value_and_data_to_register(
+            (ins[0], ins[1], ins[1], ins[2]), "Embedded-array-data()["
         )
+
+        self.type_mapping = {
+            "boolean": "Z",
+            "byte": "B",
+            "char": "C",
+            "short": "S",
+            "int": "I",
+            "long": "J",
+            "float": "F",
+            "double": "D",
+        }
 
         self.table_obj = TableObject(MAX_REG_COUNT)
         self.ret_stack = []
+        self.ret_type = ""
+        self.apkinfo = apkinfo
 
-    def _invoke(self, instruction):
+    def _invoke(self, instruction, look_up=False, skip_self=False):
         """
         Function call in Android smali code. It will check if the corresponding table field has a value, if it does,
         inserts its own function name into called_by_func column.
         """
+
+        if look_up:
+            try:
+                instruction[-1] = self._lookup_implement(
+                    self.table_obj.pop(int(instruction[1][1:])).current_type,
+                    instruction[-1],
+                    skip_self=skip_self,
+                )
+            except ValueError as e:
+                log.exception(e)
+            except IndexError:
+                pass
 
         executed_fuc = instruction[-1]
         reg_list = instruction[1: len(instruction) - 1]
@@ -158,28 +187,34 @@ class PyEval:
         # push the return value into ret_stack
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
+        # Extract the type of return value
+        self.ret_type = executed_fuc[executed_fuc.index(")") + 1:]
+
     def _move_result(self, instruction):
 
         reg = instruction[1]
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(reg, pre_ret)
+            variable_object = RegisterObject(
+                reg, pre_ret, value_type=self.ret_type
+            )
             self.table_obj.insert(index, variable_object)
+            self.ret_type = ""
         except IndexError as e:
 
             log.exception(f"{e} in _move_result")
 
-    def _assign_value(self, instruction):
+    def _assign_value(self, instruction, value_type=""):
 
         reg = instruction[1]
         value = instruction[2]
         index = int(reg[1:])
 
-        variable_object = RegisterObject(reg, value)
+        variable_object = RegisterObject(reg, value, value_type=value_type)
         self.table_obj.insert(index, variable_object)
 
-    def _assign_value_wide(self, instruction):
+    def _assign_value_wide(self, instruction, value_type=""):
         """
         For 64 bit, it has two register, which is vx and vx+1
         """
@@ -188,8 +223,10 @@ class PyEval:
         index = int(reg[1:])
         reg_plus_one = f"v{index + 1}"
 
-        variable_object = RegisterObject(reg, value)
-        variable_object2 = RegisterObject(reg_plus_one, value)
+        variable_object = RegisterObject(reg, value, value_type=value_type)
+        variable_object2 = RegisterObject(
+            reg_plus_one, value, value_type=value_type
+        )
         self.table_obj.insert(index, variable_object)
         self.table_obj.insert(index + 1, variable_object2)
 
@@ -200,7 +237,7 @@ class PyEval:
 
         Invokes a virtual method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
 
     @logger
     def INVOKE_DIRECT(self, instruction):
@@ -226,7 +263,7 @@ class PyEval:
         invoke-virtual/range { parameters }, methodtocall
         Invokes a virtual-range method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
 
     @logger
     def INVOKE_INTERFACE(self, instruction):
@@ -234,7 +271,15 @@ class PyEval:
         invoke-interface { parameters }, methodtocall
         Invokes a interface method with parameters.
         """
-        self._invoke(instruction)
+        self._invoke(instruction, look_up=True)
+
+    @logger
+    def INVOKE_SUPER(self, instruction):
+        """
+        invoke-interface { parameters }, methodtocall
+        Invokes a interface method with parameters.
+        """
+        self._invoke(instruction, look_up=True, skip_self=True)
 
     def INVOKE_POLYMORPHIC(self, instruction):
         self._invoke(instruction)
@@ -265,8 +310,12 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(reg, pre_ret)
-            variable_object2 = RegisterObject(f"v{index + 1}", pre_ret)
+            variable_object = RegisterObject(
+                reg, pre_ret, value_type=self.ret_type
+            )
+            variable_object2 = RegisterObject(
+                f"v{index + 1}", pre_ret, value_type=self.ret_type
+            )
             self.table_obj.insert(index, variable_object)
             self.table_obj.insert(index + 1, variable_object2)
         except IndexError as e:
@@ -295,7 +344,18 @@ class PyEval:
         Store variables to vx, and then insert the VariableObject into table.
         """
 
-        self._assign_value(instruction)
+        self._assign_value(instruction, value_type=instruction[2])
+
+    @logger
+    def NEW_ARRAY(self, instruction):
+        try:
+            self._move_value_to_register(
+                instruction[:-1],
+                "new-array()[({src0})",
+                value_type=instruction[-1],
+            )
+        except IndexError as e:
+            log.exception(f"{e} in NEW_ARRAY")
 
     @logger
     def CONST_STRING(self, instruction):
@@ -307,7 +367,11 @@ class PyEval:
         Store string variable to vx, and then insert the VariableObject into table.
         """
 
-        self._assign_value(instruction)
+        self._assign_value(instruction, value_type="Ljava/lang/String;")
+
+    @logger
+    def CONST_CLASS(self, instruction):
+        self._assign_value(instruction, value_type="Ljava/lang/Class;")
 
     @logger
     def CONST(self, instruction):
@@ -395,9 +459,19 @@ class PyEval:
 
         It means vx = vy[vz].
         """
+
         try:
+            if "-" in instruction[0] and "object" not in instruction[0]:
+                index = instruction[0].index("-") + 1
+                value_type = self.type_mapping[instruction[0][index:]]
+            else:
+                array_reg_index = int(instruction[2][1:])
+                value_type = self.table_obj.pop(array_reg_index).current_type[
+                    1:
+                ]
+
             self._move_value_to_register(
-                instruction, "{src0}[{src1}]", wide=True
+                instruction, "{src0}[{src1}]", wide=True, value_type=value_type
             )
         except IndexError as e:
             log.exception(f"{e} in AGET_OBJECT")
@@ -412,20 +486,33 @@ class PyEval:
 
     @logger
     def FILLED_NEW_ARRAY_KIND(self, instruction):
+        value_type = instruction[-1]
+
         try:
-            self._invoke([instruction] + ["new-array["])
+            self._invoke([instruction] + [f"new-array(){value_type}"])
         except IndexError as e:
             log.exception(f"{e} in MOVE_KIND")
 
     @logger
     def AGET_WIDE_KIND(self, instruction):
+        array_reg_index = int(instruction[2][1:])
+        value_type = self.table_obj.pop(array_reg_index).current_type[1:]
+
         try:
             destination = int(instruction[1][1:])
             source_list = [int(reg[1:]) for reg in instruction[2:]]
 
-            self._transfer_register(source_list, destination, "{src0}[{src1}]")
             self._transfer_register(
-                source_list, destination + 1, "{src0}[{src1}]"
+                source_list,
+                destination,
+                "{src0}[{src1}]",
+                value_type=value_type,
+            )
+            self._transfer_register(
+                source_list,
+                destination + 1,
+                "{src0}[{src1}]",
+                value_type=value_type,
             )
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
@@ -473,13 +560,20 @@ class PyEval:
     def CAST_TYPE(self, instruction):
         try:
             part = instruction[0].split("-")
+            value_type = self.type_mapping[part[1]]
+
             if part[0] in ("double", "long"):
                 self._move_value_to_register(
                     instruction + [f"v{int(instruction[2][1:])+1}"],
                     "casting({src0}, {src1})",
+                    value_type=value_type,
                 )
             elif part[1] in ("double", "long"):
-                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    instruction,
+                    "casting({src0})",
+                    value_type=value_type,
+                )
                 self._move_value_to_register(
                     [
                         instruction[0],
@@ -487,30 +581,50 @@ class PyEval:
                         instruction[2],
                     ],
                     "casting({src0})",
+                    value_type=value_type,
                 )
             else:
-                self._move_value_to_register(instruction, "casting({src0})")
+                self._move_value_to_register(
+                    instruction,
+                    "casting({src0})",
+                    value_type=value_type,
+                )
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
 
     @logger
     def BINOP_KIND(self, instruction):
+        mnemonic = instruction[0]
+        index = mnemonic.index("-") + 1
+        if "/" in mnemonic:
+            r_index = mnemonic.index("/")
+            value_type = self.type_mapping[mnemonic[index:r_index]]
+        else:
+            value_type = self.type_mapping[mnemonic[index:]]
+
         try:
-            wide = any(
-                wide_type in instruction[0] for wide_type in ("double", "long")
-            )
+            wide = value_type in ("D", "J")
 
             if "/2addr" in instruction[0]:
                 self._combine_value_to_register(
-                    instruction, "binop({src0}, {src1})", wide
+                    instruction,
+                    "binop({src0}, {src1})",
+                    wide,
+                    value_type=value_type,
                 )
             elif "/lit" in instruction[0]:
                 self._move_value_and_data_to_register(
-                    instruction, "binop({src0}, {data})", wide
+                    instruction,
+                    "binop({src0}, {data})",
+                    wide,
+                    value_type=value_type,
                 )
             else:
                 self._move_value_to_register(
-                    instruction, "binop({src0}, {src1})", wide
+                    instruction,
+                    "binop({src0}, {src1})",
+                    wide,
+                    value_type=value_type,
                 )
         except IndexError as e:
             log.exception(f"{e} in BINOP_KIND")
@@ -518,49 +632,108 @@ class PyEval:
     def show_table(self):
         return self.table_obj.get_table()
 
-    def _move_value_to_register(self, instruction, str_format, wide=False):
+    def _move_value_to_register(
+        self, instruction, str_format, wide=False, value_type=None
+    ):
         destination = int(instruction[1][1:])
         source_list = [int(reg[1:]) for reg in instruction[2:]]
-        self._transfer_register(source_list, destination, str_format)
+
+        self._transfer_register(
+            source_list, destination, str_format, value_type=value_type
+        )
 
         if wide:
             pair_source_list = [src + 1 for src in source_list]
             pair_destination = destination + 1
             self._transfer_register(
-                pair_source_list, pair_destination, str_format
+                pair_source_list,
+                pair_destination,
+                str_format,
+                value_type=value_type,
             )
 
+    def _lookup_implement(
+        self, instance_type, method_full_name, skip_self=False
+    ):
+        class_name, signature = method_full_name.split("->")
+        index = signature.index("(")
+        method_name, descriptor = signature[:index], signature[index:]
+
+        class_pool = (
+            self.apkinfo.class_hierarchy[instance_type]
+            if skip_self
+            else {instance_type}
+        )
+        next_class_pool = set()
+        while class_pool and not (
+            len(class_pool) == 1 and "Ljava/lang/Object;" in class_pool
+        ):
+            next_class_pool.clear()
+            for class_name in class_pool:
+                method = self.apkinfo.find_method(
+                    class_name, method_name, descriptor
+                )
+
+                if method:
+                    return (
+                        f"{method.class_name}->"
+                        f"{method.name}{method.descriptor}"
+                    )
+
+                next_class_pool.update(
+                    (self.apkinfo.class_hierarchy[class_name])
+                )
+                next_class_pool.difference_update(class_pool)
+
+            class_pool = set(next_class_pool)
+
+        raise ValueError(
+            "The implement of method {signature} was"
+            "not found. Instance type: {instance_type}"
+        )
+
     def _move_value_and_data_to_register(
-        self, instruction, str_format, wide=False
+        self, instruction, str_format, wide=False, value_type=None
     ):
         destination = int(instruction[1][1:])
         source_list = [int(reg[1:]) for reg in instruction[2:-1]]
         data = instruction[-1]
 
         self._transfer_register(
-            source_list, destination, str_format, data=data
+            source_list,
+            destination,
+            str_format,
+            data=data,
+            value_type=value_type,
         )
 
         if wide:
             self._transfer_register(
-                source_list, destination + 1, str_format, data=data
+                source_list,
+                destination + 1,
+                str_format,
+                data=data,
+                value_type=value_type,
             )
 
-    def _combine_value_to_register(self, instruction, str_format, wide=False):
+    def _combine_value_to_register(
+        self, instruction, str_format, wide=False, value_type=""
+    ):
         self._move_value_to_register(
-            instruction[0:2] + instruction[1:], str_format, wide
+            instruction[0:2] + instruction[1:],
+            str_format,
+            wide,
+            value_type=value_type,
         )
 
     def _transfer_register(
-        self,
-        source_list,
-        destination,
-        str_format,
-        data=None,
+        self, source_list, destination, str_format, data=None, value_type=None
     ):
         source_register_list = [
             self.table_obj.pop(index) for index in source_list
         ]
+        if not value_type:
+            value_type = source_register_list[0].current_type
 
         value_dict = {
             f"src{index}": register.value
@@ -569,7 +742,9 @@ class PyEval:
         value_dict["data"] = data
 
         new_register = RegisterObject(
-            f"v{destination}", str_format.format(**value_dict)
+            f"v{destination}",
+            str_format.format(**value_dict),
+            value_type=value_type,
         )
 
         self.table_obj.insert(destination, new_register)

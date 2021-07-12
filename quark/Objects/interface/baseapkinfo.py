@@ -171,6 +171,11 @@ class BaseApkinfo:
         """
         pass
 
+    @property
+    @abstractmethod
+    def class_hierarchy(self) -> Dict[str, Set[str]]:
+        pass
+
     @staticmethod
     def _check_file_signature(raw: bytes) -> Optional[str]:
         if raw[0:3] == b"dex":

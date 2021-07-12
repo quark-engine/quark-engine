@@ -209,28 +209,33 @@ class TestApkinfo:
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
-                ["v15", "v14"],
+                ["v5", "v8"],
                 (
-                    "Lcom/example/google/service/SMSReceiver;->"
-                    "_Context Landroid/content/Context;"
+                    "Landroid/support/v4/app/FragmentManagerImpl;"
+                    "->mTmpActions [Ljava/lang/Runnable;"
                 ),
             ),
             BytecodeObject(
                 "invoke-direct",
-                ["v14", "v8"],
+                ["v5", "v6"],
                 (
-                    "Lcom/example/google/service/SMSReceiver;"
-                    "->isContact(Ljava/lang/String;)Ljava/lang/Boolean;"
+                    "Ljava/lang/IllegalStateException;"
+                    "-><init>(Ljava/lang/String;)V"
                 ),
             ),
-            BytecodeObject("array-length", ["v10", "v6"], None),
-            BytecodeObject("return-void", None, None),
+            BytecodeObject("array-length", ["v5", "v5"], None),
+            BytecodeObject(
+                "invoke-static",
+                [],
+                "Landroid/os/Looper;->myLooper()Landroid/os/Looper;",
+            ),
+            BytecodeObject("return", ["v0"], None),
         ]
 
         method = apkinfo.find_method(
-            class_name="Lcom/example/google/service/SMSReceiver;",
-            method_name="onReceive",
-            descriptor="(Landroid/content/Context; Landroid/content/Intent;)V",
+            class_name="Landroid/support/v4/app/FragmentManagerImpl;",
+            method_name="execPendingActions",
+            descriptor="()Z",
         )
 
         bytecodes = list(apkinfo.get_method_bytecode(method))
@@ -255,3 +260,11 @@ class TestApkinfo:
         upper_methods = apkinfo.lowerfunc(method)
 
         assert (expect_method, expect_offset) in upper_methods
+
+    def test_class_hierarchy_with_expected_class(self, apkinfo):
+        expected_upper_class = {"Lcom/example/google/service/HttpHelper;"}
+        class_name = "Lcom/example/google/service/WebServiceCalling;"
+
+        upper_set = apkinfo.class_hierarchy[class_name]
+
+        assert expected_upper_class == upper_set

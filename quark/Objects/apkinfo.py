@@ -4,6 +4,7 @@
 
 import functools
 import re
+from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
 
@@ -117,7 +118,6 @@ class AndroguardImp(BaseApkinfo):
         self, method_object: MethodObject
     ) -> Set[MethodObject]:
         method_analysis = method_object.cache
-
         try:
             for (
                 _,
@@ -135,28 +135,24 @@ class AndroguardImp(BaseApkinfo):
                         None,
                         None,
                     )
-                elif length_operands == 1:
-                    # Only one register
+                else:
+                    index_of_parameter_starts = None
+                    for i in range(length_operands - 1, -1, -1):
+                        if not isinstance(ins.get_operands()[i][0], Operand):
+                            index_of_parameter_starts = i
+                            break
 
-                    reg_list.append(
-                        f"v{ins.get_operands()[length_operands - 1][1]}",
-                    )
-                    bytecode_obj = BytecodeObject(
-                        ins.get_name(),
-                        reg_list,
-                        None,
-                    )
-                elif length_operands >= 2:
-                    # if the last one's type is not Operand, it is a parameter.
-                    if not isinstance(ins.get_operands()[-1][0], Operand):
-                        parameter = ins.get_operands()[-1]
+                    if index_of_parameter_starts is not None:
+                        parameter = ins.get_operands()[
+                            index_of_parameter_starts
+                        ]
                         parameter = (
                             parameter[2]
                             if len(parameter) == 3
                             else parameter[1]
                         )
 
-                        for i in range(length_operands - 1):
+                        for i in range(index_of_parameter_starts):
                             reg_list.append(
                                 "v" + str(ins.get_operands()[i][1]),
                             )
@@ -257,6 +253,18 @@ class AndroguardImp(BaseApkinfo):
                 result["second_hex"] = ins.get_hex()
 
         return result
+
+    @property
+    def class_hierarchy(self) -> Dict[str, Set[str]]:
+        hierarchy_dict = defaultdict(set)
+
+        for _class in self.analysis.get_classes():
+            hierarchy_dict[str(_class.name)].add(str(_class.extends))
+            hierarchy_dict[str(_class.name)].union(
+                str(implements) for implements in _class.implements
+            )
+
+        return hierarchy_dict
 
     @staticmethod
     @functools.lru_cache

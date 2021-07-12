@@ -13,22 +13,13 @@ from quark.Objects.analysis import QuarkAnalysis
 from quark.Objects.apkinfo import AndroguardImp
 from quark.Objects.rzapkinfo import RizinImp
 from quark.utils import tools
-from quark.utils.colors import (
-    red,
-    yellow,
-    green,
-    lightblue,
-    magenta,
-    lightyellow,
-    colorful_report,
-)
+from quark.utils.colors import (colorful_report, green, lightblue, lightyellow,
+                                magenta, red, yellow)
 from quark.utils.graph import call_graph
-from quark.utils.output import (
-    get_rule_classification_data,
-    output_parent_function_graph,
-    output_parent_function_table,
-    output_parent_function_json,
-)
+from quark.utils.output import (get_rule_classification_data,
+                                output_parent_function_graph,
+                                output_parent_function_json,
+                                output_parent_function_table)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -192,7 +183,7 @@ class Quark:
         for first_call_method in first_method_list:
             for second_call_method in second_method_list:
 
-                pyeval = PyEval()
+                pyeval = PyEval(self.apkinfo)
                 # Check if there is an operation of the same register
 
                 for bytecode_obj in self.apkinfo.get_method_bytecode(
