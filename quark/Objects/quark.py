@@ -381,7 +381,7 @@ class Quark:
                 self.quark_analysis.level_4_result.append(parent_function)
 
                 keyword_item_list = (
-                    rule_obj.api[i].get("match_keywords", None)
+                    rule_obj.api[i].get("keyword", None)
                     for i in range(2)
                 )
 
