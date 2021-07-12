@@ -135,5 +135,4 @@ class RegisterObject:
         return int(self.register_name[1:])
 
 
-if __name__ == "__main__":
-    pass
+pass

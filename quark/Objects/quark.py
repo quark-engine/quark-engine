@@ -594,5 +594,4 @@ class Quark:
         output_parent_function_graph(data_bundle)
 
 
-if __name__ == "__main__":
-    pass
+pass

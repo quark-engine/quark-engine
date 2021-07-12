@@ -750,5 +750,4 @@ class PyEval:
         self.table_obj.insert(destination, new_register)
 
 
-if __name__ == "__main__":
-    pass
+pass
