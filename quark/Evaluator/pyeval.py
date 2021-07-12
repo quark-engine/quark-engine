@@ -677,7 +677,7 @@ class PyEval:
                 if method:
                     return (
                         f"{method.class_name}->"
-                        "{method.name}{method.descriptor}"
+                        f"{method.name}{method.descriptor}"
                     )
 
                 next_class_pool.update(
