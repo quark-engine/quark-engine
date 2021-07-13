@@ -153,6 +153,18 @@ quark -a first.apk -a second.apk -C
 $ pip install -U quark-engine
 ```
 
+#### Installation without CLI
+
+Quark has the possibility to be installed only as a python package and without the CLI supports. 
+This allows better integration with other packages that would share the same `Click` dependency.
+To install Quark without the CLI-supports, an environment variable set to 1 is required
+
+```bash
+$ export QUARK_WITHOUT_CLI=1
+$ pip install -U quark-engine
+```
+
+
 ### Get the latest quark rules from our [quark-rules](https://github.com/quark-engine/quark-rules) repo
 
 Now you can download the quark-rules to your home directory with a simple command.
