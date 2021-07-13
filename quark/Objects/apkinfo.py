@@ -3,84 +3,41 @@
 # See the file 'LICENSE' for copying permission.
 
 import functools
-import hashlib
-import os
 import re
+from collections import defaultdict
+from os import PathLike
+from typing import Dict, List, Optional, Set, Union
 
-from androguard.core import androconf
+from androguard.core.analysis.analysis import MethodAnalysis
+from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.Objects.bytecodeobject import BytecodeObject
+from quark.Objects.interface.baseapkinfo import BaseApkinfo
+from quark.Objects.struct.bytecodeobject import BytecodeObject
+from quark.Objects.struct.methodobject import MethodObject
 
 
-class Apkinfo:
+class AndroguardImp(BaseApkinfo):
     """Information about apk based on androguard analysis"""
 
-    __slots__ = [
-        "ret_type",
-        "apk",
-        "dalvikvmformat",
-        "analysis",
-        "apk_filename",
-        "apk_filepath",
-    ]
+    __slots__ = ("apk", "dalvikvmformat", "analysis")
 
-    def __init__(self, apk_filepath):
-        """Information about apk based on androguard analysis"""
-        self.ret_type = androconf.is_android(apk_filepath)
+    def __init__(self, apk_filepath: Union[str, PathLike]):
+        super().__init__(apk_filepath, "androguard")
 
         if self.ret_type == "APK":
             # return the APK, list of DalvikVMFormat, and Analysis objects
-            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
-
-        if self.ret_type == "DEX":
+            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(
+                apk_filepath
+            )
+        elif self.ret_type == "DEX":
             # return the sha256hash, DalvikVMFormat, and Analysis objects
             _, _, self.analysis = AnalyzeDex(apk_filepath)
-
-        self.apk_filename = os.path.basename(apk_filepath)
-        self.apk_filepath = apk_filepath
-
-    def __repr__(self):
-        return f"<Apkinfo-APK:{self.apk_filename}>"
+        else:
+            raise ValueError("Unsupported File type.")
 
     @property
-    def filename(self):
-        """
-        Return the filename of apk.
-
-        :return: a string of apk filename
-        """
-        return os.path.basename(self.apk_filepath)
-
-    @property
-    def filesize(self):
-        """
-        Return the file size of apk file by bytes.
-
-        :return: a number of size bytes
-        """
-        return os.path.getsize(self.apk_filepath)
-
-    @property
-    def md5(self):
-        """
-        Return the md5 checksum of the apk file.
-
-        :return: a string of md5 checksum of the apk file
-        """
-        md5 = hashlib.md5()
-        with open(self.apk_filepath, "rb") as f:
-            for chunk in iter(lambda: f.read(4096), b""):
-                md5.update(chunk)
-        return md5.hexdigest()
-
-    @property
-    def permissions(self):
-        """
-        Return all permissions from given APK.
-
-        :return: a list of all permissions
-        """
+    def permissions(self) -> List[str]:
         if self.ret_type == "APK":
             return self.apk.get_permissions()
 
@@ -88,12 +45,7 @@ class Apkinfo:
             return []
 
     @property
-    def android_apis(self):
-        """
-        Return all Android native APIs from given APK.
-
-        :return: a set of all Android native APIs MethodAnalysis
-        """
+    def android_apis(self) -> Set[MethodObject]:
         apis = set()
 
         for external_cls in self.analysis.get_external_classes():
@@ -101,43 +53,30 @@ class Apkinfo:
                 if meth_analysis.is_android_api():
                     apis.add(meth_analysis)
 
-        return apis
+        return {self._convert_to_method_object(api) for api in apis}
 
     @property
-    def custom_methods(self):
-        """
-        Return all custom methods from given APK.
-
-        :return: a set of all custom methods MethodAnalysis
-        """
+    def custom_methods(self) -> Set[MethodObject]:
         return {
-            meth_analysis
+            self._convert_to_method_object(meth_analysis)
             for meth_analysis in self.analysis.get_methods()
             if not meth_analysis.is_external()
         }
 
     @property
-    def all_methods(self):
-        """
-        Return all methods including Android native API and custom methods from given APK.
-
-        :return: a set of all method MethodAnalysis
-        """
-
-        return {meth_analysis for meth_analysis in self.analysis.get_methods()}
+    def all_methods(self) -> Set[MethodObject]:
+        return {
+            self._convert_to_method_object(meth_analysis)
+            for meth_analysis in self.analysis.get_methods()
+        }
 
     @functools.lru_cache()
-    def find_method(self, class_name=".*", method_name=".*", descriptor=".*"):
-        """
-        Find method from given class_name, method_name and the descriptor.
-        default is find all method.
-
-        :param class_name: the class name of the Android API
-        :param method_name: the method name of the Android API
-        :param descriptor: the descriptor of the Android API
-        :return: a generator of MethodClassAnalysis
-        """
-
+    def find_method(
+        self,
+        class_name: Optional[str] = ".*",
+        method_name: Optional[str] = ".*",
+        descriptor: Optional[str] = ".*",
+    ) -> MethodObject:
         regex_class_name = re.escape(class_name)
         regex_method_name = f"^{re.escape(method_name)}$"
         regex_descriptor = re.escape(descriptor)
@@ -156,31 +95,34 @@ class Apkinfo:
                 )
             )
 
-            return result
+            return self._convert_to_method_object(result)
         else:
             return None
 
     @functools.lru_cache()
-    def upperfunc(self, method_analysis):
-        """
-        Return the xref from method from given method analysis instance.
+    def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+        method_analysis = method_object.cache
+        return {
+            self._convert_to_method_object(call)
+            for _, call, _ in method_analysis.get_xref_from()
+        }
 
-        :param method_analysis: the method analysis in androguard
-        :return: a set of all xref from functions
-        """
-        return {call for _, call, _ in method_analysis.get_xref_from()}
+    def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+        method_analysis = method_object.cache
+        return {
+            (self._convert_to_method_object(call), offset)
+            for _, call, offset in method_analysis.get_xref_to()
+        }
 
-    def get_method_bytecode(self, method_analysis):
-        """
-        Return the corresponding bytecode according to the
-        given class name and method name.
-
-        :param method_analysis: the method analysis in androguard
-        :return: a generator of all bytecode instructions
-        """
-
+    def get_method_bytecode(
+        self, method_object: MethodObject
+    ) -> Set[MethodObject]:
+        method_analysis = method_object.cache
         try:
-            for _, ins in method_analysis.get_method().get_instructions_idx():
+            for (
+                _,
+                ins,
+            ) in method_analysis.get_method().get_instructions_idx():
                 bytecode_obj = None
                 reg_list = []
 
@@ -193,46 +135,51 @@ class Apkinfo:
                         None,
                         None,
                     )
-                elif length_operands == 1:
-                    # Only one register
+                else:
+                    index_of_parameter_starts = None
+                    for i in range(length_operands - 1, -1, -1):
+                        if not isinstance(ins.get_operands()[i][0], Operand):
+                            index_of_parameter_starts = i
+                            break
 
-                    reg_list.append(
-                        f"v{ins.get_operands()[length_operands - 1][1]}",
-                    )
-                    bytecode_obj = BytecodeObject(
-                        ins.get_name(),
-                        reg_list,
-                        None,
-                    )
-                elif length_operands >= 2:
-                    # the last one is parameter, the other are registers.
-
-                    parameter = ins.get_operands()[length_operands - 1]
-                    for i in range(length_operands - 1):
-                        reg_list.append(
-                            "v" + str(ins.get_operands()[i][1]),
+                    if index_of_parameter_starts is not None:
+                        parameter = ins.get_operands()[
+                            index_of_parameter_starts
+                        ]
+                        parameter = (
+                            parameter[2]
+                            if len(parameter) == 3
+                            else parameter[1]
                         )
-                    parameter = parameter[2] if len(parameter) == 3 else parameter[1]
+
+                        for i in range(index_of_parameter_starts):
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]),
+                            )
+                    else:
+                        parameter = None
+                        for i in range(length_operands):
+                            reg_list.append(
+                                "v" + str(ins.get_operands()[i][1]),
+                            )
+
                     bytecode_obj = BytecodeObject(
-                        ins.get_name(),
-                        reg_list,
-                        parameter,
+                        ins.get_name(), reg_list, parameter
                     )
 
                 yield bytecode_obj
-        except AttributeError as error:
+        except AttributeError:
             # TODO Log the rule here
             pass
 
-    def get_strings(self):
-
+    def get_strings(self) -> str:
         return {
             str(string_analysis.get_orig_value())
             for string_analysis in self.analysis.get_strings()
         }
 
     @functools.lru_cache()
-    def construct_bytecode_instruction(self, instruction):
+    def _construct_bytecode_instruction(self, instruction):
         """
         Construct a list of strings from the given bytecode instructions.
 
@@ -251,7 +198,9 @@ class Apkinfo:
         elif length_operands == 1:
             # Only one register
 
-            reg_list.append(f"v{instruction.get_operands()[length_operands - 1][1]}")
+            reg_list.append(
+                f"v{instruction.get_operands()[length_operands - 1][1]}"
+            )
 
             instruction_list.extend(reg_list)
 
@@ -271,32 +220,61 @@ class Apkinfo:
             return instruction_list
 
     @functools.lru_cache()
-    def get_wrapper_smali(self, method_analysis, first_method, second_method):
-        """
-        Return the dict of two method smali code from given method analysis object, only for self-defined
-        method.
-        :param method_analysis:
-        :return:
+    def get_wrapper_smali(
+        self,
+        parent_method: MethodObject,
+        first_method: MethodObject,
+        second_method: MethodObject,
+    ) -> Dict[str, Union[BytecodeObject, str]]:
+        method_analysis = parent_method.cache
 
-        {
-        "first": "invoke-virtual v5, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;",
-        "second": "invoke-virtual v3, v0, v4, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String; Ljava/lang/String;)I"
+        result = {
+            "first": None,
+            "first_hex": None,
+            "second": None,
+            "second_hex": None,
         }
-        """
-
-        result = {"first": None, "first_hex": None, "second": None, "second_hex": None}
 
         first_method_pattern = (
-            f"{first_method.class_name}->{first_method.name}{first_method.descriptor}"
+            f"{first_method.class_name}"
+            f"->{first_method.name}{first_method.descriptor}"
         )
-        second_method_pattern = f"{second_method.class_name}->{second_method.name}{second_method.descriptor}"
+        second_method_pattern = (
+            f"{second_method.class_name}"
+            f"->{second_method.name}{second_method.descriptor}"
+        )
 
         for _, ins in method_analysis.get_method().get_instructions_idx():
             if first_method_pattern in str(ins):
-                result["first"] = self.construct_bytecode_instruction(ins)
+                result["first"] = self._construct_bytecode_instruction(ins)
                 result["first_hex"] = ins.get_hex()
             if second_method_pattern in str(ins):
-                result["second"] = self.construct_bytecode_instruction(ins)
+                result["second"] = self._construct_bytecode_instruction(ins)
                 result["second_hex"] = ins.get_hex()
 
         return result
+
+    @property
+    def class_hierarchy(self) -> Dict[str, Set[str]]:
+        hierarchy_dict = defaultdict(set)
+
+        for _class in self.analysis.get_classes():
+            hierarchy_dict[str(_class.name)].add(str(_class.extends))
+            hierarchy_dict[str(_class.name)].union(
+                str(implements) for implements in _class.implements
+            )
+
+        return hierarchy_dict
+
+    @staticmethod
+    @functools.lru_cache
+    def _convert_to_method_object(
+        method_analysis: MethodAnalysis,
+    ) -> MethodObject:
+        return MethodObject(
+            access_flags=method_analysis.access,
+            class_name=str(method_analysis.class_name),
+            name=str(method_analysis.name),
+            descriptor=str(method_analysis.descriptor),
+            cache=method_analysis,
+        )

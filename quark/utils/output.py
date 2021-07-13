@@ -53,6 +53,10 @@ def _collect_crime_description(call_graph_analysis_list):
 def _search_cross_references(call_graph_analysis_list, search_depth):
     reference_dict = defaultdict(set)
 
+    if not call_graph_analysis_list:
+        return reference_dict
+
+    apkinfo = call_graph_analysis_list[0]["apkinfo"]
     parent_set = {item["parent"] for item in call_graph_analysis_list}
 
     for parent in parent_set:
@@ -62,7 +66,7 @@ def _search_cross_references(call_graph_analysis_list, search_depth):
             for function in expand_queue:
                 next_expand_queue = {
                     child_function
-                    for _, child_function, _ in function.get_xref_to()
+                    for child_function, _ in apkinfo.lowerfunc(function)
                 }
                 called_function_set.update(next_expand_queue)
                 expand_queue = next_expand_queue

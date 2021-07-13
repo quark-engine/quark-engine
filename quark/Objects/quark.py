@@ -10,24 +10,16 @@ import pandas as pd
 
 from quark.Evaluator.pyeval import PyEval
 from quark.Objects.analysis import QuarkAnalysis
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp
+from quark.Objects.rzapkinfo import RizinImp
 from quark.utils import tools
-from quark.utils.colors import (
-    red,
-    yellow,
-    green,
-    lightblue,
-    magenta,
-    lightyellow,
-    colorful_report,
-)
+from quark.utils.colors import (colorful_report, green, lightblue, lightyellow,
+                                magenta, red, yellow)
 from quark.utils.graph import call_graph
-from quark.utils.output import (
-    get_rule_classification_data,
-    output_parent_function_graph,
-    output_parent_function_table,
-    output_parent_function_json,
-)
+from quark.utils.output import (get_rule_classification_data,
+                                output_parent_function_graph,
+                                output_parent_function_json,
+                                output_parent_function_table)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -37,12 +29,20 @@ MAX_SEARCH_LAYER = 3
 class Quark:
     """Quark module is used to check quark's five-stage theory"""
 
-    def __init__(self, apk):
+    def __init__(self, apk, core_library="androguard"):
         """
 
         :param apk: the filename of the apk.
         """
-        self.apkinfo = Apkinfo(apk)
+        core_library = core_library.lower()
+        if core_library == "rizin":
+            self.apkinfo = RizinImp(apk)
+        elif core_library == "androguard":
+            self.apkinfo = AndroguardImp(apk)
+        else:
+            raise ValueError(
+                f"Unsupported core library for Quark: {core_library}"
+            )
 
         self.quark_analysis = QuarkAnalysis()
 
@@ -137,7 +137,7 @@ class Quark:
 
                 seq_table = [
                     (call, number)
-                    for _, call, number in mutual_parent.get_xref_to()
+                    for call, number in self.apkinfo.lowerfunc(mutual_parent)
                     if call in (first_call_method, second_call_method)
                 ]
 
@@ -163,7 +163,13 @@ class Quark:
 
         return state
 
-    def check_parameter(self, parent_function, first_method_list, second_method_list):
+    def check_parameter(
+        self,
+        parent_function,
+        first_method_list,
+        second_method_list,
+        keyword_item_list=None,
+    ):
         """
         Check the usage of the same parameter between two method.
 
@@ -177,10 +183,12 @@ class Quark:
         for first_call_method in first_method_list:
             for second_call_method in second_method_list:
 
-                pyeval = PyEval()
+                pyeval = PyEval(self.apkinfo)
                 # Check if there is an operation of the same register
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(parent_function):
+                for bytecode_obj in self.apkinfo.get_method_bytecode(
+                    parent_function
+                ):
                     # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
                     instruction = [bytecode_obj.mnemonic]
                     if bytecode_obj.registers is not None:
@@ -208,6 +216,18 @@ class Quark:
                             ):
                                 state = True
 
+                                if keyword_item_list and any(
+                                    keyword_item_list
+                                ):
+                                    self.check_parameter_values(
+                                        c_func,
+                                        (
+                                            first_method_pattern,
+                                            second_method_pattern,
+                                        ),
+                                        keyword_item_list,
+                                    )
+
                                 # Record the mapping between the parent function and the wrapper method
                                 self.quark_analysis.parent_wrapper_mapping[
                                     parent_function.full_name
@@ -233,6 +253,35 @@ class Quark:
                     )
 
         return state
+
+    def check_parameter_values(
+        self, source_str, pattern_list, keyword_item_list
+    ):
+        for pattern, keyword_item in zip(pattern_list, keyword_item_list):
+            if keyword_item is None:
+                continue
+
+            start_index = source_str.index(pattern) + len(pattern)
+
+            end_index = -1
+            brackets_count = 1
+            for idx, char in enumerate(source_str[start_index:]):
+                if char == "(":
+                    brackets_count += 1
+                elif char == ")":
+                    brackets_count -= 1
+
+                if brackets_count == 0:
+                    end_index = idx + start_index
+                    break
+
+            parameter_str = source_str[start_index:end_index]
+
+            for keyword in keyword_item:
+                if str(keyword) not in parameter_str:
+                    return False
+
+        return True
 
     def run(self, rule_obj):
         """
@@ -300,6 +349,10 @@ class Quark:
         first_api_xref_from = self.apkinfo.upperfunc(first_api)
         second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
+        if not (first_api_xref_from and second_api_xref_from):
+            # Exit if the upper function is not found (for Rizin library).
+            return
+
         mutual_parent_function_list = self.find_intersection(
             first_api_xref_from, second_api_xref_from
         )
@@ -318,8 +371,18 @@ class Quark:
                 rule_obj.check_item[3] = True
                 self.quark_analysis.level_4_result.append(parent_function)
 
+                keyword_item_list = (
+                    rule_obj.api[i].get("keyword", None)
+                    for i in range(2)
+                )
+
                 # Level 5: Handling The Same Register Check
-                if self.check_parameter(parent_function, first_wrapper, second_wrapper):
+                if self.check_parameter(
+                    parent_function,
+                    first_wrapper,
+                    second_wrapper,
+                    keyword_item_list=keyword_item_list,
+                ):
                     rule_obj.check_item[4] = True
                     self.quark_analysis.level_5_result.append(parent_function)
 

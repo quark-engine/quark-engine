@@ -2,7 +2,8 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp
+from quark.Objects.rzapkinfo import RizinImp
 from quark.utils.regex import (
     extract_url,
     extract_ip,
@@ -15,8 +16,12 @@ from quark.utils.regex import (
 class Forensic:
     __slots__ = ["apk", "all_strings"]
 
-    def __init__(self, apkpath):
-        self.apk = Apkinfo(apkpath)
+    def __init__(self, apkpath, core_library="androguard"):
+        if core_library == "rizin":
+            self.apk = RizinImp(apkpath)
+        elif core_library == "androguard":
+            self.apk = AndroguardImp(apkpath)
+
         self.all_strings = self.apk.get_strings()
 
     def get_all_strings(self):

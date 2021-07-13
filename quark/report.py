@@ -5,7 +5,7 @@
 import os
 
 from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
+from quark.Objects.struct.ruleobject import RuleObject
 
 
 class Report:
@@ -16,7 +16,7 @@ class Report:
     def __init__(self):
         self.quark = None
 
-    def analysis(self, apk, rule):
+    def analysis(self, apk, rule, core_library="androguard"):
         """
         The main function of Quark-Engine analysis, the analysis is based on the provided APK file.
 
@@ -25,7 +25,7 @@ class Report:
         :return: None
         """
 
-        self.quark = Quark(apk)
+        self.quark = Quark(apk, core_library)
 
         if os.path.isdir(rule):
 
@@ -34,7 +34,7 @@ class Report:
             for single_rule in rules_list:
                 if single_rule.endswith("json"):
                     rulepath = os.path.join(rule, single_rule)
-                    rule_checker = QuarkRule(rulepath)
+                    rule_checker = RuleObject(rulepath)
 
                     # Run the checker
                     self.quark.run(rule_checker)
@@ -44,7 +44,7 @@ class Report:
 
         elif os.path.isfile(rule):
             if rule.endswith("json"):
-                rule = QuarkRule(rule)
+                rule = RuleObject(rule)
                 # Run checker
                 self.quark.run(rule)
                 # Generate json report

@@ -1,0 +1,81 @@
+# This is the basic workflow of using quark-engine
+
+name: Smoke Test
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Runs a single command using the runners shell
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pipenv
+          pipenv install --skip-lock --dev
+          sudo apt-get -y install graphviz
+      # Download the latest rule set
+      - name: Download rule from https://github.com/quark-engine/quark-rules
+        run: |
+          pipenv run freshquark
+          
+      # Runs a set of commands using the quark-engine
+      - name: Run a multi-line script
+        run: |
+          git clone https://github.com/quark-engine/apk-malware-samples
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -g
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d -g
+          pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -c
+
+      - name: Check Accuracy
+        run: |
+          echo "Ahmyth_RESULT=$(pipenv run quark -a apk-malware-samples/Ahmyth.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+          echo "a4db_RESULT=$(pipenv run quark -a apk-malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+          echo "e273e_RESULT=$(pipenv run quark -a apk-malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+          
+      - name: Check Ahmyt Result
+        # This sample should have 16 behaviors with 100% confidence
+        run: |
+          if [ "${{ env.Ahmyth_RESULT }}" == "16" ]; then
+            exit 0
+          else
+            exit 1
+          fi
+
+      - name: Check 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk Result
+        # This sample should have 11 behaviors with 100% confidence
+        run: |
+          if [ "${{ env.a4db_RESULT }}" == "11" ]; then
+            exit 0
+          else
+            exit 1
+          fi
+          
+      - name: Check 14d9f1a92dd984d6040cc41ed06e273e.apk Result
+        # This sample should have 15 behaviors with 100% confidence
+        run: |
+          if [ "${{ env.e273e_RESULT }}" == "15" ]; then
+            exit 0
+          else
+            exit 1
+          fi

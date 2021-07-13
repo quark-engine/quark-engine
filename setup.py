@@ -15,6 +15,7 @@ required_requirements = [
     "pandas",
     "prompt-toolkit==3.0.19",
     "plotly",
+    "rzpipe",
 ]
 without_cli_support = os.environ.get('QUARK_WITHOUT_CLI', default=0)
 if not without_cli_support:

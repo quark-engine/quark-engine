@@ -12,7 +12,7 @@ from tqdm import tqdm
 from quark import __version__
 from quark import config
 from quark.Objects.quark import Quark
-from quark.Objects.quarkrule import QuarkRule
+from quark.Objects.struct.ruleobject import RuleObject
 from quark.logo import logo
 from quark.utils.colors import yellow
 from quark.utils.graph import show_comparison_graph, select_label_menu
@@ -111,6 +111,14 @@ logo()
     required=False,
     is_flag=True,
 )
+@click.option(
+    "--core-library",
+    "core_library",
+    help="Specify the core library used to analyze an APK",
+    type=click.Choice(("androguard", "rizin"), case_sensitive=False),
+    required=False,
+    default="androguard",
+)
 def entry_point(
     summary,
     detail,
@@ -124,11 +132,12 @@ def entry_point(
     permission,
     label,
     comparison,
+    core_library,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     # Load APK
-    data = Quark(apk[0])
+    data = Quark(apk[0], core_library)
 
     # Load rules
     rules_list = [file for file in os.listdir(rule) if file.endswith("json")]
@@ -140,7 +149,7 @@ def entry_point(
         all_labels = set()
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
             labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 all_labels.add(single_label)
@@ -163,7 +172,7 @@ def entry_point(
 
             for single_rule in tqdm(rules_list):
                 rulepath = os.path.join(rule, single_rule)
-                rule_checker = QuarkRule(rulepath)
+                rule_checker = RuleObject(rulepath)
 
                 # analyse malware only on rules where appears label selected
                 labels = np.array(rule_checker.label)
@@ -209,7 +218,7 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
@@ -246,7 +255,7 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
 
             labels = rule_checker.label
             if label_flag and summary not in labels:
@@ -280,7 +289,7 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
 
             labels = rule_checker.label
             if label_flag and detail not in labels:
@@ -304,7 +313,7 @@ def entry_point(
 
         for single_rule in tqdm(rules_list):
             rulepath = os.path.join(rule, single_rule)
-            rule_checker = QuarkRule(rulepath)
+            rule_checker = RuleObject(rulepath)
 
             # Run the checker
             data.run(rule_checker)

@@ -23,6 +23,14 @@ class BytecodeObject:
     def __repr__(self):
         return f"<BytecodeObject-mnemonic:{self._mnemonic}, registers:{self._registers}, parameter:{self._parameter}>"
 
+    def __eq__(self, obj):
+        return (
+            isinstance(obj, BytecodeObject)
+            and obj.mnemonic == self.mnemonic
+            and obj.registers == self.registers
+            and obj.parameter == self.parameter
+        )
+
     @property
     def mnemonic(self):
         """

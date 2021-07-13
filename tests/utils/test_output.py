@@ -3,7 +3,7 @@ import os
 
 import pytest
 import requests
-from quark.Objects.apkinfo import Apkinfo
+from quark.Objects.apkinfo import AndroguardImp as Apkinfo
 from quark.Objects.quark import MAX_SEARCH_LAYER
 from quark.utils.output import (
     get_rule_classification_data,
@@ -56,6 +56,7 @@ def analysis_element_1(analysis_object):
     return {
         "crime": "The Crime",
         "parent": parent,
+        "apkinfo": analysis_object,
         "first_call": first_api,
         "first_api": first_api,
         "second_call": second_api,
@@ -84,6 +85,7 @@ def analysis_element_2(analysis_object):
     return {
         "crime": "Another Crime",
         "parent": parent,
+        "apkinfo": analysis_object,
         "first_call": first_api,
         "first_api": first_api,
         "second_call": second_api,
