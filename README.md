@@ -139,6 +139,11 @@ quark -a first.apk -a second.apk -C
 
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
+### Upcoming unstable feature
+Now Quark also supports [Rizin](https://github.com/rizinorg/rizin) as one of our Android analysis frameworks. You can use option `--core-library` with `rizin` to enable the Rizin-based analysis library.
+```bash
+quark -a Ahmyth.apk -s --core-library rizin
+```
 
 ## QuickStart
 
