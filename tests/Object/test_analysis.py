@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from quark.Objects.analysis import QuarkAnalysis
+from quark.core.analysis import QuarkAnalysis
 
 
 class TestQuarkAnalysis:

@@ -3,10 +3,10 @@ from unittest.mock import patch
 
 import pytest
 import requests
-from quark.Evaluator.pyeval import MAX_REG_COUNT, PyEval
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.struct.registerobject import RegisterObject
-from quark.Objects.struct.tableobject import TableObject
+from quark.evaluator.pyeval import MAX_REG_COUNT, PyEval
+from quark.core.apkinfo import AndroguardImp
+from quark.core.struct.registerobject import RegisterObject
+from quark.core.struct.tableobject import TableObject
 
 
 @pytest.fixture()
@@ -148,9 +148,7 @@ def aput_wide_kind(request):
 
 NEG_NOT_KIND = [
     prefix + postfix
-    for prefix, postfix in itertools.product(
-        ["neg-", "not-"], ["int", "long", "float"]
-    )
+    for prefix, postfix in itertools.product(["neg-", "not-"], ["int", "long", "float"])
 ]
 
 NEG_NOT_WIDE_KIND = ("neg-double", "not-double")
@@ -185,18 +183,12 @@ ALL_CAST_KIND = list(
     )
 )
 
-CAST_KIND = [
-    ins for ins in ALL_CAST_KIND if "double" not in ins and "long" not in ins
-]
+CAST_KIND = [ins for ins in ALL_CAST_KIND if "double" not in ins and "long" not in ins]
 CAST_SIMPLE_TO_WIDE_KIND = [
-    ins
-    for ins in ALL_CAST_KIND
-    if ins.endswith("double") or ins.endswith("long")
+    ins for ins in ALL_CAST_KIND if ins.endswith("double") or ins.endswith("long")
 ]
 CAST_WIDE_TO_SIMPLE_KIND = [
-    ins
-    for ins in ALL_CAST_KIND
-    if ins.startswith("double") or ins.startswith("long")
+    ins for ins in ALL_CAST_KIND if ins.startswith("double") or ins.startswith("long")
 ]
 
 
@@ -231,9 +223,7 @@ _BINOP_PREFIX = (
 
 SIMPLE_BINOP_KIND = [
     prefix + "-" + type_str
-    for prefix, type_str in itertools.product(
-        _BINOP_PREFIX, ("int", "float", "long")
-    )
+    for prefix, type_str in itertools.product(_BINOP_PREFIX, ("int", "float", "long"))
 ]
 
 BINOP_WIDE_KIND = [prefix + "-" + "double" for prefix in _BINOP_PREFIX]
@@ -241,9 +231,7 @@ BINOP_WIDE_KIND = [prefix + "-" + "double" for prefix in _BINOP_PREFIX]
 BINOP_2ADDR_KIND = [ins + "/2addr" for ins in SIMPLE_BINOP_KIND]
 BINOP_LIT_KIND = [
     ins + postfix
-    for ins, postfix in itertools.product(
-        SIMPLE_BINOP_KIND, ("/lit8", "/lit16")
-    )
+    for ins, postfix in itertools.product(SIMPLE_BINOP_KIND, ("/lit8", "/lit16"))
 ]
 
 
@@ -337,9 +325,7 @@ class TestPyEval:
 
         pyeval._invoke(instruction)
 
-        assert pyeval.table_obj.pop(9).called_by_func == [
-            "java.io.file.close()"
-        ]
+        assert pyeval.table_obj.pop(9).called_by_func == ["java.io.file.close()"]
         assert pyeval.ret_stack == ["some-func()Lclass;()"]
 
     # Tests for invoke_virtual
@@ -354,7 +340,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_VIRTUAL(instruction)
             mock.assert_called_once_with(instruction, look_up=True)
 
@@ -368,10 +354,7 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.ret_stack == [
-            (
-                "Landroid/support/v4/util/SimpleArrayMap;"
-                "->isEmpty()Z(ArrayMap object)"
-            )
+            ("Landroid/support/v4/util/SimpleArrayMap;" "->isEmpty()Z(ArrayMap object)")
         ]
         assert pyeval.ret_type == "Z"
 
@@ -387,7 +370,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_DIRECT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -403,7 +386,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_STATIC(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -419,7 +402,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_INTERFACE(instruction)
             mock.assert_called_once_with(instruction, look_up=True)
 
@@ -444,11 +427,9 @@ class TestPyEval:
     def test_invoke_super_with_valid_mnemonic(self, pyeval):
         instruction = ["invoke-super", "v4", "v9", "some_function()V"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_SUPER(instruction)
-            mock.assert_called_once_with(
-                instruction, look_up=True, skip_self=True
-            )
+            mock.assert_called_once_with(instruction, look_up=True, skip_self=True)
 
     def test_invoke_super_with_class_inheritance(self, pyeval):
         instruction = [
@@ -477,14 +458,14 @@ class TestPyEval:
             "prototype_idx",
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_POLYMORPHIC(instruction)
             mock.assert_called_once_with(instruction)
 
     # Tests for invoke-custom
     def test_invoke_custom_with_valid_mnemonic(self, pyeval):
         instruction = ["invoke-custom", "v4", "v9", "method"]
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_CUSTOM(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -509,9 +490,7 @@ class TestPyEval:
 
     def test_move_with_valid_instrcution(self, pyeval):
         instruction = ["move-result-object", "v1"]
-        expected_return_value = (
-            "some_function()V(used_register_1, used_register_2)"
-        )
+        expected_return_value = "some_function()V(used_register_1, used_register_2)"
         expected_return_type = "Lclass;"
         pyeval.ret_stack.append(expected_return_value)
         pyeval.ret_type = expected_return_type
@@ -526,7 +505,7 @@ class TestPyEval:
     def test_move_result_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -545,7 +524,7 @@ class TestPyEval:
     def test_move_result_object_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result-object", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT_OBJECT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -628,7 +607,7 @@ class TestPyEval:
     def test_const(self, pyeval):
         instruction = ["const", "v1", "string value"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -640,7 +619,7 @@ class TestPyEval:
             "https://github.com/quark-engine/quark-engine",
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_FOUR(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -648,7 +627,7 @@ class TestPyEval:
     def test_const_sixteen(self, pyeval):
         instruction = ["const/16", "v1", "123"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_SIXTEEN(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -656,7 +635,7 @@ class TestPyEval:
     def test_const_high_sixteen(self, pyeval):
         instruction = ["const/high16", "v1", "123"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_HIGHSIXTEEN(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -697,9 +676,7 @@ class TestPyEval:
             value_type="[java/lang/String;",
         )
 
-    def test_filled_array_kind_with_class_type(
-        self, pyeval, filled_array_kind
-    ):
+    def test_filled_array_kind_with_class_type(self, pyeval, filled_array_kind):
         instruction = [filled_array_kind, "v1", "[type_idx"]
 
         pyeval.eval[instruction[0]](instruction)
@@ -707,9 +684,7 @@ class TestPyEval:
         assert pyeval.ret_stack == ["new-array()[type_idx()"]
         assert pyeval.ret_type == "[type_idx"
 
-    def test_filled_array_kind_with_primitive_type(
-        self, pyeval, filled_array_kind
-    ):
+    def test_filled_array_kind_with_primitive_type(self, pyeval, filled_array_kind):
         instruction = [filled_array_kind, "v1", "[I"]
 
         pyeval.eval[instruction[0]](instruction)
@@ -775,10 +750,7 @@ class TestPyEval:
 
         assert pyeval.table_obj.pop(6) == RegisterObject(
             "v6",
-            (
-                "an_array[some_number]:"
-                "(Lcom/google/progress/SMSHelper;, some_number)"
-            ),
+            ("an_array[some_number]:" "(Lcom/google/progress/SMSHelper;, some_number)"),
             value_type="[I",
         )
 

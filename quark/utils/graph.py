@@ -60,8 +60,7 @@ def call_graph(call_graph_analysis):
     )
     dot.attr(compound="true")
 
-    with dot.subgraph(
-            name="cluster_mutual") as mutual_parent_function_description:
+    with dot.subgraph(name="cluster_mutual") as mutual_parent_function_description:
         mutual_parent_function_description.attr(
             style="rounded",
             penwidth="1",
@@ -85,8 +84,7 @@ def call_graph(call_graph_analysis):
 
     with dot.subgraph(name="cluster_0") as wrapper:
         wrapper.attr(label="Wrapped Functions", fontname="Courier New Bold")
-        wrapper.attr(style="rounded", penwidth="1", fillcolor="red",
-                     shape="box")
+        wrapper.attr(style="rounded", penwidth="1", fillcolor="red", shape="box")
         # Build the first call nodes
 
         if first_call != first_api:
@@ -146,8 +144,7 @@ def call_graph(call_graph_analysis):
             fontname="Courier New",
             shape="box",
         )
-        native_call_subgraph.attr(label="Native API Calls",
-                                  fontname="Courier New Bold")
+        native_call_subgraph.attr(label="Native API Calls", fontname="Courier New Bold")
         # Native API Calls
 
         native_call_subgraph.node(

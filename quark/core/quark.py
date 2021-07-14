@@ -8,18 +8,27 @@ import os
 import numpy as np
 import pandas as pd
 
-from quark.Evaluator.pyeval import PyEval
-from quark.Objects.analysis import QuarkAnalysis
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.rzapkinfo import RizinImp
+from quark.evaluator.pyeval import PyEval
+from quark.core.analysis import QuarkAnalysis
+from quark.core.apkinfo import AndroguardImp
+from quark.core.rzapkinfo import RizinImp
 from quark.utils import tools
-from quark.utils.colors import (colorful_report, green, lightblue, lightyellow,
-                                magenta, red, yellow)
+from quark.utils.colors import (
+    colorful_report,
+    green,
+    lightblue,
+    lightyellow,
+    magenta,
+    red,
+    yellow,
+)
 from quark.utils.graph import call_graph
-from quark.utils.output import (get_rule_classification_data,
-                                output_parent_function_graph,
-                                output_parent_function_json,
-                                output_parent_function_table)
+from quark.utils.output import (
+    get_rule_classification_data,
+    output_parent_function_graph,
+    output_parent_function_json,
+    output_parent_function_table,
+)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -40,9 +49,7 @@ class Quark:
         elif core_library == "androguard":
             self.apkinfo = AndroguardImp(apk)
         else:
-            raise ValueError(
-                f"Unsupported core library for Quark: {core_library}"
-            )
+            raise ValueError(f"Unsupported core library for Quark: {core_library}")
 
         self.quark_analysis = QuarkAnalysis()
 
@@ -186,9 +193,7 @@ class Quark:
                 pyeval = PyEval(self.apkinfo)
                 # Check if there is an operation of the same register
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(
-                    parent_function
-                ):
+                for bytecode_obj in self.apkinfo.get_method_bytecode(parent_function):
                     # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
                     instruction = [bytecode_obj.mnemonic]
                     if bytecode_obj.registers is not None:
@@ -216,9 +221,7 @@ class Quark:
                             ):
                                 state = True
 
-                                if keyword_item_list and any(
-                                    keyword_item_list
-                                ):
+                                if keyword_item_list and any(keyword_item_list):
                                     self.check_parameter_values(
                                         c_func,
                                         (
@@ -254,9 +257,7 @@ class Quark:
 
         return state
 
-    def check_parameter_values(
-        self, source_str, pattern_list, keyword_item_list
-    ):
+    def check_parameter_values(self, source_str, pattern_list, keyword_item_list):
         for pattern, keyword_item in zip(pattern_list, keyword_item_list):
             if keyword_item is None:
                 continue
@@ -372,8 +373,7 @@ class Quark:
                 self.quark_analysis.level_4_result.append(parent_function)
 
                 keyword_item_list = (
-                    rule_obj.api[i].get("keyword", None)
-                    for i in range(2)
+                    rule_obj.api[i].get("keyword", None) for i in range(2)
                 )
 
                 # Level 5: Handling The Same Register Check

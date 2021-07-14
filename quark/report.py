@@ -4,8 +4,8 @@
 
 import os
 
-from quark.Objects.quark import Quark
-from quark.Objects.struct.ruleobject import RuleObject
+from quark.core.quark import Quark
+from quark.core.struct.ruleobject import RuleObject
 
 
 class Report:
@@ -61,4 +61,6 @@ class Report:
         if report_type == "json":
             return self.quark.get_json_report()
 
-        raise ValueError("The format are not supported, please refer to the Quark manual.")
+        raise ValueError(
+            "The format are not supported, please refer to the Quark manual."
+        )

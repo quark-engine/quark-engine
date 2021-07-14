@@ -18,8 +18,7 @@ def invalid_file(tempfile):
 @pytest.fixture(scope="module")
 def sample_apk_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/"
-        "apk-malware-samples/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/" "apk-malware-samples/raw/master/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
 
@@ -70,23 +69,17 @@ class TestReport:
             sample_report.analysis(None, None)
 
     @pytest.mark.xfail(reason="Requirement for the future.")
-    def test_analysis_with_non_exist_apk(
-        self, sample_report, sample_rule_file
-    ):
+    def test_analysis_with_non_exist_apk(self, sample_report, sample_rule_file):
         with pytest.raises(FileNotFoundError):
             sample_report.analysis("NON_EXIST_APK", sample_rule_file)
 
     @pytest.mark.xfail(reason="Requirement for the future.")
-    def test_analysis_with_non_exist_rule(
-        self, sample_report, sample_apk_file
-    ):
+    def test_analysis_with_non_exist_rule(self, sample_report, sample_apk_file):
         with pytest.raises(FileNotFoundError):
             sample_report.analysis(sample_apk_file, "NON_EXIST_RULE")
 
     @pytest.mark.xfail(reason="Requirement for the future.")
-    def test_analysis_with_both_invalid_files(
-        self, sample_report, invalid_file
-    ):
+    def test_analysis_with_both_invalid_files(self, sample_report, invalid_file):
         with pytest.raises(BaseException):
             sample_report.analysis(invalid_file, invalid_file)
 
@@ -94,9 +87,9 @@ class TestReport:
         self, sample_report, sample_dex_file, sample_rule_file
     ):
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
                 sample_report.analysis(sample_dex_file, sample_rule_file)
 
@@ -107,9 +100,9 @@ class TestReport:
         self, sample_report, sample_apk_file, sample_rule_file
     ):
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
                 sample_report.analysis(sample_apk_file, sample_rule_file)
 
@@ -126,9 +119,9 @@ class TestReport:
         ]
         num_of_rules = len(rule_list)
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
 
                 sample_report.analysis(sample_apk_file, sample_rule_directory)

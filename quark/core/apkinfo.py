@@ -12,9 +12,9 @@ from androguard.core.analysis.analysis import MethodAnalysis
 from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.Objects.interface.baseapkinfo import BaseApkinfo
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 
 class AndroguardImp(BaseApkinfo):
@@ -27,9 +27,7 @@ class AndroguardImp(BaseApkinfo):
 
         if self.ret_type == "APK":
             # return the APK, list of DalvikVMFormat, and Analysis objects
-            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(
-                apk_filepath
-            )
+            self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
         elif self.ret_type == "DEX":
             # return the sha256hash, DalvikVMFormat, and Analysis objects
             _, _, self.analysis = AnalyzeDex(apk_filepath)
@@ -114,9 +112,7 @@ class AndroguardImp(BaseApkinfo):
             for _, call, offset in method_analysis.get_xref_to()
         }
 
-    def get_method_bytecode(
-        self, method_object: MethodObject
-    ) -> Set[MethodObject]:
+    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
         method_analysis = method_object.cache
         try:
             for (
@@ -143,13 +139,9 @@ class AndroguardImp(BaseApkinfo):
                             break
 
                     if index_of_parameter_starts is not None:
-                        parameter = ins.get_operands()[
-                            index_of_parameter_starts
-                        ]
+                        parameter = ins.get_operands()[index_of_parameter_starts]
                         parameter = (
-                            parameter[2]
-                            if len(parameter) == 3
-                            else parameter[1]
+                            parameter[2] if len(parameter) == 3 else parameter[1]
                         )
 
                         for i in range(index_of_parameter_starts):
@@ -163,9 +155,7 @@ class AndroguardImp(BaseApkinfo):
                                 "v" + str(ins.get_operands()[i][1]),
                             )
 
-                    bytecode_obj = BytecodeObject(
-                        ins.get_name(), reg_list, parameter
-                    )
+                    bytecode_obj = BytecodeObject(ins.get_name(), reg_list, parameter)
 
                 yield bytecode_obj
         except AttributeError:
@@ -198,9 +188,7 @@ class AndroguardImp(BaseApkinfo):
         elif length_operands == 1:
             # Only one register
 
-            reg_list.append(
-                f"v{instruction.get_operands()[length_operands - 1][1]}"
-            )
+            reg_list.append(f"v{instruction.get_operands()[length_operands - 1][1]}")
 
             instruction_list.extend(reg_list)
 

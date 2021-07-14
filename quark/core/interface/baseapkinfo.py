@@ -4,17 +4,15 @@ from abc import abstractmethod
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
 
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 
 class BaseApkinfo:
 
     __slots__ = ["ret_type", "apk_filename", "apk_filepath", "core_library"]
 
-    def __init__(
-        self, apk_filepath: Union[str, PathLike], core_library: str = "None"
-    ):
+    def __init__(self, apk_filepath: Union[str, PathLike], core_library: str = "None"):
         with open(apk_filepath, "rb") as file:
             raw = file.read()
             self.ret_type = self._check_file_signature(raw)
@@ -135,9 +133,7 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def get_method_bytecode(
-        self, method_object: MethodObject
-    ) -> Set[MethodObject]:
+    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
         """
         Return the corresponding bytecode according to the
         given class name and method name.

@@ -2,15 +2,14 @@ import os.path
 
 import pytest
 import requests
-from quark.Objects.apkinfo import AndroguardImp as Apkinfo
+from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
 
 
 @pytest.fixture(scope="module")
 def analysis_object(tmp_path_factory):
     APK_SOURCE = (
-        "https://github.com/quark-engine/"
-        "apk-malware-samples/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/" "apk-malware-samples/raw/master/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
 
@@ -78,9 +77,7 @@ def test_wrapper_lookup_with_result(
     assert path == [connect_method_1]
 
 
-def test_wrapper_lookup_with_no_result(
-    analysis_object, leaf_method_1, parent_method
-):
+def test_wrapper_lookup_with_no_result(analysis_object, leaf_method_1, parent_method):
     path = []
 
     wrapper_lookup(analysis_object, path, leaf_method_1, parent_method)

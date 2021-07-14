@@ -202,9 +202,7 @@ class AxmlReader(object):
             node = {"Address": self._ptr, "Type": node_type}
 
             if node_type == RES_XML_START_ELEMENT_TYPE:
-                ext = self._rz.cmdj(
-                    f"pfj axml_ResXMLTree_attrExt @ { ext_ptr }"
-                )
+                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_attrExt @ { ext_ptr }")
 
                 node["Namespace"] = ext[0]["value"][0]["value"]
                 node["Name"] = ext[1]["value"][0]["value"]
@@ -213,9 +211,7 @@ class AxmlReader(object):
                 # node['AttrCount'] = ext[4]['value']
 
             elif node_type == RES_XML_END_ELEMENT_TYPE:
-                ext = self._rz.cmdj(
-                    f"pfj axml_ResXMLTree_endElementExt @ { ext_ptr }"
-                )
+                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_endElementExt @ { ext_ptr }")
 
                 node["Namespace"] = ext[0]["value"][0]["value"]
                 node["Name"] = ext[1]["value"][0]["value"]
@@ -224,17 +220,13 @@ class AxmlReader(object):
                 RES_XML_START_NAMESPACE_TYPE,
                 RES_XML_END_NAMESPACE_TYPE,
             ]:
-                ext = self._rz.cmdj(
-                    f"pfj axml_ResXMLTree_namespaceExt @ { ext_ptr }"
-                )
+                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_namespaceExt @ { ext_ptr }")
 
                 node["Prefix"] = ext[0]["value"][0]["value"]
                 node["Uri"] = ext[1]["value"][0]["value"]
 
             elif node_type == RES_XML_CDATA_TYPE:
-                ext = self._rz.cmdj(
-                    f"pfj axml_ResXMLTree_cdataExt @ { ext_ptr }"
-                )
+                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_cdataExt @ { ext_ptr }")
 
                 node["Data"] = ext[0]["value"][0]["value"]
                 # typedData
@@ -276,9 +268,7 @@ class AxmlReader(object):
         attributeCount = attrExt[4]["value"]
         result = []
         for _ in range(attributeCount):
-            attr = self._rz.cmdj(
-                f"pfj axml_ResXMLTree_attribute @ {attrAddress}"
-            )
+            attr = self._rz.cmdj(f"pfj axml_ResXMLTree_attribute @ {attrAddress}")
 
             result.append(
                 {

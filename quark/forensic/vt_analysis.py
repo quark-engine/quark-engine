@@ -1,4 +1,3 @@
-
 import requests
 import time
 import hashlib
@@ -9,7 +8,6 @@ from tqdm import tqdm
 
 
 class VTAnalysis:
-
     def __init__(self, api_keys_list, waiting_time=16):
 
         self.REPORT_URL = "https://www.virustotal.com/vtapi/v2/file/report"
@@ -42,8 +40,7 @@ class VTAnalysis:
         self.reports.update(progress)
 
     def change_api_key(self):
-        tqdm.write(
-            f"[*] {self.api_key} is unavailable, change another API key")
+        tqdm.write(f"[*] {self.api_key} is unavailable, change another API key")
         self.api_keys_list[self.api_key] = False
         for api_key in self.api_keys_list:
             if self.api_keys_list[api_key]:
@@ -58,8 +55,10 @@ class VTAnalysis:
 
         for api_key in self.api_keys_list:
             try:
-                params = {"apikey": api_key,
-                          "resource": "34efc3ebf51a6511c0d12cce7592db73"}
+                params = {
+                    "apikey": api_key,
+                    "resource": "34efc3ebf51a6511c0d12cce7592db73",
+                }
                 res = requests.get(self.REPORT_URL, params)
 
                 tqdm.write(f"API {api_key}: {res.status_code}")
@@ -88,10 +87,7 @@ class VTAnalysis:
         return positives_report
 
     def retreive_report(self, file_md5):
-        params = {
-            "apikey": self.api_key,
-            "resource": file_md5
-        }
+        params = {"apikey": self.api_key, "resource": file_md5}
         res = requests.get(self.REPORT_URL, params)
 
         if res.status_code == 200:
@@ -106,7 +102,7 @@ class VTAnalysis:
             "apikey": self.api_key,
         }
 
-        files = {'file': (filename, file)}
+        files = {"file": (filename, file)}
 
         res = requests.post(self.SCAN_URL, files=files, params=params)
 
@@ -144,7 +140,7 @@ class VTAnalysis:
 
         # Upload file to VT
         tqdm.write(f"[*] Upload file: {path}")
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             scan_result = self.scan_file(os.path.basename(path), f)
         time.sleep(self.WAITING_TIME)
 
@@ -169,16 +165,14 @@ class VTAnalysis:
             self.reports[file_md5] = report["positives"]
             return report["positives"]
         else:
-            tqdm.write(
-                f"[*] Unable to retrieve {file_md5}, add to waiting queue")
+            tqdm.write(f"[*] Unable to retrieve {file_md5}, add to waiting queue")
             self.waiting_queue.add(file_md5)
             return
 
     def analyze_multi_file(self, path):
 
         if not os.path.isdir(path):
-            tqdm.write(
-                red(f"[*] Error: Given path is not a directory: {path}"))
+            tqdm.write(red(f"[*] Error: Given path is not a directory: {path}"))
             return
 
         for filename in tqdm(os.listdir(path)):

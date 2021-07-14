@@ -3,11 +3,11 @@ import zipfile
 
 import pytest
 import requests
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.interface.baseapkinfo import BaseApkinfo
-from quark.Objects.rzapkinfo import RizinImp
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.apkinfo import AndroguardImp
+from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.rzapkinfo import RizinImp
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"
@@ -39,8 +39,7 @@ def apkinfo(request, apk_path):
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/apk-malware-samples"
-        "/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/apk-malware-samples" "/raw/master/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
@@ -82,9 +81,7 @@ class TestApkinfo:
         assert apkinfo.ret_type == "DEX"
 
     def test_filename(self, apkinfo):
-        assert (
-            apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
-        )
+        assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
     def test_filesize(self, apkinfo):
         assert apkinfo.filesize == 266155
@@ -170,9 +167,7 @@ class TestApkinfo:
         assert str(result.descriptor) == "(Z)V"
 
     def test_upperfunc(self, apkinfo):
-        api = apkinfo.find_method(
-            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
-        )
+        api = apkinfo.find_method("Ljava/lang/reflect/Field;", "setAccessible", "(Z)V")
 
         expect_function = MethodObject(
             (
@@ -218,10 +213,7 @@ class TestApkinfo:
             BytecodeObject(
                 "invoke-direct",
                 ["v5", "v6"],
-                (
-                    "Ljava/lang/IllegalStateException;"
-                    "-><init>(Ljava/lang/String;)V"
-                ),
+                ("Ljava/lang/IllegalStateException;" "-><init>(Ljava/lang/String;)V"),
             ),
             BytecodeObject("array-length", ["v5", "v5"], None),
             BytecodeObject(
