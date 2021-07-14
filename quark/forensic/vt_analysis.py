@@ -64,9 +64,7 @@ class VTAnalysis:
                 tqdm.write(f"API {api_key}: {res.status_code}")
                 if res.status_code == 200:
                     self.api_keys_list[api_key] = True
-                elif res.status_code == 403:
-                    self.api_keys_list[api_key] = False
-                elif res.status_code == 204:
+                elif res.status_code in [403, 204]:
                     self.api_keys_list[api_key] = False
                 elif res.status_code == 400:
                     tqdm.write("Failed to check api key: Bad Request.")
@@ -79,12 +77,11 @@ class VTAnalysis:
         if all_info:
             return self.reports
 
-        positives_report = {}
-        for file_md5 in self.reports:
-            if self.reports[file_md5] > 0:
-                positives_report[file_md5] = self.reports[file_md5]
-
-        return positives_report
+        return {
+            file_md5: self.reports[file_md5]
+            for file_md5 in self.reports
+            if self.reports[file_md5] > 0
+        }
 
     def retreive_report(self, file_md5):
         params = {"apikey": self.api_key, "resource": file_md5}
@@ -92,10 +89,9 @@ class VTAnalysis:
 
         if res.status_code == 200:
             return res.json()
-        else:
-            if not self.change_api_key():
-                return False
-            return self.retreive_report(file_md5)
+        if not self.change_api_key():
+            return False
+        return self.retreive_report(file_md5)
 
     def scan_file(self, filename, file):
         params = {
@@ -108,10 +104,9 @@ class VTAnalysis:
 
         if res.status_code == 200:
             return res.json()
-        else:
-            if not self.change_api_key():
-                return False
-            return self.scan_file(filename, file)
+        if not self.change_api_key():
+            return False
+        return self.scan_file(filename, file)
 
     def analyze_single_file(self, path):
 
@@ -215,5 +210,4 @@ class VTAnalysis:
                 continue
 
 
-if __name__ == "__main__":
-    pass
+pass
