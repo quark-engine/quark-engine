@@ -14,9 +14,7 @@ class RegisterObject:
         "_type_history",
     ]
 
-    def __init__(
-        self, register_name, value, called_by_func=None, value_type=None
-    ):
+    def __init__(self, register_name, value, called_by_func=None, value_type=None):
         """
         A data structure for creating the bytecode variable object, which
         used to record the state of each register.

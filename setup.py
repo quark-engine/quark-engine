@@ -17,11 +17,9 @@ required_requirements = [
     "plotly",
     "rzpipe",
 ]
-without_cli_support = os.environ.get('QUARK_WITHOUT_CLI', default=0)
+without_cli_support = os.environ.get("QUARK_WITHOUT_CLI", default=0)
 if not without_cli_support:
-    required_requirements.append(
-        "click==8.0.1"
-    )
+    required_requirements.append("click==8.0.1")
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username

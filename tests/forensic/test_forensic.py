@@ -2,8 +2,10 @@ from quark.forensic import Forensic
 import pytest
 import requests
 
-APK_SOURCE = "https://github.com/quark-engine/apk-malware-samples" \
-             "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+APK_SOURCE = (
+    "https://github.com/quark-engine/apk-malware-samples"
+    "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+)
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
@@ -18,7 +20,6 @@ def forensic(scope="function"):
 
 
 class TestForensic:
-
     def test_all_strings(self, forensic):
         assert len(forensic.get_all_strings()) == 1005
 

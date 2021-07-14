@@ -162,7 +162,7 @@ class PyEval:
                 pass
 
         executed_fuc = instruction[-1]
-        reg_list = instruction[1: len(instruction) - 1]
+        reg_list = instruction[1 : len(instruction) - 1]
         value_of_reg_list = []
 
         # query the value from hash table based on register index.
@@ -188,7 +188,7 @@ class PyEval:
         self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
 
         # Extract the type of return value
-        self.ret_type = executed_fuc[executed_fuc.index(")") + 1:]
+        self.ret_type = executed_fuc[executed_fuc.index(")") + 1 :]
 
     def _move_result(self, instruction):
 
@@ -196,9 +196,7 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(
-                reg, pre_ret, value_type=self.ret_type
-            )
+            variable_object = RegisterObject(reg, pre_ret, value_type=self.ret_type)
             self.table_obj.insert(index, variable_object)
             self.ret_type = ""
         except IndexError as e:
@@ -224,9 +222,7 @@ class PyEval:
         reg_plus_one = f"v{index + 1}"
 
         variable_object = RegisterObject(reg, value, value_type=value_type)
-        variable_object2 = RegisterObject(
-            reg_plus_one, value, value_type=value_type
-        )
+        variable_object2 = RegisterObject(reg_plus_one, value, value_type=value_type)
         self.table_obj.insert(index, variable_object)
         self.table_obj.insert(index + 1, variable_object2)
 
@@ -310,9 +306,7 @@ class PyEval:
         index = int(reg[1:])
         try:
             pre_ret = self.ret_stack.pop()
-            variable_object = RegisterObject(
-                reg, pre_ret, value_type=self.ret_type
-            )
+            variable_object = RegisterObject(reg, pre_ret, value_type=self.ret_type)
             variable_object2 = RegisterObject(
                 f"v{index + 1}", pre_ret, value_type=self.ret_type
             )
@@ -466,9 +460,7 @@ class PyEval:
                 value_type = self.type_mapping[instruction[0][index:]]
             else:
                 array_reg_index = int(instruction[2][1:])
-                value_type = self.table_obj.pop(array_reg_index).current_type[
-                    1:
-                ]
+                value_type = self.table_obj.pop(array_reg_index).current_type[1:]
 
             self._move_value_to_register(
                 instruction, "{src0}[{src1}]", wide=True, value_type=value_type
@@ -549,9 +541,7 @@ class PyEval:
     @logger
     def NEG_AND_NOT_KIND(self, instruction):
         try:
-            wide = any(
-                wide_type in instruction[0] for wide_type in ("double", "long")
-            )
+            wide = any(wide_type in instruction[0] for wide_type in ("double", "long"))
             self._move_value_to_register(instruction, "{src0}", wide)
         except IndexError as e:
             log.exception(f"{e} in {instruction[0]}")
@@ -652,9 +642,7 @@ class PyEval:
                 value_type=value_type,
             )
 
-    def _lookup_implement(
-        self, instance_type, method_full_name, skip_self=False
-    ):
+    def _lookup_implement(self, instance_type, method_full_name, skip_self=False):
         class_name, signature = method_full_name.split("->")
         index = signature.index("(")
         method_name, descriptor = signature[:index], signature[index:]
@@ -670,19 +658,12 @@ class PyEval:
         ):
             next_class_pool.clear()
             for class_name in class_pool:
-                method = self.apkinfo.find_method(
-                    class_name, method_name, descriptor
-                )
+                method = self.apkinfo.find_method(class_name, method_name, descriptor)
 
                 if method:
-                    return (
-                        f"{method.class_name}->"
-                        f"{method.name}{method.descriptor}"
-                    )
+                    return f"{method.class_name}->" f"{method.name}{method.descriptor}"
 
-                next_class_pool.update(
-                    (self.apkinfo.class_hierarchy[class_name])
-                )
+                next_class_pool.update((self.apkinfo.class_hierarchy[class_name]))
                 next_class_pool.difference_update(class_pool)
 
             class_pool = set(next_class_pool)
@@ -729,9 +710,7 @@ class PyEval:
     def _transfer_register(
         self, source_list, destination, str_format, data=None, value_type=None
     ):
-        source_register_list = [
-            self.table_obj.pop(index) for index in source_list
-        ]
+        source_register_list = [self.table_obj.pop(index) for index in source_list]
         if not value_type:
             value_type = source_register_list[0].current_type
 

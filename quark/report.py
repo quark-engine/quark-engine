@@ -61,4 +61,6 @@ class Report:
         if report_type == "json":
             return self.quark.get_json_report()
 
-        raise ValueError("The format are not supported, please refer to the Quark manual.")
+        raise ValueError(
+            "The format are not supported, please refer to the Quark manual."
+        )

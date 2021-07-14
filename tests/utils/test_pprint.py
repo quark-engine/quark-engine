@@ -93,8 +93,7 @@ def test_print_success(capsys, bold_style, green_color):
 
 def test_table():
     expected_csv = base64.b64decode(
-        "Q29sdW1uIDEsQ29sdW1uIDIsQ29sdW1uIDMNClJv"
-        "dyAxLDExLDIyDQpSb3cgMiwzMyw0NA0K"
+        "Q29sdW1uIDEsQ29sdW1uIDIsQ29sdW1uIDMNClJv" "dyAxLDExLDIyDQpSb3cgMiwzMyw0NA0K"
     ).decode()
 
     header = ["Column 1", "Column 2", "Column 3"]

@@ -65,8 +65,7 @@ def _search_cross_references(call_graph_analysis_list, search_depth):
         for _ in range(search_depth):
             for function in expand_queue:
                 next_expand_queue = {
-                    child_function
-                    for child_function, _ in apkinfo.lowerfunc(function)
+                    child_function for child_function, _ in apkinfo.lowerfunc(function)
                 }
                 called_function_set.update(next_expand_queue)
                 expand_queue = next_expand_queue

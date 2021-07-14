@@ -374,9 +374,7 @@ class TestQuark:
             simple_quark_obj.run(rule_object)
             mock.assert_called()
 
-    def test_check_parameter_values_without_matched_str(
-        self, simple_quark_obj
-    ):
+    def test_check_parameter_values_without_matched_str(self, simple_quark_obj):
         source_str = (
             "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
             " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"

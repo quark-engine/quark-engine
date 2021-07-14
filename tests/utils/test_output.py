@@ -152,17 +152,12 @@ def test_get_rule_classification_data_with_duplicate_crime(
     assert reference_dict[expected_parent] == set()
 
 
-def test_output_parent_function_table_with_data_bundle(
-    capsys, sample_data_bundle
-):
+def test_output_parent_function_table_with_data_bundle(capsys, sample_data_bundle):
     output_parent_function_table(sample_data_bundle)
 
     output = capsys.readouterr().out
     assert output.count("Lcom/google/progress/Locate;getLocation") == 2
-    assert (
-        output.count("Lcom/google/progress/AndroidClientService;sendMessage")
-        == 1
-    )
+    assert output.count("Lcom/google/progress/AndroidClientService;sendMessage") == 1
     assert output.count("Call Lcom/google/progress/Locate;getLocation") == 1
     assert output.count("The Crime") == 1
     assert output.count("Another Crime") == 1
