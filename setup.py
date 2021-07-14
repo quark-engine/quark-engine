@@ -1,9 +1,27 @@
+import os
 import setuptools
 
 from quark import __version__
 
 with open("README.md") as fh:
     long_description = fh.read()
+
+required_requirements = [
+    "prettytable",
+    "androguard==3.4.0a1",
+    "tqdm",
+    "colorama",
+    "graphviz",
+    "pandas",
+    "prompt-toolkit==3.0.19",
+    "plotly",
+    "rzpipe",
+]
+without_cli_support = os.environ.get('QUARK_WITHOUT_CLI', default=0)
+if not without_cli_support:
+    required_requirements.append(
+        "click==8.0.1"
+    )
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username
@@ -28,16 +46,5 @@ setuptools.setup(
         "Topic :: Security",
     ],
     python_requires=">=3.7",
-    install_requires=[
-        "prettytable",
-        "androguard==3.4.0a1",
-        "tqdm",
-        "colorama",
-        "click==8.0.1",
-        "graphviz",
-        "pandas",
-        "prompt-toolkit==3.0.19",
-        "plotly",
-        "rzpipe",
-    ],
+    install_requires=required_requirements,
 )
