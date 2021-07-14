@@ -4,8 +4,8 @@
 
 import os
 
-from quark.Objects.quark import Quark
-from quark.Objects.struct.ruleobject import RuleObject
+from quark.core.quark import Quark
+from quark.core.struct.ruleobject import RuleObject
 
 
 class Report:

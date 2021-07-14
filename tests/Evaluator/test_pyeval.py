@@ -3,10 +3,10 @@ from unittest.mock import patch
 
 import pytest
 import requests
-from quark.Evaluator.pyeval import MAX_REG_COUNT, PyEval
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.struct.registerobject import RegisterObject
-from quark.Objects.struct.tableobject import TableObject
+from quark.evaluator.pyeval import MAX_REG_COUNT, PyEval
+from quark.core.apkinfo import AndroguardImp
+from quark.core.struct.registerobject import RegisterObject
+from quark.core.struct.tableobject import TableObject
 
 
 @pytest.fixture()
@@ -340,7 +340,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_VIRTUAL(instruction)
             mock.assert_called_once_with(instruction, look_up=True)
 
@@ -370,7 +370,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_DIRECT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -386,7 +386,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_STATIC(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -402,7 +402,7 @@ class TestPyEval:
             ),
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_INTERFACE(instruction)
             mock.assert_called_once_with(instruction, look_up=True)
 
@@ -427,7 +427,7 @@ class TestPyEval:
     def test_invoke_super_with_valid_mnemonic(self, pyeval):
         instruction = ["invoke-super", "v4", "v9", "some_function()V"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_SUPER(instruction)
             mock.assert_called_once_with(instruction, look_up=True, skip_self=True)
 
@@ -458,14 +458,14 @@ class TestPyEval:
             "prototype_idx",
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_POLYMORPHIC(instruction)
             mock.assert_called_once_with(instruction)
 
     # Tests for invoke-custom
     def test_invoke_custom_with_valid_mnemonic(self, pyeval):
         instruction = ["invoke-custom", "v4", "v9", "method"]
-        with patch("quark.Evaluator.pyeval.PyEval._invoke") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_CUSTOM(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -505,7 +505,7 @@ class TestPyEval:
     def test_move_result_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -524,7 +524,7 @@ class TestPyEval:
     def test_move_result_object_with_valid_mnemonic(self, pyeval):
         instruction = ["move-result-object", "v1"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._move_result") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._move_result") as mock:
             pyeval.MOVE_RESULT_OBJECT(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -607,7 +607,7 @@ class TestPyEval:
     def test_const(self, pyeval):
         instruction = ["const", "v1", "string value"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -619,7 +619,7 @@ class TestPyEval:
             "https://github.com/quark-engine/quark-engine",
         ]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_FOUR(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -627,7 +627,7 @@ class TestPyEval:
     def test_const_sixteen(self, pyeval):
         instruction = ["const/16", "v1", "123"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_SIXTEEN(instruction)
             mock.assert_called_once_with(instruction)
 
@@ -635,7 +635,7 @@ class TestPyEval:
     def test_const_high_sixteen(self, pyeval):
         instruction = ["const/high16", "v1", "123"]
 
-        with patch("quark.Evaluator.pyeval.PyEval._assign_value") as mock:
+        with patch("quark.evaluator.pyeval.PyEval._assign_value") as mock:
             pyeval.CONST_HIGHSIXTEEN(instruction)
             mock.assert_called_once_with(instruction)
 

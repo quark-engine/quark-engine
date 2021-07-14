@@ -3,11 +3,11 @@ import zipfile
 
 import pytest
 import requests
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.interface.baseapkinfo import BaseApkinfo
-from quark.Objects.rzapkinfo import RizinImp
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.apkinfo import AndroguardImp
+from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.rzapkinfo import RizinImp
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"

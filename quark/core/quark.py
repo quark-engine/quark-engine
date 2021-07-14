@@ -8,10 +8,10 @@ import os
 import numpy as np
 import pandas as pd
 
-from quark.Evaluator.pyeval import PyEval
-from quark.Objects.analysis import QuarkAnalysis
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.rzapkinfo import RizinImp
+from quark.evaluator.pyeval import PyEval
+from quark.core.analysis import QuarkAnalysis
+from quark.core.apkinfo import AndroguardImp
+from quark.core.rzapkinfo import RizinImp
 from quark.utils import tools
 from quark.utils.colors import (
     colorful_report,

@@ -2,7 +2,7 @@ import os.path
 
 import pytest
 import requests
-from quark.Objects.apkinfo import AndroguardImp as Apkinfo
+from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
 
 

@@ -87,9 +87,9 @@ class TestReport:
         self, sample_report, sample_dex_file, sample_rule_file
     ):
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
                 sample_report.analysis(sample_dex_file, sample_rule_file)
 
@@ -100,9 +100,9 @@ class TestReport:
         self, sample_report, sample_apk_file, sample_rule_file
     ):
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
                 sample_report.analysis(sample_apk_file, sample_rule_file)
 
@@ -119,9 +119,9 @@ class TestReport:
         ]
         num_of_rules = len(rule_list)
 
-        with patch("quark.Objects.quark.Quark.run") as mock_run:
+        with patch("quark.core.quark.Quark.run") as mock_run:
             with patch(
-                "quark.Objects.quark.Quark.generate_json_report"
+                "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
 
                 sample_report.analysis(sample_apk_file, sample_rule_directory)

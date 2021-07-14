@@ -10,10 +10,10 @@ from typing import Dict, Generator, List, Optional, Set, Union
 
 import rzpipe
 
-from quark.Objects.axmlreader import AxmlReader
-from quark.Objects.interface.baseapkinfo import BaseApkinfo
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.axmlreader import AxmlReader
+from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 

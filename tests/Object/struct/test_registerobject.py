@@ -1,5 +1,5 @@
 import pytest
-from quark.Objects.struct.registerobject import RegisterObject
+from quark.core.struct.registerobject import RegisterObject
 
 
 @pytest.fixture()

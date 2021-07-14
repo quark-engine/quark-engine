@@ -4,8 +4,8 @@ from unittest.mock import patch
 
 import pytest
 import requests
-from quark.Objects.quark import Quark
-from quark.Objects.struct.ruleobject import RuleObject
+from quark.core.quark import Quark
+from quark.core.struct.ruleobject import RuleObject
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"
@@ -361,7 +361,7 @@ class TestQuark:
     ):
         rule_object = RuleObject(rule_without_keyword)
 
-        with patch("quark.Objects.quark.Quark.check_parameter_values") as mock:
+        with patch("quark.core.quark.Quark.check_parameter_values") as mock:
             simple_quark_obj.run(rule_object)
             mock.assert_not_called()
 
@@ -370,7 +370,7 @@ class TestQuark:
     ):
         rule_object = RuleObject(rule_with_one_keyword)
 
-        with patch("quark.Objects.quark.Quark.check_parameter_values") as mock:
+        with patch("quark.core.quark.Quark.check_parameter_values") as mock:
             simple_quark_obj.run(rule_object)
             mock.assert_called()
 

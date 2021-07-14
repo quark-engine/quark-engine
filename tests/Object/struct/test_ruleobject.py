@@ -1,7 +1,7 @@
 import os
 
 import pytest
-from quark.Objects.struct.ruleobject import RuleObject
+from quark.core.struct.ruleobject import RuleObject
 
 
 @pytest.fixture()

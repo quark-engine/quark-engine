@@ -2,8 +2,8 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from quark.Objects.apkinfo import AndroguardImp
-from quark.Objects.rzapkinfo import RizinImp
+from quark.core.apkinfo import AndroguardImp
+from quark.core.rzapkinfo import RizinImp
 from quark.utils.regex import (
     extract_url,
     extract_ip,

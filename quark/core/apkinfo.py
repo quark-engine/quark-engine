@@ -12,9 +12,9 @@ from androguard.core.analysis.analysis import MethodAnalysis
 from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.Objects.interface.baseapkinfo import BaseApkinfo
-from quark.Objects.struct.bytecodeobject import BytecodeObject
-from quark.Objects.struct.methodobject import MethodObject
+from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.struct.bytecodeobject import BytecodeObject
+from quark.core.struct.methodobject import MethodObject
 
 
 class AndroguardImp(BaseApkinfo):
