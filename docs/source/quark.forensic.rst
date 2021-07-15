@@ -12,6 +12,14 @@ quark.forensic.forensic module
    :undoc-members:
    :show-inheritance:
 
+quark.forensic.vt\_analysis module
+----------------------------------
+
+.. automodule:: quark.forensic.vt_analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

@@ -1,13 +1,13 @@
-quark.Evaluator package
+quark.evaluator package
 =======================
 
 Submodules
 ----------
 
-quark.Evaluator.pyeval module
+quark.evaluator.pyeval module
 -----------------------------
 
-.. automodule:: quark.Evaluator.pyeval
+.. automodule:: quark.evaluator.pyeval
    :members:
    :undoc-members:
    :show-inheritance:
@@ -15,7 +15,7 @@ quark.Evaluator.pyeval module
 Module contents
 ---------------
 
-.. automodule:: quark.Evaluator
+.. automodule:: quark.evaluator
    :members:
    :undoc-members:
    :show-inheritance:
