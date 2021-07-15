@@ -2,13 +2,12 @@ import functools
 import logging
 import os.path
 import re
+import rzpipe
 import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
 from typing import Dict, Generator, List, Optional, Set, Union
-
-import rzpipe
 
 from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo
