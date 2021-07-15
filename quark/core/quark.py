@@ -2,16 +2,15 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import numpy as np
 import operator
 import os
-
-import numpy as np
 import pandas as pd
 
-from quark.evaluator.pyeval import PyEval
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
+from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
 from quark.utils.colors import (
     colorful_report,

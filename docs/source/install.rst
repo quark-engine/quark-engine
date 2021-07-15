@@ -39,6 +39,9 @@ Once you see the following msg, then you're all set::
       -l, --label [max|detailed]      Show report based on label of rules
       -C, --comparison                Behaviors comparison based on max confidence
                                       of rule labels
+      --core-library [androguard|rizin]
+                                      Specify the core library used to analyze an
+                                      APK
       --version                       Show the version and exit.
       --help                          Show this message and exit.
 

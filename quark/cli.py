@@ -2,11 +2,10 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import json
-import os
-
 import click
+import json
 import numpy as np
+import os
 from tqdm import tqdm
 
 from quark import __version__

@@ -1,10 +1,10 @@
-import requests
-import time
 import hashlib
 import os
+import requests
+import time
+from tqdm import tqdm
 
 from quark.utils.colors import green, red, yellow
-from tqdm import tqdm
 
 
 class VTAnalysis:

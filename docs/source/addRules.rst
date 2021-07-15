@@ -43,14 +43,16 @@ json format to construct the rule of the crime.
         ],
 
         "api": [
-            {
-                "class": "Landroid/telephony/TelephonyManager",
-                "method": "getCellLocation"
-            },
-            {
-                "class": "Landroid/telephony/SmsManager",
-                "method": "sendTextMessage"
-            }
+        {
+            "class": "Landroid/telephony/TelephonyManager",
+            "method": "getCellLocation",
+            "descriptor": "()Landroid/telephony/CellLocation;"
+        },
+        {
+            "class": "Landroid/telephony/SmsManager",
+            "method": "sendTextMessage",
+            "descriptor": "(Ljava/lang/String; Ljava/lang/String; Ljava/lang/String; Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
+        }
         ],
 
         "score": 4
