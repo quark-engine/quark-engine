@@ -14,7 +14,7 @@ prettytable = "*"
 tqdm = "*"
 colorama = "*"
 quark-engine = {editable = true,path = "."}
-click = "8.0.1"
+click = "*"
 androguard = "==3.4.0a1"
 graphviz = "*"
 requests = "*"
