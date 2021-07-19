@@ -155,7 +155,7 @@ quark -a Ahmyth.apk -s --core-library rizin
 ### Installation
 
 ```bash
-$ pip install -U quark-engine
+$ pip3 install -U quark-engine
 ```
 
 #### Installation without CLI
@@ -166,7 +166,7 @@ To install Quark without the CLI-supports, an environment variable set to 1 is r
 
 ```bash
 $ export QUARK_WITHOUT_CLI=1
-$ pip install -U quark-engine
+$ pip3 install -U quark-engine
 ```
 
 
