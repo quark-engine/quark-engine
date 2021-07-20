@@ -151,24 +151,13 @@ quark -a Ahmyth.apk -s --core-library rizin
 -   Python 3.7+
 -   git
 -   graphviz
+-   click >= 8.0.1 (For CLI supports)
 
 ### Installation
 
 ```bash
 $ pip3 install -U quark-engine
 ```
-
-#### Installation without CLI
-
-Quark has the possibility to be installed only as a python package and without the CLI supports. 
-This allows better integration with other packages that would share the same `Click` dependency.
-To install Quark without the CLI-supports, an environment variable set to 1 is required
-
-```bash
-$ export QUARK_WITHOUT_CLI=1
-$ pip3 install -U quark-engine
-```
-
 
 ### Get the latest quark rules from our [quark-rules](https://github.com/quark-engine/quark-rules) repo
 

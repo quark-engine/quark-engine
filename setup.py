@@ -1,4 +1,3 @@
-import os
 import setuptools
 
 from quark import __version__
@@ -16,10 +15,8 @@ required_requirements = [
     "prompt-toolkit==3.0.19",
     "plotly",
     "rzpipe",
+    "click",
 ]
-without_cli_support = os.environ.get("QUARK_WITHOUT_CLI", default=0)
-if not without_cli_support:
-    required_requirements.append("click==8.0.1")
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username
