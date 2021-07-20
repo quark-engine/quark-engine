@@ -1,8 +1,8 @@
 import hashlib
-import sys
 import os
-import requests
 import time
+
+import requests
 from tqdm import tqdm
 
 from quark.utils.colors import green, red, yellow
@@ -41,8 +41,7 @@ class VTAnalysis:
         self.reports.update(progress)
 
     def change_api_key(self):
-        tqdm.write(
-            f"[*] {self.api_key} is unavailable, change another API key")
+        tqdm.write(f"[*] {self.api_key} is unavailable, change another API key")
         self.api_keys_list[self.api_key] = False
         for api_key in self.api_keys_list:
             if self.api_keys_list[api_key]:
@@ -167,16 +166,14 @@ class VTAnalysis:
             self.reports[file_md5] = report["positives"]
             return report["positives"]
         else:
-            tqdm.write(
-                f"[*] Unable to retrieve {file_md5}, add to waiting queue")
+            tqdm.write(f"[*] Unable to retrieve {file_md5}, add to waiting queue")
             self.waiting_queue.add(file_md5)
             return
 
     def analyze_multi_file(self, path):
 
         if not os.path.isdir(path):
-            tqdm.write(
-                red(f"[*] Error: Given path is not a directory: {path}"))
+            tqdm.write(red(f"[*] Error: Given path is not a directory: {path}"))
             return
 
         file_count = sum(len(files) for _, _, files in os.walk(path))
@@ -200,8 +197,7 @@ class VTAnalysis:
 
                     # Found positives file
                     if result > 0:
-                        tqdm.write(
-                            green(f"[*] Found positives file: {file_path}"))
+                        tqdm.write(green(f"[*] Found positives file: {file_path}"))
 
                 except Exception as e:
                     tqdm.write(yellow(f"[WARN] Exception found: {e.message}"))
