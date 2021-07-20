@@ -1,4 +1,5 @@
 import hashlib
+import sys
 import os
 import requests
 import time
@@ -40,7 +41,8 @@ class VTAnalysis:
         self.reports.update(progress)
 
     def change_api_key(self):
-        tqdm.write(f"[*] {self.api_key} is unavailable, change another API key")
+        tqdm.write(
+            f"[*] {self.api_key} is unavailable, change another API key")
         self.api_keys_list[self.api_key] = False
         for api_key in self.api_keys_list:
             if self.api_keys_list[api_key]:
@@ -165,36 +167,47 @@ class VTAnalysis:
             self.reports[file_md5] = report["positives"]
             return report["positives"]
         else:
-            tqdm.write(f"[*] Unable to retrieve {file_md5}, add to waiting queue")
+            tqdm.write(
+                f"[*] Unable to retrieve {file_md5}, add to waiting queue")
             self.waiting_queue.add(file_md5)
             return
 
     def analyze_multi_file(self, path):
 
         if not os.path.isdir(path):
-            tqdm.write(red(f"[*] Error: Given path is not a directory: {path}"))
+            tqdm.write(
+                red(f"[*] Error: Given path is not a directory: {path}"))
             return
 
-        for filename in tqdm(os.listdir(path)):
-            file_path = os.path.join(path, filename)
+        file_count = sum(len(files) for _, _, files in os.walk(path))
 
-            try:
-                result = self.analyze_single_file(file_path)
+        progress_bar = tqdm(total=file_count)
+        for root, dirs, files in os.walk(path):  # Walk the directory
+            for name in files:
 
-                # All API keys are unavailable
-                if result == -1:
-                    return
+                file_path = os.path.join(root, name)
 
-                if not result:
+                try:
+                    result = self.analyze_single_file(file_path)
+                    progress_bar.update(1)  # Increment the progress bar
+
+                    # All API keys are unavailable
+                    if result == -1:
+                        return
+
+                    if not result:
+                        continue
+
+                    # Found positives file
+                    if result > 0:
+                        tqdm.write(
+                            green(f"[*] Found positives file: {file_path}"))
+
+                except Exception as e:
+                    tqdm.write(yellow(f"[WARN] Exception found: {e.message}"))
                     continue
 
-                # Found positives file
-                if result > 0:
-                    tqdm.write(green(f"[*] Found positives file: {filename}"))
-
-            except Exception as e:
-                tqdm.write(yellow(f"[WARN] Exception found: {e}"))
-                continue
+        progress_bar.close()
 
         # Retrieve the file report from waiting queue
         tqdm.write(f"[*] Start to retrieve file report from waiting queue")
@@ -211,7 +224,7 @@ class VTAnalysis:
                     self.reports[file_md5] = report["positives"]
 
             except Exception as e:
-                tqdm.write(yellow(f"[WARN] Exception found: {e}"))
+                tqdm.write(yellow(f"[WARN] Exception found: {e.message}"))
                 continue
 
 
