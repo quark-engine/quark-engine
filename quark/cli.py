@@ -2,20 +2,21 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import click
 import json
-import numpy as np
 import os
+
+import click
+import numpy as np
 from tqdm import tqdm
 
-from quark import __version__
-from quark import config
+from quark import __version__, config
+from quark.core.parallelquark import ParallelQuark
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.logo import logo
 from quark.utils.colors import yellow
-from quark.utils.graph import show_comparison_graph, select_label_menu
-from quark.utils.pprint import print_success, print_info, print_warning
+from quark.utils.graph import select_label_menu, show_comparison_graph
+from quark.utils.pprint import print_info, print_success, print_warning
 from quark.utils.weight import Weight
 
 logo()
@@ -118,6 +119,15 @@ logo()
     required=False,
     default="androguard",
 )
+@click.option(
+    "-j",
+    "--num-of-process",
+    "num_of_process",
+    type=click.IntRange(min=1),
+    help="Allow analyzing APK with N processes",
+    required=False,
+    default=1,
+)
 def entry_point(
     summary,
     detail,
@@ -132,24 +142,27 @@ def entry_point(
     label,
     comparison,
     core_library,
+    num_of_process,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
-    # Load APK
-    data = Quark(apk[0], core_library)
-
     # Load rules
-    rules_list = [file for file in os.listdir(rule) if file.endswith("json")]
+    rule_path_list = [
+        os.path.join(rule, file)
+        for file in os.listdir(rule)
+        if file.endswith("json")
+    ]
 
     if comparison:
 
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
         all_labels = set()
-        for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
+        for rulepath in tqdm(rule_path_list):
             rule_checker = RuleObject(rulepath)
-            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
+            labels = (
+                rule_checker.label
+            )  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 all_labels.add(single_label)
 
@@ -161,7 +174,11 @@ def entry_point(
         # perform label based analysis on the apk_
         malware_confidences = {}
         for apk_ in apk:
-            data = Quark(apk_)
+            data = (
+                ParallelQuark(apk_, core_library, num_of_process)
+                if num_of_process > 1
+                else Quark(apk_, core_library)
+            )
             all_labels = {}
             # dictionary containing
             # key: label
@@ -169,15 +186,26 @@ def entry_point(
             # $ print(all_rules["accessibility service"])
             # > [60, 40, 60, 40, 60, 40]
 
-            for single_rule in tqdm(rules_list):
-                rulepath = os.path.join(rule, single_rule)
-                rule_checker = RuleObject(rulepath)
+            rule_checker_list = [
+                RuleObject(rulepath) for rulepath in rule_path_list
+            ]
 
-                # analyse malware only on rules where appears label selected
-                labels = np.array(rule_checker.label)
-                if len(np.intersect1d(labels, selected_label)) == 0:
-                    continue
+            # analyse malware only on rules where appears label selected
+            rule_checker_list = [
+                rule_checker
+                for rule_checker in rule_checker_list
+                if len(
+                    np.intersect1d(
+                        np.array(rule_checker.label), selected_label
+                    )
+                )
+                != 0
+            ]
 
+            if num_of_process > 1:
+                data.apply_rules(rule_checker_list)
+
+            for rule_checker in tqdm(rule_checker_list):
                 # Run the checker
                 data.run(rule_checker)
                 confidence = rule_checker.check_item.count(True) * 20
@@ -197,7 +225,9 @@ def entry_point(
                 # on radar data use the maximum confidence for a certain label
                 radar_data[_label] = np.max(confidences)
 
-            radar_confidence = [value_ for _label, value_ in radar_data.items()]
+            radar_confidence = [
+                value_ for _label, value_ in radar_data.items()
+            ]
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
 
         show_comparison_graph(
@@ -207,6 +237,15 @@ def entry_point(
             font_size=22,
         )
 
+        return
+
+    # Load APK
+    data = (
+        ParallelQuark(apk[0], core_library, num_of_process)
+        if num_of_process > 1
+        else Quark(apk[0], core_library)
+    )
+
     if label:
         all_labels = {}
         # dictionary containing
@@ -215,13 +254,20 @@ def entry_point(
         # $ print(all_rules["accessibility service"])
         # > [60, 40, 60, 40, 60, 40]
 
-        for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+        rule_checker_list = [
+            RuleObject(rulepath) for rulepath in rule_path_list
+        ]
+
+        if num_of_process > 1:
+            data.apply_rules(rule_checker_list)
+
+        for rule_checker in tqdm(rule_checker_list):
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
-            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
+            labels = (
+                rule_checker.label
+            )  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label in all_labels:
                     all_labels[single_label].append(confidence)
@@ -247,25 +293,30 @@ def entry_point(
         if summary == "all_rules":
             label_flag = False
         elif summary.endswith("json"):
-            rules_list = [summary]
+            rule_path_list = [summary]
             label_flag = False
         else:
             label_flag = True
 
-        for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
+        rule_checker_list = [
+            rule_checker
+            for rule_checker in rule_checker_list
+            if (not label_flag) or (summary in rule_checker.label)
+        ]
 
-            labels = rule_checker.label
-            if label_flag and summary not in labels:
-                continue
+        if isinstance(data, ParallelQuark):
+            data.apply_rules(rule_checker_list)
 
+        for rule_checker in tqdm(rule_checker_list):
             # Run the checker
             data.run(rule_checker)
 
             data.show_summary_report(rule_checker, threshold)
 
-        w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
+        w = Weight(
+            data.quark_analysis.score_sum, data.quark_analysis.weight_sum
+        )
         print_warning(w.calculate())
         print_info(f"Total Score: {data.quark_analysis.score_sum}")
         print(data.quark_analysis.summary_report_table)
@@ -281,23 +332,28 @@ def entry_point(
         if detail == "all_rules":
             label_flag = False
         elif detail.endswith("json"):
-            rules_list = [detail]
+            rule_path_list = [detail]
             label_flag = False
         else:
             label_flag = True
 
-        for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
+        rule_checker_list = [
+            rule_checker
+            for rule_checker in rule_checker_list
+            if (not label_flag) or (detail in rule_checker.label)
+        ]
 
-            labels = rule_checker.label
-            if label_flag and detail not in labels:
-                continue
+        if isinstance(data, ParallelQuark):
+            data.apply_rules(rule_checker_list)
 
+        for rule_checker, rule_path in tqdm(
+            zip(rule_checker_list, rule_path_list)
+        ):
             # Run the checker
             data.run(rule_checker)
 
-            print(f"Rulepath: {rulepath}")
+            print(f"Rulepath: {rule_path}")
             print(f"Rule crime: {rule_checker.crime}")
             data.show_detail_report(rule_checker)
             print_success("OK")
@@ -310,10 +366,12 @@ def entry_point(
     # Show JSON report
     if output:
 
-        for single_rule in tqdm(rules_list):
-            rulepath = os.path.join(rule, single_rule)
-            rule_checker = RuleObject(rulepath)
+        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
 
+        if isinstance(data, ParallelQuark):
+            data.apply_rules(rule_checker_list)
+
+        for rule_checker in tqdm(rule_checker_list):
             # Run the checker
             data.run(rule_checker)
 
@@ -341,6 +399,9 @@ def entry_point(
 
         for p in data.apkinfo.permissions:
             print(p)
+
+    if isinstance(data, ParallelQuark):
+        data.close()
 
 
 if __name__ == "__main__":

@@ -139,6 +139,12 @@ quark -a first.apk -a second.apk -C
 
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
+### Parallelize the analysis
+Add the option `-j` and set the number of processes. You can now utilize every CPU by the Quark asynchronous analysis.
+```bash
+quark -a Ahmyth.apk -s -j 4
+```
+
 ### Upcoming unstable feature
 Now Quark also supports [Rizin](https://github.com/rizinorg/rizin) as one of our Android analysis frameworks. You can use option `--core-library` with `rizin` to enable the Rizin-based analysis library.
 ```bash
