@@ -120,13 +120,12 @@ logo()
     default="androguard",
 )
 @click.option(
-    "-j",
-    "--num-of-process",
+    "--multi-process",
     "num_of_process",
     type=click.IntRange(min=1),
     help="Allow analyzing APK with N processes",
     required=False,
-    default=1,
+    default=os.cpu_count(),
 )
 def entry_point(
     summary,
