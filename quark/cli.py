@@ -194,12 +194,7 @@ def entry_point(
             rule_checker_list = [
                 rule_checker
                 for rule_checker in rule_checker_list
-                if len(
-                    np.intersect1d(
-                        np.array(rule_checker.label), selected_label
-                    )
-                )
-                != 0
+                if len(np.intersect1d(rule_checker.label, selected_label)) != 0
             ]
 
             if num_of_process > 1:
