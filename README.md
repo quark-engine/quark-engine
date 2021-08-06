@@ -139,10 +139,10 @@ quark -a first.apk -a second.apk -C
 
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
-### Parallelize the analysis
-Add the option `-j` and set the number of processes. You can now utilize every CPU by the Quark asynchronous analysis.
+### Parallelizing Quark
+Now Quark supports multiprocessing for analyzing APKs parallelly, by adding the option `--multi-process` and set the number of processes. (the default is the number of CPUs in your computer.)
 ```bash
-quark -a Ahmyth.apk -s -j 4
+quark -a Ahmyth.apk -s --multi-process 4
 ```
 
 ### Upcoming unstable feature
