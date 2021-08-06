@@ -322,6 +322,7 @@ def entry_point(
 
     # Show detail report
     if detail:
+        threshold_number = int(threshold) if threshold else 0
 
         if detail == "all_rules":
             label_flag = False
@@ -346,11 +347,14 @@ def entry_point(
         ):
             # Run the checker
             data.run(rule_checker)
+            
+            confidence = rule_checker.check_item.count(True) * 20
 
-            print(f"Rulepath: {rule_path}")
-            print(f"Rule crime: {rule_checker.crime}")
-            data.show_detail_report(rule_checker)
-            print_success("OK")
+            if confidence >= threshold_number:
+                print(f"Rulepath: {rulepath}")
+                print(f"Rule crime: {rule_checker.crime}")
+                data.show_detail_report(rule_checker)
+                print_success("OK")
 
         if classification:
             data.show_rule_classification()
