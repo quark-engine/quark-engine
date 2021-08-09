@@ -8,4 +8,6 @@ HOME_DIR = f"{Path.home()}/.quark-engine/"
 SOURCE = "https://github.com/quark-engine/quark-rules"
 DIR_PATH = f"{HOME_DIR}quark-rules"
 
+DEBUG = False
+
 Path(HOME_DIR).mkdir(parents=True, exist_ok=True)

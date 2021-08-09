@@ -9,18 +9,22 @@
 import logging
 from datetime import datetime
 
+from quark import config
 from quark.core.struct.registerobject import RegisterObject
 from quark.core.struct.tableobject import TableObject
 
 MAX_REG_COUNT = 40
-TIMESTAMPS = datetime.now().strftime("%Y-%m-%d")
-LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
 log = logging.getLogger(__name__)
 log.setLevel(logging.DEBUG)
-handler = logging.FileHandler(LOG_FILENAME, mode="w")
-format_str = "%(asctime)s %(levelname)s [%(lineno)d]: %(message)s"
-handler.setFormatter(logging.Formatter(format_str))
-log.addHandler(handler)
+if config.DEBUG:
+    TIMESTAMPS = datetime.now().strftime("%Y-%m-%d")
+    LOG_FILENAME = f"{TIMESTAMPS}.quark.log"
+    handler = logging.FileHandler(LOG_FILENAME, mode="w")
+    format_str = "%(asctime)s %(levelname)s [%(lineno)d]: %(message)s"
+    handler.setFormatter(logging.Formatter(format_str))
+    log.addHandler(handler)
+else:
+    log.disabled = True
 
 
 def logger(func):
