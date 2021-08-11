@@ -84,11 +84,8 @@ class AndroguardImp(BaseApkinfo):
             descriptor=regex_descriptor,
         )
         
-        try:
-            result = next(method_result)
-            return self._convert_to_method_object(result)
-        except StopIteration:
-            return None
+        result = next(method_result, None)
+        return self._convert_to_method_object(result) if result else None
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
