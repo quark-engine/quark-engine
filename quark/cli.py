@@ -347,11 +347,11 @@ def entry_point(
         ):
             # Run the checker
             data.run(rule_checker)
-            
+
             confidence = rule_checker.check_item.count(True) * 20
 
             if confidence >= threshold_number:
-                print(f"Rulepath: {rulepath}")
+                print(f"Rulepath: {rule_path}")
                 print(f"Rule crime: {rule_checker.crime}")
                 data.show_detail_report(rule_checker)
                 print_success("OK")
