@@ -83,18 +83,9 @@ class AndroguardImp(BaseApkinfo):
             methodname=regex_method_name,
             descriptor=regex_descriptor,
         )
-        if list(method_result):
-            (result,) = list(
-                self.analysis.find_methods(
-                    classname=regex_class_name,
-                    methodname=regex_method_name,
-                    descriptor=regex_descriptor,
-                )
-            )
 
-            return self._convert_to_method_object(result)
-        else:
-            return None
+        result = next(method_result, None)
+        return self._convert_to_method_object(result) if result else None
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
