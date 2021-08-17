@@ -125,7 +125,7 @@ logo()
     type=click.IntRange(min=1),
     help="Allow analyzing APK with N processes",
     required=False,
-    default=os.cpu_count(),
+    default=1,
 )
 def entry_point(
     summary,
