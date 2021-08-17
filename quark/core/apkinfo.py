@@ -83,7 +83,7 @@ class AndroguardImp(BaseApkinfo):
             methodname=regex_method_name,
             descriptor=regex_descriptor,
         )
-        
+
         result = next(method_result, None)
         return self._convert_to_method_object(result) if result else None
 
