@@ -18,9 +18,6 @@ RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
 
 class RizinImp(BaseApkinfo):
-
-    __slots__ = ["_tmp_dir", "_dex_list", "_number_of_dex", "_manifest"]
-
     def __init__(
         self,
         apk_filepath: Union[str, PathLike],
@@ -103,7 +100,7 @@ class RizinImp(BaseApkinfo):
 
         return method_dict
 
-    @property
+    @functools.cached_property
     def permissions(self) -> List[str]:
         axml = AxmlReader(self._manifest)
         permission_list = set()
@@ -131,7 +128,7 @@ class RizinImp(BaseApkinfo):
     def custom_methods(self) -> Set[MethodObject]:
         return {method for method in self.all_methods if not method.cache.is_imported}
 
-    @property
+    @functools.cached_property
     def all_methods(self) -> Set[MethodObject]:
         method_set = set()
         for dex_index in range(self._number_of_dex):
@@ -309,7 +306,7 @@ class RizinImp(BaseApkinfo):
 
         return result
 
-    @property
+    @functools.cached_property
     def class_hierarchy(self) -> Dict[str, Set[str]]:
         hierarchy_dict = defaultdict(set)
 
