@@ -119,9 +119,6 @@ class ParallelQuark(Quark):
             result = self._pool.apply_async(self._worker_analysis, (rule_obj,))
             self._result_map[id(rule_obj)] = result
 
-    def close(self):
-        self._pool.close()
-
     def run(self, rule_obj):
         self._apply_analysis_result(rule_obj)
 
