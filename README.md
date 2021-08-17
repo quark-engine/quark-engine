@@ -139,6 +139,12 @@ quark -a first.apk -a second.apk -C
 
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
+### Parallelizing Quark
+Now Quark supports multiprocessing for analyzing APKs parallelly, by adding the option `--multi-process` and set the number of processes. (the default is the number of CPUs in your computer.)
+```bash
+quark -a Ahmyth.apk -s --multi-process 4
+```
+
 ### Upcoming unstable feature
 Now Quark also supports [Rizin](https://github.com/rizinorg/rizin) as one of our Android analysis frameworks. You can use option `--core-library` with `rizin` to enable the Rizin-based analysis library.
 ```bash
