@@ -2,26 +2,34 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import plotly.graph_objects as go
 import sys
+
+import plotly.graph_objects as go
 from graphviz import Digraph
 from prompt_toolkit.shortcuts import checkboxlist_dialog
 
 
-def wrapper_lookup(apkinfo, wrapper, top_method, native_api):
-    next_level = []
+def wrapper_lookup(apkinfo, method, native_api):
+    visited_method_list = set()
+    stack = [method]
 
-    for method, _ in apkinfo.lowerfunc(top_method):
-        if method == native_api:
-            wrapper.append(top_method)
-            return
-        elif method.is_android_api():
-            continue
+    while stack:
+        parent = stack[-1]
+        if parent not in visited_method_list:
+            visited_method_list.add(parent)
+
+            submethods = {
+                reference[0] for reference in apkinfo.lowerfunc(parent)
+            }
+            if native_api in submethods:
+                return [parent]
+
+            next_level = filter(lambda m: not m.is_android_api(), submethods)
+            stack.extend(next_level)
         else:
-            next_level.append(method)
+            stack.pop()
 
-    for next_level_method in next_level:
-        wrapper_lookup(apkinfo, wrapper, next_level_method, native_api)
+    return []
 
 
 def call_graph(call_graph_analysis):
@@ -37,13 +45,10 @@ def call_graph(call_graph_analysis):
     second_api = call_graph_analysis["second_api"]
     crime = call_graph_analysis["crime"]
 
-    first_wrapper = []
-    second_wrapper = []
-
     if first_call != first_api:
-        wrapper_lookup(apkinfo, first_wrapper, first_call, first_api)
+        first_wrapper = wrapper_lookup(apkinfo, first_call, first_api)
     if second_call != second_api:
-        wrapper_lookup(apkinfo, second_wrapper, second_call, second_api)
+        second_wrapper = wrapper_lookup(apkinfo, second_call, second_api)
 
     # Initialize the Digraph object
     dot = Digraph(
