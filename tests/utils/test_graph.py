@@ -70,17 +70,15 @@ def leaf_method_2(analysis_object):
 def test_wrapper_lookup_with_result(
     analysis_object, parent_method, connect_method_1, leaf_method_1
 ):
-    path = []
-
-    wrapper_lookup(analysis_object, path, parent_method, leaf_method_1)
+    path = wrapper_lookup(analysis_object, parent_method, leaf_method_1)
 
     assert path == [connect_method_1]
 
 
-def test_wrapper_lookup_with_no_result(analysis_object, leaf_method_1, parent_method):
-    path = []
-
-    wrapper_lookup(analysis_object, path, leaf_method_1, parent_method)
+def test_wrapper_lookup_with_no_result(
+    analysis_object, leaf_method_1, parent_method
+):
+    path = wrapper_lookup(analysis_object, leaf_method_1, parent_method)
 
     assert path == []
 
