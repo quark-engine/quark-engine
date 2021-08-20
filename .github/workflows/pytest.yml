@@ -23,8 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pipenv
-        pip install meson
+        pip install pytest pipenv rzpipe meson ninja
         sudo apt-get install -y ninja-build
         
         # Install graphviz
@@ -32,14 +31,14 @@ jobs:
         
         
         # Install Rizin
-        git clone https://github.com/rizinorg/rizin
-        cd rizin/
-        meson build
-        ninja -C build
-        sudo ninja -C build install
-        cd ..
+        RIZIN_LATEST=https://github.com/rizinorg/rizin/releases/latest
+        DOWNLOAD_URL='https://github.com'`curl -sfL $RIZIN_LATEST | grep 'href=\"/rizinorg/rizin/releases/'| grep 'static-x86_64'| cut -d \" -f 2`
+        curl -sSfL --retry 5 -o rizin.tar.xz $DOWNLOAD_URL
+        sudo mkdir -p /opt/rizin
+        sudo tar -Jxf rizin.tar.xz --directory /opt/rizin
+        PATH="/opt/rizin/bin:$PATH"
+        export PATH
         
-
         
     - name: Test with pytest
       run: |
