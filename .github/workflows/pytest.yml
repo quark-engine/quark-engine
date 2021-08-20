@@ -27,16 +27,18 @@ jobs:
         pip install meson
         sudo apt-get install -y ninja-build
         
+        # Install graphviz
+        sudo apt-get -y install graphviz
+        
         
         # Install Rizin
         git clone https://github.com/rizinorg/rizin
-        meson build rizin/
         cd rizin/
+        meson build
         ninja -C build
-        ninja -C build install
+        sudo ninja -C build install
         
-        # Install graphviz
-        sudo apt-get -y install graphviz
+
         
     - name: Test with pytest
       run: |
