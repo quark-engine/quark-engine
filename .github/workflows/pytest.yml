@@ -23,10 +23,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest pipenv
+        pip install pytest
+        python setup.py install
         
-        pipenv install --skip-lock --dev
-        pipenv install coveralls codecov pytest-cov --skip-lock --dev
         
         # Install Rizin
         RIZIN_LATEST=https://github.com/rizinorg/rizin/releases/latest
@@ -42,5 +41,4 @@ jobs:
         
     - name: Test with pytest
       run: |
-        pipenv shell
         pytest
