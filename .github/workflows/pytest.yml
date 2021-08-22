@@ -41,4 +41,5 @@ jobs:
         
     - name: Test with pytest
       run: |
-          rizin -h
+          pipenv install --dev
+          pipenv run pytest
