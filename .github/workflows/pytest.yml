@@ -42,6 +42,5 @@ jobs:
         
     - name: Test with pytest
       run: |
-          pipenv install -e . --skip-lock --dev
-          pipenv install coveralls codecov pytest-cov --skip-lock
+          pipenv install --dev
           pipenv run pytest
