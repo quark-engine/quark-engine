@@ -36,6 +36,7 @@ jobs:
         meson build
         ninja -C build
         sudo ninja -C build install
+        sudo ldconfig -v
         cd -
         
         
