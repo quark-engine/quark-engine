@@ -3,12 +3,14 @@
 # See the file 'LICENSE' for copying permission.
 
 import functools
+import json
 import logging
 import os.path
 import re
 import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
+from curses import raw
 from os import PathLike
 from typing import Dict, Generator, List, Optional, Set, Union
 
@@ -18,7 +20,7 @@ from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-from quark.utils.tools import descriptor_to_androguard_format
+from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
@@ -65,6 +67,43 @@ class RizinImp(BaseApkinfo):
         rz.cmd("aa")
         return rz
 
+    def _convert_type_to_type_signature(self, raw_type: str):
+        # TODO - Initialize the dict only once
+        mapping_dict = {
+            "void":"V",
+            "boolean":"Z",
+            "byte":"B",
+            "char":"C",
+            "short":"S",
+            "int":"I",
+            "long":"J",
+            "float":"F",
+            "double":"D",
+            "String":"Ljava/lang/String;"
+        }
+
+        if raw_type.endswith('[]'):
+            return '[' + self._convert_type_to_type_signature(raw_type[:-2])
+
+        if raw_type.startswith('['):
+            return '[' + self._convert_type_to_type_signature(raw_type[1:])
+
+        if raw_type in mapping_dict:
+            return mapping_dict[raw_type]
+
+        if '.' in raw_type or '_' in raw_type:
+            raw_type = raw_type.replace('.', '/')
+            raw_type = raw_type.replace('_', '$')
+            return 'L' + raw_type + ';'
+
+        return raw_type
+            
+    def _escape_str_in_rizin_manner(self, raw_str: str):
+        char_list = ['<', '>', '$']
+        for c in char_list:
+            raw_str = raw_str.replace(c, '_')
+        return raw_str
+
     @functools.lru_cache
     def _get_methods_classified(self, dexindex):
         rz = self._get_rz(dexindex)
@@ -75,24 +114,98 @@ class RizinImp(BaseApkinfo):
             if json_obj.get("type") not in ["FUNC", "METH"]:
                 continue
 
-            full_name = json_obj["realname"]
-            class_name, method_descriptor = full_name.split(".method.", maxsplit=1)
-            class_name = class_name + ";"
+            # -- Descriptor --
+            # Type A - getCanRetrieveWindowContent(Landroid/accessibilityservice/AccessibilityServiceInfo;)Z
+            # Type B - android.content.pm.ResolveInfo
+            # Type C - android.view.LayoutInflater$Factory2 getCanRetrieveWindowContent(android.accessibilityservice.AccessibilityServiceInfo)
 
-            delimiter = method_descriptor.index('(')
-            methodname = method_descriptor[:delimiter]
-            descriptor = method_descriptor[delimiter:]
-            descriptor = descriptor_to_androguard_format(descriptor)
+            full_method_name = json_obj['name']
+            raw_argument_str = next(re.finditer('\(.*\).*', full_method_name), None)
+            if raw_argument_str is None:
+                continue # continue if for type B
+            raw_argument_str = raw_argument_str.group(0)
+            
+            if raw_argument_str.endswith(')'):
+                # Type C detected
+                # Need to parse the argument type
+                raw_argument_str = raw_argument_str[1:-1]
+                arguments = [self._convert_type_to_type_signature(arg) for arg in raw_argument_str.split(', ')]
 
+                # Need to parse the return type
+                return_type = next(re.finditer('[A-Za-zL][A-Za-z0-9L/\;[\]$.]+ ', full_method_name), None)
+                if return_type is None:
+                    print(f"Unresolved method signature: {full_method_name}")
+                    continue
+                return_type = return_type.group(0).strip()
+
+                # Convert type C to type A
+                raw_argument_str = '(' + ' '.join(arguments) + ')' + self._convert_type_to_type_signature(return_type)
+
+            descriptor = descriptor_to_androguard_format(raw_argument_str)
+
+            # -- Method name --
+            method_name = json_obj['realname']
+
+            # -- Class name --
+            # Subclass - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat_AccessibilityServiceInfoVersionImpl_getId
+            # Overload - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompatJellyBeanMr2_getCapabilities_2
+            # Normal - sym.android.support.v4.app.BackStackRecord_mBreadCrumbTitleText
+            # Prefix - sym.imp.android.os.Handler_post
+            # Truncated - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat_AccessibilityServiceInfoVersionImpl_getCanRetrieveWind
+            # Bug? - sym.imp.java.util.concurrent.CountDownLatch__init
+            # Special - sym.imp.clone
+
+            # detect the length of the class name with the escaped method name
+            escaped_method_name = self._escape_str_in_rizin_manner(method_name)
+            if escaped_method_name.endswith('_'):
+                escaped_method_name = escaped_method_name[:-1]
+
+            flag_name = json_obj['flagname']
+
+            # Special case for clone
+            # TODO - Handle methods that belong to no class in a more general way.
+            if flag_name == 'sym.imp.clone':
+                method = MethodObject(
+                    class_name="",
+                    name="clone",
+                    descriptor="()Ljava/lang/Object;",
+                    cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+                )
+                method_dict[""].append(method)
+                continue
+
+            if escaped_method_name not in flag_name:
+                print(f"The flag name may be truncated by rizin: {json_obj['flagname']}")
+
+            # Drop the method name
+            match = None
+            for match in re.finditer('_+[A-Za-z]+', flag_name):
+                pass
+            if match is None:
+                print(f"Skip the damaged flag: {json_obj['flagname']}")
+                continue
+            match = match.group(0)
+            flag_name = flag_name[:flag_name.rfind(match)]
+
+            # Drop the prefixes sym. and imp.
+            while flag_name.startswith('sym.') or flag_name.startswith('imp.'):
+                flag_name = flag_name[4:]
+
+            class_name = self._convert_type_to_type_signature(flag_name)
+            
+            # -- Is imported --
             is_imported = json_obj["is_imported"]
 
             method = MethodObject(
                 class_name=class_name,
-                name=methodname,
+                name=method_name,
                 descriptor=descriptor,
                 cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
             )
             method_dict[class_name].append(method)
+
+        for class_name, method_list in method_dict.items():
+            method_dict[class_name] = remove_dup_list(method_list)
 
         return method_dict
 
@@ -326,17 +439,12 @@ class RizinImp(BaseApkinfo):
 
             rz = self._get_rz(dex_index)
 
-            hierarchy_graph = rz.cmd("icg").split("\n")
+            class_info_list = rz.cmdj("icj")
+            for class_info in class_info_list:
+                class_name = class_info['classname']
+                super_class = class_info['super']
 
-            for element in hierarchy_graph:
-                if element.startswith("age"):
-                    element_part = element.split()
-                    for index, class_name in enumerate(element_part):
-                        if not class_name.endswith(";"):
-                            element_part[index] = class_name + ";"
-
-                    for subclass in element_part[2:]:
-                        hierarchy_dict[subclass].add(element_part[1])
+                hierarchy_dict[class_name].add(super_class)
 
         return hierarchy_dict
 
@@ -348,19 +456,14 @@ class RizinImp(BaseApkinfo):
 
             rz = self._get_rz(dex_index)
 
-            hierarchy_graph = rz.cmd("icg").split("\n")
+            class_info_list = rz.cmdj("icj")
+            for class_info in class_info_list:
+                class_name = class_info['classname']
+                super_class = class_info['super']
 
-            for element in hierarchy_graph:
-                if element.startswith("age"):
-                    element_part = element.split()
-                    for index, class_name in enumerate(element_part):
-                        if not class_name.endswith(";"):
-                            element_part[index] = class_name + ";"
-
-                    hierarchy_dict[element_part[1]].update(element_part[2:])
+                hierarchy_dict[super_class].add(class_name)
 
         return hierarchy_dict
-
     def _get_method_by_address(self, address: int) -> MethodObject:
         if address < 0:
             return None
@@ -380,8 +483,8 @@ class RizinImp(BaseApkinfo):
         mnemonic, args = smali.split(maxsplit=1)  # Split into twe parts
 
         # invoke-kind instruction may left method index at the last
-        if mnemonic.startswith("invoke"):
-            args = args[: args.rfind(" ;")]
+        # if mnemonic.startswith("invoke"):
+        #     args = args[: args.rfind(" ;")]
 
         args = [arg.strip() for arg in re.split("[{},]+", args) if arg]
 
@@ -392,7 +495,7 @@ class RizinImp(BaseApkinfo):
             args = args[:-1]
 
             if mnemonic.startswith("invoke"):
-                parameter = re.sub(r"\.", ";->", parameter, count=1)
+                parameter = re.sub(r"\.", "->", parameter, count=1)
 
         register_list = []
         # Ranged registers
