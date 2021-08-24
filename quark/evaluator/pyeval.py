@@ -658,7 +658,7 @@ class PyEval:
         )
         next_class_pool = set()
         while class_pool and not (
-            len(class_pool) == 1 and "Ljava/lang/Object;" in class_pool
+            len(class_pool) == 1 and "Ljava/lang/core;" in class_pool
         ):
             next_class_pool.clear()
             for class_name in class_pool:

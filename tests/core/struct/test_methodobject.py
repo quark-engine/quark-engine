@@ -13,9 +13,9 @@ class TestMethodObject:
 
     def test_compare_with_different_access_flags(self):
         method_1 = MethodObject(
-            class_name="Ljava/lang/Object;",
+            class_name="Ljava/lang/core;",
             name="clone",
-            descriptor="()Ljava/lang/Object;",
+            descriptor="()Ljava/lang/core;",
             access_flags="public",
         )
 
@@ -30,9 +30,9 @@ class TestMethodObject:
 
     def test_compare_with_different_caches(self):
         method_1 = MethodObject(
-            class_name="Ljava/lang/Object;",
+            class_name="Ljava/lang/core;",
             name="clone",
-            descriptor="()Ljava/lang/Object;",
+            descriptor="()Ljava/lang/core;",
             cache=("Cache Type A"),
         )
 
@@ -47,9 +47,9 @@ class TestMethodObject:
 
     def test_is_android_api_with_api(self):
         method = MethodObject(
-            class_name="Ljava/lang/Object;",
+            class_name="Ljava/lang/core;",
             name="clone",
-            descriptor="()Ljava/lang/Object;",
+            descriptor="()Ljava/lang/core;",
         )
 
         assert method.is_android_api() is True
