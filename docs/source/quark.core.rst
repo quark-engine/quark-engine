@@ -30,6 +30,14 @@ quark.core.apkinfo module
    :undoc-members:
    :show-inheritance:
 
+quark.core.parallelquark module
+-------------------------------
+
+.. automodule:: quark.core.parallelquark
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 quark.core.quark module
 -----------------------
 
