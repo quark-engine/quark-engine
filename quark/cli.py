@@ -155,8 +155,8 @@ def entry_point(
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
         all_labels = set()
-        for rulepath in tqdm(rule_path_list):
-            rule_checker = RuleObject(rulepath)
+        for rule_path in tqdm(rule_path_list):
+            rule_checker = RuleObject(rule_path)
             labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 all_labels.add(single_label)
