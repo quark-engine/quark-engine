@@ -20,6 +20,7 @@ class Report:
         """
         The main function of Quark-Engine analysis, the analysis is based on the provided APK file.
 
+        :param core_library: the library to analysis binary
         :param apk: the APK file
         :param rule: the rule to be checked, it could be a directory or a single json rule
         :return: None
@@ -33,8 +34,8 @@ class Report:
 
             for single_rule in rules_list:
                 if single_rule.endswith("json"):
-                    rulepath = os.path.join(rule, single_rule)
-                    rule_checker = RuleObject(rulepath)
+                    rule_path = os.path.join(rule, single_rule)
+                    rule_checker = RuleObject(rule_path)
 
                     # Run the checker
                     self.quark.run(rule_checker)
