@@ -4,12 +4,13 @@
 
 import functools
 import re
-from androguard.core.analysis.analysis import MethodAnalysis
-from androguard.core.bytecodes.dvm_types import Operand
-from androguard.misc import AnalyzeAPK, AnalyzeDex
 from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
+
+from androguard.core.analysis.analysis import MethodAnalysis
+from androguard.core.bytecodes.dvm_types import Operand
+from androguard.misc import AnalyzeAPK, AnalyzeDex
 
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject

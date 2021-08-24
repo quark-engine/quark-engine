@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Installing Quark-Engine &mdash; quark-engine v21.7.1 documentation</title>
+  <title>Installing Quark-Engine &mdash; quark-engine v21.8.1 documentation</title>
   
 
   
@@ -191,7 +191,11 @@ $ pipenv shell
 </pre></div>
 </div>
 <p>Once you see the following msg, then you’re all set:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Options:
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Usage: quark [OPTIONS]
+
+  Quark is an Obfuscation-Neglect Android Malware Scoring System
+
+Options:
   -s, --summary TEXT              Show summary report. Optionally specify the
                                   name of a rule/label
   -d, --detail TEXT               Show detail report. Optionally specify the
@@ -214,6 +218,7 @@ $ pipenv shell
   --core-library [androguard|rizin]
                                   Specify the core library used to analyze an
                                   APK
+  --multi-process INTEGER RANGE   Allow analyzing APK with N processes  [x&gt;=1]
   --version                       Show the version and exit.
   --help                          Show this message and exit.
 </pre></div>

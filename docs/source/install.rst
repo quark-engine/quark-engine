@@ -19,6 +19,10 @@ Run the help cmd of quark::
 
 Once you see the following msg, then you're all set::
 
+    Usage: quark [OPTIONS]
+
+      Quark is an Obfuscation-Neglect Android Malware Scoring System
+
     Options:
       -s, --summary TEXT              Show summary report. Optionally specify the
                                       name of a rule/label
@@ -42,6 +46,7 @@ Once you see the following msg, then you're all set::
       --core-library [androguard|rizin]
                                       Specify the core library used to analyze an
                                       APK
+      --multi-process INTEGER RANGE   Allow analyzing APK with N processes  [x>=1]
       --version                       Show the version and exit.
       --help                          Show this message and exit.
 

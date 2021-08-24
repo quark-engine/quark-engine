@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from quark.core.struct.ruleobject import RuleObject
 
 

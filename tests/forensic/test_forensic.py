@@ -1,6 +1,7 @@
-from quark.forensic import Forensic
 import pytest
 import requests
+
+from quark.forensic import Forensic
 
 APK_SOURCE = (
     "https://github.com/quark-engine/apk-malware-samples"

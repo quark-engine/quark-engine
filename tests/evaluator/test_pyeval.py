@@ -3,10 +3,11 @@ from unittest.mock import patch
 
 import pytest
 import requests
-from quark.evaluator.pyeval import MAX_REG_COUNT, PyEval
+
 from quark.core.apkinfo import AndroguardImp
 from quark.core.struct.registerobject import RegisterObject
 from quark.core.struct.tableobject import TableObject
+from quark.evaluator.pyeval import MAX_REG_COUNT, PyEval
 
 
 @pytest.fixture()

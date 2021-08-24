@@ -22,7 +22,7 @@ copyright = 'Quark-Engine Team'
 author = 'KunYu Chen, JunWei Song'
 
 # The full version, including alpha/beta/rc tags
-release = 'v21.7.1'
+release = 'v21.8.1'
 
 # -- General configuration ---------------------------------------------------
 

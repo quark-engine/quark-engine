@@ -1,4 +1,5 @@
 import pytest
+
 from quark.utils.regex import (
     extract_content,
     extract_file,
