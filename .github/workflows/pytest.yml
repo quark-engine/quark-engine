@@ -23,7 +23,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pipenv rzpipe meson ninja
+        pip install pytest pipenv rzpipe meson ninja coverage
         sudo apt-get install -y ninja-build
         
         # Install graphviz
@@ -46,8 +46,9 @@ jobs:
           pipenv install coveralls codecov pytest-cov --skip-lock
           pipenv run pytest --cov=./
 
-    - name: Python Code Coverage Using GitHub Actions and Codecov
-      run: |
-          coveralls
-          codecov
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        flags: unittests
+        fail_ci_if_error: true
           
