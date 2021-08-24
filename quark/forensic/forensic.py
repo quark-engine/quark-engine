@@ -39,6 +39,7 @@ class Forensic:
         """
 
         url = set()
+        test = "test for coverage"
 
         for string in self.all_strings:
 
