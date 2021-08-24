@@ -31,7 +31,7 @@ Once you see the following msg, then you're all set::
       -o, --output FILE               Output report in JSON
       -a, --apk FILE                  APK file  [required]
       -r, --rule PATH                 Rules directory  [default:
-                                      /Users/nick/.quark-engine/quark-rules]
+                                      /Users/$USER/.quark-engine/quark-rules]
       -g, --graph                     Create call graph to call_graph_image
                                       directory
       -c, --classification            Show rules classification
