@@ -1,4 +1,5 @@
 import pytest
+
 from quark.core.struct.bytecodeobject import BytecodeObject
 
 

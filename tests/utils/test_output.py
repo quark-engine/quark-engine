@@ -3,6 +3,7 @@ import os
 
 import pytest
 import requests
+
 from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.core.quark import MAX_SEARCH_LAYER
 from quark.utils.output import (

@@ -1,4 +1,5 @@
 import pytest
+
 from quark.utils.tools import contains, remove_dup_list
 
 

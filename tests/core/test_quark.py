@@ -4,6 +4,7 @@ from unittest.mock import patch
 
 import pytest
 import requests
+
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 

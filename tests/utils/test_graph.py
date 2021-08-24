@@ -2,6 +2,7 @@ import os.path
 
 import pytest
 import requests
+
 from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
 
@@ -75,9 +76,7 @@ def test_wrapper_lookup_with_result(
     assert path == [connect_method_1]
 
 
-def test_wrapper_lookup_with_no_result(
-    analysis_object, leaf_method_1, parent_method
-):
+def test_wrapper_lookup_with_no_result(analysis_object, leaf_method_1, parent_method):
     path = wrapper_lookup(analysis_object, leaf_method_1, parent_method)
 
     assert path == []

@@ -147,9 +147,7 @@ def entry_point(
 
     # Load rules
     rule_path_list = [
-        os.path.join(rule, file)
-        for file in os.listdir(rule)
-        if file.endswith("json")
+        os.path.join(rule, file) for file in os.listdir(rule) if file.endswith("json")
     ]
 
     if comparison:
@@ -159,9 +157,7 @@ def entry_point(
         all_labels = set()
         for rulepath in tqdm(rule_path_list):
             rule_checker = RuleObject(rulepath)
-            labels = (
-                rule_checker.label
-            )  # array type, e.g. ['network', 'collection']
+            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 all_labels.add(single_label)
 
@@ -185,9 +181,7 @@ def entry_point(
             # $ print(all_rules["accessibility service"])
             # > [60, 40, 60, 40, 60, 40]
 
-            rule_checker_list = [
-                RuleObject(rulepath) for rulepath in rule_path_list
-            ]
+            rule_checker_list = [RuleObject(rulepath) for rulepath in rule_path_list]
 
             # analyse malware only on rules where appears label selected
             rule_checker_list = [
@@ -219,9 +213,7 @@ def entry_point(
                 # on radar data use the maximum confidence for a certain label
                 radar_data[_label] = np.max(confidences)
 
-            radar_confidence = [
-                value_ for _label, value_ in radar_data.items()
-            ]
+            radar_confidence = [value_ for _label, value_ in radar_data.items()]
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
 
         show_comparison_graph(
@@ -248,9 +240,7 @@ def entry_point(
         # $ print(all_rules["accessibility service"])
         # > [60, 40, 60, 40, 60, 40]
 
-        rule_checker_list = [
-            RuleObject(rulepath) for rulepath in rule_path_list
-        ]
+        rule_checker_list = [RuleObject(rulepath) for rulepath in rule_path_list]
 
         if num_of_process > 1:
             data.apply_rules(rule_checker_list)
@@ -259,9 +249,7 @@ def entry_point(
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
-            labels = (
-                rule_checker.label
-            )  # array type, e.g. ['network', 'collection']
+            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label in all_labels:
                     all_labels[single_label].append(confidence)
@@ -308,9 +296,7 @@ def entry_point(
 
             data.show_summary_report(rule_checker, threshold)
 
-        w = Weight(
-            data.quark_analysis.score_sum, data.quark_analysis.weight_sum
-        )
+        w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
         print_warning(w.calculate())
         print_info(f"Total Score: {data.quark_analysis.score_sum}")
         print(data.quark_analysis.summary_report_table)
@@ -342,9 +328,7 @@ def entry_point(
         if isinstance(data, ParallelQuark):
             data.apply_rules(rule_checker_list)
 
-        for rule_checker, rule_path in tqdm(
-            zip(rule_checker_list, rule_path_list)
-        ):
+        for rule_checker, rule_path in tqdm(zip(rule_checker_list, rule_path_list)):
             # Run the checker
             data.run(rule_checker)
 
