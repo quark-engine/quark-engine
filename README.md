@@ -11,8 +11,8 @@
     <a href="https://www.youtube.com/watch?v=XK-yqHPnsvc&ab_channel=DEFCONConference">
         <img alt="defcon" src="https://img.shields.io/badge/DEFCON%2028-BTV-blue">
     </a><br>
-    <a href="https://travis-ci.org/quark-engine/quark-engine.svg?branch=master">
-        <img alt="build status" src="https://travis-ci.org/quark-engine/quark-engine.svg?branch=master">
+    <a href="https://github.com/quark-engine/quark-engine/actions/workflows/pytest.yml">
+        <img alt="build status" src="https://github.com/quark-engine/quark-engine/actions/workflows/pytest.yml/badge.svg">
     </a>
     <a href="https://codecov.io/gh/quark-engine/quark-engine">
         <img alt="codecov" src="https://codecov.io/gh/quark-engine/quark-engine/branch/master/graph/badge.svg">
