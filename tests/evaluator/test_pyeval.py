@@ -536,7 +536,7 @@ class TestPyEval:
         override_original_instruction = [
             "new-instance",
             "v4",
-            "Ljava/lang/core;",
+            "Ljava/lang/Object;",
         ]
 
         pyeval.NEW_INSTANCE(instruction)
@@ -555,7 +555,7 @@ class TestPyEval:
         pyeval.NEW_INSTANCE(override_original_instruction)
 
         assert pyeval.table_obj.pop(4) == RegisterObject(
-            "v4", "Ljava/lang/core;", value_type="Ljava/lang/core;"
+            "v4", "Ljava/lang/Object;", value_type="Ljava/lang/Object;"
         )
 
     # Tests for const_string

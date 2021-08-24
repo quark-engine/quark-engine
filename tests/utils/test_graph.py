@@ -62,7 +62,7 @@ def leaf_method_1(analysis_object):
 @pytest.fixture(scope="function")
 def leaf_method_2(analysis_object):
     return analysis_object.find_method(
-        "Ljava/lang/core;",
+        "Ljava/lang/Object;",
         "<init>",
         "()V",
     )
