@@ -118,8 +118,9 @@ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s network
 There is also the possibility to select only one rule:
 
 ```bash
-quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s 00058.json
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s <path_to_rule_folder>/00058.json
 ```
+(If you want to select one of the rules of Quark-Rule, the default path to Quark-Rule is `$HOME/.quark-engine/quark -rules/`.)
 
 ### Label-based Report
 Check which topic (indicated by [labels](https://github.com/quark-engine/quark-rules/blob/master/label_desc.csv)) of the malware is more aggressive.
