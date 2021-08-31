@@ -16,10 +16,14 @@ Here are two common errors that will occur. If those errors happened to you too,
 
 
 #. Errors on arguments (Reference to issue `#239 <https://github.com/quark-engine/quark-engine/issues/239>`_\ ): This type of error is usually caused by an outdated version of packages. Please update Quark Engine and the related python package first, then check if the problem still exists.
-#. Errors on rules not found (Reference to `issue #237 <https://github.com/quark-engine/quark-engine/issues/237>`_\ ): Please update Quark-Rule with ``freshquark`` first. Since the way to specify rules is by adding ``path to the rule`` as an argument, you need to input ``path to the rule`` if the rule file is not in the current folder. If you want to select one of the rules of Quark-Rule, the default path to Quark-Rule is ``$HOME/.quark-engine/quark-rules/``.
-   ## How do threshold, score, and weight working in Quark Engine?
-   About those details, we have a video to explain how it works. You can check out the video on YouTube:
-   https://www.youtube.com/watch?v=SOH4eqrv9_g
+#. Errors on rules not found (Reference to `issue #237 <https://github.com/quark-engine/quark-engine/issues/237>`_\ ): Please update Quark-Rule with ``freshquark`` first. Since the way to specify rules is by adding ``<path_to_the_rule>`` as an argument, you need to input ``<path_to_the_rule>`` if the rule file is not in the current folder. If you want to select one of the rules of Quark-Rule, the default path to Quark-Rule is ``$HOME/.quark-engine/quark-rules/``.
+   
+   
+How do threshold, score, and weight working in Quark Engine?
+------------------------------------------------------------
+
+About those details, we have a video to explain how it works. You can check out the video on YouTube:
+https://www.youtube.com/watch?v=SOH4eqrv9_g
 
 Why do scores keeping the same in all the analyses?
 ---------------------------------------------------
