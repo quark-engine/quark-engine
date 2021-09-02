@@ -71,8 +71,9 @@ def download():
                 print_success(
                     f"Complete downloading the latest quark-rules.\n"
                     f"All the rules are saved in {yellow(config.DIR_PATH)}.\n"
-                    f"To specify one of the rules of Quark-Rule, use {yellow(f'{config.DIR_PATH}/<rule_name>.json')} as an argument."
-
+                    f"To specify one of the rules of Quark-Rule, use "
+                    f"{yellow(f'{config.DIR_PATH}/<rule_name>.json')} "
+                    f"as an argument."
                 )
 
         except subprocess.CalledProcessError as error:

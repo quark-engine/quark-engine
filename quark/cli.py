@@ -278,7 +278,9 @@ def entry_point(
             if not os.path.isfile(summary):
                 print_warning(
                     f"Specified rule not found.\n"
-                    f"If you want to specify one of the rules of Quark-Rule, use {yellow(f'{config.DIR_PATH}/{summary}')} as an argument."
+                    f"If you want to specify one of the rules of Quark-Rule, use "
+                    f"{yellow(f'{config.DIR_PATH}/{summary}')} "
+                    f"as an argument."
                 )
                 return
 
@@ -323,7 +325,9 @@ def entry_point(
             if not os.path.isfile(detail):
                 print_warning(
                     f"Specified rule not found.\n"
-                    f"If you want to specify one of the rules of Quark-Rule, use {yellow(f'{config.DIR_PATH}/{detail}')} as an argument."
+                    f"If you want to specify one of the rules of Quark-Rule, use "
+                    f"{yellow(f'{config.DIR_PATH}/{detail}')} "
+                    f"as an argument."
                 )
                 return
 
