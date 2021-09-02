@@ -9,7 +9,7 @@ import os
 import subprocess
 
 from quark import config
-from quark.utils.colors import green
+from quark.utils.colors import green, yellow
 from quark.utils.pprint import print_warning, print_info, print_success
 
 
@@ -68,7 +68,13 @@ def download():
 
             if result.returncode == 0:
                 # Download successful
-                print_success("Complete downloading the latest quark-rules")
+                print_success(
+                    f"Complete downloading the latest quark-rules.\n"
+                    f"All the rules are saved in {yellow(config.DIR_PATH)}.\n"
+                    f"To specify one of the rules of Quark-Rule, use "
+                    f"{yellow(f'{config.DIR_PATH}/<rule_name>.json')} "
+                    f"as an argument."
+                )
 
         except subprocess.CalledProcessError as error:
 
