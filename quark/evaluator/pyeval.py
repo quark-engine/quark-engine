@@ -495,7 +495,7 @@ class PyEval:
         value_type = instruction[-1]
 
         try:
-            self._invoke([instruction] + [f"new-array(){value_type}"])
+            self._invoke(instruction[:-1] + [f"new-array(){value_type}"])
         except IndexError as e:
             log.exception(f"{e} in MOVE_KIND")
 
