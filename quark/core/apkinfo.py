@@ -245,6 +245,18 @@ class AndroguardImp(BaseApkinfo):
 
         return hierarchy_dict
 
+    @property
+    def subclass_relationships(self) -> Dict[str, Set[str]]:
+        hierarchy_dict = defaultdict(set)
+
+        for _class in self.analysis.get_classes():
+            class_name = str(_class.name)
+            hierarchy_dict[str(_class.extends)].add(class_name)
+            for implements in _class.implements:
+                hierarchy_dict[str(implements)].add(class_name)
+
+        return hierarchy_dict
+
     @staticmethod
     @functools.lru_cache
     def _convert_to_method_object(

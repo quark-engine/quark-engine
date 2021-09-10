@@ -284,6 +284,39 @@ class Quark:
 
         return True
 
+    def find_api_usage(self, class_name, method_name, descriptor_name):
+        method_list = []
+
+        # Source method
+        source_method = self.apkinfo.find_method(
+            class_name, method_name, descriptor_name
+        )
+        if source_method:
+            return [source_method]
+
+        search_classes = {class_name}
+        level = search_classes
+
+        # Find all subclasses
+        while level:
+            next_level = set()
+            for _class in level:
+                next_level.update(self.apkinfo.subclass_relationships[_class])
+
+                # Check override
+                method = self.apkinfo.find_method(
+                    _class, method_name, descriptor_name
+                )
+                if method:
+                    bytecodes = self.apkinfo.get_method_bytecode(method)
+                    if not next(bytecodes, None):
+                        method_list.append(method)
+
+            search_classes.update(next_level)
+            level = next_level
+
+        return method_list
+
     def run(self, rule_obj):
         """
         Run the five levels check to get the y_score.
@@ -312,79 +345,87 @@ class Quark:
         api_2_class_name = rule_obj.api[1]["class"]
         api_2_descriptor = rule_obj.api[1]["descriptor"]
 
-        first_api = self.apkinfo.find_method(
+        first_api_list = self.find_api_usage(
             api_1_class_name, api_1_method_name, api_1_descriptor
         )
-        second_api = self.apkinfo.find_method(
+        second_api_list = self.find_api_usage(
             api_2_class_name, api_2_method_name, api_2_descriptor
         )
 
-        if first_api is None and second_api is None:
+        if not first_api_list and not second_api_list:
             # Exit if the level 2 stage check fails.
             return
 
         else:
             rule_obj.check_item[1] = True
 
-        if first_api is not None:
-            first_api = self.apkinfo.find_method(
-                api_1_class_name, api_1_method_name, api_1_descriptor
-            )
-            self.quark_analysis.level_2_result.append(first_api)
-        if second_api is not None:
-            second_api = self.apkinfo.find_method(
-                api_2_class_name, api_2_method_name, api_2_descriptor
-            )
-            self.quark_analysis.level_2_result.append(second_api)
+        if first_api_list:
+            self.quark_analysis.level_2_result.append(first_api_list[0])
+        if second_api_list:
+            self.quark_analysis.level_2_result.append(second_api_list[0])
+
         # Level 3: Both Native API Check
-        if first_api is None or second_api is None:
+        if not (first_api_list and second_api_list):
             # Exit if the level 3 stage check fails.
             return
 
-        self.quark_analysis.first_api = first_api
-        self.quark_analysis.second_api = second_api
+        self.quark_analysis.first_api = first_api_list[0]
+        self.quark_analysis.second_api = second_api_list[0]
         rule_obj.check_item[2] = True
 
         # Level 4: Sequence Check
-        # Looking for the first layer of the upper function
-        first_api_xref_from = self.apkinfo.upperfunc(first_api)
-        second_api_xref_from = self.apkinfo.upperfunc(second_api)
+        for first_api in first_api_list:
+            for second_api in second_api_list:
+                # Looking for the first layer of the upper function
+                first_api_xref_from = self.apkinfo.upperfunc(first_api)
+                second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
-        if not (first_api_xref_from and second_api_xref_from):
-            # Exit if the upper function is not found (for Rizin library).
-            return
+                if not (first_api_xref_from and second_api_xref_from):
+                    # Exit if the upper function is not found (for Rizin library).
+                    return
 
-        mutual_parent_function_list = self.find_intersection(
-            first_api_xref_from, second_api_xref_from
-        )
-
-        if mutual_parent_function_list is None:
-            # Exit if the level 4 stage check fails.
-            return
-        for parent_function in mutual_parent_function_list:
-            first_wrapper = []
-            second_wrapper = []
-
-            self.find_previous_method(first_api, parent_function, first_wrapper)
-            self.find_previous_method(second_api, parent_function, second_wrapper)
-
-            if self.check_sequence(parent_function, first_wrapper, second_wrapper):
-                rule_obj.check_item[3] = True
-                self.quark_analysis.level_4_result.append(parent_function)
-
-                keyword_item_list = (
-                    rule_obj.api[i].get("keyword", None) for i in range(2)
+                mutual_parent_function_list = self.find_intersection(
+                    first_api_xref_from, second_api_xref_from
                 )
 
-                # Level 5: Handling The Same Register Check
-                if self.check_parameter(
-                    parent_function,
-                    first_wrapper,
-                    second_wrapper,
-                    keyword_item_list=keyword_item_list,
-                ):
-                    rule_obj.check_item[4] = True
-                    self.quark_analysis.level_5_result.append(parent_function)
+                if mutual_parent_function_list is None:
+                    # Exit if the level 4 stage check fails.
+                    return
+                for parent_function in mutual_parent_function_list:
+                    first_wrapper = []
+                    second_wrapper = []
+
+                    self.find_previous_method(
+                        first_api, parent_function, first_wrapper
+                    )
+                    self.find_previous_method(
+                        second_api, parent_function, second_wrapper
+                    )
+
+                    if self.check_sequence(
+                        parent_function, first_wrapper, second_wrapper
+                    ):
+                        rule_obj.check_item[3] = True
+                        self.quark_analysis.level_4_result.append(
+                            parent_function
+                        )
+
+                        keyword_item_list = (
+                            rule_obj.api[i].get("keyword", None)
+                            for i in range(2)
+                        )
+
+                        # Level 5: Handling The Same Register Check
+                        if self.check_parameter(
+                            parent_function,
+                            first_wrapper,
+                            second_wrapper,
+                            keyword_item_list=keyword_item_list,
+                        ):
+                            rule_obj.check_item[4] = True
+                            self.quark_analysis.level_5_result.append(
+                                parent_function
+                            )
 
     def get_json_report(self):
         """
