@@ -652,7 +652,7 @@ class PyEval:
         method_name, descriptor = signature[:index], signature[index:]
 
         class_pool = (
-            self.apkinfo.class_hierarchy[instance_type]
+            self.apkinfo.superclass_relationships[instance_type]
             if skip_self
             else {instance_type}
         )
@@ -667,7 +667,9 @@ class PyEval:
                 if method:
                     return f"{method.class_name}->" f"{method.name}{method.descriptor}"
 
-                next_class_pool.update((self.apkinfo.class_hierarchy[class_name]))
+                next_class_pool.update(
+                    (self.apkinfo.superclass_relationships[class_name])
+                )
                 next_class_pool.difference_update(class_pool)
 
             class_pool = set(next_class_pool)

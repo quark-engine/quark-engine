@@ -254,10 +254,10 @@ class TestApkinfo:
 
         assert (expect_method, expect_offset) in upper_methods
 
-    def test_class_hierarchy_with_expected_class(self, apkinfo):
+    def test_superclass_relationships_with_expected_class(self, apkinfo):
         expected_upper_class = {"Lcom/example/google/service/HttpHelper;"}
         class_name = "Lcom/example/google/service/WebServiceCalling;"
 
-        upper_set = apkinfo.class_hierarchy[class_name]
+        upper_set = apkinfo.superclass_relationships[class_name]
 
         assert expected_upper_class == upper_set

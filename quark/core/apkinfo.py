@@ -234,7 +234,7 @@ class AndroguardImp(BaseApkinfo):
         return result
 
     @property
-    def class_hierarchy(self) -> Dict[str, Set[str]]:
+    def superclass_relationships(self) -> Dict[str, Set[str]]:
         hierarchy_dict = defaultdict(set)
 
         for _class in self.analysis.get_classes():

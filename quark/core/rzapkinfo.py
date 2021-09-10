@@ -312,7 +312,7 @@ class RizinImp(BaseApkinfo):
         return result
 
     @functools.cached_property
-    def class_hierarchy(self) -> Dict[str, Set[str]]:
+    def superclass_relationships(self) -> Dict[str, Set[str]]:
         hierarchy_dict = defaultdict(set)
 
         for dex_index in range(self._number_of_dex):

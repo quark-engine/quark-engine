@@ -173,7 +173,7 @@ class BaseApkinfo:
 
     @property
     @abstractmethod
-    def class_hierarchy(self) -> Dict[str, Set[str]]:
+    def superclass_relationships(self) -> Dict[str, Set[str]]:
         pass
 
     @staticmethod
