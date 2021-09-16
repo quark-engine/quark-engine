@@ -20,7 +20,7 @@ class RuleObject:
         "_label",
     ]
 
-    def __init__(self, json_filename):
+    def __init__(self, json_filename, json_data=None):
         """
         According to customized JSON rules, calculate the weighted score and assessing the stages of the crime.
 
@@ -29,14 +29,18 @@ class RuleObject:
         # the state of five stages
         self.check_item = [False, False, False, False, False]
 
-        with open(json_filename) as json_file:
-            self._json_obj = json.loads(json_file.read())
-            self._crime = self._json_obj["crime"]
-            self._permission = self._json_obj["permission"]
-            self._api = self._json_obj["api"]
-            self._score = self._json_obj["score"]
-            self.rule_filename = os.path.basename(json_filename)
-            self._label = self._json_obj["label"]
+        if json_data == None:
+            with open(json_filename) as json_file:
+                self._json_obj = json.loads(json_file.read())
+        else:
+            self._json_obj = json_data
+        
+        self._crime = self._json_obj["crime"]
+        self._permission = self._json_obj["permission"]
+        self._api = self._json_obj["api"]
+        self._score = self._json_obj["score"]
+        self.rule_filename = os.path.basename(json_filename)
+        self._label = self._json_obj["label"]
 
     def __repr__(self):
         return f"<RuleObject-{self.rule_filename}>"
