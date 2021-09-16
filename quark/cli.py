@@ -156,7 +156,7 @@ def entry_point(
 
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
-        all_labels = set()
+        all_labels = set() # array type, e.g. ['network', 'collection']
 
         for rule_data in tqdm(rule_buffer_list):
             labels = rule_data.label
