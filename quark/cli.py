@@ -156,7 +156,7 @@ def entry_point(
 
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
-        all_labels = set() # array type, e.g. ['network', 'collection']
+        all_labels = set()  # array type, e.g. ['network', 'collection']
 
         for rule_data in tqdm(rule_buffer_list):
             labels = rule_data.label
@@ -351,7 +351,10 @@ def entry_point(
             confidence = rule_checker.check_item.count(True) * 20
 
             if confidence >= threshold_number:
-                print(f"Rulepath: {os.path.join(rule, rule_checker.rule_filename)}")
+                print(
+                    f"Rulepath: "
+                    f"{os.path.join(rule, rule_checker.rule_filename)}"
+                )
                 print(f"Rule crime: {rule_checker.crime}")
                 data.show_detail_report(rule_checker)
                 print_success("OK")
@@ -398,6 +401,7 @@ def entry_point(
 
     if isinstance(data, ParallelQuark):
         data.close()
+
 
 def update_rule_buffer(rule_buffer_list, rule_path_list):
     for rule_path in tqdm(rule_path_list):

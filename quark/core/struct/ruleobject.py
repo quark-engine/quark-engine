@@ -29,12 +29,12 @@ class RuleObject:
         # the state of five stages
         self.check_item = [False, False, False, False, False]
 
-        if json_data == None:
+        if json_data is not None:
+            self._json_obj = json_data
+        else:
             with open(json_filename) as json_file:
                 self._json_obj = json.loads(json_file.read())
-        else:
-            self._json_obj = json_data
-        
+
         self._crime = self._json_obj["crime"]
         self._permission = self._json_obj["permission"]
         self._api = self._json_obj["api"]
