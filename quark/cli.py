@@ -149,15 +149,17 @@ def entry_point(
     rule_path_list = [
         os.path.join(rule, file) for file in os.listdir(rule) if file.endswith("json")
     ]
+    rule_buffer_list = []
+    update_rule_buffer(rule_buffer_list, rule_path_list)
 
     if comparison:
 
         # selection of labels on which it will be done the comparison on radar chart
         # first look for all label found in the rule list
-        all_labels = set()
-        for rule_path in tqdm(rule_path_list):
-            rule_checker = RuleObject(rule_path)
-            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
+        all_labels = set()  # array type, e.g. ['network', 'collection']
+
+        for rule_data in tqdm(rule_buffer_list):
+            labels = rule_data.label
             for single_label in labels:
                 all_labels.add(single_label)
 
@@ -181,12 +183,10 @@ def entry_point(
             # $ print(all_rules["accessibility service"])
             # > [60, 40, 60, 40, 60, 40]
 
-            rule_checker_list = [RuleObject(rulepath) for rulepath in rule_path_list]
-
             # analyse malware only on rules where appears label selected
             rule_checker_list = [
                 rule_checker
-                for rule_checker in rule_checker_list
+                for rule_checker in rule_buffer_list
                 if len(np.intersect1d(rule_checker.label, selected_label)) != 0
             ]
 
@@ -240,12 +240,10 @@ def entry_point(
         # $ print(all_rules["accessibility service"])
         # > [60, 40, 60, 40, 60, 40]
 
-        rule_checker_list = [RuleObject(rulepath) for rulepath in rule_path_list]
-
         if num_of_process > 1:
-            data.apply_rules(rule_checker_list)
+            data.apply_rules(rule_buffer_list)
 
-        for rule_checker in tqdm(rule_checker_list):
+        for rule_checker in tqdm(rule_buffer_list):
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
@@ -285,14 +283,14 @@ def entry_point(
                 return
 
             rule_path_list = [summary]
+            update_rule_buffer(rule_buffer_list, rule_path_list)
             label_flag = False
         else:
             label_flag = True
 
-        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
         rule_checker_list = [
             rule_checker
-            for rule_checker in rule_checker_list
+            for rule_checker in rule_buffer_list
             if (not label_flag) or (summary in rule_checker.label)
         ]
 
@@ -332,28 +330,31 @@ def entry_point(
                 return
 
             rule_path_list = [detail]
+            update_rule_buffer(rule_buffer_list, rule_path_list)
             label_flag = False
         else:
             label_flag = True
 
-        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
         rule_checker_list = [
             rule_checker
-            for rule_checker in rule_checker_list
+            for rule_checker in rule_buffer_list
             if (not label_flag) or (detail in rule_checker.label)
         ]
 
         if isinstance(data, ParallelQuark):
             data.apply_rules(rule_checker_list)
 
-        for rule_checker, rule_path in tqdm(zip(rule_checker_list, rule_path_list)):
+        for rule_checker in tqdm(rule_checker_list):
             # Run the checker
             data.run(rule_checker)
 
             confidence = rule_checker.check_item.count(True) * 20
 
             if confidence >= threshold_number:
-                print(f"Rulepath: {rule_path}")
+                print(
+                    f"Rulepath: "
+                    f"{os.path.join(rule, rule_checker.rule_filename)}"
+                )
                 print(f"Rule crime: {rule_checker.crime}")
                 data.show_detail_report(rule_checker)
                 print_success("OK")
@@ -366,12 +367,10 @@ def entry_point(
     # Show JSON report
     if output:
 
-        rule_checker_list = [RuleObject(rule) for rule in rule_path_list]
-
         if isinstance(data, ParallelQuark):
-            data.apply_rules(rule_checker_list)
+            data.apply_rules(rule_buffer_list)
 
-        for rule_checker in tqdm(rule_checker_list):
+        for rule_checker in tqdm(rule_buffer_list):
             # Run the checker
             data.run(rule_checker)
 
@@ -403,6 +402,16 @@ def entry_point(
     if isinstance(data, ParallelQuark):
         data.close()
 
+
+def update_rule_buffer(rule_buffer_list, rule_path_list):
+    for rule_path in tqdm(rule_path_list):
+        with open(rule_path, "r") as json_file:
+            json_data = json.loads(json_file.read())
+        if isinstance(json_data, list):
+            for rule_data in json_data:
+                rule_buffer_list.append(RuleObject(rule_path, rule_data))
+        else:
+            rule_buffer_list.append(RuleObject(rule_path, json_data))
 
 if __name__ == "__main__":
     entry_point()
