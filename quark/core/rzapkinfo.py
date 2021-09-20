@@ -18,6 +18,7 @@ from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
+from quark.utils.tools import descriptor_to_androguard_format
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
@@ -78,20 +79,10 @@ class RizinImp(BaseApkinfo):
             class_name, method_descriptor = full_name.split(".method.", maxsplit=1)
             class_name = class_name + ";"
 
-            l_index = method_descriptor.index("(")
-            r_index = method_descriptor.index(")")
-            methodname = method_descriptor[:l_index]
-            argument_string = method_descriptor[l_index:r_index]
-            argument_string = (
-                "("
-                + " ".join(re.findall(r"L.+?;|[ZBCSIJFD]|\[", argument_string))
-                + ")"
-            )
-
-            argument_string = re.sub(r"\[ ", "[", argument_string)
-
-            return_value = method_descriptor[method_descriptor.index(")") + 1 :]
-            descriptor = argument_string + return_value
+            delimiter = method_descriptor.index('(')
+            methodname = method_descriptor[:delimiter]
+            descriptor = method_descriptor[delimiter:]
+            descriptor = descriptor_to_androguard_format(descriptor)
 
             is_imported = json_obj["is_imported"]
 

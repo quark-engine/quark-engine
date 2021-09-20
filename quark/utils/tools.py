@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import copy
+import re
 
 
 def remove_dup_list(element):
@@ -39,3 +40,18 @@ def contains(subset_to_check, target_list):
         else:
             return True
     return False
+
+
+def descriptor_to_androguard_format(descriptor):
+    if "(" not in descriptor or ")" not in descriptor:
+        raise ValueError(f"Invalid descriptor. {descriptor}")
+
+    delimiter = descriptor.index(")")
+
+    arg_str = descriptor[:delimiter]
+    args = re.findall(r"L.+?;|[ZBCSIJFD]|\[", arg_str)
+
+    new_descriptor = "(" + " ".join(args) + descriptor[delimiter:]
+    new_descriptor = re.sub(r"\[ ", "[", new_descriptor)
+
+    return new_descriptor
