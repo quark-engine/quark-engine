@@ -65,8 +65,10 @@ logo()
 @click.option(
     "-g",
     "--graph",
-    is_flag=True,
+    is_flag=False,
     help="Create call graph to call_graph_image directory",
+    flag_value="png",
+    type=click.Choice(["png", "json"]),
     required=False,
 )
 @click.option(
@@ -311,7 +313,7 @@ def entry_point(
         if classification:
             data.show_rule_classification()
         if graph:
-            data.show_call_graph()
+            data.show_call_graph(graph)
 
     # Show detail report
     if detail:
