@@ -635,7 +635,7 @@ class Quark:
             for seq_operation in self.quark_analysis.level_5_result:
                 print(f"\t\t {seq_operation.full_name}")
 
-    def show_call_graph(self, output_format):
+    def show_call_graph(self, output_format=None):
         print_info("Creating Call Graph...")
         for call_graph_analysis in self.quark_analysis.call_graph_analysis_list:
             call_graph(call_graph_analysis, output_format)
