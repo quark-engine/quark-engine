@@ -30,7 +30,7 @@ def wrapper_lookup(apkinfo, method, native_api):
     return []
 
 
-def call_graph(call_graph_analysis):
+def call_graph(call_graph_analysis, output_format="png"):
     """
     Generating a call graph based on two native Android APIs.
     """
@@ -53,7 +53,7 @@ def call_graph(call_graph_analysis):
         filename=f"{parent_function.name}_{first_call.name}_{second_call.name}",
         node_attr={"fontname": "Courier New Bold"},
         comment="Quark-Engine Call Graph Result",
-        format="png",
+        format=output_format,
         graph_attr={
             "label": f"Potential Malicious Activity: {crime}",
             "labelloc": "top",
