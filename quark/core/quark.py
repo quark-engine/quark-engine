@@ -425,9 +425,7 @@ class Quark:
         score = rule_obj.score
 
         # Assign level 1 examine result
-        permissions = []
-        if rule_obj.check_item[0]:
-            permissions = rule_obj.permission
+        permissions = rule_obj.permission if rule_obj.check_item[0] else []
 
         # Assign level 2 examine result
         api = []
@@ -628,7 +626,7 @@ class Quark:
         if rule_obj.check_item[3]:
 
             colorful_report("4.Native API Sequence")
-            print(f"\t\t Sequence show up in:")
+            print("\t\t Sequence show up in:")
             for seq_method in self.quark_analysis.level_4_result:
                 print(f"\t\t {seq_method.full_name}")
         if rule_obj.check_item[4]:
