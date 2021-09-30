@@ -41,3 +41,10 @@ When Quark received a PR, the triage process is as below:
 .. image:: https://i.imgur.com/jEkZSV8.png
 
 
+Release process
+----------------
+``Version: v1.0``
+
+The Quark release process is as below:
+
+.. image:: https://i.imgur.com/WFifONc.png
