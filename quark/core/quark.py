@@ -433,8 +433,9 @@ class Quark:
             for item2 in self.quark_analysis.level_2_result:
                 api.append(
                     {
-                        "class": repr(item2.class_name),
-                        "method": repr(item2.name),
+                        "class": str(item2.class_name),
+                        "method": str(item2.name),
+                        "descriptor": str(item2.descriptor)
                     }
                 )
 
