@@ -341,15 +341,16 @@ class Quark:
             # Exit if the level 3 stage check fails.
             return
 
-        self.quark_analysis.first_api = first_api
-        self.quark_analysis.second_api = second_api
-        rule_obj.check_item[2] = True
-
-        # Level 4: Sequence Check
         # Looking for the first layer of the upper function
         first_api_xref_from = self.apkinfo.upperfunc(first_api)
         second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
+        self.quark_analysis.first_api = first_api
+        self.quark_analysis.second_api = second_api
+        self.quark_analysis.level_3_result = [first_api_xref_from, second_api_xref_from]
+        rule_obj.check_item[2] = True
+
+        # Level 4: Sequence Check
         if not (first_api_xref_from and second_api_xref_from):
             # Exit if the upper function is not found (for Rizin library).
             return
@@ -424,9 +425,7 @@ class Quark:
         score = rule_obj.score
 
         # Assign level 1 examine result
-        permissions = []
-        if rule_obj.check_item[0]:
-            permissions = rule_obj.permission
+        permissions = rule_obj.permission if rule_obj.check_item[0] else []
 
         # Assign level 2 examine result
         api = []
@@ -434,15 +433,17 @@ class Quark:
             for item2 in self.quark_analysis.level_2_result:
                 api.append(
                     {
-                        "class": repr(item2.class_name),
-                        "method": repr(item2.name),
+                        "class": str(item2.class_name),
+                        "method": str(item2.name),
+                        "descriptor": str(item2.descriptor)
                     }
                 )
 
-        # Assign level 3 examine result
+        # Assign level 3 - list methods calling to the APIs
         combination = []
         if rule_obj.check_item[2]:
-            combination = rule_obj.api
+            for method_list in self.quark_analysis.level_3_result:
+                combination.append([method.full_name for method in method_list])
 
         # Assign level 4 - 5 examine result if exist
         sequnce_show_up = []
@@ -613,20 +614,20 @@ class Quark:
                 print(f"\t\t {api.full_name}")
         if rule_obj.check_item[2]:
             colorful_report("3.Native API Combination")
-            print(
-                f"\t\t {rule_obj.api[0]['class']} "
-                f"{rule_obj.api[0]['method']} "
-                f"{rule_obj.api[0]['descriptor']}",
-            )
-            print(
-                f"\t\t {rule_obj.api[1]['class']} "
-                f"{rule_obj.api[1]['method']} "
-                f"{rule_obj.api[1]['descriptor']}",
-            )
+            for numbered_api, method_list in zip(
+                ("First API", "Second API"), self.quark_analysis.level_3_result
+            ):
+                print(f"\t\t {numbered_api} show up in:")
+                if method_list:
+                    for comb_method in method_list:
+                        print(f"\t\t {comb_method.full_name}")
+                else:
+                    print("\t\t None")
+
         if rule_obj.check_item[3]:
 
             colorful_report("4.Native API Sequence")
-            print(f"\t\t Sequence show up in:")
+            print("\t\t Sequence show up in:")
             for seq_method in self.quark_analysis.level_4_result:
                 print(f"\t\t {seq_method.full_name}")
         if rule_obj.check_item[4]:
