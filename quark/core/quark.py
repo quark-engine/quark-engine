@@ -308,26 +308,38 @@ class Quark:
         if source_method:
             return [source_method]
 
-        search_classes = {class_name}
-        level = search_classes
+        # Potential Method
+        potential_method_list = [
+            method
+            for method in self.apkinfo.all_methods
+            if method.name == method_name
+            and method.descriptor == descriptor_name
+        ]
 
-        # Find all subclasses
-        while level:
-            next_level = set()
-            for _class in level:
-                next_level.update(self.apkinfo.subclass_relationships[_class])
+        potential_method_list = [
+            method
+            for method in potential_method_list
+            if not next(self.apkinfo.get_method_bytecode(method), None)
+        ]
 
-                # Check override
-                method = self.apkinfo.find_method(
-                    _class, method_name, descriptor_name
-                )
-                if method:
-                    bytecodes = self.apkinfo.get_method_bytecode(method)
-                    if not next(bytecodes, None):
-                        method_list.append(method)
+        # Check if each method's class is a subclass of the given class
+        for method in potential_method_list:
+            current_class_set = {method.class_name}
 
-            search_classes.update(next_level)
-            level = next_level
+            while not current_class_set.intersection(
+                {class_name, "Ljava/lang/Object;"}
+            ):
+                next_class_set = set()
+                for clazz in current_class_set:
+                    next_class_set.update(
+                        self.apkinfo.superclass_relationships[clazz]
+                    )
+
+                current_class_set = next_class_set
+
+            current_class_set.discard("Ljava/lang/Object;")
+            if current_class_set:
+                method_list.append(method)
 
         return method_list
 
