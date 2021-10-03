@@ -13,13 +13,22 @@ from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
 from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
-from quark.utils.colors import (colorful_report, green, lightblue, lightyellow,
-                                magenta, red, yellow)
+from quark.utils.colors import (
+    colorful_report,
+    green,
+    lightblue,
+    lightyellow,
+    magenta,
+    red,
+    yellow,
+)
 from quark.utils.graph import call_graph
-from quark.utils.output import (get_rule_classification_data,
-                                output_parent_function_graph,
-                                output_parent_function_json,
-                                output_parent_function_table)
+from quark.utils.output import (
+    get_rule_classification_data,
+    output_parent_function_graph,
+    output_parent_function_json,
+    output_parent_function_table,
+)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -269,9 +278,8 @@ class Quark:
 
         return state
 
-    def check_parameter_values(
-        self, source_str, pattern_list, keyword_item_list
-    ):
+    @staticmethod
+    def check_parameter_values(source_str, pattern_list, keyword_item_list):
         for pattern, keyword_item in zip(pattern_list, keyword_item_list):
             if keyword_item is None:
                 continue
