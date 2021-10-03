@@ -122,8 +122,10 @@ class TestRuleObject:
         for idx, value in enumerate(expected_value):
             assert rule_obj.get_score(confidence[idx]) == value
 
-    def test_androguard_format_api(self, rule_obj):
+    @staticmethod
+    def test_androguard_format_api(rule_obj):
         assert rule_obj.api[0]["descriptor"] == "(I Ljava/lang/String; [B J)V"
 
-    def test_java_format_api(self, rule_obj):
+    @staticmethod
+    def test_java_format_api(rule_obj):
         assert rule_obj.api[1]["descriptor"] == "(I Ljava/lang/String; [B J)V"
