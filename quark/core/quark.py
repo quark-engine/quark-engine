@@ -13,22 +13,13 @@ from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
 from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
-from quark.utils.colors import (
-    colorful_report,
-    green,
-    lightblue,
-    lightyellow,
-    magenta,
-    red,
-    yellow,
-)
+from quark.utils.colors import (colorful_report, green, lightblue, lightyellow,
+                                magenta, red, yellow)
 from quark.utils.graph import call_graph
-from quark.utils.output import (
-    get_rule_classification_data,
-    output_parent_function_graph,
-    output_parent_function_json,
-    output_parent_function_table,
-)
+from quark.utils.output import (get_rule_classification_data,
+                                output_parent_function_graph,
+                                output_parent_function_json,
+                                output_parent_function_table)
 from quark.utils.pprint import print_info, print_success
 from quark.utils.weight import Weight
 
@@ -49,7 +40,9 @@ class Quark:
         elif core_library == "androguard":
             self.apkinfo = AndroguardImp(apk)
         else:
-            raise ValueError(f"Unsupported core library for Quark: {core_library}")
+            raise ValueError(
+                f"Unsupported core library for Quark: {core_library}"
+            )
 
         self.quark_analysis = QuarkAnalysis()
 
@@ -108,7 +101,9 @@ class Quark:
                 depth, first_method_set, second_method_set
             )
 
-    def method_recursive_search(self, depth, first_method_set, second_method_set):
+    def method_recursive_search(
+        self, depth, first_method_set, second_method_set
+    ):
         # Not found same method usage, try to find the next layer.
         depth += 1
         if depth > MAX_SEARCH_LAYER:
@@ -121,14 +116,22 @@ class Quark:
         # Extend the xref from function into next layer.
         for method in first_method_set:
             if self.apkinfo.upperfunc(method):
-                next_level_set_1 = self.apkinfo.upperfunc(method) | next_level_set_1
+                next_level_set_1 = (
+                    self.apkinfo.upperfunc(method) | next_level_set_1
+                )
         for method in second_method_set:
             if self.apkinfo.upperfunc(method):
-                next_level_set_2 = self.apkinfo.upperfunc(method) | next_level_set_2
+                next_level_set_2 = (
+                    self.apkinfo.upperfunc(method) | next_level_set_2
+                )
 
-        return self.find_intersection(next_level_set_1, next_level_set_2, depth)
+        return self.find_intersection(
+            next_level_set_1, next_level_set_2, depth
+        )
 
-    def check_sequence(self, mutual_parent, first_method_list, second_method_list):
+    def check_sequence(
+        self, mutual_parent, first_method_list, second_method_list
+    ):
         """
         Check if the first function appeared before the second function.
 
@@ -156,9 +159,14 @@ class Quark:
                 # seq_table would look like: [(getLocation, 1256), (sendSms, 1566), (sendSms, 2398)]
 
                 method_list_need_check = [x[0] for x in seq_table]
-                sequence_pattern_method = [first_call_method, second_call_method]
+                sequence_pattern_method = [
+                    first_call_method,
+                    second_call_method,
+                ]
 
-                if tools.contains(sequence_pattern_method, method_list_need_check):
+                if tools.contains(
+                    sequence_pattern_method, method_list_need_check
+                ):
                     state = True
 
                     # Record the mapping between the parent function and the wrapper method
@@ -193,7 +201,9 @@ class Quark:
                 pyeval = PyEval(self.apkinfo)
                 # Check if there is an operation of the same register
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(parent_function):
+                for bytecode_obj in self.apkinfo.get_method_bytecode(
+                    parent_function
+                ):
                     # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
                     instruction = [bytecode_obj.mnemonic]
                     if bytecode_obj.registers is not None:
@@ -221,7 +231,9 @@ class Quark:
                             ):
                                 state = True
 
-                                if keyword_item_list and any(keyword_item_list):
+                                if keyword_item_list and any(
+                                    keyword_item_list
+                                ):
                                     self.check_parameter_values(
                                         c_func,
                                         (
@@ -257,7 +269,9 @@ class Quark:
 
         return state
 
-    def check_parameter_values(self, source_str, pattern_list, keyword_item_list):
+    def check_parameter_values(
+        self, source_str, pattern_list, keyword_item_list
+    ):
         for pattern, keyword_item in zip(pattern_list, keyword_item_list):
             if keyword_item is None:
                 continue
@@ -373,6 +387,8 @@ class Quark:
         self.quark_analysis.second_api = second_api_list[0]
         rule_obj.check_item[2] = True
 
+        self.quark_analysis.level_3_result = [set(), set()]
+
         # Level 4: Sequence Check
         for first_api in first_api_list:
             for second_api in second_api_list:
@@ -380,9 +396,12 @@ class Quark:
                 first_api_xref_from = self.apkinfo.upperfunc(first_api)
                 second_api_xref_from = self.apkinfo.upperfunc(second_api)
 
-                if not (first_api_xref_from and second_api_xref_from):
-                    # Exit if the upper function is not found.
-                    return
+                self.quark_analysis.level_3_result[0].update(
+                    first_api_xref_from
+                )
+                self.quark_analysis.level_3_result[1].update(
+                    second_api_xref_from
+                )
 
                 mutual_parent_function_list = self.find_intersection(
                     first_api_xref_from, second_api_xref_from
@@ -434,7 +453,9 @@ class Quark:
         :return: json report
         """
 
-        w = Weight(self.quark_analysis.score_sum, self.quark_analysis.weight_sum)
+        w = Weight(
+            self.quark_analysis.score_sum, self.quark_analysis.weight_sum
+        )
         warning = w.calculate()
 
         # Filter out color code in threat level
@@ -465,9 +486,7 @@ class Quark:
         score = rule_obj.score
 
         # Assign level 1 examine result
-        permissions = []
-        if rule_obj.check_item[0]:
-            permissions = rule_obj.permission
+        permissions = rule_obj.permission if rule_obj.check_item[0] else []
 
         # Assign level 2 examine result
         api = []
@@ -475,15 +494,19 @@ class Quark:
             for item2 in self.quark_analysis.level_2_result:
                 api.append(
                     {
-                        "class": repr(item2.class_name),
-                        "method": repr(item2.name),
+                        "class": str(item2.class_name),
+                        "method": str(item2.name),
+                        "descriptor": str(item2.descriptor),
                     }
                 )
 
-        # Assign level 3 examine result
+        # Assign level 3 - list methods calling to the APIs
         combination = []
         if rule_obj.check_item[2]:
-            combination = rule_obj.api
+            for method_list in self.quark_analysis.level_3_result:
+                combination.append(
+                    [method.full_name for method in method_list]
+                )
 
         # Assign level 4 - 5 examine result if exist
         sequnce_show_up = []
@@ -496,7 +519,9 @@ class Quark:
                     {
                         repr(
                             item4.full_name
-                        ): self.quark_analysis.parent_wrapper_mapping[item4.full_name]
+                        ): self.quark_analysis.parent_wrapper_mapping[
+                            item4.full_name
+                        ]
                     }
                 )
 
@@ -654,20 +679,20 @@ class Quark:
                 print(f"\t\t {api.full_name}")
         if rule_obj.check_item[2]:
             colorful_report("3.Native API Combination")
-            print(
-                f"\t\t {rule_obj.api[0]['class']} "
-                f"{rule_obj.api[0]['method']} "
-                f"{rule_obj.api[0]['descriptor']}",
-            )
-            print(
-                f"\t\t {rule_obj.api[1]['class']} "
-                f"{rule_obj.api[1]['method']} "
-                f"{rule_obj.api[1]['descriptor']}",
-            )
+            for numbered_api, method_list in zip(
+                ("First API", "Second API"), self.quark_analysis.level_3_result
+            ):
+                print(f"\t\t {numbered_api} show up in:")
+                if method_list:
+                    for comb_method in method_list:
+                        print(f"\t\t {comb_method.full_name}")
+                else:
+                    print("\t\t None")
+
         if rule_obj.check_item[3]:
 
             colorful_report("4.Native API Sequence")
-            print(f"\t\t Sequence show up in:")
+            print("\t\t Sequence show up in:")
             for seq_method in self.quark_analysis.level_4_result:
                 print(f"\t\t {seq_method.full_name}")
         if rule_obj.check_item[4]:
@@ -678,7 +703,9 @@ class Quark:
 
     def show_call_graph(self, output_format=None):
         print_info("Creating Call Graph...")
-        for call_graph_analysis in self.quark_analysis.call_graph_analysis_list:
+        for (
+            call_graph_analysis
+        ) in self.quark_analysis.call_graph_analysis_list:
             call_graph(call_graph_analysis, output_format)
         print_success("Call Graph Completed")
 

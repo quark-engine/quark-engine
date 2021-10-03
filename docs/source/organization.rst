@@ -29,12 +29,17 @@ Responsibilities
 
 Triage process
 ---------------
-``Version: v1.0``
+``Version: v1.1``
 
 When Quark received an issue, the triage process is as below:
 
 .. image:: https://i.imgur.com/iFFqcYx.png
 
+.. note::
+    **If the issue is unable to reproduce, and the issue raiser hasn't responded.**
+
+    - **Over one month**, the assignee should apply the label ``more-info-require`` to the issue and ask for more information.
+    - **Over two months**, the assignee should apply the label ``invalid`` to the issue and close it.
 
 When Quark received a PR, the triage process is as below:
 
