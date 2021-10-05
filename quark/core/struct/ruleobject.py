@@ -4,6 +4,7 @@
 
 import json
 import os
+from quark.utils.tools import descriptor_to_androguard_format
 
 
 class RuleObject:
@@ -37,7 +38,15 @@ class RuleObject:
 
         self._crime = self._json_obj["crime"]
         self._permission = self._json_obj["permission"]
+
         self._api = self._json_obj["api"]
+        for index in range(len(self._api)):
+            descriptor = self._api[index]["descriptor"]
+            if " " not in descriptor:
+                self._api[index][
+                    "descriptor"
+                ] = descriptor_to_androguard_format(descriptor)
+
         self._score = self._json_obj["score"]
         self.rule_filename = os.path.basename(json_filename)
         self._label = self._json_obj["label"]

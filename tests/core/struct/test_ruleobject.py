@@ -18,11 +18,13 @@ def rule_obj(scope="function"):
         "api": [
             {
                 "class": "Landroid/telephony/TelephonyManager",
-                "method": "getCellLocation"
+                "method": "getCellLocation",
+                "descriptor": "(I Ljava/lang/String; [B J)V"
             },
             {
                 "class": "Landroid/telephony/SmsManager",
-                "method": "sendTextMessage"
+                "method": "sendTextMessage",
+                "descriptor": "(ILjava/lang/String;[BJ)V"
             }
         ],
         "score": 4,
@@ -119,3 +121,11 @@ class TestRuleObject:
         expected_value = [0.25, 0.5, 1.0, 2.0, 4.0]
         for idx, value in enumerate(expected_value):
             assert rule_obj.get_score(confidence[idx]) == value
+
+    @staticmethod
+    def test_androguard_format_api(rule_obj):
+        assert rule_obj.api[0]["descriptor"] == "(I Ljava/lang/String; [B J)V"
+
+    @staticmethod
+    def test_java_format_api(rule_obj):
+        assert rule_obj.api[1]["descriptor"] == "(I Ljava/lang/String; [B J)V"

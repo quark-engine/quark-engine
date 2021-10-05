@@ -1,6 +1,10 @@
 import pytest
 
-from quark.utils.tools import contains, remove_dup_list
+from quark.utils.tools import (
+    contains,
+    descriptor_to_androguard_format,
+    remove_dup_list,
+)
 
 
 def test_remove_dup_list_with_invalid_arg():
@@ -61,3 +65,50 @@ def test_contains_with_correct_sequence():
     result = contains(subset, target)
 
     assert result is True
+
+
+def test_descriptor_to_androguard_format_with_invalid_str():
+    descriptor = "Z"
+
+    with pytest.raises(ValueError):
+        _ = descriptor_to_androguard_format(descriptor)
+
+
+def test_descriptor_to_androguard_format_with_formatted_str():
+    descriptor = "(I Ljava/lang/String; [B J)"
+
+    result = descriptor_to_androguard_format(descriptor)
+
+    assert result == descriptor
+
+
+def test_descriptor_to_androguard_format_with_primitive():
+    descriptor = "(ZBCSIJFD)"
+
+    result = descriptor_to_androguard_format(descriptor)
+
+    assert result == "(Z B C S I J F D)"
+
+
+def test_descriptor_to_androguard_format_with_class():
+    descriptor = "(Ljava/lang/String;)"
+
+    result = descriptor_to_androguard_format(descriptor)
+
+    assert result == "(Ljava/lang/String;)"
+
+
+def test_descriptor_to_androguard_format_with_array():
+    descriptor = "([Ljava/lang/String;)"
+
+    result = descriptor_to_androguard_format(descriptor)
+
+    assert result == "([Ljava/lang/String;)"
+
+
+def test_descriptor_to_androguard_format_with_combination():
+    descriptor = "(ILjava/lang/String;[BJ)"
+
+    result = descriptor_to_androguard_format(descriptor)
+
+    assert result == "(I Ljava/lang/String; [B J)"
