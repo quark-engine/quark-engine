@@ -148,11 +148,44 @@ def entry_point(
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
 
     # Load rules
-    rule_path_list = [
-        os.path.join(rule, file) for file in os.listdir(rule) if file.endswith("json")
-    ]
     rule_buffer_list = []
+    rule_filter = summary or detail
+
+    # Determine the location of rules
+    if rule_filter and rule_filter.endswith("json"):
+        if not os.path.isfile(rule_filter):
+            print_warning(
+                f"Specified rule not found.\n"
+                f"If you want to specify one of the rules of Quark-Rule, "
+                f"use {yellow(f'{config.DIR_PATH}/{rule_filter}')} "
+                f"as an argument."
+            )
+            return
+
+        rule_path_list = [rule_filter]
+    else:
+        rule_path_list = [
+            os.path.join(rule, file)
+            for file in os.listdir(rule)
+            if file.endswith("json")
+        ]
+
+    # Load rules into memory
     update_rule_buffer(rule_buffer_list, rule_path_list)
+
+    # Determine if the user provide a rule label
+    if (
+        rule_filter
+        and rule_filter != "all_rules"
+        and not rule_filter.endswith("json")
+    ):
+        rule_checker_list = [
+            rule_checker
+            for rule_checker in rule_buffer_list
+            if rule_filter in rule_checker.label
+        ]
+    else:
+        rule_checker_list = rule_buffer_list
 
     if comparison:
 
@@ -160,10 +193,8 @@ def entry_point(
         # first look for all label found in the rule list
         all_labels = set()  # array type, e.g. ['network', 'collection']
 
-        for rule_data in tqdm(rule_buffer_list):
-            labels = rule_data.label
-            for single_label in labels:
-                all_labels.add(single_label)
+        for rule_checker in rule_checker_list:
+            all_labels.update(rule_checker.label)
 
         # let user choose a list of label on which it will be performed the analysis
         selected_label = np.array(
@@ -215,7 +246,9 @@ def entry_point(
                 # on radar data use the maximum confidence for a certain label
                 radar_data[_label] = np.max(confidences)
 
-            radar_confidence = [value_ for _label, value_ in radar_data.items()]
+            radar_confidence = [
+                value_ for _label, value_ in radar_data.items()
+            ]
             malware_confidences[apk_.split("/")[-1]] = radar_confidence
 
         show_comparison_graph(
@@ -249,7 +282,9 @@ def entry_point(
             # Run the checker
             data.run(rule_checker)
             confidence = rule_checker.check_item.count(True) * 20
-            labels = rule_checker.label  # array type, e.g. ['network', 'collection']
+            labels = (
+                rule_checker.label
+            )  # array type, e.g. ['network', 'collection']
             for single_label in labels:
                 if single_label in all_labels:
                     all_labels[single_label].append(confidence)
@@ -272,30 +307,6 @@ def entry_point(
     # Show summary report
     if summary:
 
-        if summary == "all_rules":
-            label_flag = False
-        elif summary.endswith("json"):
-            if not os.path.isfile(summary):
-                print_warning(
-                    f"Specified rule not found.\n"
-                    f"If you want to specify one of the rules of Quark-Rule, "
-                    f"use {yellow(f'{config.DIR_PATH}/{summary}')} "
-                    f"as an argument."
-                )
-                return
-
-            rule_path_list = [summary]
-            update_rule_buffer(rule_buffer_list, rule_path_list)
-            label_flag = False
-        else:
-            label_flag = True
-
-        rule_checker_list = [
-            rule_checker
-            for rule_checker in rule_buffer_list
-            if (not label_flag) or (summary in rule_checker.label)
-        ]
-
         if isinstance(data, ParallelQuark):
             data.apply_rules(rule_checker_list)
 
@@ -305,7 +316,9 @@ def entry_point(
 
             data.show_summary_report(rule_checker, threshold)
 
-        w = Weight(data.quark_analysis.score_sum, data.quark_analysis.weight_sum)
+        w = Weight(
+            data.quark_analysis.score_sum, data.quark_analysis.weight_sum
+        )
         print_warning(w.calculate())
         print_info(f"Total Score: {data.quark_analysis.score_sum}")
         print(data.quark_analysis.summary_report_table)
@@ -318,30 +331,6 @@ def entry_point(
     # Show detail report
     if detail:
         threshold_number = int(threshold) if threshold else 0
-
-        if detail == "all_rules":
-            label_flag = False
-        elif detail.endswith("json"):
-            if not os.path.isfile(detail):
-                print_warning(
-                    f"Specified rule not found.\n"
-                    f"If you want to specify one of the rules of Quark-Rule, "
-                    f"use {yellow(f'{config.DIR_PATH}/{detail}')} "
-                    f"as an argument."
-                )
-                return
-
-            rule_path_list = [detail]
-            update_rule_buffer(rule_buffer_list, rule_path_list)
-            label_flag = False
-        else:
-            label_flag = True
-
-        rule_checker_list = [
-            rule_checker
-            for rule_checker in rule_buffer_list
-            if (not label_flag) or (detail in rule_checker.label)
-        ]
 
         if isinstance(data, ParallelQuark):
             data.apply_rules(rule_checker_list)
@@ -414,6 +403,7 @@ def update_rule_buffer(rule_buffer_list, rule_path_list):
                 rule_buffer_list.append(RuleObject(rule_path, rule_data))
         else:
             rule_buffer_list.append(RuleObject(rule_path, json_data))
+
 
 if __name__ == "__main__":
     entry_point()
