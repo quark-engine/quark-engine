@@ -45,7 +45,7 @@ jobs:
         cd -
 
     - name: Install Rizin and graphviz (macOS)
-      if: matrix.os == 'macOS'
+      if: matrix.os == 'macOS-latest'
       run: |
         brew install graphviz ninja
         # Install Rizin
