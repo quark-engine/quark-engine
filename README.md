@@ -155,7 +155,7 @@ quark -a Ahmyth.apk -s --core-library rizin
 ## QuickStart
 
 ### Requirements
--   Python 3.7+
+-   Python 3.8+
 -   git
 -   graphviz
 -   click >= 8.0.1 (For CLI supports)
