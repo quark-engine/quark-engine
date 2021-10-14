@@ -49,12 +49,8 @@ jobs:
       run: |
         brew install graphviz ninja
         # Install Rizin
-        sudo git clone --branch v0.2.1 https://github.com/rizinorg/rizin /tmp/rizin/
-        cd /tmp/rizin/
-        meson build
-        ninja -C build
-        sudo ninja -C build install
-        cd -
+        wget https://github.com/rizinorg/rizin/releases/download/v0.2.1/rizin-macos-v0.2.1.pkg
+        sudo installer -pkg rizin-macos-v0.2.1.pkg -target /
 
     - name: Test with pytest
       run: |
