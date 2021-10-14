@@ -12,24 +12,29 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8, 3.9, 3.10]
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.8
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.8
+        python-version: ${{ matrix.python-version }}
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pytest pipenv rzpipe meson ninja coverage
         sudo apt-get install -y ninja-build
-        
+
         # Install graphviz
         sudo apt-get -y install graphviz
-        
-        
+
+
         # Install Rizin
         sudo git clone --branch v0.2.1 https://github.com/rizinorg/rizin /opt/rizin/
         cd /opt/rizin/
@@ -38,8 +43,8 @@ jobs:
         sudo ninja -C build install
         sudo ldconfig -v
         cd -
-        
-        
+
+
     - name: Test with pytest
       run: |
           pipenv install --dev
