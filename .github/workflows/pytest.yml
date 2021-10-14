@@ -15,7 +15,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: [3.8, 3.9]
 
     steps:
@@ -32,9 +32,9 @@ jobs:
         pip install pytest pipenv rzpipe meson ninja coverage
 
     - name: Install Rizin and graphviz
+      if: matrix.os == 'ubuntu-latest'
       # Linux dependencies
-      - run: |
-
+      run: |
         sudo apt-get -y install graphviz
         # Install Rizin
         sudo git clone --branch v0.2.1 https://github.com/rizinorg/rizin /opt/rizin/
@@ -43,21 +43,6 @@ jobs:
         ninja -C build
         sudo ninja -C build install
         cd -
-        if: matrix.os == 'ubuntu-latest'
-
-      # macos dependencies
-      - run: |
-
-        brew install graphviz
-        # Install Rizin
-        sudo git clone --branch v0.2.1 https://github.com/rizinorg/rizin /tmp/rizin
-        cd /tmp/rizin
-        meson build
-        ninja -C build
-        sudo ninja -C build install
-        cd -
-        if: matrix.os == 'macos-latest'
-
 
     - name: Test with pytest
       run: |
