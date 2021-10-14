@@ -36,10 +36,9 @@ jobs:
           sudo apt-get -y install graphviz
         elif [ "$RUNNER_OS" == "Windows" ]; then
           winget install graphviz
-        elif [ "$RUNNER_OS" == "macOS" ]; then
+        else
           brew install graphviz
         fi
-
 
 
         # Install Rizin
