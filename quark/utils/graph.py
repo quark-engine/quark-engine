@@ -2,6 +2,7 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import os
 import sys
 
 import plotly.graph_objects as go
@@ -254,6 +255,10 @@ def show_comparison_graph(title, lables, malware_confidences, font_size=22):
             )
         )
     fig.show()
+    if not os.path.exists("images"):    
+        os.mkdir("behaviors_comparison_radar_chart")
+    fig.write_image("behaviors_comparison_radar_chart/radar_chart.png")
+    
 
 
 def select_label_menu(all_labels, min_labels=5, max_labels=10):
