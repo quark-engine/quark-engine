@@ -395,7 +395,7 @@ def entry_point(
 
 
 def update_rule_buffer(rule_buffer_list, rule_path_list):
-    for rule_path in tqdm(rule_path_list):
+    for rule_path in rule_path_list:
         with open(rule_path, "r") as json_file:
             json_data = json.loads(json_file.read())
         if isinstance(json_data, list):
