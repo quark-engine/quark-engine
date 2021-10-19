@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import sys
+import os
 
 import plotly.graph_objects as go
 from graphviz import Digraph
@@ -254,6 +255,9 @@ def show_comparison_graph(title, lables, malware_confidences, font_size=22):
             )
         )
     fig.show()
+    if not os.path.exists("behaviors_comparison_radar_chart"):
+        os.mkdir("behaviors_comparison_radar_chart")
+    fig.write_image("behaviors_comparison_radar_chart/compariso_image.jpeg")
 
 
 def select_label_menu(all_labels, min_labels=5, max_labels=10):
