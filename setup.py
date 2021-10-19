@@ -40,6 +40,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Security",
     ],
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=required_requirements,
 )
