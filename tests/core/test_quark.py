@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 from unittest.mock import patch
 
@@ -432,3 +433,20 @@ class TestQuark:
         # Check if proper dict object
         assert isinstance(json_report, dict)
         assert json_report.get("md5") == "14d9f1a92dd984d6040cc41ed06e273e"
+
+    def test_json_report_format(self, quark_obj):
+        # Inner function for comparing two json objects
+        def sorting(item):
+            if isinstance(item, dict):
+                return sorted((key, sorting(values)) for key, values in item.items())
+            if isinstance(item, list):
+                return sorted(sorting(x) for x in item)
+            else:
+                return item
+
+        json_report = quark_obj.get_json_report()
+
+        with open("tests/core/json_report_sample.json") as json_file:
+            sample_json = json.loads(json_file.read())
+
+            assert sorting(sample_json) == sorting(json_report)
