@@ -492,9 +492,10 @@ class PyEval:
     @logger
     def AGET_WIDE_KIND(self, instruction):
         array_reg_index = int(instruction[2][1:])
-        value_type = self.table_obj.pop(array_reg_index).current_type[1:]
+
 
         try:
+            value_type = self.table_obj.pop(array_reg_index).current_type[1:]
             destination = int(instruction[1][1:])
             source_list = [int(reg[1:]) for reg in instruction[2:]]
 
