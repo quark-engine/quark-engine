@@ -177,6 +177,8 @@ class PyEval:
                 var_obj = self.table_obj.pop(index)
                 value_of_reg_list.append(var_obj.value)
 
+        invoked_state = f"{executed_fuc}({','.join(value_of_reg_list)})"
+
         # insert the function and the parameter into called_by_func
         for reg in reg_list:
             index = int(reg[1:])
@@ -184,15 +186,23 @@ class PyEval:
             if obj_stack:
                 # add the function name into each parameter table
                 var_obj = self.table_obj.pop(index)
-                var_obj.called_by_func = (
-                    f"{executed_fuc}({','.join(value_of_reg_list)})"
-                )
+                var_obj.called_by_func = invoked_state
 
-        # push the return value into ret_stack
-        self.ret_stack.append(f"{executed_fuc}({','.join(value_of_reg_list)})")
+        if instruction[0].startswith('invoke') and not instruction[0].endswith("static"):
+            # push the return value into the instance
+            reg_idx_to_object = int(reg_list[0][1:])
 
-        # Extract the type of return value
-        self.ret_type = executed_fuc[executed_fuc.index(")") + 1 :]
+            obj_stack = self.table_obj.get_obj_list(reg_idx_to_object)
+            if obj_stack:
+                var_obj = self.table_obj.pop(reg_idx_to_object)
+                var_obj.value = invoked_state
+
+        if not executed_fuc.endswith(")V"):
+            # push the return value into ret_stack
+            self.ret_stack.append(invoked_state)
+
+            # Extract the type of return value
+            self.ret_type = executed_fuc[executed_fuc.index(")") + 1:]
 
     def _move_result(self, instruction):
 
@@ -485,7 +495,7 @@ class PyEval:
         value_type = instruction[-1]
 
         try:
-            self._invoke([instruction] + [f"new-array(){value_type}"])
+            self._invoke(instruction[:-1] + [f"new-array(){value_type}"])
         except IndexError as e:
             log.exception(f"{e} in MOVE_KIND")
 
