@@ -534,9 +534,7 @@ class Quark:
             for item4 in self.quark_analysis.level_4_result:
                 sequnce_show_up.append(
                     {
-                        repr(
-                            item4.full_name
-                        ): self.quark_analysis.parent_wrapper_mapping[
+                        item4.full_name: self.quark_analysis.parent_wrapper_mapping[
                             item4.full_name
                         ]
                     }
@@ -547,9 +545,7 @@ class Quark:
                 for item5 in self.quark_analysis.level_5_result:
                     same_operation_show_up.append(
                         {
-                            repr(
-                                item5.full_name
-                            ): self.quark_analysis.parent_wrapper_mapping[
+                            item5.full_name: self.quark_analysis.parent_wrapper_mapping[
                                 item5.full_name
                             ]
                         }
