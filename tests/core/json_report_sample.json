@@ -41,7 +41,7 @@
             ],
             "sequence": [
                 {
-                    "'Lcom/google/progress/AndroidClientService$2; run ()V'": {
+                    "Lcom/google/progress/AndroidClientService$2; run ()V": {
                         "first": [
                             "invoke-virtual",
                             "v5",
@@ -59,7 +59,7 @@
                     }
                 },
                 {
-                    "'Lcom/google/progress/AndroidClientService; sendMessage ()V'": {
+                    "Lcom/google/progress/AndroidClientService; sendMessage ()V": {
                         "first": [
                             "invoke-virtual",
                             "v6",
@@ -77,7 +77,7 @@
                     }
                 },
                 {
-                    "'Lcom/google/progress/AndroidClientService; doByte ([B)V'": {
+                    "Lcom/google/progress/AndroidClientService; doByte ([B)V": {
                         "first": [
                             "invoke-virtual/range",
                             "v35",
@@ -97,7 +97,7 @@
             ],
             "register": [
                 {
-                    "'Lcom/google/progress/AndroidClientService$2; run ()V'": {
+                    "Lcom/google/progress/AndroidClientService$2; run ()V": {
                         "first": [
                             "invoke-virtual",
                             "v5",
@@ -115,7 +115,7 @@
                     }
                 },
                 {
-                    "'Lcom/google/progress/AndroidClientService; sendMessage ()V'": {
+                    "Lcom/google/progress/AndroidClientService; sendMessage ()V": {
                         "first": [
                             "invoke-virtual",
                             "v6",
@@ -133,7 +133,7 @@
                     }
                 },
                 {
-                    "'Lcom/google/progress/AndroidClientService; doByte ([B)V'": {
+                    "Lcom/google/progress/AndroidClientService; doByte ([B)V": {
                         "first": [
                             "invoke-virtual/range",
                             "v35",
