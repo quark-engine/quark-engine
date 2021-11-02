@@ -520,13 +520,10 @@ class Quark:
                     }
                 )
 
-        # Assign level 3 - list methods calling to the APIs
+        # Assign level 3 examine result
         combination = []
         if rule_obj.check_item[2]:
-            for method_list in self.quark_analysis.level_3_result:
-                combination.append(
-                    [method.full_name for method in method_list]
-                )
+            combination = rule_obj.api
 
         # Assign level 4 - 5 examine result if exist
         sequnce_show_up = []
