@@ -16,7 +16,7 @@ colorama = "*"
 quark-engine = {editable = true,path = "."}
 click = "*"
 androguard = "==3.4.0a1"
-graphviz = "*"
+graphviz = "0.16"
 requests = "*"
 pandas = "*"
 plotly = "*"
