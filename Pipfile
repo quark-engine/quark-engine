@@ -10,18 +10,18 @@ sphinx = "*"
 sphinx-rtd-theme = "*"
 
 [packages]
-prettytable = "*"
-tqdm = "*"
-colorama = "*"
+prettytable = "<=2.4.0"
+tqdm = "<=4.62.3"
+colorama = "<=0.4.4"
 quark-engine = {editable = true,path = "."}
-click = "*"
+click = "<=8.0.3"
 androguard = "==3.4.0a1"
-graphviz = "*"
-requests = "*"
-pandas = "*"
-plotly = "*"
+graphviz = "<=0.18.2"
+requests = "<=2.26.0"
+pandas = "<=1.3.4"
+plotly = "<=5.4.0"
 prompt-toolkit = "==3.0.19"
-rzpipe = "*"
+rzpipe = "<=0.1.2"
 
 [requires]
 python_version = "3.8"
