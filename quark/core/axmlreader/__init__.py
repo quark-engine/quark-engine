@@ -1,6 +1,7 @@
 import enum
 import functools
 import os.path
+import pkg_resources
 
 import rzpipe
 
@@ -72,8 +73,7 @@ class AxmlReader(object):
 
     def __init__(self, file_path, structure_path=None):
         if structure_path is None:
-            directory = os.path.dirname(__file__)
-            structure_path = os.path.join(directory, "axml_definition")
+            structure_path = pkg_resources.resource_filename("quark.core.axmlreader", "axml_definition")
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
