@@ -30,7 +30,7 @@ setuptools.setup(
     url="https://github.com/quark-engine/quark-engine",
     packages=setuptools.find_packages(),
     package_data={
-        "quark.core.axmlreader":["axml_definition"]
+        "quark.core.axmlreader": ["axml_definition"]
     },
     entry_points={
         "console_scripts": [

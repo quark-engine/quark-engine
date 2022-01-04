@@ -73,7 +73,9 @@ class AxmlReader(object):
 
     def __init__(self, file_path, structure_path=None):
         if structure_path is None:
-            structure_path = pkg_resources.resource_filename("quark.core.axmlreader", "axml_definition")
+            structure_path = pkg_resources.resource_filename(
+                "quark.core.axmlreader", "axml_definition"
+            )
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
