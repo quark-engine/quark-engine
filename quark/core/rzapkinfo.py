@@ -168,7 +168,14 @@ class RizinImp(BaseApkinfo):
                 continue
 
             if "fcn_addr" in xref:
-                upperfunc_set.add(self._get_method_by_address(xref["fcn_addr"]))
+                matched_method = self._get_method_by_address(xref["fcn_addr"])
+                if not matched_method:
+                    logging.debug(
+                        f"Cannot identify function at {xref['fcn_addr']}."
+                    )
+                    continue
+
+                upperfunc_set.add(matched_method)
             else:
                 logging.debug(
                     f"Key from was not found at searching"
@@ -194,10 +201,19 @@ class RizinImp(BaseApkinfo):
                 continue
 
             if "to" in xref:
+                matched_method = self._get_method_by_address(xref["to"])
+                if not matched_method:
+                    logging.debug(
+                        f"Cannot identify function at {xref['fcn_addr']}."
+                    )
+                    continue
+
+                offset = xref["from"] - cache.address
+
                 lowerfunc_set.add(
                     (
-                        self._get_method_by_address(xref["to"]),
-                        xref["from"] - cache.address,
+                        matched_method,
+                        offset,
                     )
                 )
             else:
