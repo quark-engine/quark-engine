@@ -6,7 +6,7 @@ with open("README.md") as fh:
     long_description = fh.read()
 
 required_requirements = [
-    "prettytable",
+    "prettytable>=1.0.0",
     "androguard==3.4.0a1",
     "tqdm",
     "colorama",
