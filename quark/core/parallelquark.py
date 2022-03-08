@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 from multiprocessing.pool import Pool
+from multiprocessing import cpu_count
 
 from quark.core.analysis import QuarkAnalysis
 from quark.core.quark import Quark
@@ -93,7 +94,8 @@ class ParallelQuark(Quark):
                 for behavior in result[2]
             ]
 
-            analysis.level_5_result = [behavior[0] for behavior in behavior_list]
+            analysis.level_5_result = [behavior[0]
+                                       for behavior in behavior_list]
 
             analysis.call_graph_analysis_list.extend(
                 [
@@ -113,7 +115,8 @@ class ParallelQuark(Quark):
     def __init__(self, apk, core_library, num_of_process=1):
         self._result_map = {}
         self._pool = Pool(
-            num_of_process - 1, self._worker_initializer, (apk, core_library)
+            min(num_of_process, cpu_count - 1), self._worker_initializer,
+            (apk, core_library)
         )
 
         super().__init__(apk, core_library)
