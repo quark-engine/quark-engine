@@ -115,7 +115,7 @@ class ParallelQuark(Quark):
     def __init__(self, apk, core_library, num_of_process=1):
         self._result_map = {}
         self._pool = Pool(
-            min(num_of_process, cpu_count - 1), self._worker_initializer,
+            min(num_of_process, cpu_count() - 1), self._worker_initializer,
             (apk, core_library)
         )
 
