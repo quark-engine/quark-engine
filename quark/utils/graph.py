@@ -18,7 +18,9 @@ def wrapper_lookup(apkinfo, method, native_api):
         if parent not in visited_method_list:
             visited_method_list.add(parent)
 
-            submethods = {reference[0] for reference in apkinfo.lowerfunc(parent)}
+            submethods = {
+                reference[0] for reference in apkinfo.lowerfunc(parent)
+            }
             if native_api in submethods:
                 return [parent]
 

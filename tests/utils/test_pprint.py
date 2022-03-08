@@ -2,7 +2,6 @@ import base64
 import sys
 
 import pytest
-
 from quark.utils.pprint import (
     print_error,
     print_info,

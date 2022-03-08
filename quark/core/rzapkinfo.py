@@ -1,18 +1,13 @@
-# -*- coding: utf-8 -*-
-# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
-# See the file 'LICENSE' for copying permission.
-
 import functools
 import logging
 import os.path
 import re
+import rzpipe
 import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
 from typing import Dict, Generator, List, Optional, Set, Union
-
-import rzpipe
 
 from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo

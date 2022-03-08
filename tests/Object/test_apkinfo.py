@@ -3,7 +3,6 @@ import zipfile
 
 import pytest
 import requests
-
 from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.rzapkinfo import RizinImp

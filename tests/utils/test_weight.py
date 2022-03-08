@@ -1,5 +1,4 @@
 import pytest
-
 from quark.utils.weight import LEVEL_INFO, Weight
 
 

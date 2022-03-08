@@ -5,7 +5,6 @@ from unittest.mock import patch
 
 import pytest
 import requests
-
 from quark.report import Report
 
 

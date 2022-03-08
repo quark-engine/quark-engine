@@ -4,7 +4,6 @@
 
 import json
 from collections import defaultdict
-
 from graphviz.dot import Digraph
 from prettytable import PrettyTable
 

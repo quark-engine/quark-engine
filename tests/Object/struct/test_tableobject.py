@@ -1,5 +1,4 @@
 import pytest
-
 from quark.core.struct.tableobject import TableObject
 
 

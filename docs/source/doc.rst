@@ -17,7 +17,7 @@ Clean the source::
 
 Auto gen the doc::
 
-    $ sphinx-apidoc -o source ../quark -f
+    $ sphinx-apidoc -o source ../quark
 
 Build the HTML::
 
