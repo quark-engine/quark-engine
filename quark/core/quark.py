@@ -29,7 +29,7 @@ from quark.utils.output import (
     output_parent_function_json,
     output_parent_function_table,
 )
-from quark.utils.pprint import print_info, print_success
+from quark.utils.pprint import print_info, print_success, print_warning
 from quark.utils.weight import Weight
 
 MAX_SEARCH_LAYER = 3
@@ -422,6 +422,17 @@ class Quark:
                 self.quark_analysis.level_3_result[1].update(
                     second_api_xref_from
                 )
+
+                if not first_api_xref_from:
+                    print_warning(
+                        f"Unable to find the upperfunc of {first_api}"
+                    )
+                    continue
+                if not second_api_xref_from:
+                    print_warning(
+                        f"Unable to find the upperfunc of{second_api}"
+                    )
+                    continue
 
                 mutual_parent_function_list = self.find_intersection(
                     first_api_xref_from, second_api_xref_from
