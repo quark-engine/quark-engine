@@ -334,7 +334,7 @@ class Quark:
         for method in potential_method_list:
             current_class_set = {method.class_name}
 
-            while not current_class_set.intersection(
+            while current_class_set and not current_class_set.intersection(
                 {class_name, "Ljava/lang/Object;"}
             ):
                 next_class_set = set()
