@@ -47,7 +47,7 @@ Once you see the following msg, then you're all set::
                                       Specify the core library used to analyze an
                                       APK
       --multi-process INTEGER RANGE   Allow analyzing APK with N processes, 
-                                      where N doesn't exceeds the number of usable CPUs - 1, 
+                                      where N doesn't exceeds the number of usable CPUs - 1 
                                       to avoid memory exhaustion.
       --version                       Show the version and exit.
       --help                          Show this message and exit.

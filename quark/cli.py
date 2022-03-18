@@ -124,9 +124,9 @@ logo()
 @click.option(
     "--multi-process",
     "num_of_process",
-    type=click.INT,
+    type=click.IntRange(min=1),
     help="Allow analyzing APK with N processes, where N doesn't exceeds" +
-    " the number of usable CPUs - 1, to avoid memory exhaustion.",
+    " the number of usable CPUs - 1 to avoid memory exhaustion.",
     required=False,
     default=1,
 )
