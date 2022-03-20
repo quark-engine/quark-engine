@@ -141,7 +141,10 @@ quark -a first.apk -a second.apk -C
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
 ### Parallelizing Quark
-Now Quark supports multiprocessing for analyzing APKs parallelly, by adding the option `--multi-process` and set the number of processes. (the default is the number of CPUs in your computer.)
+Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
+
+**Note:** Quark-Engine automatically limits this value to be less than or equal to the number of CPUs - 1. This restriction is done to avoid the CPU from running out of memory. 
+
 ```bash
 quark -a Ahmyth.apk -s --multi-process 4
 ```

@@ -125,7 +125,8 @@ logo()
     "--multi-process",
     "num_of_process",
     type=click.IntRange(min=1),
-    help="Allow analyzing APK with N processes",
+    help="Allow analyzing APK with N processes, where N doesn't exceeds" +
+    " the number of usable CPUs - 1 to avoid memory exhaustion.",
     required=False,
     default=1,
 )
@@ -146,7 +147,6 @@ def entry_point(
     num_of_process,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
-
     # Load rules
     rule_buffer_list = []
     rule_filter = summary or detail
