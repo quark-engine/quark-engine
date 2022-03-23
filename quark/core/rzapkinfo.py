@@ -9,7 +9,6 @@ import re
 import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
-from curses import raw
 from os import PathLike
 from typing import Dict, Generator, List, Optional, Set, Union
 
