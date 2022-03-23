@@ -24,6 +24,20 @@ from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
+PRIMITIVE_TYPE_MAPPING = {
+    "void":"V",
+    "boolean":"Z",
+    "byte":"B",
+    "char":"C",
+    "short":"S",
+    "int":"I",
+    "long":"J",
+    "float":"F",
+    "double":"D",
+    "String":"Ljava/lang/String;"
+}
+
+RIZIN_ESCAPE_CHAR_LIST = ['<', '>', '$']
 
 class RizinImp(BaseApkinfo):
     def __init__(
@@ -68,20 +82,6 @@ class RizinImp(BaseApkinfo):
         return rz
 
     def _convert_type_to_type_signature(self, raw_type: str):
-        # TODO - Initialize the dict only once
-        mapping_dict = {
-            "void":"V",
-            "boolean":"Z",
-            "byte":"B",
-            "char":"C",
-            "short":"S",
-            "int":"I",
-            "long":"J",
-            "float":"F",
-            "double":"D",
-            "String":"Ljava/lang/String;"
-        }
-
         if raw_type.endswith('[]'):
             return '[' + self._convert_type_to_type_signature(raw_type[:-2])
 
@@ -99,8 +99,7 @@ class RizinImp(BaseApkinfo):
         return raw_type
             
     def _escape_str_in_rizin_manner(self, raw_str: str):
-        char_list = ['<', '>', '$']
-        for c in char_list:
+        for c in RIZIN_ESCAPE_CHAR_LIST:
             raw_str = raw_str.replace(c, '_')
         return raw_str
 
