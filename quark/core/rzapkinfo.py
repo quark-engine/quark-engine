@@ -3,7 +3,6 @@
 # See the file 'LICENSE' for copying permission.
 
 import functools
-import json
 import logging
 import os.path
 import re
@@ -91,25 +90,25 @@ class RizinImp(BaseApkinfo):
         return rz
 
     def _convert_type_to_type_signature(self, raw_type: str):
-        if raw_type.endswith('[]'):
-            return '[' + self._convert_type_to_type_signature(raw_type[:-2])
+        if raw_type.endswith("[]"):
+            return "[" + self._convert_type_to_type_signature(raw_type[:-2])
 
-        if raw_type.startswith('['):
-            return '[' + self._convert_type_to_type_signature(raw_type[1:])
+        if raw_type.startswith("["):
+            return "[" + self._convert_type_to_type_signature(raw_type[1:])
 
         if raw_type in PRIMITIVE_TYPE_MAPPING:
             return PRIMITIVE_TYPE_MAPPING[raw_type]
 
-        if '.' in raw_type or '_' in raw_type:
-            raw_type = raw_type.replace('.', '/')
-            raw_type = raw_type.replace('_', '$')
-            return 'L' + raw_type + ';'
+        if "." in raw_type or "_" in raw_type:
+            raw_type = raw_type.replace(".", "/")
+            raw_type = raw_type.replace("_", "$")
+            return "L" + raw_type + ";"
 
         return raw_type
-            
+
     def _escape_str_in_rizin_manner(self, raw_str: str):
         for c in RIZIN_ESCAPE_CHAR_LIST:
-            raw_str = raw_str.replace(c, '_')
+            raw_str = raw_str.replace(c, "_")
         return raw_str
 
     @functools.lru_cache
@@ -123,44 +122,59 @@ class RizinImp(BaseApkinfo):
                 continue
 
             # -- Descriptor --
-            full_method_name = json_obj['name']
-            raw_argument_str = next(re.finditer('\(.*\).*', full_method_name), None)
+            full_method_name = json_obj["name"]
+            raw_argument_str = next(
+                re.finditer("\\(.*\\).*", full_method_name), None
+            )
             if raw_argument_str is None:
                 continue
             raw_argument_str = raw_argument_str.group(0)
-            
-            if raw_argument_str.endswith(')'):
-                # Java lauguage type is detected. Convert it to JVM type signature
+
+            if raw_argument_str.endswith(")"):
+                # Convert Java lauguage type to JVM type signature
 
                 # Parse the arguments
                 raw_argument_str = raw_argument_str[1:-1]
-                arguments = [self._convert_type_to_type_signature(arg) for arg in raw_argument_str.split(', ')]
+                arguments = [
+                    self._convert_type_to_type_signature(arg)
+                    for arg in raw_argument_str.split(", ")
+                ]
 
                 # Parse the return type
-                return_type = next(re.finditer('[A-Za-zL][A-Za-z0-9L/\;[\]$.]+ ', full_method_name), None)
+                return_type = next(
+                    re.finditer(
+                        "[A-Za-zL][A-Za-z0-9L/\\;[\\]$.]+ ", full_method_name
+                    ),
+                    None,
+                )
                 if return_type is None:
                     print(f"Unresolved method signature: {full_method_name}")
                     continue
                 return_type = return_type.group(0).strip()
 
                 # Convert
-                raw_argument_str = '(' + ' '.join(arguments) + ')' + self._convert_type_to_type_signature(return_type)
+                raw_argument_str = (
+                    "("
+                    + " ".join(arguments)
+                    + ")"
+                    + self._convert_type_to_type_signature(return_type)
+                )
 
             descriptor = descriptor_to_androguard_format(raw_argument_str)
 
             # -- Method name --
-            method_name = json_obj['realname']
+            method_name = json_obj["realname"]
 
             # -- Class name --
             # Test if the class name is truncated
             escaped_method_name = self._escape_str_in_rizin_manner(method_name)
-            if escaped_method_name.endswith('_'):
+            if escaped_method_name.endswith("_"):
                 escaped_method_name = escaped_method_name[:-1]
 
-            flag_name = json_obj['flagname']
+            flag_name = json_obj["flagname"]
 
             # sym.imp.clone doesn't belong to a class
-            if flag_name == 'sym.imp.clone':
+            if flag_name == "sym.imp.clone":
                 method = MethodObject(
                     class_name="",
                     name="clone",
@@ -171,24 +185,28 @@ class RizinImp(BaseApkinfo):
                 continue
 
             if escaped_method_name not in flag_name:
-                logging.warning(f"The class name may be truncated: {json_obj['flagname']}")
+                logging.warning(
+                    f"The class name may be truncated: {json_obj['flagname']}"
+                )
 
             # Drop the method name
             match = None
-            for match in re.finditer('_+[A-Za-z]+', flag_name):
+            for match in re.finditer("_+[A-Za-z]+", flag_name):
                 pass
             if match is None:
-                logging.warning(f"Skip the damaged flag: {json_obj['flagname']}")
+                logging.warning(
+                    f"Skip the damaged flag: {json_obj['flagname']}"
+                )
                 continue
             match = match.group(0)
-            flag_name = flag_name[:flag_name.rfind(match)]
+            flag_name = flag_name[: flag_name.rfind(match)]
 
             # Drop the prefixes sym. and imp.
-            while flag_name.startswith('sym.') or flag_name.startswith('imp.'):
+            while flag_name.startswith("sym.") or flag_name.startswith("imp."):
                 flag_name = flag_name[4:]
 
             class_name = self._convert_type_to_type_signature(flag_name)
-            
+
             # -- Is imported --
             is_imported = json_obj["is_imported"]
 
@@ -439,8 +457,8 @@ class RizinImp(BaseApkinfo):
 
             class_info_list = rz.cmdj("icj")
             for class_info in class_info_list:
-                class_name = class_info['classname']
-                super_class = class_info['super']
+                class_name = class_info["classname"]
+                super_class = class_info["super"]
 
                 hierarchy_dict[class_name].add(super_class)
 
@@ -456,12 +474,13 @@ class RizinImp(BaseApkinfo):
 
             class_info_list = rz.cmdj("icj")
             for class_info in class_info_list:
-                class_name = class_info['classname']
-                super_class = class_info['super']
+                class_name = class_info["classname"]
+                super_class = class_info["super"]
 
                 hierarchy_dict[super_class].add(class_name)
 
         return hierarchy_dict
+
     def _get_method_by_address(self, address: int) -> MethodObject:
         if address < 0:
             return None
