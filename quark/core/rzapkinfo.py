@@ -88,8 +88,8 @@ class RizinImp(BaseApkinfo):
         if raw_type.startswith('['):
             return '[' + self._convert_type_to_type_signature(raw_type[1:])
 
-        if raw_type in mapping_dict:
-            return mapping_dict[raw_type]
+        if raw_type in PRIMITIVE_TYPE_MAPPING:
+            return PRIMITIVE_TYPE_MAPPING[raw_type]
 
         if '.' in raw_type or '_' in raw_type:
             raw_type = raw_type.replace('.', '/')
@@ -115,30 +115,27 @@ class RizinImp(BaseApkinfo):
                 continue
 
             # -- Descriptor --
-            # Type A - getCanRetrieveWindowContent(Landroid/accessibilityservice/AccessibilityServiceInfo;)Z
-            # Type B - android.content.pm.ResolveInfo
-            # Type C - android.view.LayoutInflater$Factory2 getCanRetrieveWindowContent(android.accessibilityservice.AccessibilityServiceInfo)
-
             full_method_name = json_obj['name']
             raw_argument_str = next(re.finditer('\(.*\).*', full_method_name), None)
             if raw_argument_str is None:
-                continue # continue if for type B
+                continue
             raw_argument_str = raw_argument_str.group(0)
             
             if raw_argument_str.endswith(')'):
-                # Type C detected
-                # Need to parse the argument type
+                # Java lauguage type is detected. Convert it to JVM type signature
+
+                # Parse the arguments
                 raw_argument_str = raw_argument_str[1:-1]
                 arguments = [self._convert_type_to_type_signature(arg) for arg in raw_argument_str.split(', ')]
 
-                # Need to parse the return type
+                # Parse the return type
                 return_type = next(re.finditer('[A-Za-zL][A-Za-z0-9L/\;[\]$.]+ ', full_method_name), None)
                 if return_type is None:
                     print(f"Unresolved method signature: {full_method_name}")
                     continue
                 return_type = return_type.group(0).strip()
 
-                # Convert type C to type A
+                # Convert
                 raw_argument_str = '(' + ' '.join(arguments) + ')' + self._convert_type_to_type_signature(return_type)
 
             descriptor = descriptor_to_androguard_format(raw_argument_str)
@@ -147,23 +144,14 @@ class RizinImp(BaseApkinfo):
             method_name = json_obj['realname']
 
             # -- Class name --
-            # Subclass - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat_AccessibilityServiceInfoVersionImpl_getId
-            # Overload - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompatJellyBeanMr2_getCapabilities_2
-            # Normal - sym.android.support.v4.app.BackStackRecord_mBreadCrumbTitleText
-            # Prefix - sym.imp.android.os.Handler_post
-            # Truncated - sym.android.support.v4.accessibilityservice.AccessibilityServiceInfoCompat_AccessibilityServiceInfoVersionImpl_getCanRetrieveWind
-            # Bug? - sym.imp.java.util.concurrent.CountDownLatch__init
-            # Special - sym.imp.clone
-
-            # detect the length of the class name with the escaped method name
+            # Test if the class name is truncated
             escaped_method_name = self._escape_str_in_rizin_manner(method_name)
             if escaped_method_name.endswith('_'):
                 escaped_method_name = escaped_method_name[:-1]
 
             flag_name = json_obj['flagname']
 
-            # Special case for clone
-            # TODO - Handle methods that belong to no class in a more general way.
+            # sym.imp.clone doesn't belong to a class
             if flag_name == 'sym.imp.clone':
                 method = MethodObject(
                     class_name="",
@@ -175,14 +163,14 @@ class RizinImp(BaseApkinfo):
                 continue
 
             if escaped_method_name not in flag_name:
-                print(f"The flag name may be truncated by rizin: {json_obj['flagname']}")
+                logging.warning(f"The class name may be truncated: {json_obj['flagname']}")
 
             # Drop the method name
             match = None
             for match in re.finditer('_+[A-Za-z]+', flag_name):
                 pass
             if match is None:
-                print(f"Skip the damaged flag: {json_obj['flagname']}")
+                logging.warning(f"Skip the damaged flag: {json_obj['flagname']}")
                 continue
             match = match.group(0)
             flag_name = flag_name[:flag_name.rfind(match)]
@@ -196,6 +184,7 @@ class RizinImp(BaseApkinfo):
             # -- Is imported --
             is_imported = json_obj["is_imported"]
 
+            # Append the method
             method = MethodObject(
                 class_name=class_name,
                 name=method_name,
@@ -204,6 +193,7 @@ class RizinImp(BaseApkinfo):
             )
             method_dict[class_name].append(method)
 
+        # Remove duplicates
         for class_name, method_list in method_dict.items():
             method_dict[class_name] = remove_dup_list(method_list)
 
