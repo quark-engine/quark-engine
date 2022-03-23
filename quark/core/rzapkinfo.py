@@ -25,19 +25,28 @@ from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
 PRIMITIVE_TYPE_MAPPING = {
-    "void":"V",
-    "boolean":"Z",
-    "byte":"B",
-    "char":"C",
-    "short":"S",
-    "int":"I",
-    "long":"J",
-    "float":"F",
-    "double":"D",
-    "String":"Ljava/lang/String;"
+    "void": "V",
+    "boolean": "Z",
+    "byte": "B",
+    "char": "C",
+    "short": "S",
+    "int": "I",
+    "long": "J",
+    "float": "F",
+    "double": "D",
+    "Boolean": "Ljava/lang/Boolean;",
+    "Byte": "Ljava/lang/Byte;",
+    "Character": "Ljava/lang/Character;",
+    "Short": "Ljava/lang/Short;",
+    "Integer": "Ljava/lang/Integer;",
+    "Long": "Ljava/lang/Long;",
+    "Float": "Ljava/lang/Float;",
+    "Double": "Ljava/lang/Double;",
+    "String": "Ljava/lang/String;",
 }
 
-RIZIN_ESCAPE_CHAR_LIST = ['<', '>', '$']
+RIZIN_ESCAPE_CHAR_LIST = ["<", ">", "$"]
+
 
 class RizinImp(BaseApkinfo):
     def __init__(
