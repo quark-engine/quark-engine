@@ -105,7 +105,8 @@ class RizinImp(BaseApkinfo):
 
         return raw_type
 
-    def _escape_str_in_rizin_manner(self, raw_str: str):
+    @staticmethod
+    def _escape_str_in_rizin_manner(raw_str: str):
         for c in RIZIN_ESCAPE_CHAR_LIST:
             raw_str = raw_str.replace(c, "_")
         return raw_str
@@ -164,6 +165,9 @@ class RizinImp(BaseApkinfo):
             # -- Method name --
             method_name = json_obj["realname"]
 
+            # -- Is imported --
+            is_imported = json_obj["is_imported"]
+
             # -- Class name --
             # Test if the class name is truncated
             escaped_method_name = self._escape_str_in_rizin_manner(method_name)
@@ -205,9 +209,6 @@ class RizinImp(BaseApkinfo):
                 flag_name = flag_name[4:]
 
             class_name = self._convert_type_to_type_signature(flag_name)
-
-            # -- Is imported --
-            is_imported = json_obj["is_imported"]
 
             # Append the method
             method = MethodObject(
