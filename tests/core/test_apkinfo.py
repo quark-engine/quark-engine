@@ -117,7 +117,10 @@ class TestApkinfo:
             ),
         }
 
-        assert len(apkinfo.android_apis) == 1270
+        if apkinfo.core_library == "androguard":
+            assert len(apkinfo.android_apis) == 1270
+        elif apkinfo.core_library == "rizin":
+            assert len(apkinfo.android_apis) == 1269
         assert api.issubset(apkinfo.android_apis)
 
     def test_custom_methods(self, apkinfo):
@@ -133,7 +136,10 @@ class TestApkinfo:
                 "()V",
             ),
         }
-        assert len(apkinfo.custom_methods) == 3999
+        if apkinfo.core_library == "androguard":
+            assert len(apkinfo.custom_methods) == 3999
+        elif apkinfo.core_library == "rizin":
+            assert len(apkinfo.custom_methods) == 3990
         assert test_custom_method.issubset(apkinfo.custom_methods)
 
     def test_all_methods(self, apkinfo):
@@ -153,7 +159,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.all_methods) == 5452
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.all_methods) == 5273
+            assert len(apkinfo.all_methods) == 5260
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
@@ -168,20 +174,21 @@ class TestApkinfo:
         assert str(result.descriptor) == "(Z)V"
 
     def test_upperfunc(self, apkinfo):
-        api = apkinfo.find_method("Ljava/lang/reflect/Field;", "setAccessible", "(Z)V")
-
-        expect_function = MethodObject(
-            (
-                "Landroid/support/v4/widget/SlidingPaneLayout$"
-                "SlidingPanelLayoutImplJB;"
-            ),
+        api = apkinfo.find_method(
+            "Lcom/example/google/service/ContactsHelper;",
             "<init>",
-            "()V",
+            "(Landroid/content/Context;)V",
         )
 
-        upper = list(apkinfo.upperfunc(api))[0]
+        expect_function = apkinfo.find_method(
+            "Lcom/example/google/service/SMSReceiver;",
+            "isContact",
+            "(Ljava/lang/String;)Ljava/lang/Boolean;",
+        )
 
-        assert upper == expect_function
+        upper_methods = list(apkinfo.upperfunc(api))
+
+        assert expect_function in upper_methods
 
     def test_lowerfunc(self, apkinfo):
         method = apkinfo.find_method(
@@ -238,17 +245,17 @@ class TestApkinfo:
 
     def test_lowerfunc(self, apkinfo):
         method = apkinfo.find_method(
-            "Lcom/example/google/service/WebServiceCalling;",
-            "Send",
-            "(Landroid/os/Handler; Ljava/lang/String;)V",
+            "Lcom/example/google/service/SMSReceiver;",
+            "isContact",
+            "(Ljava/lang/String;)Ljava/lang/Boolean;",
         )
 
         expect_method = apkinfo.find_method(
-            "Ljava/lang/StringBuilder;",
-            "append",
-            "(Ljava/lang/String;)Ljava/lang/StringBuilder;",
+            "Lcom/example/google/service/ContactsHelper;",
+            "<init>",
+            "(Landroid/content/Context;)V",
         )
-        expect_offset = 42
+        expect_offset = 10
 
         upper_methods = apkinfo.lowerfunc(method)
 
