@@ -206,3 +206,30 @@ Alternatively, you can use the quark API as well.
         report.analysis(file, RULE_PATH)
         json_report = report.get_report("json")
         print(json_report)
+
+Radiocontrast
+-------------
+Radiocontrast is a Quark API that quickly generates Quark rules from a specified method. It builds up 100% matched rules by using native APIs in that method. The feature lets you easily expose the behavior of a method, just like radiocontrast.
+
+For example, we want to know the behavior of a method called `Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V,` in Ahmyth.apk.
+Here is the simplest way for Radiocontrast usage:
+
+.. code-block:: python
+
+    from quark.radiocontrast import RadioContrast
+
+    # The target APK.
+    APK_PATH = "~/apk-malware-sample/Ahmyth.apk"
+
+    # The method that you want to generate rules. 
+    TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"
+
+    # The output directory for generated rules.
+    GENERATED_RULE_DIR = "~/generated_rules"
+
+    radiocontrast = RadioContrast(
+        APK_PATH,
+        TARGET_METHOD,
+        GENERATED_RULE_DIR
+    )
+    radiocontrast.rule_generate()

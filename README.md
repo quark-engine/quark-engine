@@ -140,6 +140,31 @@ quark -a first.apk -a second.apk -C
 
 <img src="https://i.imgur.com/ClRWOei.png"/>
 
+### Radiocontrast
+Radiocontrast is a Quark API that quickly generates Quark rules from a specified method. It builds up 100% matched rules by using native APIs in that method. The feature lets you easily expose the behavior of a method, just like radiocontrast.
+
+For example, we want to know the behavior of a method called `Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V,` in Ahmyth.apk.
+Here is the simplest way for Radiocontrast usage:
+```python
+from quark.radiocontrast import RadioContrast
+
+# The target APK.
+APK_PATH = "~/apk-malware-sample/Ahmyth.apk"
+
+# The method that you want to generate rules. 
+TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"
+
+# The output directory for generated rules.
+GENERATED_RULE_DIR = "~/generated_rules"
+
+radiocontrast = RadioContrast(
+    APK_PATH, 
+    TARGET_METHOD, 
+    GENERATED_RULE_DIR
+)
+radiocontrast.rule_generate()
+```
+
 ### Parallelizing Quark
 Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
 
