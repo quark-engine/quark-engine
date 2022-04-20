@@ -290,6 +290,53 @@ class TestApkinfo:
         assert isinstance(result, list)
         assert expect_method in result
 
+    def test_find_method_in_regular_class(self, apkinfo):
+        result = apkinfo.find_method(
+            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
+        )
+
+        assert isinstance(result, MethodObject)
+        assert str(result.class_name) == "Ljava/lang/reflect/Field;"
+        assert str(result.name) == "setAccessible"
+        assert str(result.descriptor) == "(Z)V"
+
+    def test_find_method_in_inner_class(self, apkinfo):
+        result = apkinfo.find_method(
+            "Landroid/support/v4/accessibilityservice/Accessibility"
+            + "ServiceInfoCompat$AccessibilityServiceInfoVersionImpl;",
+            "getId",
+            "(Landroid/accessibilityservice/AccessibilityServiceInfo;)"
+            + "Ljava/lang/String;",
+        )
+
+        assert isinstance(result, MethodObject)
+        assert (
+            str(result.class_name)
+            == "Landroid/support/v4/accessibilityservice/Accessibility"
+            + "ServiceInfoCompat$AccessibilityServiceInfoVersionImpl;"
+        )
+        assert str(result.name) == "getId"
+        assert (
+            str(result.descriptor)
+            == "(Landroid/accessibilityservice/AccessibilityServiceInfo;)"
+            + "Ljava/lang/String;"
+        )
+
+    def test_find_method_in_anonymous_class(self, apkinfo):
+        result = apkinfo.find_method(
+            "Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;",
+            "sendAccessibilityEvent",
+            "(Landroid/view/View; I)V",
+        )
+
+        assert isinstance(result, MethodObject)
+        assert (
+            str(result.class_name)
+            == "Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;"
+        )
+        assert str(result.name) == "sendAccessibilityEvent"
+        assert str(result.descriptor) == "(Landroid/view/View; I)V"
+
     def test_upperfunc(self, apkinfo):
         api = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
