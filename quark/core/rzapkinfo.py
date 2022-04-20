@@ -252,24 +252,22 @@ class RizinImp(BaseApkinfo):
         return method
 
     @functools.lru_cache
-    def _get_methods_classified(self, dexindex):
+    def _get_methods_classified(
+        self, dex_index: int
+    ) -> Dict[str, List[MethodObject]]:
         """
-        Parse all methods in the specified Dex and convert them into a
-        dictionary. The dictionary takes their belonging classes as the keys.
-        Then, it categorizes them into lists.
+        Use command isj to get all the methods and categorize them into
+        a dictionary.
 
-        :param dexindex: an index indicating which Dex file should this method
-        parse
-        :return: a dictionary taking a class name as the key and a list of
-        MethodObject as the corresponding value.
+        :param dex_index: an index to the Dex file that need to be parsed.
+        :return: a dict that holds methods categorized by their class name
         """
-        rz = self._get_rz(dexindex)
+        rz = self._get_rz(dex_index)
 
         method_json_list = rz.cmdj("isj")
         method_dict = defaultdict(list)
         for json_obj in method_json_list:
             method = self._parse_method_from_isj_obj(json_obj, dexindex)
-
             if method:
                 method_dict[method.class_name].append(method)
 
