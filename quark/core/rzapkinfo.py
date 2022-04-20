@@ -112,8 +112,17 @@ class RizinImp(BaseApkinfo):
         return raw_str
 
     @functools.lru_cache
-    def _get_methods_classified(self, dexindex):
-        rz = self._get_rz(dexindex)
+    def _get_methods_classified(
+        self, dex_index: int
+    ) -> Dict[str, List[MethodObject]]:
+        """
+        Use command isj to get all the methods and categorize them into
+        a dictionary.
+
+        :param dex_index: an index to the Dex file that need to be parsed.
+        :return: a dict that holds methods categorized by their class name
+        """
+        rz = self._get_rz(dex_index)
 
         method_json_list = rz.cmdj("isj")
         method_dict = defaultdict(list)
@@ -131,7 +140,7 @@ class RizinImp(BaseApkinfo):
             raw_argument_str = raw_argument_str.group(0)
 
             if raw_argument_str.endswith(")"):
-                # Convert Java lauguage type to JVM type signature
+                # Convert Java language type to JVM type signature
 
                 # Parse the arguments
                 raw_argument_str = raw_argument_str[1:-1]
@@ -169,53 +178,14 @@ class RizinImp(BaseApkinfo):
             is_imported = json_obj["is_imported"]
 
             # -- Class name --
-            # Test if the class name is truncated
-            escaped_method_name = self._escape_str_in_rizin_manner(method_name)
-            if escaped_method_name.endswith("_"):
-                escaped_method_name = escaped_method_name[:-1]
-
-            flag_name = json_obj["flagname"]
-
-            # sym.imp.clone doesn't belong to a class
-            if flag_name == "sym.imp.clone":
-                method = MethodObject(
-                    class_name="",
-                    name="clone",
-                    descriptor="()Ljava/lang/Object;",
-                    cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
-                )
-                method_dict[""].append(method)
-                continue
-
-            if escaped_method_name not in flag_name:
-                logging.warning(
-                    f"The class name may be truncated: {json_obj['flagname']}"
-                )
-
-            # Drop the method name
-            match = None
-            for match in re.finditer("_+[A-Za-z]+", flag_name):
-                pass
-            if match is None:
-                logging.warning(
-                    f"Skip the damaged flag: {json_obj['flagname']}"
-                )
-                continue
-            match = match.group(0)
-            flag_name = flag_name[: flag_name.rfind(match)]
-
-            # Drop the prefixes sym. and imp.
-            while flag_name.startswith("sym.") or flag_name.startswith("imp."):
-                flag_name = flag_name[4:]
-
-            class_name = self._convert_type_to_type_signature(flag_name)
+            class_name = "L" + json_obj["lib"].replace(".", "/") + ";"
 
             # Append the method
             method = MethodObject(
                 class_name=class_name,
                 name=method_name,
                 descriptor=descriptor,
-                cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+                cache=RizinCache(json_obj["vaddr"], dex_index, is_imported),
             )
             method_dict[class_name].append(method)
 
