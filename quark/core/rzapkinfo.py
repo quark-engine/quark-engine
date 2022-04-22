@@ -35,15 +35,6 @@ PRIMITIVE_TYPE_MAPPING = {
     "long": "J",
     "float": "F",
     "double": "D",
-    "Boolean": "Ljava/lang/Boolean;",
-    "Byte": "Ljava/lang/Byte;",
-    "Character": "Ljava/lang/Character;",
-    "Short": "Ljava/lang/Short;",
-    "Integer": "Ljava/lang/Integer;",
-    "Long": "Ljava/lang/Long;",
-    "Float": "Ljava/lang/Float;",
-    "Double": "Ljava/lang/Double;",
-    "String": "Ljava/lang/String;",
 }
 
 RIZIN_ESCAPE_CHAR_LIST = ["<", ">", "$"]
@@ -92,11 +83,18 @@ class RizinImp(BaseApkinfo):
         return rz
 
     def _convert_type_to_type_signature(self, raw_type: str):
+        if not raw_type:
+            return raw_type
+
         if raw_type.endswith("[]"):
             return "[" + self._convert_type_to_type_signature(raw_type[:-2])
 
         if raw_type.startswith("["):
             return "[" + self._convert_type_to_type_signature(raw_type[1:])
+
+        if "..." in raw_type:
+            index = raw_type.index("...")
+            return "[" + self._convert_type_to_type_signature(raw_type[:index])
 
         if raw_type in PRIMITIVE_TYPE_MAPPING:
             return PRIMITIVE_TYPE_MAPPING[raw_type]
@@ -106,13 +104,114 @@ class RizinImp(BaseApkinfo):
             raw_type = raw_type.replace("_", "$")
             return "L" + raw_type + ";"
 
-        return raw_type
+        return "Ljava/lang/" + raw_type + ";"
 
     @staticmethod
     def _escape_str_in_rizin_manner(raw_str: str):
         for c in RIZIN_ESCAPE_CHAR_LIST:
             raw_str = raw_str.replace(c, "_")
         return raw_str
+
+    def _parse_method_from_isj_obj(self, json_obj, dexindex):
+        if json_obj.get("type") not in ["FUNC", "METH"]:
+            return None
+
+        # -- Descriptor --
+        full_method_name = json_obj["name"]
+        raw_argument_str = next(
+            re.finditer("\\(.*\\).*", full_method_name), None
+        )
+        if raw_argument_str is None:
+            return None
+
+        raw_argument_str = raw_argument_str.group(0)
+
+        if raw_argument_str.endswith(")"):
+            # Convert Java lauguage type to JVM type signature
+
+            # Parse the arguments
+            raw_argument_str = raw_argument_str[1:-1]
+            arguments = [
+                self._convert_type_to_type_signature(arg)
+                for arg in raw_argument_str.split(", ")
+            ]
+
+            # Parse the return type
+            return_type = next(
+                re.finditer(
+                    "[A-Za-zL][A-Za-z0-9L/\\;[\\]$.]+ ", full_method_name
+                ),
+                None,
+            )
+            if return_type is None:
+                print(f"Unresolved method signature: {full_method_name}")
+                return None
+            return_type = return_type.group(0).strip()
+
+            # Convert
+            raw_argument_str = (
+                "("
+                + " ".join(arguments)
+                + ")"
+                + self._convert_type_to_type_signature(return_type)
+            )
+
+        descriptor = descriptor_to_androguard_format(raw_argument_str)
+
+        # -- Method name --
+        method_name = json_obj["realname"]
+
+        # -- Is imported --
+        is_imported = json_obj["is_imported"]
+
+        # -- Class name --
+        # Test if the class name is truncated
+        escaped_method_name = self._escape_str_in_rizin_manner(method_name)
+        if escaped_method_name.endswith("_"):
+            escaped_method_name = escaped_method_name[:-1]
+
+        flag_name = json_obj["flagname"]
+
+        # sym.imp.clone doesn't belong to a class
+        if flag_name == "sym.imp.clone":
+            method = MethodObject(
+                class_name="",
+                name="clone",
+                descriptor="()Ljava/lang/Object;",
+                cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+            )
+            return method
+
+        if escaped_method_name not in flag_name:
+            logging.warning(
+                f"The class name may be truncated: {json_obj['flagname']}"
+            )
+
+        # Drop the method name
+        match = None
+        for match in re.finditer("_+[A-Za-z]+", flag_name):
+            pass
+        if match is None:
+            logging.warning(f"Skip the damaged flag: {json_obj['flagname']}")
+            return None
+        match = match.group(0)
+        flag_name = flag_name[: flag_name.rfind(match)]
+
+        # Drop the prefixes sym. and imp.
+        while flag_name.startswith("sym.") or flag_name.startswith("imp."):
+            flag_name = flag_name[4:]
+
+        class_name = self._convert_type_to_type_signature(flag_name)
+
+        # Append the method
+        method = MethodObject(
+            class_name=class_name,
+            name=method_name,
+            descriptor=descriptor,
+            cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+        )
+
+        return method
 
     @functools.lru_cache
     def _get_methods_classified(self, dexindex):
@@ -121,106 +220,10 @@ class RizinImp(BaseApkinfo):
         method_json_list = rz.cmdj("isj")
         method_dict = defaultdict(list)
         for json_obj in method_json_list:
-            if json_obj.get("type") not in ["FUNC", "METH"]:
-                continue
+            method = self._parse_method_from_isj_obj(json_obj, dexindex)
 
-            # -- Descriptor --
-            full_method_name = json_obj["name"]
-            raw_argument_str = next(
-                re.finditer("\\(.*\\).*", full_method_name), None
-            )
-            if raw_argument_str is None:
-                continue
-            raw_argument_str = raw_argument_str.group(0)
-
-            if raw_argument_str.endswith(")"):
-                # Convert Java lauguage type to JVM type signature
-
-                # Parse the arguments
-                raw_argument_str = raw_argument_str[1:-1]
-                arguments = [
-                    self._convert_type_to_type_signature(arg)
-                    for arg in raw_argument_str.split(", ")
-                ]
-
-                # Parse the return type
-                return_type = next(
-                    re.finditer(
-                        "[A-Za-zL][A-Za-z0-9L/\\;[\\]$.]+ ", full_method_name
-                    ),
-                    None,
-                )
-                if return_type is None:
-                    print(f"Unresolved method signature: {full_method_name}")
-                    continue
-                return_type = return_type.group(0).strip()
-
-                # Convert
-                raw_argument_str = (
-                    "("
-                    + " ".join(arguments)
-                    + ")"
-                    + self._convert_type_to_type_signature(return_type)
-                )
-
-            descriptor = descriptor_to_androguard_format(raw_argument_str)
-
-            # -- Method name --
-            method_name = json_obj["realname"]
-
-            # -- Is imported --
-            is_imported = json_obj["is_imported"]
-
-            # -- Class name --
-            # Test if the class name is truncated
-            escaped_method_name = self._escape_str_in_rizin_manner(method_name)
-            if escaped_method_name.endswith("_"):
-                escaped_method_name = escaped_method_name[:-1]
-
-            flag_name = json_obj["flagname"]
-
-            # sym.imp.clone doesn't belong to a class
-            if flag_name == "sym.imp.clone":
-                method = MethodObject(
-                    class_name="",
-                    name="clone",
-                    descriptor="()Ljava/lang/Object;",
-                    cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
-                )
-                method_dict[""].append(method)
-                continue
-
-            if escaped_method_name not in flag_name:
-                logging.warning(
-                    f"The class name may be truncated: {json_obj['flagname']}"
-                )
-
-            # Drop the method name
-            match = None
-            for match in re.finditer("_+[A-Za-z]+", flag_name):
-                pass
-            if match is None:
-                logging.warning(
-                    f"Skip the damaged flag: {json_obj['flagname']}"
-                )
-                continue
-            match = match.group(0)
-            flag_name = flag_name[: flag_name.rfind(match)]
-
-            # Drop the prefixes sym. and imp.
-            while flag_name.startswith("sym.") or flag_name.startswith("imp."):
-                flag_name = flag_name[4:]
-
-            class_name = self._convert_type_to_type_signature(flag_name)
-
-            # Append the method
-            method = MethodObject(
-                class_name=class_name,
-                name=method_name,
-                descriptor=descriptor,
-                cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
-            )
-            method_dict[class_name].append(method)
+            if method:
+                method_dict[method.class_name].append(method)
 
         # Remove duplicates
         for class_name, method_list in method_dict.items():
@@ -359,19 +362,19 @@ class RizinImp(BaseApkinfo):
             if xref["type"] != "CALL":
                 continue
 
-            if "fcn_addr" in xref:
-                matched_method = self._get_method_by_address(xref["fcn_addr"])
+            if "from" in xref:
+                matched_method = self._get_method_by_address(xref["from"])
                 if not matched_method:
                     logging.debug(
-                        f"Cannot identify function at {xref['fcn_addr']}."
+                        f"Cannot identify function at {xref['from']}."
                     )
                     continue
 
                 upperfunc_set.add(matched_method)
             else:
                 logging.debug(
-                    f"Key from was not found at searching"
-                    f" upper methods for {method_object}."
+                    f"Key from was not found when trying to search"
+                    f" upper methods of {method_object}."
                 )
 
         return upperfunc_set
@@ -380,41 +383,32 @@ class RizinImp(BaseApkinfo):
     def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
         cache = method_object.cache
 
-        r2 = self._get_rz(cache.dexindex)
+        rz = self._get_rz(cache.dexindex)
 
-        xrefs = r2.cmdj(f"axffj @ {cache.address}")
+        instruct_flow = rz.cmdj(f"pdfj @ {cache.address}")["ops"]
 
-        if not xrefs:
-            return set()
-
-        lowerfunc_set = set()
-        for xref in xrefs:
-            if xref["type"] != "CALL":
-                continue
-
-            if "to" in xref:
-                matched_method = self._get_method_by_address(xref["to"])
-                if not matched_method:
-                    logging.debug(
-                        f"Cannot identify function at {xref['fcn_addr']}."
-                    )
-                    continue
-
-                offset = xref["from"] - cache.address
-
-                lowerfunc_set.add(
-                    (
-                        matched_method,
-                        offset,
-                    )
-                )
-            else:
-                logging.debug(
-                    f"Key from was not found at searching"
-                    f" upper methods for {method_object}."
+        lowerfunc_list = []
+        for ins in instruct_flow:
+            if "xrefs_from" in ins:
+                call_xrefs = (
+                    xref
+                    for xref in ins["xrefs_from"]
+                    if xref["type"] == "CALL"
                 )
 
-        return lowerfunc_set
+                for call_xref in call_xrefs:
+                    lowerfunc = self._get_method_by_address(call_xref["addr"])
+                    if not lowerfunc:
+                        logging.debug(
+                            f"Cannot identify function at {call_xref['addr']}."
+                        )
+                        continue
+
+                    offset = ins["offset"] - cache.address
+
+                    lowerfunc_list.append((lowerfunc, offset))
+
+        return lowerfunc_list
 
     def get_method_bytecode(
         self, method_object: MethodObject
@@ -545,12 +539,15 @@ class RizinImp(BaseApkinfo):
         return hierarchy_dict
 
     def _get_method_by_address(self, address: int) -> MethodObject:
-        if address < 0:
-            return None
+        dexindex = 0
 
-        for method in self.all_methods:
-            if method.cache.address == address:
-                return method
+        rz = self._get_rz(dexindex)
+        json_array = rz.cmdj(f"is.j @ {address}")
+
+        if json_array:
+            return self._parse_method_from_isj_obj(json_array[0], dexindex)
+        else:
+            return None
 
     @staticmethod
     def _parse_parameter(mnemonic: str, parameter: str) -> Any:
