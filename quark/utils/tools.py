@@ -49,7 +49,7 @@ def descriptor_to_androguard_format(descriptor):
 
     delimiter = descriptor.index(")")
 
-    arg_str = descriptor[:delimiter]
+    arg_str = descriptor[1:delimiter]
     args = re.findall(r"L.+?;|[ZBCSIJFD]|\[", arg_str)
 
     new_descriptor = "(" + " ".join(args) + descriptor[delimiter:]
