@@ -198,7 +198,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.android_apis) == 1270
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.android_apis) == 1269
+            assert len(apkinfo.android_apis) == 1438
         assert api.issubset(apkinfo.android_apis)
 
     def test_custom_methods(self, apkinfo):
@@ -217,7 +217,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.custom_methods) == 3999
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.custom_methods) == 3990
+            assert len(apkinfo.custom_methods) == 3999
         assert test_custom_method.issubset(apkinfo.custom_methods)
 
     def test_all_methods(self, apkinfo):
@@ -237,7 +237,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.all_methods) == 5452
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.all_methods) == 5260
+            assert len(apkinfo.all_methods) == 5451
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
