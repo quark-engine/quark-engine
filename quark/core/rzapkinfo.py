@@ -18,7 +18,8 @@ from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
+from quark.utils.tools import (descriptor_to_androguard_format,
+                               get_rizin_version, remove_dup_list)
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
@@ -51,8 +52,19 @@ class RizinImp(BaseApkinfo):
         self,
         apk_filepath: Union[str, PathLike],
         tmp_dir: Union[str, PathLike] = None,
+        rizin_path: PathLike = None,
     ):
         super().__init__(apk_filepath, "rizin")
+
+        if rizin_path:
+            if not get_rizin_version(rizin_path):
+                raise ValueError(
+                    f"The file in {rizin_path} is not a valid Rizin executable."
+                )
+
+            rizin_path = os.path.dirname(rizin_path)
+
+        self.rizin_path = rizin_path
 
         if self.ret_type == "DEX":
             self._tmp_dir = None
@@ -84,7 +96,7 @@ class RizinImp(BaseApkinfo):
 
     @functools.lru_cache
     def _get_rz(self, index):
-        rz = rzpipe.open(self._dex_list[index])
+        rz = rzpipe.open(self._dex_list[index], rizin_home=self.rizin_path)
         rz.cmd("aa")
         return rz
 
@@ -227,7 +239,7 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def permissions(self) -> List[str]:
-        axml = AxmlReader(self._manifest)
+        axml = AxmlReader(self._manifest, rizin_path=self.rizin_path)
         permission_list = set()
 
         for tag in axml:
