@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
-from typing import Any, Dict, Generator, List, Optional, Set, Union
+from typing import Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rzpipe
 
@@ -78,11 +78,31 @@ class RizinImp(BaseApkinfo):
 
     @functools.lru_cache
     def _get_rz(self, index):
+        """
+        Return a Rizin object that opens the specified Dex file.
+
+        :param index: an index indicating which Dex file should the returned
+        object open
+        :return: a Rizin object opening the specified Dex file
+        """
         rz = rzpipe.open(self._dex_list[index])
         rz.cmd("aa")
         return rz
 
     def _convert_type_to_type_signature(self, raw_type: str):
+        """
+        Convert a Java type in the format of the Java language into the
+        one in the format of the Java VM type signature.
+
+        For example,
+        + `int` will be converted into the Java VM type signature `I`.
+        + `long` will be converted into the Java VM type signature `L`.
+        + `String...` will be converted into the Java VM type signature
+        `[Ljava/lang/String;`.
+
+        :param raw_type: a type in the format of the Java language
+        :return: a type in the format of the Java VM type signature
+        """
         if not raw_type:
             return raw_type
 
@@ -108,11 +128,29 @@ class RizinImp(BaseApkinfo):
 
     @staticmethod
     def _escape_str_in_rizin_manner(raw_str: str):
+        """
+        Convert characters with special meanings in Rizin into `_`.
+        For now, these characters are `<`, `>` and `$`.
+
+        :param raw_str: a string that may consist of characters with special
+        meanings.
+        :return: a new string contains no characters with special meanings.
+        """
         for c in RIZIN_ESCAPE_CHAR_LIST:
             raw_str = raw_str.replace(c, "_")
         return raw_str
 
     def _parse_method_from_isj_obj(self, json_obj, dexindex):
+        """
+        Parse a JSON object provided by the Rizin command `isj` or `is.j` into
+        an instance of MethodObject.
+
+        :param json_obj: a JSON object provided by the Rizin command `isj` or
+        `is.j`
+        :param dexindex: an index indicating from which Dex file the JSON
+        object is generated
+        :return: an instance of MethodObject
+        """
         if json_obj.get("type") not in ["FUNC", "METH"]:
             return None
 
@@ -215,6 +253,16 @@ class RizinImp(BaseApkinfo):
 
     @functools.lru_cache
     def _get_methods_classified(self, dexindex):
+        """
+        Parse all methods in the specified Dex and convert them into a
+        dictionary. The dictionary takes their belonging classes as the keys.
+        Then, it categorizes them into lists.
+
+        :param dexindex: an index indicating which Dex file should this method
+        parse
+        :return: a dictionary taking a class name as the key and a list of
+        MethodObject as the corresponding value.
+        """
         rz = self._get_rz(dexindex)
 
         method_json_list = rz.cmdj("isj")
@@ -233,6 +281,12 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def permissions(self) -> List[str]:
+        """
+        Inherited from baseapkinfo.py.
+        Return the permissions used by the sample.
+
+        :return: a list of permissions.
+        """
         axml = AxmlReader(self._manifest)
         permission_list = set()
 
@@ -285,6 +339,12 @@ class RizinImp(BaseApkinfo):
 
     @property
     def android_apis(self) -> Set[MethodObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Return all Android native APIs used by the sample.
+
+        :return: a set of MethodObjects
+        """
         return {
             method
             for method in self.all_methods
@@ -293,10 +353,27 @@ class RizinImp(BaseApkinfo):
 
     @property
     def custom_methods(self) -> Set[MethodObject]:
-        return {method for method in self.all_methods if not method.cache.is_imported}
+        """_
+        Inherited from baseapkinfo.py.
+        Return all custom methods declared by the sample.
+
+        :return: a set of MethodObjects
+        """
+        return {
+            method
+            for method in self.all_methods
+            if not method.cache.is_imported
+        }
 
     @functools.cached_property
     def all_methods(self) -> Set[MethodObject]:
+        """_
+        Inherited from baseapkinfo.py.
+        Return all methods including Android native APIs and custom methods
+        declared in the sample.
+
+        :return: a set of MethodObjects
+        """
         method_set = set()
         for dex_index in range(self._number_of_dex):
             for method_list in self._get_methods_classified(dex_index).values():
@@ -310,6 +387,18 @@ class RizinImp(BaseApkinfo):
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
     ) -> List[MethodObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Find a method with the given class name, method name, and descriptor.
+
+        :param class_name: the class name of the target method. Defaults to
+        ".*"
+        :param method_name: the method name of the target method. Defaults to
+        ".*"
+        :param descriptor: the descriptor of the target method. Defaults to
+        ".*"
+        :return: a MethodObject of the target method
+        """
         if not class_name:
             class_name = ".*"
 
@@ -351,6 +440,14 @@ class RizinImp(BaseApkinfo):
 
     @functools.lru_cache
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the xrefs from the specified method.
+
+        :param method_object: a target method which the returned methods
+        should call
+        :return: a set of MethodObjects
+        """
         cache = method_object.cache
 
         r2 = self._get_rz(cache.dexindex)
@@ -380,7 +477,18 @@ class RizinImp(BaseApkinfo):
         return upperfunc_set
 
     @functools.lru_cache
-    def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+    def lowerfunc(
+        self, method_object: MethodObject
+    ) -> Set[Tuple[MethodObject, int]]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the xrefs to the specified method.
+
+        :param method_object: a target method used to find what methods it
+        calls
+        :return: a set of tuples consisting of the called method and the
+        offset of the invocation
+        """
         cache = method_object.cache
 
         rz = self._get_rz(cache.dexindex)
@@ -413,6 +521,14 @@ class RizinImp(BaseApkinfo):
     def get_method_bytecode(
         self, method_object: MethodObject
     ) -> Generator[BytecodeObject, None, None]:
+        """
+        Inherited from baseapkinfo.py.
+        Return the bytecodes of the specified method.
+
+        :param method_object: a target method to get the corresponding
+        bytecodes
+        :yield: a generator of BytecodeObjects
+        """
         cache = method_object.cache
 
         if not cache.is_imported:
@@ -426,6 +542,12 @@ class RizinImp(BaseApkinfo):
                     yield self._parse_smali(ins["disasm"])
 
     def get_strings(self) -> Set[str]:
+        """
+        Inherited from baseapkinfo.py.
+        Return all strings in the sample.
+
+        :return: a set of strings
+        """
         strings = set()
         for dex_index in range(self._number_of_dex):
             rz = self._get_rz(dex_index)
@@ -443,6 +565,19 @@ class RizinImp(BaseApkinfo):
         first_method: MethodObject,
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the invocations that call two specified methods, first_method
+        and second_method, respectively. Then, return a dictionary storing
+        the corresponding bytecodes and hex values.
+
+        :param parent_method: a parent method to scan
+        :param first_method: the first method called by the parent method
+        :param second_method: the second method called by the parent method
+        :return: a dictionary storing the corresponding bytecodes and hex
+        values.
+        """
+
         def convert_bytecode_to_list(bytecode):
             return [bytecode.mnemonic] + bytecode.registers + [bytecode.parameter]
 
@@ -506,6 +641,15 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def superclass_relationships(self) -> Dict[str, Set[str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Return a dictionary holding the inheritance relationship of classes in
+        the sample. The dictionary takes a class name as the key and the
+        corresponding superclass as the value.
+
+        :return: a dictionary taking a class name as the key and the
+        corresponding superclass as the value.
+        """
         hierarchy_dict = defaultdict(set)
 
         for dex_index in range(self._number_of_dex):
@@ -523,6 +667,16 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def subclass_relationships(self) -> Dict[str, Set[str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Return a dictionary holding the inheritance relationship of classes in
+        the sample. Return a dictionary holding the inheritance relationship
+        of classes in the sample. The dictionary takes a class name as the key
+        and the corresponding subclasses as the value.
+
+        :return: a dictionary taking a class name as the key and the
+        corresponding subclasses as the value.
+        """
         hierarchy_dict = defaultdict(set)
 
         for dex_index in range(self._number_of_dex):
@@ -539,6 +693,12 @@ class RizinImp(BaseApkinfo):
         return hierarchy_dict
 
     def _get_method_by_address(self, address: int) -> MethodObject:
+        """
+        Find a method via a specified address.
+
+        :param address: an address used to find the corresponding method
+        :return: the MethodObject of the method in the given address
+        """
         dexindex = 0
 
         rz = self._get_rz(dexindex)
@@ -570,6 +730,14 @@ class RizinImp(BaseApkinfo):
 
     @staticmethod
     def _parse_smali(smali: str) -> BytecodeObject:
+        """
+        Convert a Smali code provided by the Rizin command `pdfj` into a
+        BytecodeObject.
+
+        :param smali: a Smali code provided by the Rizin command `pdfj`
+        :raises ValueError: if the Smali code follows an unknown format
+        :return: a BytecodeObject
+        """
         if smali == "":
             raise ValueError("Argument cannot be empty.")
 
