@@ -16,8 +16,14 @@ from quark.core.struct.ruleobject import RuleObject
 from quark.logo import logo
 from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
-from quark.utils.pprint import print_info, print_success, print_warning
+from quark.utils.pprint import (
+    print_error,
+    print_info,
+    print_success,
+    print_warning,
+)
 from quark.utils.weight import Weight
+from quark.utils.tools import find_rizin_instance, get_rizin_version
 
 logo()
 
@@ -125,10 +131,24 @@ logo()
     "--multi-process",
     "num_of_process",
     type=click.IntRange(min=1),
-    help="Allow analyzing APK with N processes, where N doesn't exceeds" +
-    " the number of usable CPUs - 1 to avoid memory exhaustion.",
+    help="Allow analyzing APK with N processes, where N doesn't exceeds"
+    + " the number of usable CPUs - 1 to avoid memory exhaustion.",
     required=False,
     default=1,
+)
+@click.option(
+    "--rizin-path",
+    "rizin_path",
+    type=click.Path(exists=True, file_okay=True, dir_okay=False),
+    help="Specify a Rizin executable for Quark to perform analyses.",
+)
+@click.option(
+    "--disable-rizin-installation",
+    "disable_rizin_installation",
+    default=False,
+    is_flag=True,
+    help="Don't install Rizin automatically when no Rizin instance with"
+    + " a compatible version is found."
 )
 def entry_point(
     summary,
@@ -145,11 +165,38 @@ def entry_point(
     comparison,
     core_library,
     num_of_process,
+    rizin_path,
+    disable_rizin_installation,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
     # Load rules
     rule_buffer_list = []
     rule_filter = summary or detail
+
+    # Check Rizin version
+    if core_library.lower() == "rizin":
+        if not rizin_path:
+            if disable_rizin_installation:
+                print_info("Disable automatic Rizin installation.")
+
+            rizin_path = find_rizin_instance(
+                disable_rizin_installation=disable_rizin_installation
+            )
+
+            if not rizin_path:
+                print_error(
+                    "No valid Rizin executable found. Please specify the path to the Rizin executable by using option --rizin-path."
+                )
+                return
+            else:
+                version = get_rizin_version(rizin_path)
+                if rizin_path.startswith(config.HOME_DIR):
+                    print_info(f"Use the Rizin executable (version {version}) installed in the Quark directory.")
+                else:
+                    print_info(f"Use the Rizin executable (version {version}) installed in the system PATH.")
+
+        else:
+            print_info(f"Use the user-specified Rizin executable.")
 
     # Determine the location of rules
     if rule_filter and rule_filter.endswith("json"):
@@ -205,9 +252,14 @@ def entry_point(
         malware_confidences = {}
         for apk_ in apk:
             data = (
-                ParallelQuark(apk_, core_library, num_of_process)
+                ParallelQuark(
+                    apk_,
+                    core_library,
+                    num_of_process,
+                    rizin_path,
+                )
                 if num_of_process > 1
-                else Quark(apk_, core_library)
+                else Quark(apk_, core_library, rizin_path)
             )
             all_labels = {}
             # dictionary containing
@@ -262,9 +314,9 @@ def entry_point(
 
     # Load APK
     data = (
-        ParallelQuark(apk[0], core_library, num_of_process)
+        ParallelQuark(apk[0], core_library, num_of_process, rizin_path)
         if num_of_process > 1
-        else Quark(apk[0], core_library)
+        else Quark(apk[0], core_library, rizin_path)
     )
 
     if label:
