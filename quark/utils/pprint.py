@@ -3,8 +3,14 @@
 # See the file 'LICENSE' for copying permission.
 
 from prettytable import PrettyTable
+from quark.utils.colors import bold, cyan, green, red, yellow
 
-from quark.utils.colors import bold, cyan, yellow, red, green
+
+def clear_the_last_line():
+    """
+    Clear the last line of the terminal.
+    """
+    print("\033[A\033[A")
 
 
 def print_info(message):
