@@ -44,6 +44,16 @@ def contains(subset_to_check, target_list):
 
 
 def descriptor_to_androguard_format(descriptor):
+    """
+    Insert a space between the arguments of the given descriptor.
+
+    :param descriptor: a descriptor whose arguments may or may not be
+    separated by spaces
+    :raises ValueError: if the descriptor is not surrounded by
+    parentheses
+    :return: a descriptor with arguments separated by spaces
+    """
+
     if "(" not in descriptor or ")" not in descriptor:
         raise ValueError(f"Invalid descriptor. {descriptor}")
 
