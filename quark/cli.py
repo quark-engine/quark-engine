@@ -148,7 +148,7 @@ logo()
     default=False,
     is_flag=True,
     help="Don't install Rizin automatically when no Rizin instance with"
-    + " a compatible version is found."
+    + " a compatible version is found.",
 )
 def entry_point(
     summary,
@@ -185,15 +185,22 @@ def entry_point(
 
             if not rizin_path:
                 print_error(
-                    "No valid Rizin executable found. Please specify the path to the Rizin executable by using option --rizin-path."
+                    "No valid Rizin executable found. Please specify the path"
+                    + "to the Rizin executable by using option --rizin-path."
                 )
                 return
             else:
                 version = get_rizin_version(rizin_path)
                 if rizin_path.startswith(config.HOME_DIR):
-                    print_info(f"Use the Rizin executable (version {version}) installed in the Quark directory.")
+                    print_info(
+                        f"Use the Rizin executable (version {version})"
+                        + " installed in the Quark directory."
+                    )
                 else:
-                    print_info(f"Use the Rizin executable (version {version}) installed in the system PATH.")
+                    print_info(
+                        f"Use the Rizin executable (version {version})"
+                        + " installed in the system PATH."
+                    )
 
         else:
             print_info(f"Use the user-specified Rizin executable.")

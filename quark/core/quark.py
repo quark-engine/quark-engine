@@ -43,8 +43,10 @@ class Quark:
         Create a Quark object.
 
         :param apk: an APK for Quark to analyze
-        :param core_library: a string indicating which analysis library Quark should use. Defaults to "androguard"
-        :param rizin_path: a PathLike object to specify a Rizin executable for the Rizin-based analysis library. Defaults to None
+        :param core_library: a string indicating which analysis library Quark
+        should use. Defaults to "androguard"
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library. Defaults to None
         :raises ValueError: if an unknown core library is specified
         """
         core_library = core_library.lower()

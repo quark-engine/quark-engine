@@ -59,7 +59,8 @@ class RizinImp(BaseApkinfo):
         if rizin_path:
             if not get_rizin_version(rizin_path):
                 raise ValueError(
-                    f"The file in {rizin_path} is not a valid Rizin executable."
+                    f"The file in {rizin_path} is not a valid Rizin"
+                    + " executable."
                 )
 
             rizin_path = os.path.dirname(rizin_path)

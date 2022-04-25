@@ -306,7 +306,8 @@ def find_rizin_instance(
 
     # The current version is not compatible
     print_info(
-        "Find an outdated Rizin executable in the Quark directory. Try to update it."
+        "Find an outdated Rizin executable in the Quark directory. Try to"
+        + " update it."
     )
 
     if disable_rizin_installation:
