@@ -15,6 +15,29 @@ Then we could test one of the apk in `apk-malware-samples` by the rules `quark-r
 
     $ quark -a Ahmyth.apk -s
 
+Running analyses based on Rizin
+==================
+
+Now Quark also supports `Rizin`_ as one of our Android analysis frameworks. You can use option ``--core-library`` with ``rizin`` to enable the Rizin-based analysis library.
+
+.. _`Rizin`: https://github.com/rizinorg/rizin
+
+.. code-block:: bash
+
+    quark -a Ahmyth.apk -s --core-library rizin
+
+
+For now, Quark is compatible with Rizin v0.4.0. But, users don't have to installed a Rizin with that version. Quark provides a feature to automatically setup a independent Rizin. In this way, the dependency will not conflict with your environment. Type in the above command and let Quark handle everything else for you.
+
+If there is a working installation of Rizin installed in the system, Quark will check its version to determine if it is compatible. If true, Quark automatically uses it for the analysis. Otherwise, Quark uses the independent Rizin installed in the Quark directory (``~/.quark-engine``).
+
+You can use option ``--rizin-path`` to specify the path of the Rizin executable.
+
+.. code-block:: bash
+
+    quark -a Ahmyth.apk -s --core-library rizin --rizin-path path_to_a_rizin_executable
+
+Moreover, if you don't want Quark to install an independent Rizin, you can use the flag ``--disable-rizin-installation`` to disable this feature.
 
 Running in Docker
 =================
