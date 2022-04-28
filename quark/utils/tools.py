@@ -129,10 +129,9 @@ def get_rizin_version(rizin_path) -> Str:
     :return: the version number of the Rizin instance
     """
     try:
-        process = subprocess.run(
+        result = subprocess.check_output(
             [rizin_path, "-v"], timeout=5, check=True, stdout=subprocess.PIPE
         )
-        result = str(process.stdout)
 
         matched_versions = re.finditer(
             r"[0-9]+\.[0-9]+\.[0-9]+", result[: result.index("@")]
@@ -144,7 +143,10 @@ def get_rizin_version(rizin_path) -> Str:
         else:
             return None
 
-    except BaseException:
+    except subprocess.CalledProcessError:
+        return None
+
+    except OSError:
         return None
 
 
@@ -178,7 +180,10 @@ def download_rizin(target_path) -> Boolean:
 
         return True
 
-    except subprocess.CalledProcessError as error:
+    except subprocess.CalledProcessError:
+        print_error("An error occurred when downloading Rizin.\n")
+
+    except OSError:
         print_error("An error occurred when downloading Rizin.\n")
 
     return False
@@ -242,12 +247,18 @@ def update_rizin(source_path, target_commit) -> Boolean:
         return True
 
     except subprocess.CalledProcessError as error:
-        print_error("An error occurred when updating Rizin.\n")
+        pass
+    except OSError:
+        pass
 
-        for line in error.stderr.decode().splitlines():
-            print_error(line)
+    print_error("An error occurred when updating Rizin.\n")
 
-        return False
+    for line in error.stderr.decode().splitlines():
+        print_error(line)
+
+    print_error("An error occurred when downloading Rizin.\n")
+
+    return False
 
 
 def find_rizin_instance(
