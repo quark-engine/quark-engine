@@ -5,7 +5,13 @@
 import copy
 import re
 import shutil
-import subprocess
+from subprocess import (  # nosec
+    STDOUT,
+    CalledProcessError,
+    Popen,
+    PIPE,
+    check_output,
+)
 from ast import Str
 from os import F_OK, PathLike, access, mkdir
 from xmlrpc.client import Boolean
@@ -70,7 +76,7 @@ def descriptor_to_androguard_format(descriptor):
     return new_descriptor
 
 
-def execute_command(command, stderr=subprocess.PIPE, cwd=None):
+def _execute_command(command, stderr=PIPE, cwd=None):
     """
     Execute a given command and yield the messages from the standard output.
 
@@ -81,10 +87,10 @@ def execute_command(command, stderr=subprocess.PIPE, cwd=None):
     non-zero return code
     :yield: a string holding a line of message in the standard output
     """
-    process = subprocess.Popen(
+    process = Popen(  # nosec
         command,
         bufsize=1,
-        stdout=subprocess.PIPE,
+        stdout=PIPE,
         stderr=stderr,
         universal_newlines=True,
         cwd=cwd,
@@ -109,19 +115,17 @@ def execute_command(command, stderr=subprocess.PIPE, cwd=None):
 
     if return_code:
         error_messages = ""
-        if stderr == subprocess.PIPE:
+        if stderr == PIPE:
             for message in process.stderr.readlines():
                 error_messages = error_messages + message
 
-        raise subprocess.CalledProcessError(
-            return_code, command, stderr=error_messages
-        )
+        raise CalledProcessError(return_code, command, stderr=error_messages)
 
-    if stderr == subprocess.PIPE:
+    if stderr == PIPE:
         process.stderr.close()
 
 
-def get_rizin_version(rizin_path) -> Str:
+def _get_rizin_version(rizin_path) -> Str:
     """
     Get the version number of the Rizin instance in the path.
 
@@ -129,9 +133,8 @@ def get_rizin_version(rizin_path) -> Str:
     :return: the version number of the Rizin instance
     """
     try:
-        result = subprocess.check_output(
-            [rizin_path, "-v"], timeout=5, check=True, stdout=subprocess.PIPE
-        )
+        result = check_output([rizin_path, "-v"], timeout=5)  # nosec
+        result = str(result)
 
         matched_versions = re.finditer(
             r"[0-9]+\.[0-9]+\.[0-9]+", result[: result.index("@")]
@@ -143,7 +146,7 @@ def get_rizin_version(rizin_path) -> Str:
         else:
             return None
 
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         return None
 
     except OSError:
@@ -166,7 +169,7 @@ def download_rizin(target_path) -> Boolean:
     try:
         print()
 
-        for line in execute_command(
+        for line in _execute_command(
             [
                 "git",
                 "clone",
@@ -174,13 +177,13 @@ def download_rizin(target_path) -> Boolean:
                 "https://github.com/rizinorg/rizin",
                 target_path,
             ],
-            stderr=subprocess.STDOUT,
+            stderr=STDOUT,
         ):
             print_info(line)
 
         return True
 
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         print_error("An error occurred when downloading Rizin.\n")
 
     except OSError:
@@ -205,26 +208,32 @@ def update_rizin(source_path, target_commit) -> Boolean:
         print()
 
         # Checkout to target commit
-        for line in execute_command(
+        for line in _execute_command(
             ["git", "checkout", target_commit], cwd=source_path
         ):
             print_info(line)
 
         # Remove the last build
-        for line in execute_command(["rm", "-rf", "build"], cwd=source_path):
+        for line in _execute_command(["rm", "-rf", "build"], cwd=source_path):
             print_info(line)
 
         # Clean out old subproject
-        for line in execute_command(
+        for line in _execute_command(
             ["git", "clean", "-dxff", "subprojects/"], cwd=source_path
         ):
             print_info(line)
 
-    except subprocess.CalledProcessError as error:
+    except CalledProcessError as error:
         print_error("An error occurred when updating Rizin.\n")
 
         for line in error.stderr.decode().splitlines():
             print_error(line)
+
+        return False
+
+    except OSError as error:
+        print_error("An error occurred when updating Rizin.\n")
+        print_error(error)
 
         return False
 
@@ -233,20 +242,20 @@ def update_rizin(source_path, target_commit) -> Boolean:
         print()
 
         # Configure
-        for line in execute_command(
+        for line in _execute_command(
             ["meson", "--buildtype=release", "build"], cwd=source_path
         ):
             print_info(line)
 
         # Compile the source code
-        for line in execute_command(
+        for line in _execute_command(
             ["meson", "compile", "-C", "build"], cwd=source_path
         ):
             print_info(line)
 
         return True
 
-    except subprocess.CalledProcessError as error:
+    except CalledProcessError as error:
         pass
     except OSError:
         pass
@@ -286,13 +295,13 @@ def find_rizin_instance(
     # Search Rizin in PATH
     which_result = shutil.which("rizin")
     if which_result:
-        version = get_rizin_version(which_result)
+        version = _get_rizin_version(which_result)
         if version in COMPATIBLE_RAZIN_VERSIONS:
             return which_result
 
     # Otherwise, search the home path
     rizin_executable_path = rizin_source_path + "build/binrz/rizin/rizin"
-    current_version = get_rizin_version(rizin_executable_path)
+    current_version = _get_rizin_version(rizin_executable_path)
 
     if not current_version and not disable_rizin_installation:
         print_info("Cannot find a compatible Rizin instance.")

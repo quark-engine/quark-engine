@@ -19,7 +19,7 @@ from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.utils.tools import (descriptor_to_androguard_format,
-                               get_rizin_version, remove_dup_list)
+                               _get_rizin_version, remove_dup_list)
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
@@ -57,7 +57,7 @@ class RizinImp(BaseApkinfo):
         super().__init__(apk_filepath, "rizin")
 
         if rizin_path:
-            if not get_rizin_version(rizin_path):
+            if not _get_rizin_version(rizin_path):
                 raise ValueError(
                     f"The file in {rizin_path} is not a valid Rizin"
                     + " executable."

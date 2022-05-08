@@ -23,7 +23,7 @@ from quark.utils.pprint import (
     print_warning,
 )
 from quark.utils.weight import Weight
-from quark.utils.tools import find_rizin_instance, get_rizin_version
+from quark.utils.tools import find_rizin_instance, _get_rizin_version
 
 logo()
 
@@ -190,7 +190,7 @@ def entry_point(
                 )
                 return
             else:
-                version = get_rizin_version(rizin_path)
+                version = _get_rizin_version(rizin_path)
                 if rizin_path.startswith(config.HOME_DIR):
                     print_info(
                         f"Use the Rizin executable (version {version})"

@@ -131,8 +131,9 @@ class TestReport:
                 assert mock_run.call_count == num_of_rules
                 assert mock_generate_report.call_count == num_of_rules
 
+    @staticmethod
     def test_analysis_without_specified_rizin_path(
-        self, sample_apk_file, sample_rule_directory
+        sample_apk_file, sample_rule_directory
     ):
         expected_path = shutil.which("rizin")
 
@@ -152,8 +153,9 @@ class TestReport:
                 mock_run.assert_called_once()
                 mock_generate_report.assert_called_once()
 
+    @staticmethod
     def test_analysis_with_specified_rizin_path(
-        self, sample_apk_file, sample_rule_directory
+        sample_apk_file, sample_rule_directory
     ):
         rizin_path = shutil.which("rizin")
 
@@ -179,8 +181,9 @@ class TestReport:
                     mock_run.assert_called_once()
                     mock_generate_report.assert_called_once()
 
+    @staticmethod
     def test_analysis_with_invalid_rizin_path(
-        self, sample_report, sample_apk_file, sample_rule_directory
+        sample_report, sample_apk_file, sample_rule_directory
     ):
         invalid_path = "INVALID_PATH"
 

@@ -1,17 +1,17 @@
 import os
 import re
 import shutil
-import subprocess
+from subprocess import PIPE, CalledProcessError, run  # nosec
 from unittest.mock import patch
 
 import pytest
 from quark import config
 from quark.utils.tools import (
+    _get_rizin_version,
     contains,
     descriptor_to_androguard_format,
     download_rizin,
     find_rizin_instance,
-    get_rizin_version,
     remove_dup_list,
     update_rizin,
 )
@@ -26,13 +26,11 @@ def rizin_in_system_path():
 
 
 @pytest.fixture(scope="module")
-def rizin_version(rizin_in_system_path):
+def rizin_version():
+    rizin_in_system_path = shutil.which("rizin")
     try:
-        process = subprocess.run(
-            [rizin_in_system_path, "-v"],
-            timeout=5,
-            check=True,
-            stdout=subprocess.PIPE,
+        process = run(  # nosec
+            [rizin_in_system_path, "-v"], timeout=5, check=True, stdout=PIPE
         )
         result = str(process.stdout)
 
@@ -46,7 +44,7 @@ def rizin_version(rizin_in_system_path):
         return first_matched.group(0)
     except TimeoutError:
         assert False
-    except subprocess.CalledProcessError:
+    except CalledProcessError:
         assert False
 
 
@@ -170,13 +168,13 @@ def test_get_rizin_version_with_valid_path(
 ):
     expected_version = rizin_version
 
-    found_version = get_rizin_version(rizin_in_system_path)
+    found_version = _get_rizin_version(rizin_in_system_path)
 
     assert found_version == expected_version
 
 
 def test_get_rizin_version_with_invalid_path(tmp_path):
-    assert not get_rizin_version(tmp_path)
+    assert not _get_rizin_version(tmp_path)
 
 
 def test_download_rizin_successfully(tmp_path):
@@ -191,10 +189,10 @@ def test_fail_to_download_rizin_due_to_unavailable_network(tmp_path):
     target_path = tmp_path / "rizin"
 
     with patch("subprocess.Popen") as mock:
-        mock.side_effect = subprocess.CalledProcessError(
+        mock.side_effect = CalledProcessError(
             "1",
             "mock command",
-            stderr=b"fatal: unable to access "
+            stderr="fatal: unable to access "
             + "'https://github.com/rizinorg/rizin/'.",
         )
 
@@ -205,9 +203,7 @@ def test_fail_to_download_rizin_due_to_unknown_errors(tmp_path):
     target_path = tmp_path / "rizin"
 
     with patch("subprocess.Popen") as mock:
-        mock.side_effect = subprocess.CalledProcessError(
-            "1", "mock command", stderr=b""
-        )
+        mock.side_effect = CalledProcessError("1", "mock command", stderr=b"")
 
         assert not download_rizin(target_path)
 
@@ -219,10 +215,10 @@ def test_update_rizin(tmp_path):
     download_rizin(target_path)
 
     update_rizin(target_path, target_commit)
-    check_commit = subprocess.run(
+    check_commit = run(  # nosec
         ["git", "rev-parse", "HEAD"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=PIPE,
+        stderr=PIPE,
         check=True,
         cwd=target_path,
     )
@@ -239,7 +235,7 @@ def test_fail_to_update_rizin_due_to_any_errors(tmp_path):
     target_commit = config.RIZIN_COMMIT
 
     with patch("subprocess.Popen") as mock:
-        mock.side_effect = subprocess.CalledProcessError(
+        mock.side_effect = CalledProcessError(
             "1", "mock command", stderr=b"Error message"
         )
 
@@ -262,7 +258,7 @@ def test_find_rizin_instance_installed_in_quark_directory():
         mocked_which.return_value = None
 
         with patch(
-            "quark.utils.tools.get_rizin_version"
+            "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
             # Pretent the Rizin instance installed in the Quark directory is
             # compatible.
@@ -294,7 +290,7 @@ def test_find_outdated_rizin_instance_installed_in_quark_directory(
         mocked_which.return_value = None
 
         with patch(
-            "quark.utils.tools.get_rizin_version"
+            "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
             # Pretent the Rizin instance installed in the Quark directory is
             # not compatible.
@@ -350,7 +346,7 @@ def test_find_broken_rizin_instance_installed_in_quark_directory(
         mocked_which.return_value = "rizin_installed_in_system"
 
         with patch(
-            "quark.utils.tools.get_rizin_version"
+            "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
             # Pretent -
             # 1. the Rizin instance in the system path is not compatible
@@ -414,7 +410,7 @@ def test_find_rizin_instance_failed_to_download_the_source():
         mocked_which.return_value = None
 
         with patch(
-            "quark.utils.tools.get_rizin_version"
+            "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
             # Pretent the Rizin instance installed in the Quark directory is
             # broken.
@@ -450,7 +446,7 @@ def test_find_rizin_instance_failed_to_compile_or_update_the_source():
         mocked_which.return_value = None
 
         with patch(
-            "quark.utils.tools.get_rizin_version"
+            "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
             # Pretent the Rizin instance installed in the Quark directory is
             # not compatible.
