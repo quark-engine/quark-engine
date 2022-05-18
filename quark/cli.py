@@ -383,9 +383,6 @@ def entry_point(
         
     # Generate web report
     if webreport:
-        if isinstance(data, ParallelQuark):
-            data.apply_rules(rule_buffer_list)
-
         for rule_checker in tqdm(rule_buffer_list):
             data.generate_json_report(rule_checker)
 
