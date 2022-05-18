@@ -18,7 +18,7 @@ from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
 from quark.utils.pprint import print_info, print_success, print_warning
 from quark.utils.weight import Weight
-from quark.report.generate import ReportGenerator
+from quark.webreport.generate import ReportGenerator
 
 logo()
 

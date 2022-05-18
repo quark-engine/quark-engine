@@ -8,11 +8,11 @@ class ReportGenerator:
         self.json_report = json_report
 
         # Load html layout
-        with open("quark/report/upper.html") as file:
+        with open("quark/webreport/upper.html") as file:
             self.upperHTML = file.read()
             file.close()
 
-        with open("quark/report/lower.html") as file:
+        with open("quark/webreport/lower.html") as file:
             self.lowerHTML = file.read()
             file.close()
 
