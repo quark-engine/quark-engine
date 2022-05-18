@@ -18,6 +18,7 @@ from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
 from quark.utils.pprint import print_info, print_success, print_warning
 from quark.utils.weight import Weight
+from quark.webreport.generate import ReportGenerator
 
 logo()
 
@@ -42,6 +43,13 @@ logo()
     "-o",
     "--output",
     help="Output report in JSON",
+    type=click.Path(exists=False, file_okay=True, dir_okay=False),
+    required=False,
+)
+@click.option(
+    "-w",
+    "--webreport",
+    help="Generate web report",
     type=click.Path(exists=False, file_okay=True, dir_okay=False),
     required=False,
 )
@@ -136,6 +144,7 @@ def entry_point(
     apk,
     rule,
     output,
+    webreport,
     graph,
     classification,
     threshold,
@@ -357,7 +366,6 @@ def entry_point(
 
     # Show JSON report
     if output:
-
         if isinstance(data, ParallelQuark):
             data.apply_rules(rule_buffer_list)
 
@@ -371,6 +379,21 @@ def entry_point(
 
         with open(output, "w") as file:
             json.dump(json_report, file, indent=4)
+            file.close()
+
+    # Generate web report
+    if webreport:
+        for rule_checker in tqdm(rule_buffer_list):
+            data.generate_json_report(rule_checker)
+
+        json_report = data.get_json_report()
+        report_html = ReportGenerator(json_report).generate()
+
+        if ".html" not in webreport:
+            webreport = f"{webreport}.html"
+
+        with open(webreport, "w") as file:
+            file.write(report_html)
             file.close()
 
     if list:

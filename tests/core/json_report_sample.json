@@ -6,7 +6,12 @@
     "total_score": 4,
     "crimes": [
         {
+            "rule": "sendLocation_SMS.json",
             "crime": "Send Location via SMS",
+            "label": [
+                "location",
+                "collection"
+            ],
             "score": 4,
             "weight": 4.0,
             "confidence": "100%",

@@ -37,9 +37,19 @@
 Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-listing), [BlackArch](https://blackarch.org/mobile.html).
 :shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. https://twitter.com/quarkengine
 
-## Available In
+## Quark Web Report
 
-<img src="https://i.imgur.com/oQcqRXy.png"/>
+With the following command, you can easily analyze the Android sample and output the web report.
+
+See our demo [here](https://pulorsok.github.io/ruleviewer/web-report-demo).
+
+```bash
+quark -a sample.apk -s -w quark_report.html
+```
+
+![](https://i.imgur.com/hG3Ag8t.png)
+
+## Available In
 
 <img src="https://i.imgur.com/nz4m8kr.png"/>
 
@@ -164,6 +174,9 @@ radiocontrast = RadioContrast(
 )
 radiocontrast.rule_generate()
 ```
+
+### Web Report
+
 
 ### Parallelizing Quark
 Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
