@@ -563,7 +563,9 @@ class Quark:
                     )
 
         crime = {
+            "rule": rule_obj.rule_filename,
             "crime": rule_obj.crime,
+            "label": rule_obj.label,
             "score": score,
             "weight": weight,
             "confidence": confidence,
