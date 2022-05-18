@@ -1,3 +1,4 @@
+import pkg_resources
 class ReportGenerator:
     """
     This module is for web report generating.
@@ -8,11 +9,17 @@ class ReportGenerator:
         self.json_report = json_report
 
         # Load html layout
-        with open("quark/webreport/upper.html") as file:
+        upper_html_path = pkg_resources.resource_filename(
+                "quark.webreport", "upper.html"
+            )
+        lower_html_path = pkg_resources.resource_filename(
+                "quark.webreport", "lower.html"
+            )
+        with open(upper_html_path) as file:
             self.upperHTML = file.read()
             file.close()
 
-        with open("quark/webreport/lower.html") as file:
+        with open(lower_html_path) as file:
             self.lowerHTML = file.read()
             file.close()
 
