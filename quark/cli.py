@@ -392,7 +392,7 @@ def entry_point(
         json_report = data.get_json_report()
         report_html = ReportGenerator(json_report).generate()
         
-        if not ".html" in webreport:
+        if ".html" not in webreport:
             webreport = f"{webreport}.html"
         
         with open(webreport, "w") as file:

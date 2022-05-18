@@ -8,24 +8,25 @@ class ReportGenerator:
         self.json_report = json_report
 
         # Load html layout
-        with open("quark/report/upper.html", "r") as file:
+        with open("quark/report/upper.html") as file:
             self.upperHTML = file.read()
             file.close()
-            
-        with open("quark/report/lower.html", "r") as file:
+
+        with open("quark/report/lower.html") as file:
             self.lowerHTML = file.read()
             file.close()
 
     def generate(self):
         """
         Load the quark JSON report and generate the HTML of the Quark web report.
-        
+
         :return: the string of Quark web report HTML
         """
-        
+
         analysis_result = self.json_report["crimes"]
         filesize = format(
-            float(self.json_report["size_bytes"])/float((1024*1024)), '.2f')
+            float(self.json_report["size_bytes"])/float(1024*1024), '.2f',
+        )
         filename = self.json_report["apk_filename"]
         md5 = self.json_report["md5"]
 
@@ -45,9 +46,11 @@ class ReportGenerator:
 
         report_data_html = self._insert_json_report(analysis_result)
         radarechar_html = self._generate_radarechart_html(
-            five_stages_labels, all_labels)
+            five_stages_labels, all_labels,
+        )
         sample_info_html = self._generate_sample_info_html(
-            rule_number_set, filename, md5, filesize, five_stages_labels)
+            rule_number_set, filename, md5, filesize, five_stages_labels,
+        )
         analysis_result_html = self._generate_report_html(analysis_result)
 
         report_html = self.upperHTML + \
@@ -62,36 +65,36 @@ class ReportGenerator:
     def _insert_json_report(self, data):
         """
         Convert the quark JSON report to HTML with script tag.
-        
+
         :param data: the dict of Quark JSON report
         :return: the string of Quark JSON report HTML
         """
-        
+
         return f"""<script>var reportData = {str(data)}</script>"""
 
     def _get_five_stages_labels(self, data):
         """
         Get the labels with 100% confidence crimes.
-        
+
         :param data: the dict of Quark JSON report
         :return: the set contain all lebels with 100% confidence crimes
         """
-        
+
         five_stage_label_set = set()
         for item in data:
             if item["confidence"] == "100%":
                 five_stage_label_set.update(item["label"])
-                
+
         return five_stage_label_set
-                
+
     def _get_all_labels(self, data):
         """
         Get all labels with crimes above 0% confidence.
-        
+
         :param data: the dict of Quark JSON report
         :return: the set contain all labels with crimes above 0% confidence
         """
-        
+
         all_label_set = set()
         for item in data:
             if not item["confidence"] == "0%":
@@ -102,12 +105,12 @@ class ReportGenerator:
     def _count_confidence_rule_number(self, data, confidence):
         """
         Get the number of rules with given confidence in JSON report.
-        
+
         :param data: the dict of Quark JSON report
         :param confidence: the string of given confidence
         :return: the int for the number of rules with given confidence in JSON report
         """
-        
+
         count = 0
         for item in data:
             if item["confidence"] == confidence:
@@ -117,12 +120,12 @@ class ReportGenerator:
     def _generate_radarechart_html(self, five_stages_labels, all_labels):
         """
         Generate the HTML of radare chart secton in Quark web report.
-        
+
         :param five_stages_labels: the set of lebels with 100% confidence crimes
         :param all_labels: the set contain all labels with crimes above 0% confidence
         :return: the string of HTML radare chart secton
         """
-        
+
         five_labels_html = ""
         for label in five_stages_labels:
             five_labels_html += f"""<label class="label-tag">{label}</label>"""
@@ -139,7 +142,7 @@ class ReportGenerator:
         radarchart_html = f"""
             <div class="row radar-chart">
                 <div class="col-md-6"><canvas id="myChart" width="400" height="400"></canvas></div>
-                <div class="col-md-6">                    
+                <div class="col-md-6">
                     <h3>Select lables to see max confidence in radare chart</h3>
                     <div class="label-group">
                         {all_labels_html}
@@ -182,26 +185,26 @@ class ReportGenerator:
                             </tr>
                         </thead>
                         <tbody>
-            
-        
+
+
         """
         return radarchart_html
 
     def _generate_report_html(self, data):
         """
         Generate the HTML of summary report secton in Quark web report.
-        
+
         :param data: the dict of Quark JSON report
         :return: the string of HTML summary report secton
         """
-        
+
         confidence_badge = {
             "0%": "badge-secondary",
             "20%": "badge-success",
             "40%": "badge-info",
             "60%": "badge-primary",
             "80%": "badge-warning",
-            "100%": "badge-danger"
+            "100%": "badge-danger",
         }
 
         contentHTML = ""
@@ -221,7 +224,7 @@ class ReportGenerator:
     def _generate_sample_info_html(self, rules_number_set, filename, md5, filesize, labels):
         """
         Generate the HTML of sample information secton in Quark web report.
-        
+
         :param rules_number_set: the dict of the rule number for each confidence
         :param filename: the string of the sample filename
         :param md5: the string of the sample md5 hash value
@@ -229,7 +232,7 @@ class ReportGenerator:
         :param labels: the set of lebels with 100% confidence crimes
         :return: the string of HTML sample infromation secton
         """
-        
+
         five_labels_html = ""
         for label in labels:
             five_labels_html += f"""<label class="label-tag">{label}</label>"""
@@ -254,7 +257,7 @@ class ReportGenerator:
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
                 <div class="col-sm-6 report-sample-info" style="margin-left:30px; font-size: 140%; margin-right: -300px;">
 					<div class="row">
                         <div class="col-sm-12">
