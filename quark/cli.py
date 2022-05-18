@@ -380,7 +380,7 @@ def entry_point(
         with open(output, "w") as file:
             json.dump(json_report, file, indent=4)
             file.close()
-        
+
     # Generate web report
     if webreport:
         for rule_checker in tqdm(rule_buffer_list):
