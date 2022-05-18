@@ -1,4 +1,6 @@
 import pkg_resources
+
+
 class ReportGenerator:
     """
     This module is for web report generating.
@@ -10,11 +12,11 @@ class ReportGenerator:
 
         # Load html layout
         upper_html_path = pkg_resources.resource_filename(
-                "quark.webreport", "upper.html"
-            )
+            "quark.webreport", "upper.html"
+        )
         lower_html_path = pkg_resources.resource_filename(
-                "quark.webreport", "lower.html"
-            )
+            "quark.webreport", "lower.html"
+        )
         with open(upper_html_path) as file:
             self.upperHTML = file.read()
             file.close()
@@ -69,6 +71,7 @@ class ReportGenerator:
 
         return report_html
 
+
 def _insert_json_report(data):
     """
     Convert the quark JSON report to HTML with script tag.
@@ -78,6 +81,7 @@ def _insert_json_report(data):
     """
 
     return f"""<script>var reportData = {str(data)}</script>"""
+
 
 def _get_five_stages_labels(data):
     """
@@ -94,6 +98,7 @@ def _get_five_stages_labels(data):
 
     return five_stage_label_set
 
+
 def _get_all_labels(data):
     """
     Get all labels with crimes above 0% confidence.
@@ -109,6 +114,7 @@ def _get_all_labels(data):
 
     return all_label_set
 
+
 def _count_confidence_rule_number(data, confidence):
     """
     Get the number of rules with given confidence in JSON report.
@@ -123,6 +129,7 @@ def _count_confidence_rule_number(data, confidence):
         if item["confidence"] == confidence:
             count += 1
     return count
+
 
 def _generate_radarechart_html(five_stages_labels, all_labels):
     """
@@ -197,6 +204,7 @@ def _generate_radarechart_html(five_stages_labels, all_labels):
     """
     return radarchart_html
 
+
 def _generate_report_html(data):
     """
     Generate the HTML of summary report secton in Quark web report.
@@ -227,6 +235,7 @@ def _generate_report_html(data):
             </tr>
         """
     return contentHTML
+
 
 def _generate_sample_info_html(rules_number_set, filename, md5, filesize, labels):
     """
