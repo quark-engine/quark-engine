@@ -391,7 +391,7 @@ def entry_point(
 
         if ".html" not in webreport:
             webreport = f"{webreport}.html"
-        
+
         with open(webreport, "w") as file:
             file.write(report_html)
             file.close()
