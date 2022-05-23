@@ -174,8 +174,9 @@ def entry_point(
         rule_path_list = [rule_filter]
     else:
         rule_path_list = [
-            os.path.join(rule, file)
-            for file in os.listdir(rule)
+            os.path.join(dir_path, file)
+            for dir_path, _, file_list in os.walk(rule)
+            for file in file_list
             if file.endswith("json")
         ]
 
