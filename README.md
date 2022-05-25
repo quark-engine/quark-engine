@@ -49,12 +49,6 @@ quark -a sample.apk -s -w quark_report.html
 
 ![](https://i.imgur.com/hG3Ag8t.png)
 
-## Available In
-
-<img src="https://i.imgur.com/nz4m8kr.png"/>
-
-[![asciicast](https://asciinema.org/a/416810.svg)](https://asciinema.org/a/416810)
-
 ## Why Quark?
 
 Android malware analysis engine is not a new story. Every antivirus company has their own secrets to build it. With curiosity, we develop a malware scoring system from the perspective of Taiwan Criminal Law in an easy but solid way.
