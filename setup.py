@@ -23,7 +23,7 @@ setuptools.setup(
     name="quark-engine",  # Replace with your own username
     version=__version__,
     author="YuShiang Dang, ShengFeng Lu, KunYu Chen",
-     author_email="pulorsok@gmail.com",
+    author_email="pulorsok@gmail.com",
     description="An Obfuscation-Neglect Android Malware Scoring System",
     long_description=long_description,
     long_description_content_type="text/markdown",
