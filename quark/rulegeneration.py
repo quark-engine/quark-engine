@@ -46,11 +46,11 @@ class RuleGeneration:
             if api_called_count > 0:
                 statistic_result[str(api)] = api_called_count
                 str_statistic_result[str(api)] = api
-        
 
-        sorted_key = {k: v for k, v in sorted(statistic_result.items(), key=lambda item: item[1])}
+        sorted_key = {k: v for k, v in sorted(
+            statistic_result.items(), key=lambda item: item[1])}
         sorted_result = {k: v for k, v in sorted(sorted_key.items())}
-        
+
         threshold = len(api_pool) * percentile_rank
         P_set = []
         S_set = []
@@ -60,8 +60,7 @@ class RuleGeneration:
                 P_set.append(str_statistic_result[api])
                 continue
             S_set.append(str_statistic_result[api])
-            
-        pprint(P_set)
+
         return P_set, S_set
 
     def generate_rule(self, web_report=None, stage=1):

@@ -373,10 +373,10 @@ def entry_point(
             data.show_rule_classification()
         if graph:
             data.show_call_graph()
-    
+
     if rule_generation:
         generator = RuleGeneration(data, rule_generation)
-        
+
         if webreport:
             if ".html" not in webreport:
                 webreport = f"{webreport}.html"
@@ -384,7 +384,7 @@ def entry_point(
             generator.generate_rule(web_report=webreport_file)
         else:
             generator.generate_rule()
-        
+
     # Show JSON report
     if output:
         if isinstance(data, ParallelQuark):
@@ -409,14 +409,15 @@ def entry_point(
                 data.generate_json_report(rule_checker)
 
             json_report = data.get_json_report()
-            report_html = ReportGenerator(json_report).get_analysis_report_html()
+            report_html = ReportGenerator(
+                json_report).get_analysis_report_html()
 
             if ".html" not in webreport:
                 webreport = f"{webreport}.html"
 
             with open(webreport, "w") as file:
                 file.write(report_html)
-                file.close()          
+                file.close()
 
     if list:
 
