@@ -39,9 +39,12 @@ class ReportGenerator:
         )
         filename = self.json_report["apk_filename"]
         md5 = self.json_report["md5"]
-        
-        self.insert_genrule_report_html(generate_result, filename, md5, filesize)
-        self.rulegenerate_layout = self.get_json_report_html(self.rulegenerate_layout, generate_result)
+        rule_number = len(generate_result)
+
+        self.insert_genrule_report_html(
+            generate_result, filename, md5, filesize, rule_number)
+        self.rulegenerate_layout = self.get_json_report_html(
+            self.rulegenerate_layout, generate_result)
 
         return self.rulegenerate_layout
 
@@ -77,9 +80,9 @@ class ReportGenerator:
             rule_number_set, filename, md5, filesize, five_stages_labels)
         self.insert_radarechart_html(five_stages_labels, all_labels)
         self.insert_report_html(analysis_result)
-        
-        self.analysis_result_layout = self.get_json_report_html(self.analysis_result_layout, analysis_result)
-        
+
+        self.analysis_result_layout = self.get_json_report_html(
+            self.analysis_result_layout, analysis_result)
 
         return self.analysis_result_layout
 
@@ -93,7 +96,7 @@ class ReportGenerator:
         report_data_html = f"""<script>var reportData = {str(data)}</script>"""
         layout = layout.replace(
             "$report_data$", report_data_html)
-        
+
         return layout
 
     def get_five_stages_labels(self, data):
@@ -178,7 +181,7 @@ class ReportGenerator:
             self.analysis_result_layout = self.analysis_result_layout.replace(
                 key, str(replace_str))
 
-    def insert_genrule_report_html(self, data, filename, md5, filesize):
+    def insert_genrule_report_html(self, data, filename, md5, filesize, rule_number):
         """
         Generate the HTML of rule generation result secton.
 
@@ -206,8 +209,9 @@ class ReportGenerator:
             "$filename$": filename,
             "$md5$": md5,
             "$filesize$": filesize,
+            "$rule_numbers$": rule_number,
         }
-        
+
         for key, replace_str in replace_dict.items():
             self.rulegenerate_layout = self.rulegenerate_layout.replace(
                 key, str(replace_str))
