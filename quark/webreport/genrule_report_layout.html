@@ -267,16 +267,21 @@
         .api-td {
             word-break: break-all;
         }
-
         .search-box {
             background-image: url(/css/searchicon.png);
             background-position: 10px 12px;
             background-repeat: no-repeat;
-            width: 100%;
+            width: 90%;
             font-size: 1.25rem;
             padding: 12px 20px 12px 40px;
             border: 1px solid #ddd;
-            margin-top: 35px;
+            margin-top: 10px;
+        }
+        #title{
+            text-align: center;
+            margin-bottom: 50px;
+            color: #28809c;
+            font-weight: 700;
         }
     </style>
 </head>
@@ -288,22 +293,35 @@
                 <div class="col-md-6 text-center mb-5"><img class="logo"
                         src="https://quark-engine.github.io/ruleviewer/quark-logo.png"></div>
             </div>
+            <div clsas="row">
+                <h1 id="title">Quark Rule Generation Report</h1>
+            </div>
             <div class="row filter-bar">
+                
+                <div class="row">
                 <div class="col-md-6">
                     <label>Sample Information</label>
                     <div class="row" style="margin-left: auto;margin-top: 20px;">
                         <dt class="col-sm-3 sample-info-lable">File name</dt>
-                        <dd class="col-sm-9 sample-info-lable">$filename$</dd>
-                        <dt class="col-sm-3 sample-info-lable">MD5</dt>
-                        <dd class="col-sm-9 sample-info-lable">$md5$</dd>
+                        <dd class="col-sm-9 sample-info-lable">Ahmyth.apk</dd>
                         <dt class="col-sm-3 sample-info-lable">File size</dt>
-                        <dd class="col-sm-9 sample-info-lable">$filesize$ Mb</dd>
+                        <dd class="col-sm-9 sample-info-lable">0.26 Mb</dd>
+                        <dt class="col-sm-3 sample-info-lable">MD5</dt>
+                        <dd class="col-sm-9 sample-info-lable">893e05aabd8754236ea70d3da8363d52</dd>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <label>Search crime</label>
-                    <input type="text" class="search-box" id="search" onkeyup="search()"
-                        placeholder="Search for crime description..">
+                    <div class="row">
+                        <label> The Number of Generated Rules: <span style="color:#ff9928">$rule_numbers$</span></label>
+                    </div>
+                    
+                    <div class="row" style="margin-top: 20px;">
+                        <dt class="col-sm-6 sample-info-lable" style="font-size:110%">Search Rules</dt>
+                        <dd class="col-sm-6 sample-info-lable"></dd>
+                        <input type="text" class="search-box" id="search" onkeyup="search()"
+                            placeholder="Search rules by keywords..">
+                    </div>
+                </div>
                 </div>
             </div>
             <!-- The Modal -->
