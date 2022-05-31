@@ -32,7 +32,7 @@ setuptools.setup(
     package_data={
         "quark.core.axmlreader": ["axml_definition"],
         "quark.webreport": [
-            "analysis_report_layout.html", 
+            "analysis_report_layout.html",
             "genrule_report_layout.html"
         ]
     },

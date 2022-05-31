@@ -27,7 +27,8 @@ class RuleGeneration:
     def api_filter(self, percentile_rank=0.2):
         """
         Sorting APIs by the number of APIs used in APK,
-        and split APIs into P_set (less used number) and S_set (more used number)
+        and split APIs into P_set (less used number)
+        and S_set (more used number)
         by percentile_rank (default 20%).
 
         :param percentile_rank: The int for rank of percentile.

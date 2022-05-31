@@ -303,7 +303,7 @@ def count_confidence_rule_number(data, confidence):
 
     :param data: the dict of Quark JSON report
     :param confidence: the string of given confidence
-    :return: the int for the number of rules 
+    :return: the int for the number of rules
     with given confidence in JSON report
     """
 
