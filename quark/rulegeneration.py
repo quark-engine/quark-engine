@@ -1,6 +1,5 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
-
 import os
 import json
 from pprint import pprint
@@ -39,28 +38,30 @@ class RuleGeneration:
         :return S_set: a set of APIs that more used.
         """
         statistic_result = {}
+        str_statistic_result = {}
         api_pool = self.apkinfo.android_apis
 
         for api in api_pool:
             api_called_count = len(self.apkinfo.upperfunc(api))
-            statistic_result[api] = api_called_count
+            if api_called_count > 0:
+                statistic_result[str(api)] = api_called_count
+                str_statistic_result[str(api)] = api
+        
 
-        sorted_result = {k: v for k, v in sorted(
-            statistic_result.items(), key=lambda number: number[1])}
-
+        sorted_key = {k: v for k, v in sorted(statistic_result.items(), key=lambda item: item[1])}
+        sorted_result = {k: v for k, v in sorted(sorted_key.items())}
+        
         threshold = len(api_pool) * percentile_rank
         P_set = []
         S_set = []
-        p_count = {"first": [], "second": []}
 
-        for i, (api, number) in enumerate(sorted_result.items()):
+        for i, (api, _) in enumerate(sorted_result.items()):
             if i < threshold:
-                P_set.append(api)
-                p_count["first"].append(number)
+                P_set.append(str_statistic_result[api])
                 continue
-            p_count["second"].append(number)
-            S_set.append(api)
-
+            S_set.append(str_statistic_result[api])
+            
+        pprint(P_set)
         return P_set, S_set
 
     def generate_rule(self, web_report=None, stage=1):
