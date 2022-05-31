@@ -28,7 +28,8 @@ class ReportGenerator:
 
     def get_rule_generate_report_html(self):
         """
-        Load the rule generation result and generate the HTML of the Quark web report.
+        Load the rule generation result
+        and generate the HTML of the Quark web report.
 
         :return: the string of Quark web report HTML
         """
@@ -43,14 +44,15 @@ class ReportGenerator:
 
         self.insert_genrule_report_html(
             generate_result, filename, md5, filesize, rule_number)
-        self.rulegenerate_layout = self.get_json_report_html(
+        self.rulegenerate_layout = get_json_report_html(
             self.rulegenerate_layout, generate_result)
 
         return self.rulegenerate_layout
 
     def get_analysis_report_html(self):
         """
-        Load the quark JSON report and generate the HTML of the Quark web report.
+        Load the quark JSON report
+        and generate the HTML of the Quark web report.
 
         :return: the string of Quark web report HTML
         """
@@ -64,92 +66,36 @@ class ReportGenerator:
 
         rule_number_set = {
             "all": len(analysis_result),
-            "100%": self.count_confidence_rule_number(analysis_result, "100%"),
-            "80%": self.count_confidence_rule_number(analysis_result, "80%"),
-            "60%": self.count_confidence_rule_number(analysis_result, "60%"),
-            "40%": self.count_confidence_rule_number(analysis_result, "40%"),
-            "20%": self.count_confidence_rule_number(analysis_result, "20%"),
-            "0%": self.count_confidence_rule_number(analysis_result, "0%"),
+            "100%": count_confidence_rule_number(analysis_result, "100%"),
+            "80%": count_confidence_rule_number(analysis_result, "80%"),
+            "60%": count_confidence_rule_number(analysis_result, "60%"),
+            "40%": count_confidence_rule_number(analysis_result, "40%"),
+            "20%": count_confidence_rule_number(analysis_result, "20%"),
+            "0%": count_confidence_rule_number(analysis_result, "0%"),
         }
 
         # Get all labels
-        five_stages_labels = self.get_five_stages_labels(analysis_result)
-        all_labels = self.get_all_labels(analysis_result)
+        five_stages_labels = get_five_stages_labels(analysis_result)
+        all_labels = get_all_labels(analysis_result)
 
         self.insert_sample_information_html(
             rule_number_set, filename, md5, filesize, five_stages_labels)
         self.insert_radarechart_html(five_stages_labels, all_labels)
         self.insert_report_html(analysis_result)
 
-        self.analysis_result_layout = self.get_json_report_html(
+        self.analysis_result_layout = get_json_report_html(
             self.analysis_result_layout, analysis_result)
 
         return self.analysis_result_layout
-
-    def get_json_report_html(self, layout, data):
-        """
-        Convert the quark JSON report to HTML with script tag.
-
-        :param data: the dict of Quark JSON report
-        :return: the string of Quark JSON report HTML
-        """
-        report_data_html = f"""<script>var reportData = {str(data)}</script>"""
-        layout = layout.replace(
-            "$report_data$", report_data_html)
-
-        return layout
-
-    def get_five_stages_labels(self, data):
-        """
-        Get the labels with 100% confidence crimes.
-
-        :param data: the dict of Quark JSON report
-        :return: the set contain all lebels with 100% confidence crimes
-        """
-
-        five_stage_label_set = set()
-        for item in data:
-            if item["confidence"] == "100%":
-                five_stage_label_set.update(item["label"])
-
-        return five_stage_label_set
-
-    def get_all_labels(self, data):
-        """
-        Get all labels with crimes above 0% confidence.
-
-        :param data: the dict of Quark JSON report
-        :return: the set contain all labels with crimes above 0% confidence
-        """
-
-        all_label_set = set()
-        for item in data:
-            if not item["confidence"] == "0%":
-                all_label_set.update(item["label"])
-
-        return all_label_set
-
-    def count_confidence_rule_number(self, data, confidence):
-        """
-        Get the number of rules with given confidence in JSON report.
-
-        :param data: the dict of Quark JSON report
-        :param confidence: the string of given confidence
-        :return: the int for the number of rules with given confidence in JSON report
-        """
-
-        count = 0
-        for item in data:
-            if item["confidence"] == confidence:
-                count += 1
-        return count
 
     def insert_radarechart_html(self, five_stages_labels, all_labels):
         """
         Generate the HTML of radare chart secton in Quark web report.
 
-        :param five_stages_labels: the set of lebels with 100% confidence crimes
-        :param all_labels: the set contain all labels with crimes above 0% confidence
+        :param five_stages_labels: the set of lebels
+        with 100% confidence crimes
+        :param all_labels: the set contain all labels
+        with crimes above 0% confidence
         """
 
         five_labels_html = ""
@@ -166,10 +112,11 @@ class ReportGenerator:
                 label = "dex"
 
             all_labels_html += f"""
-                <label id="collection" class="label-container">{label}
-                    <input class="rule-label" type="checkbox" name="label" value="{label}">
-                    <span class="checkmark"></span>
-                </label>
+            <label id="collection" class="label-container">{label}
+                <input class="rule-label" type="checkbox"
+                    name="label" value="{label}">
+                <span class="checkmark"></span>
+            </label>
             """
 
         replace_dict = {
@@ -181,7 +128,14 @@ class ReportGenerator:
             self.analysis_result_layout = self.analysis_result_layout.replace(
                 key, str(replace_str))
 
-    def insert_genrule_report_html(self, data, filename, md5, filesize, rule_number):
+    def insert_genrule_report_html(
+        self,
+        data,
+        filename,
+        md5,
+        filesize,
+        rule_number
+    ):
         """
         Generate the HTML of rule generation result secton.
 
@@ -201,7 +155,11 @@ class ReportGenerator:
                     <td><p class="fw-normal mb-1">{rule["number"]}</p></td>
                     <td><p class="api-td fw-normal mb-1">{api1}</p></td>
                     <td><p class="api-td fw-normal mb-1">{api2}</p></td>
-                    <td><a href="#" class="edit-btn btn btn-info btn-sm">Edit</a></td>
+                    <td>
+                        <a href="#" class="edit-btn btn btn-info btn-sm">
+                            Edit
+                        </a>
+                    </td>
                 </tr>
             """
         replace_dict = {
@@ -241,18 +199,30 @@ class ReportGenerator:
                 <tr>
                     <td><p class="fw-normal mb-1">{rule_number}</p></td>
                     <td><p class="fw-normal mb-1">{description}</p></td>
-                    <td><span class="badge {confidence_badge[confidence]}">{confidence}</span></td>
+                    <td>
+                        <span class="badge {confidence_badge[confidence]}">
+                            {confidence}
+                        </span>
+                    </td>
                 </tr>
             """
 
         self.analysis_result_layout = self.analysis_result_layout.replace(
             "$report_content$", contentHTML)
 
-    def insert_sample_information_html(self, rules_number_set, filename, md5, filesize, labels):
+    def insert_sample_information_html(
+        self,
+        rules_number_set,
+        filename,
+        md5,
+        filesize,
+        labels
+    ):
         """
         Generate the HTML of sample information secton in Quark web report.
 
-        :param rules_number_set: the dict of the rule number for each confidence
+        :param rules_number_set: the dict of rule number
+        for each confidence
         :param filename: the string of the sample filename
         :param md5: the string of the sample md5 hash value
         :param filesize: the string of the sample filesize
@@ -279,3 +249,66 @@ class ReportGenerator:
         for key, replace_str in replace_dict.items():
             self.analysis_result_layout = self.analysis_result_layout.replace(
                 key, str(replace_str))
+
+
+def get_json_report_html(layout, data):
+    """
+    Convert the quark JSON report to HTML with script tag.
+
+    :param data: the dict of Quark JSON report
+    :return: the string of Quark JSON report HTML
+    """
+    report_data_html = f"""<script>var reportData = {str(data)}</script>"""
+    layout = layout.replace(
+        "$report_data$", report_data_html)
+
+    return layout
+
+
+def get_five_stages_labels(data):
+    """
+    Get the labels with 100% confidence crimes.
+
+    :param data: the dict of Quark JSON report
+    :return: the set contain all lebels with 100% confidence crimes
+    """
+
+    five_stage_label_set = set()
+    for item in data:
+        if item["confidence"] == "100%":
+            five_stage_label_set.update(item["label"])
+
+    return five_stage_label_set
+
+
+def get_all_labels(data):
+    """
+    Get all labels with crimes above 0% confidence.
+
+    :param data: the dict of Quark JSON report
+    :return: the set contain all labels with crimes above 0% confidence
+    """
+
+    all_label_set = set()
+    for item in data:
+        if not item["confidence"] == "0%":
+            all_label_set.update(item["label"])
+
+    return all_label_set
+
+
+def count_confidence_rule_number(data, confidence):
+    """
+    Get the number of rules with given confidence in JSON report.
+
+    :param data: the dict of Quark JSON report
+    :param confidence: the string of given confidence
+    :return: the int for the number of rules 
+    with given confidence in JSON report
+    """
+
+    count = 0
+    for item in data:
+        if item["confidence"] == confidence:
+            count += 1
+    return count

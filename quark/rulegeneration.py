@@ -1,11 +1,7 @@
-# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
-# See the file 'LICENSE' for copying permission.
 import os
 import json
-from pprint import pprint
 
 from tqdm import tqdm
-from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
 
@@ -30,8 +26,9 @@ class RuleGeneration:
 
     def api_filter(self, percentile_rank=0.2):
         """
-        Sorting APIs by the number of APIs used in APK, 
-        and split APIs into P_set (less used number) and S_set (more used number) by percentile_rank (default 20%).
+        Sorting APIs by the number of APIs used in APK,
+        and split APIs into P_set (less used number) and S_set (more used number)
+        by percentile_rank (default 20%).
 
         :param percentile_rank: The int for rank of percentile.
         :return P_set: a set of APIs that less used.
@@ -179,17 +176,3 @@ class RuleGeneration:
         outter_loop.clear()
         outter_loop.close()
         return
-
-
-if __name__ == "__main__":
-
-    # The target APK.
-    APK_PATH = "Ahmyth.apk"
-
-    # The output directory for generated rules.
-    GENERATED_RULE_DIR = "generated_rules"
-
-    generator = RuleGeneration(APK_PATH, GENERATED_RULE_DIR)
-    generator.generate_rule(web_report="report.html")
-
-    pass
