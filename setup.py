@@ -31,7 +31,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     package_data={
         "quark.core.axmlreader": ["axml_definition"],
-        "quark.webreport": ["lower.html", "upper.html"]
+        "quark.webreport": ["analysis_report_layout.html", "genrule_report_layout.html"]
     },
     entry_points={
         "console_scripts": [
