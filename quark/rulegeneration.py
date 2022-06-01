@@ -9,7 +9,7 @@ from quark.webreport.generate import ReportGenerator
 
 class RuleGeneration:
     """
-    This module is for generating rules with the APIs 
+    This module is for generating rules with the APIs
     that are 20% least usage count in the given APK
     """
 
@@ -18,7 +18,7 @@ class RuleGeneration:
         self.apkinfo = self.quark.apkinfo
         self.output_dir = output_dir
         self.first_api_set, self.second_api_set = self.api_filter()
-        
+
         return
 
     def api_filter(self, percentile_rank=0.2):
