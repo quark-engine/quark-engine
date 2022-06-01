@@ -2,16 +2,16 @@
 Rule Generation
 ++++++++++++++++++++++++++++++++++++++++
 
-The Rule generation technique is based on the folowing idea belows:
+The Rule generation technique is based on the idea below:
 
-1. Sort API by API usage count
-2. Separate all API into two groups, P(20% least usage count) and S(other 80% API), by the Pareto principle (20-80 rule)
+1. Sort all APIs used in an APK by their usage counts.
+2. Separate all APIs into two groups, P(20% least usage count) and S(other 80% APIs), by the Pareto principle (20-80 rule)
 3. Combine $P$ and $S$ into four different phases:
     - PxP
     - PxS 
     - SxP 
     - SxS
-4. Execute rule generate by phase: PxP -> PxS -> SxP -> SxS
+4. Execute the rule generation with each phase in this order: PxP -> PxS -> SxP -> SxS
 
 The earlier the phase, the higher the value of the rule but less time spent.
 We can generate rules in a phased manner according to different situations.
@@ -19,13 +19,13 @@ For example, under a time constraint, we can take PxP phase rules as an overview
 
 CLI Usage
 ------------------------
-Generate rules for apk with the following command::
+Generate rules for APK with the following command::
 
-    $ Quark -a <sample path> --generate-rule <generated rule directory path>
+    $ quark -a <sample path> --generate-rule <generated rule directory path>
 
 Generate rules and web editor with the following command::
 
-    $ Quark -a <sample path> --generate-rule <generated rule directory path> -w <report file path>
+    $ quark -a <sample path> --generate-rule <generated rule directory path> -w <web editor file name>
 
 
 API Usage
@@ -51,7 +51,7 @@ Web Editor Tutorial
 -----------------------------------
 
 Here is the demo for the rule generation web editor.
-You can easily review and edit generated rules with 4 steps:
+You can easily review and edit generated rules with 5 steps:
 
 1. Input keywords to search rules.
 2. Select the generated rules you want to save.
