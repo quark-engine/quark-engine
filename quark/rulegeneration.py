@@ -17,8 +17,7 @@ class RuleGeneration:
         self.quark = Quark(apk)
         self.apkinfo = self.quark.apkinfo
         self.output_dir = output_dir
-        self.first_api_set, _ = self.api_filter()
-        self.second_api_set = self.first_api_set.copy()
+        self.first_api_set, self.second_api_set = self.api_filter()
         
         return
 
@@ -70,15 +69,15 @@ class RuleGeneration:
 
         if stage == 1:
             first_apis_pool = list(self.first_api_set)
-            second_apis_pool = list(self.second_api_set)
+            second_apis_pool = list(self.first_api_set)
         elif stage == 2:
             first_apis_pool = list(self.first_api_set)
             second_apis_pool = list(self.second_api_set)
         elif stage == 3:
-            first_apis_pool = list(self.first_api_set)
-            second_apis_pool = list(self.second_api_set)
+            first_apis_pool = list(self.second_api_set)
+            second_apis_pool = list(self.first_api_set)
         elif stage == 4:
-            first_apis_pool = list(self.first_api_set)
+            first_apis_pool = list(self.second_api_set)
             second_apis_pool = list(self.second_api_set)
         elif stage == 0:
             first_apis_pool = list(self.first_api_set) + \
