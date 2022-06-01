@@ -13,6 +13,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
@@ -39,6 +40,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install_index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rule_generation.html">Rule Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_index.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
@@ -144,6 +146,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject.api">api (quark.core.struct.ruleobject.RuleObject property)</a>
 </li>
+      <li><a href="quark.html#quark.rulegeneration.RuleGeneration.api_filter">api_filter() (quark.rulegeneration.RuleGeneration method)</a>
+</li>
       <li><a href="quark.core.html#quark.core.apkinfo.AndroguardImp.apk">apk (quark.core.apkinfo.AndroguardImp attribute)</a>
 
       <ul>
@@ -236,10 +240,10 @@
 </li>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.CONST">CONST() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.CONST_CLASS">CONST_CLASS() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.CONST_FOUR">CONST_FOUR() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.CONST_HIGHSIXTEEN">CONST_HIGHSIXTEEN() (quark.evaluator.pyeval.PyEval method)</a>
@@ -264,6 +268,8 @@
         <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp.core_library">(quark.core.rzapkinfo.RizinImp attribute)</a>
 </li>
       </ul></li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.count_confidence_rule_number">count_confidence_rule_number() (in module quark.webreport.generate)</a>
+</li>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject.crime">crime (quark.core.struct.ruleobject.RuleObject property)</a>
 </li>
       <li><a href="quark.core.html#quark.core.analysis.QuarkAnalysis.crime_description">crime_description (quark.core.analysis.QuarkAnalysis attribute)</a>
@@ -358,7 +364,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.html#quark.core.quark.Quark.generate_json_report">generate_json_report() (quark.core.quark.Quark method)</a>
 </li>
+      <li><a href="quark.html#quark.rulegeneration.RuleGeneration.generate_rule">generate_rule() (quark.rulegeneration.RuleGeneration method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.get_all_labels">get_all_labels() (in module quark.webreport.generate)</a>
+</li>
       <li><a href="quark.forensic.html#quark.forensic.forensic.Forensic.get_all_strings">get_all_strings() (quark.forensic.forensic.Forensic method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.get_analysis_report_html">get_analysis_report_html() (quark.webreport.generate.ReportGenerator method)</a>
 </li>
       <li><a href="quark.forensic.html#quark.forensic.forensic.Forensic.get_android_api">get_android_api() (quark.forensic.forensic.Forensic method)</a>
 </li>
@@ -374,9 +386,13 @@
 </li>
       <li><a href="quark.forensic.html#quark.forensic.vt_analysis.VTAnalysis.get_file_md5">get_file_md5() (quark.forensic.vt_analysis.VTAnalysis method)</a>
 </li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.get_five_stages_labels">get_five_stages_labels() (in module quark.webreport.generate)</a>
+</li>
       <li><a href="quark.forensic.html#quark.forensic.forensic.Forensic.get_ip">get_ip() (quark.forensic.forensic.Forensic method)</a>
 </li>
       <li><a href="quark.core.html#quark.core.quark.Quark.get_json_report">get_json_report() (quark.core.quark.Quark method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.get_json_report_html">get_json_report_html() (in module quark.webreport.generate)</a>
 </li>
       <li><a href="quark.core.html#quark.core.apkinfo.AndroguardImp.get_method_bytecode">get_method_bytecode() (quark.core.apkinfo.AndroguardImp method)</a>
 
@@ -386,15 +402,17 @@
         <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp.get_method_bytecode">(quark.core.rzapkinfo.RizinImp method)</a>
 </li>
       </ul></li>
-      <li><a href="quark.core.struct.html#quark.core.struct.tableobject.TableObject.get_obj_list">get_obj_list() (quark.core.struct.tableobject.TableObject method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.core.struct.html#quark.core.struct.tableobject.TableObject.get_obj_list">get_obj_list() (quark.core.struct.tableobject.TableObject method)</a>
+</li>
       <li><a href="quark.html#quark.report.Report.get_report">get_report() (quark.report.Report method)</a>
 </li>
       <li><a href="quark.forensic.html#quark.forensic.vt_analysis.VTAnalysis.get_reports">get_reports() (quark.forensic.vt_analysis.VTAnalysis method)</a>
 </li>
       <li><a href="quark.utils.html#quark.utils.output.get_rule_classification_data">get_rule_classification_data() (in module quark.utils.output)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.get_rule_generate_editor_html">get_rule_generate_editor_html() (quark.webreport.generate.ReportGenerator method)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject.get_score">get_score() (quark.core.struct.ruleobject.RuleObject method)</a>
 </li>
@@ -450,14 +468,22 @@
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.tableobject.TableObject.insert">insert() (quark.core.struct.tableobject.TableObject method)</a>
 </li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_genrule_report_html">insert_genrule_report_html() (quark.webreport.generate.ReportGenerator method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_radarechart_html">insert_radarechart_html() (quark.webreport.generate.ReportGenerator method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_report_html">insert_report_html() (quark.webreport.generate.ReportGenerator method)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_sample_information_html">insert_sample_information_html() (quark.webreport.generate.ReportGenerator method)</a>
+</li>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.INVOKE_CUSTOM">INVOKE_CUSTOM() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.INVOKE_DIRECT">INVOKE_DIRECT() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.INVOKE_INTERFACE">INVOKE_INTERFACE() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.INVOKE_POLYMORPHIC">INVOKE_POLYMORPHIC() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
       <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.INVOKE_STATIC">INVOKE_STATIC() (quark.evaluator.pyeval.PyEval method)</a>
@@ -531,7 +557,11 @@
       <li><a href="quark.core.interface.html#quark.core.interface.baseapkinfo.BaseApkinfo.md5">md5 (quark.core.interface.baseapkinfo.BaseApkinfo property)</a>
 </li>
       <li><a href="quark.core.html#quark.core.quark.Quark.method_recursive_search">method_recursive_search() (quark.core.quark.Quark method)</a>
+
+      <ul>
+        <li><a href="quark.html#quark.radiocontrast.RadioContrast.method_recursive_search">(quark.radiocontrast.RadioContrast method)</a>
 </li>
+      </ul></li>
       <li><a href="quark.core.struct.html#quark.core.struct.methodobject.MethodObject">MethodObject (class in quark.core.struct.methodobject)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.bytecodeobject.BytecodeObject.mnemonic">mnemonic (quark.core.struct.bytecodeobject.BytecodeObject property)</a>
@@ -592,7 +622,11 @@
 </li>
         <li><a href="quark.html#module-quark.logo">quark.logo</a>
 </li>
+        <li><a href="quark.html#module-quark.radiocontrast">quark.radiocontrast</a>
+</li>
         <li><a href="quark.html#module-quark.report">quark.report</a>
+</li>
+        <li><a href="quark.html#module-quark.rulegeneration">quark.rulegeneration</a>
 </li>
         <li><a href="quark.utils.html#module-quark.utils">quark.utils</a>
 </li>
@@ -609,6 +643,10 @@
         <li><a href="quark.utils.html#module-quark.utils.tools">quark.utils.tools</a>
 </li>
         <li><a href="quark.utils.html#module-quark.utils.weight">quark.utils.weight</a>
+</li>
+        <li><a href="quark.webreport.html#module-quark.webreport">quark.webreport</a>
+</li>
+        <li><a href="quark.webreport.html#module-quark.webreport.generate">quark.webreport.generate</a>
 </li>
       </ul></li>
   </ul></td>
@@ -814,8 +852,6 @@
         <li><a href="quark.core.struct.html#module-quark.core.struct.ruleobject">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.core.struct.tableobject
 
@@ -830,6 +866,8 @@
         <li><a href="quark.evaluator.html#module-quark.evaluator">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.evaluator.pyeval
 
@@ -873,10 +911,24 @@
 </li>
       </ul></li>
       <li>
+    quark.radiocontrast
+
+      <ul>
+        <li><a href="quark.html#module-quark.radiocontrast">module</a>
+</li>
+      </ul></li>
+      <li>
     quark.report
 
       <ul>
         <li><a href="quark.html#module-quark.report">module</a>
+</li>
+      </ul></li>
+      <li>
+    quark.rulegeneration
+
+      <ul>
+        <li><a href="quark.html#module-quark.rulegeneration">module</a>
 </li>
       </ul></li>
       <li>
@@ -935,6 +987,20 @@
         <li><a href="quark.utils.html#module-quark.utils.weight">module</a>
 </li>
       </ul></li>
+      <li>
+    quark.webreport
+
+      <ul>
+        <li><a href="quark.webreport.html#module-quark.webreport">module</a>
+</li>
+      </ul></li>
+      <li>
+    quark.webreport.generate
+
+      <ul>
+        <li><a href="quark.webreport.html#module-quark.webreport.generate">module</a>
+</li>
+      </ul></li>
       <li><a href="quark.core.html#quark.core.analysis.QuarkAnalysis">QuarkAnalysis (class in quark.core.analysis)</a>
 </li>
   </ul></td>
@@ -943,6 +1009,8 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.html#quark.radiocontrast.RadioContrast">RadioContrast (class in quark.radiocontrast)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.colors.red">red() (in module quark.utils.colors)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.registerobject.RegisterObject.register_name">register_name (quark.core.struct.registerobject.RegisterObject property)</a>
@@ -954,6 +1022,8 @@
       <li><a href="quark.utils.html#quark.utils.tools.remove_dup_list">remove_dup_list() (in module quark.utils.tools)</a>
 </li>
       <li><a href="quark.html#quark.report.Report">Report (class in quark.report)</a>
+</li>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator">ReportGenerator (class in quark.webreport.generate)</a>
 </li>
       <li><a href="quark.core.axmlreader.html#quark.core.axmlreader.Res_value_type">Res_value_type (class in quark.core.axmlreader)</a>
 </li>
@@ -972,6 +1042,10 @@
       <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp">RizinImp (class in quark.core.rzapkinfo)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject.rule_filename">rule_filename (quark.core.struct.ruleobject.RuleObject attribute)</a>
+</li>
+      <li><a href="quark.html#quark.radiocontrast.RadioContrast.rule_generate">rule_generate() (quark.radiocontrast.RadioContrast method)</a>
+</li>
+      <li><a href="quark.html#quark.rulegeneration.RuleGeneration">RuleGeneration (class in quark.rulegeneration)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject">RuleObject (class in quark.core.struct.ruleobject)</a>
 </li>

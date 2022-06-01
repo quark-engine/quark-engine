@@ -14,6 +14,7 @@ from quark.core.parallelquark import ParallelQuark
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.logo import logo
+from quark.rulegeneration import RuleGeneration
 from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
 from quark.utils.pprint import print_info, print_success, print_warning
@@ -122,6 +123,13 @@ logo()
     is_flag=True,
 )
 @click.option(
+    "--generate-rule",
+    "rule_generation",
+    help="Generate rules and output to given directory",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True),
+    required=False,
+)
+@click.option(
     "--core-library",
     "core_library",
     help="Specify the core library used to analyze an APK",
@@ -141,6 +149,7 @@ logo()
 def entry_point(
     summary,
     detail,
+    rule_generation,
     apk,
     rule,
     output,
@@ -365,6 +374,17 @@ def entry_point(
         if graph:
             data.show_call_graph()
 
+    if rule_generation:
+        generator = RuleGeneration(apk[0], rule_generation)
+
+        if webreport:
+            if ".html" not in webreport:
+                webreport = f"{webreport}.html"
+            webreport_file = os.path.join(rule_generation, webreport)
+            generator.generate_rule(web_editor=webreport_file)
+        else:
+            generator.generate_rule()
+
     # Show JSON report
     if output:
         if isinstance(data, ParallelQuark):
@@ -384,18 +404,20 @@ def entry_point(
 
     # Generate web report
     if webreport:
-        for rule_checker in tqdm(rule_buffer_list):
-            data.generate_json_report(rule_checker)
+        if summary or detail:
+            for rule_checker in tqdm(rule_buffer_list):
+                data.generate_json_report(rule_checker)
 
-        json_report = data.get_json_report()
-        report_html = ReportGenerator(json_report).generate()
+            json_report = data.get_json_report()
+            report_html = ReportGenerator(
+                json_report).get_analysis_report_html()
 
-        if ".html" not in webreport:
-            webreport = f"{webreport}.html"
+            if ".html" not in webreport:
+                webreport = f"{webreport}.html"
 
-        with open(webreport, "w") as file:
-            file.write(report_html)
-            file.close()
+            with open(webreport, "w") as file:
+                file.write(report_html)
+                file.close()
 
     if list:
 
