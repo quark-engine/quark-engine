@@ -5,7 +5,7 @@ Rule Generation
 The Rule generation technique is based on the idea below:
 
 1. Sort all APIs used in an APK by their usage counts.
-2. Separate all APIs into two groups, P(20% least usage count) and S(other 80% APIs), by the Pareto principle (20-80 rule)
+2. Separate all APIs into two groups, P(20% least usage count) and S(other 80% APIs), by the Pareto principle (20-80 rule).
 3. Combine $P$ and $S$ into four different phases:
     - PxP
     - PxS 
@@ -37,7 +37,7 @@ And here is the simplest way for API usage:
 
     from quark.rulegeneration import RuleGeneration
 
-   # The target APK.
+    # The target APK.
     APK_PATH = "Ahmyth.apk"
 
     # The output directory for generated rules.
