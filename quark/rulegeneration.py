@@ -9,7 +9,8 @@ from quark.webreport.generate import ReportGenerator
 
 class RuleGeneration:
     """
-    This module is for generating rules with the APIs in a specific method.
+    This module is for generating rules with the APIs 
+    that are 20% least usage count in the given APK
     """
 
     def __init__(self, apk, output_dir):
@@ -62,6 +63,8 @@ class RuleGeneration:
         """
         Generate rules and export them to the output directory.
 
+        :param web_editor: The path of the web editor.
+        :param stage: The int for stage of rule generation.
         :return: None
         """
 
