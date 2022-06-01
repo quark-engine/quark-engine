@@ -2,6 +2,7 @@ import os
 import json
 
 from tqdm import tqdm
+from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
 
@@ -11,17 +12,13 @@ class RuleGeneration:
     This module is for generating rules with the APIs in a specific method.
     """
 
-    def __init__(self, quark, output_dir):
-        self.quark = quark
+    def __init__(self, apk, output_dir):
+        self.quark = Quark(apk)
         self.apkinfo = self.quark.apkinfo
         self.output_dir = output_dir
-        self.first_api_set = set()
-        self.second_api_set = set()
-
-        # Parse smali code into classname methodname and descriptor.
-
-        self.first_api_set, self.second_api_set = self.api_filter()
-
+        self.first_api_set, _ = self.api_filter()
+        self.second_api_set = self.first_api_set.copy()
+        
         return
 
     def api_filter(self, percentile_rank=0.2):
@@ -61,7 +58,7 @@ class RuleGeneration:
 
         return P_set, S_set
 
-    def generate_rule(self, web_report=None, stage=1):
+    def generate_rule(self, web_editor=None, stage=1):
         """
         Generate rules and export them to the output directory.
 
@@ -142,7 +139,7 @@ class RuleGeneration:
                 if not comb.check_item[4]:
                     continue
 
-                if web_report:
+                if web_editor:
                     generated_rule["number"] = rule_number
                     self.generated_result.append(generated_rule)
                     rule_number += 1
@@ -155,22 +152,22 @@ class RuleGeneration:
 
                     rule_number += 1
 
-        if web_report:
-            web_report_data = {
+        if web_editor:
+            web_editor_data = {
                 "apk_filename": self.quark.apkinfo.filename,
                 "md5": self.quark.apkinfo.md5,
                 "size_bytes": self.quark.apkinfo.filesize,
                 "result": self.generated_result
             }
 
-            report_html = ReportGenerator(
-                web_report_data).get_rule_generate_report_html()
+            editor_html = ReportGenerator(
+                web_editor_data).get_rule_generate_editor_html()
 
-            if ".html" not in web_report:
-                web_report = f"{web_report}.html"
+            if ".html" not in web_editor:
+                web_editor = f"{web_editor}.html"
 
-            with open(web_report, "w") as file:
-                file.write(report_html)
+            with open(web_editor, "w") as file:
+                file.write(editor_html)
                 file.close()
 
         # Clear progress bar

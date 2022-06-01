@@ -375,13 +375,13 @@ def entry_point(
             data.show_call_graph()
 
     if rule_generation:
-        generator = RuleGeneration(data, rule_generation)
+        generator = RuleGeneration(apk[0], rule_generation)
 
         if webreport:
             if ".html" not in webreport:
                 webreport = f"{webreport}.html"
             webreport_file = os.path.join(rule_generation, webreport)
-            generator.generate_rule(web_report=webreport_file)
+            generator.generate_rule(web_editor=webreport_file)
         else:
             generator.generate_rule()
 

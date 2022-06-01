@@ -26,7 +26,7 @@ class ReportGenerator:
             self.analysis_result_layout = file.read()
             file.close()
 
-    def get_rule_generate_report_html(self):
+    def get_rule_generate_editor_html(self):
         """
         Load the rule generation result
         and generate the HTML of the Quark web report.
