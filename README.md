@@ -162,11 +162,15 @@ TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"
 GENERATED_RULE_DIR = "~/generated_rules"
 
 radiocontrast = RadioContrast(
-    APK_PATH, 
-    TARGET_METHOD, 
-    GENERATED_RULE_DIR
+ APK_PATH, 
+ TARGET_METHOD, 
+ GENERATED_RULE_DIR
 )
-radiocontrast.rule_generate()
+
+# web_editor: the file path for generated rules web editor.
+# percentile_rank: the percentile number of api filter rank. 
+# For example, percentile_rank=0.2 filter the APIs that over 20% of used count
+radiocontrast.rule_generate(percentile_rank=0.2, web_editor="ahmyth.html")
 ```
 
 ### Web Report

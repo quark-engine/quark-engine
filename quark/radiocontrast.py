@@ -14,7 +14,7 @@ class RadioContrast:
     """
     This module is for generating rules with the APIs in a specific method.
     """
- 
+
     def __init__(self, apk_path, target_method, output_dir, max_search_layer=3):
         self.quark = Quark(apk_path)
         self.apkinfo = self.quark.apkinfo
