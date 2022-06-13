@@ -7,13 +7,14 @@ import json
 from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
+from quark.webreport.generate import ReportGenerator
 
 
 class RadioContrast:
     """
     This module is for generating rules with the APIs in a specific method.
     """
-
+ 
     def __init__(self, apk_path, target_method, output_dir, max_search_layer=3):
         self.quark = Quark(apk_path)
         self.apkinfo = self.quark.apkinfo
@@ -34,6 +35,45 @@ class RadioContrast:
         self.api_set = set()
         self.max_search_layer = max_search_layer
         return
+
+    def api_filter(self, percentile_rank):
+        """
+        Sorting APIs by the number of APIs used in APK,
+        and split APIs into P_set (less used number)
+        and S_set (more used number)
+        by percentile_rank (default 20%).
+
+        :param percentile_rank: The int for rank of percentile.
+        :return P_set: a set of APIs that less used.
+        :return S_set: a set of APIs that more used.
+        """
+        statistic_result = {}
+        str_statistic_result = {}
+
+        for api in self.api_set:
+            api_called_count = len(self.apkinfo.upperfunc(api))
+            if api_called_count > 0:
+                statistic_result[str(api)] = api_called_count
+                str_statistic_result[str(api)] = api
+
+        sorted_key = {k: v for k, v in sorted(
+            statistic_result.items(), key=lambda item: item[1])}
+        sorted_result = {k: v for k, v in sorted(sorted_key.items())}
+        sorted_result1 = dict(
+            sorted(sorted_result.items(), key=lambda x: x[1]))
+
+        threshold = len(self.api_set) * percentile_rank
+        P_set = []
+        S_set = []
+        self.api_set = []
+        for i, (api, _) in enumerate(sorted_result1.items()):
+            self.api_set.append(str_statistic_result[api])
+            if i < threshold:
+                P_set.append(str_statistic_result[api])
+                continue
+            S_set.append(str_statistic_result[api])
+
+        return P_set, S_set
 
     def method_recursive_search(self, method_set, depth=1):
         """
@@ -60,7 +100,7 @@ class RadioContrast:
 
             self.method_recursive_search(self.apkinfo.lowerfunc(md[0]), depth)
 
-    def rule_generate(self):
+    def rule_generate(self, percentile_rank=0.2, web_editor=None):
         """
         Generate rules and export them to the output directory.
 
@@ -69,6 +109,7 @@ class RadioContrast:
         # Rescursive search for apis in target method.
         lower_funcs = set(self.apkinfo.lowerfunc(self.method))
         self.method_recursive_search(lower_funcs)
+        self.api_set, _ = self.api_filter(percentile_rank=percentile_rank)
 
         first_apis_pool = list(self.api_set)
         second_apis_pool = list(self.api_set)
@@ -76,6 +117,8 @@ class RadioContrast:
         # Setup progress bar.
         second_api_pool_num = len(second_apis_pool)
         outter_loop = tqdm(first_apis_pool)
+
+        self.generated_result = list()
 
         # The number of rule file.
         rule_number = 1
@@ -125,6 +168,14 @@ class RadioContrast:
                     continue
 
                 if comb.check_item[4]:
+                    continue
+
+                if web_editor:
+                    generated_rule["number"] = rule_number
+                    self.generated_result.append(generated_rule)
+                    rule_number += 1
+
+                else:
                     rule_name = f"{rule_number}.json"
                     rule_path = os.path.join(self.output_dir, rule_name)
                     with open(rule_path, "w") as rule_file:
@@ -132,11 +183,25 @@ class RadioContrast:
 
                     rule_number += 1
 
+        if web_editor:
+            web_editor_data = {
+                "apk_filename": self.quark.apkinfo.filename,
+                "md5": self.quark.apkinfo.md5,
+                "size_bytes": self.quark.apkinfo.filesize,
+                "result": self.generated_result
+            }
+
+            editor_html = ReportGenerator(
+                web_editor_data).get_rule_generate_editor_html()
+
+            if ".html" not in web_editor:
+                web_editor = f"{web_editor}.html"
+
+            with open(web_editor, "w") as file:
+                file.write(editor_html)
+                file.close()
+
         # Clear progress bar
         outter_loop.clear()
         outter_loop.close()
         return
-
-
-if __name__ == "__main__":
-    pass
