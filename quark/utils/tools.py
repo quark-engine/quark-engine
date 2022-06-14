@@ -55,3 +55,42 @@ def descriptor_to_androguard_format(descriptor):
     new_descriptor = re.sub(r"\[ ", "[", new_descriptor)
 
     return new_descriptor
+
+
+def filter_api_by_usage_count(data, api_pool, percentile_rank=0.2):
+    """
+    Sorting APIs by the number of APIs used in APK,
+    and split APIs into P_set (less used number)
+    and S_set (more used number)
+    by percentile_rank (default 20%).
+
+    :param data: the object of apkinfo.
+    :param api_pool: the APIs list for rule generation.
+    :param percentile_rank: the int for rank of percentile.
+    :return P_set: a set of APIs that less used.
+    :return S_set: a set of APIs that more used.
+    """
+    statistic_result = {}
+    str_statistic_result = {}
+
+    for api in api_pool:
+        api_called_count = len(data.upperfunc(api))
+        if api_called_count > 0:
+            statistic_result[str(api)] = api_called_count
+            str_statistic_result[str(api)] = api
+
+    sorted_key = {k: v for k, v in sorted(
+        statistic_result.items(), key=lambda item: item[1])}
+    sorted_result = {k: v for k, v in sorted(sorted_key.items())}
+
+    threshold = len(api_pool) * percentile_rank
+    P_set = []
+    S_set = []
+
+    for i, (api, _) in enumerate(sorted_result.items()):
+        if i < threshold:
+            P_set.append(str_statistic_result[api])
+            continue
+        S_set.append(str_statistic_result[api])
+
+    return P_set, S_set

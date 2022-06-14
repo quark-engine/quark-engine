@@ -63,3 +63,41 @@ You can easily review and edit generated rules with 5 steps:
 5. Save the edited rule.
 
 .. image:: https://i.imgur.com/kIVIeCk.png
+
+
+Radiocontrast
+-----------------------------------
+Radiocontrast is a Quark API that quickly generates Quark rules from a specified method. It builds up 100% matched rules by using native APIs in that method. The feature lets you easily expose the behavior of a method, just like radiocontrast.
+
+For example, we want to know the behavior of a method called ``Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V,`` in Ahmyth.apk.
+Here is the simplest way for Radiocontrast usage:
+
+.. code-block:: python
+
+    from quark.radiocontrast import RadioContrast
+
+    # The target APK.
+    APK_PATH = "~/apk-malware-sample/Ahmyth.apk"
+
+    # The method that you want to generate rules. 
+    TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"
+
+    # The output directory for generated rules.
+    GENERATED_RULE_DIR = "~/generated_rules"
+
+    radiocontrast = RadioContrast(
+    APK_PATH, 
+    TARGET_METHOD, 
+    GENERATED_RULE_DIR
+    )
+
+    radiocontrast.generate_rule()
+
+Use web editor to manage generated rules, you can define the parameter ``web_editor`` in ``generate_rule()`` as the path of output html file::
+    
+    radiocontrast.generate_rule(web_editor="ahmyth.html")
+
+The parameter ``percentile_rank`` in ``generate_rule()`` as the percentile number of API filter rank.
+For example, if you want to keep the 20% least usage count APIs, set the percentile_rank as 0.2::
+    
+    radiocontrast.generate_rule(percentile_rank=0.2)

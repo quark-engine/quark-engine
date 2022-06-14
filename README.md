@@ -162,15 +162,16 @@ TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"
 GENERATED_RULE_DIR = "~/generated_rules"
 
 radiocontrast = RadioContrast(
-    APK_PATH, 
-    TARGET_METHOD, 
-    GENERATED_RULE_DIR
+ APK_PATH, 
+ TARGET_METHOD, 
+ GENERATED_RULE_DIR
 )
-radiocontrast.rule_generate()
+
+# param: web_editor: the file path for generated rules web editor.
+# param: percentile_rank: the percentile number of api filter rank. 
+#        For example, percentile_rank=0.2 use 20% least usage count APIs to generate rules
+radiocontrast.generate_rule(percentile_rank=0.2, web_editor="ahmyth.html")
 ```
-
-### Web Report
-
 
 ### Parallelizing Quark
 Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
