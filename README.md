@@ -170,7 +170,7 @@ radiocontrast = RadioContrast(
 # param: web_editor: the file path for generated rules web editor.
 # param: percentile_rank: the percentile number of api filter rank. 
 #        For example, percentile_rank=0.2 use 20% least usage count APIs to generate rules
-radiocontrast.rule_generate(percentile_rank=0.2, web_editor="ahmyth.html")
+radiocontrast.generate_rule(percentile_rank=0.2, web_editor="ahmyth.html")
 ```
 
 ### Parallelizing Quark

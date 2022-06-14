@@ -94,7 +94,13 @@ Here is the simplest way for Radiocontrast usage:
     GENERATED_RULE_DIR
     )
 
-    # web_editor: the file path for generated rules web editor.
-    # percentile_rank: the percentile number of api filter rank. 
-    # For example, percentile_rank=0.2 filter the APIs that over 20% of used count
-    radiocontrast.rule_generate(percentile_rank=0.2, web_editor="ahmyth.html")
+    radiocontrast.rule_generate()
+
+Use web editor to manage generated rules, you can define the parameter ``web_editor`` in ``rule_generate()`` as the path of output html file::
+    
+    radiocontrast.generate_rule(web_editor="ahmyth.html")
+
+The parameter ``percentile_rank`` in ``rule_generate()`` as the percentile number of api filter rank.
+For example, if you want to keep the 20% least usage count APIs, set the percentile_rank as 0.2::
+    
+    radiocontrast.generate_rule(percentile_rank=0.2)

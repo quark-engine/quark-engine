@@ -8,6 +8,7 @@ from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
+from quark.utils.tools import api_filter
 
 
 class RadioContrast:
@@ -36,45 +37,6 @@ class RadioContrast:
         self.max_search_layer = max_search_layer
         return
 
-    def api_filter(self, percentile_rank):
-        """
-        Sorting APIs by the number of APIs used in APK,
-        and split APIs into P_set (less used number)
-        and S_set (more used number)
-        by percentile_rank (default 20%).
-
-        :param percentile_rank: The int for rank of percentile.
-        :return P_set: a set of APIs that less used.
-        :return S_set: a set of APIs that more used.
-        """
-        statistic_result = {}
-        str_statistic_result = {}
-
-        for api in self.api_set:
-            api_called_count = len(self.apkinfo.upperfunc(api))
-            if api_called_count > 0:
-                statistic_result[str(api)] = api_called_count
-                str_statistic_result[str(api)] = api
-
-        sorted_key = {k: v for k, v in sorted(
-            statistic_result.items(), key=lambda item: item[1])}
-        sorted_result = {k: v for k, v in sorted(sorted_key.items())}
-        sorted_result1 = dict(
-            sorted(sorted_result.items(), key=lambda x: x[1]))
-
-        threshold = len(self.api_set) * percentile_rank
-        P_set = []
-        S_set = []
-        self.api_set = []
-        for i, (api, _) in enumerate(sorted_result1.items()):
-            self.api_set.append(str_statistic_result[api])
-            if i < threshold:
-                P_set.append(str_statistic_result[api])
-                continue
-            S_set.append(str_statistic_result[api])
-
-        return P_set, S_set
-
     def method_recursive_search(self, method_set, depth=1):
         """
         Find all APIs in the target method.
@@ -100,7 +62,7 @@ class RadioContrast:
 
             self.method_recursive_search(self.apkinfo.lowerfunc(md[0]), depth)
 
-    def rule_generate(self, percentile_rank=0.2, web_editor=None):
+    def generate_rule(self, percentile_rank=0.2, web_editor=None):
         """
         Generate rules and export them to the output directory.
 
@@ -109,7 +71,7 @@ class RadioContrast:
         # Rescursive search for apis in target method.
         lower_funcs = set(self.apkinfo.lowerfunc(self.method))
         self.method_recursive_search(lower_funcs)
-        self.api_set, _ = self.api_filter(percentile_rank=percentile_rank)
+        self.api_set, _ = api_filter(self.apkinfo, self.api_set, percentile_rank=percentile_rank)
 
         first_apis_pool = list(self.api_set)
         second_apis_pool = list(self.api_set)

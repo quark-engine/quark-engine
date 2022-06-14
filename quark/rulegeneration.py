@@ -5,7 +5,7 @@ from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
-
+from quark.utils.tools import api_filter
 
 class RuleGeneration:
     """
@@ -16,47 +16,11 @@ class RuleGeneration:
     def __init__(self, apk, output_dir):
         self.quark = Quark(apk)
         self.apkinfo = self.quark.apkinfo
+        self.api_set = self.apkinfo.android_apis
         self.output_dir = output_dir
-        self.first_api_set, self.second_api_set = self.api_filter()
+        self.first_api_set, self.second_api_set = api_filter(self.apkinfo, self.api_set, percentile_rank=0.2)
 
         return
-
-    def api_filter(self, percentile_rank=0.2):
-        """
-        Sorting APIs by the number of APIs used in APK,
-        and split APIs into P_set (less used number)
-        and S_set (more used number)
-        by percentile_rank (default 20%).
-
-        :param percentile_rank: The int for rank of percentile.
-        :return P_set: a set of APIs that less used.
-        :return S_set: a set of APIs that more used.
-        """
-        statistic_result = {}
-        str_statistic_result = {}
-        api_pool = self.apkinfo.android_apis
-
-        for api in api_pool:
-            api_called_count = len(self.apkinfo.upperfunc(api))
-            if api_called_count > 0:
-                statistic_result[str(api)] = api_called_count
-                str_statistic_result[str(api)] = api
-
-        sorted_key = {k: v for k, v in sorted(
-            statistic_result.items(), key=lambda item: item[1])}
-        sorted_result = {k: v for k, v in sorted(sorted_key.items())}
-
-        threshold = len(api_pool) * percentile_rank
-        P_set = []
-        S_set = []
-
-        for i, (api, _) in enumerate(sorted_result.items()):
-            if i < threshold:
-                P_set.append(str_statistic_result[api])
-                continue
-            S_set.append(str_statistic_result[api])
-
-        return P_set, S_set
 
     def generate_rule(self, web_editor=None, stage=1):
         """
