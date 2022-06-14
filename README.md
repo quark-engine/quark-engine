@@ -167,14 +167,11 @@ radiocontrast = RadioContrast(
  GENERATED_RULE_DIR
 )
 
-# web_editor: the file path for generated rules web editor.
-# percentile_rank: the percentile number of api filter rank. 
-# For example, percentile_rank=0.2 filter the APIs that over 20% of used count
+# param: web_editor: the file path for generated rules web editor.
+# param: percentile_rank: the percentile number of api filter rank. 
+#        For example, percentile_rank=0.2 use 20% least usage count APIs to generate rules
 radiocontrast.rule_generate(percentile_rank=0.2, web_editor="ahmyth.html")
 ```
-
-### Web Report
-
 
 ### Parallelizing Quark
 Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
