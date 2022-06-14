@@ -66,7 +66,7 @@ class RadioContrast:
         """
         Generate rules and export them to the output directory.
 
-        :param percentile_rank: The percentile rank 
+        :param percentile_rank: The percentile rank
                                 for filter APIs by used count.
         :param web_editor: The path of the web editor html file.
         :return: None
