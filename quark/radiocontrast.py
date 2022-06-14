@@ -66,14 +66,15 @@ class RadioContrast:
         """
         Generate rules and export them to the output directory.
 
-        :param percentile_rank: The percentile rank for filter APIs by used count.
+        :param percentile_rank: The percentile rank 
+                                for filter APIs by used count.
         :param web_editor: The path of the web editor html file.
         :return: None
         """
         # Rescursive search for apis in target method.
         lower_funcs = set(self.apkinfo.lowerfunc(self.method))
         self.method_recursive_search(lower_funcs)
-        self.api_set, _ = api_filter(
+        self.api_set, _ = filter_api_by_usage_count(
             self.apkinfo, self.api_set, percentile_rank=percentile_rank)
 
         first_apis_pool = list(self.api_set)

@@ -19,7 +19,7 @@ class RuleGeneration:
         self.apkinfo = self.quark.apkinfo
         self.api_set = self.apkinfo.android_apis
         self.output_dir = output_dir
-        self.first_api_set, self.second_api_set = api_filter(
+        self.first_api_set, self.second_api_set = filter_api_by_usage_count(
             self.apkinfo, self.api_set, percentile_rank=0.2)
 
         return
