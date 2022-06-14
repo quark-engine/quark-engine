@@ -57,14 +57,16 @@ def descriptor_to_androguard_format(descriptor):
     return new_descriptor
 
 
-def api_filter(data, api_pool, percentile_rank=0.2):
+def filter_api_by_usage_count(data, api_pool, percentile_rank=0.2):
     """
     Sorting APIs by the number of APIs used in APK,
     and split APIs into P_set (less used number)
     and S_set (more used number)
     by percentile_rank (default 20%).
 
-    :param percentile_rank: The int for rank of percentile.
+    :param data: the object of apkinfo.
+    :param api_pool: the APIs list for rule generation.
+    :param percentile_rank: the int for rank of percentile.
     :return P_set: a set of APIs that less used.
     :return S_set: a set of APIs that more used.
     """

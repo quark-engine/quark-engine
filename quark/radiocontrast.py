@@ -8,7 +8,7 @@ from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
-from quark.utils.tools import api_filter
+from quark.utils.tools import filter_api_by_usage_count
 
 
 class RadioContrast:
@@ -66,6 +66,8 @@ class RadioContrast:
         """
         Generate rules and export them to the output directory.
 
+        :param percentile_rank: The percentile rank for filter APIs by used count.
+        :param web_editor: The path of the web editor html file.
         :return: None
         """
         # Rescursive search for apis in target method.

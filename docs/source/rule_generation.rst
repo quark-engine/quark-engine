@@ -74,9 +74,6 @@ Here is the simplest way for Radiocontrast usage:
 
 .. code-block:: python
 
-    from quark.radiocontrast import Radiocontrast
-
-    # The target APK.
     from quark.radiocontrast import RadioContrast
 
     # The target APK.
@@ -94,13 +91,13 @@ Here is the simplest way for Radiocontrast usage:
     GENERATED_RULE_DIR
     )
 
-    radiocontrast.rule_generate()
+    radiocontrast.generate_rule()
 
-Use web editor to manage generated rules, you can define the parameter ``web_editor`` in ``rule_generate()`` as the path of output html file::
+Use web editor to manage generated rules, you can define the parameter ``web_editor`` in ``generate_rule()`` as the path of output html file::
     
     radiocontrast.generate_rule(web_editor="ahmyth.html")
 
-The parameter ``percentile_rank`` in ``rule_generate()`` as the percentile number of API filter rank.
+The parameter ``percentile_rank`` in ``generate_rule()`` as the percentile number of API filter rank.
 For example, if you want to keep the 20% least usage count APIs, set the percentile_rank as 0.2::
     
     radiocontrast.generate_rule(percentile_rank=0.2)

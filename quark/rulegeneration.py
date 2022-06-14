@@ -5,7 +5,7 @@ from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
-from quark.utils.tools import api_filter
+from quark.utils.tools import filter_api_by_usage_count
 
 
 class RuleGeneration:
