@@ -100,7 +100,7 @@ Use web editor to manage generated rules, you can define the parameter ``web_edi
     
     radiocontrast.generate_rule(web_editor="ahmyth.html")
 
-The parameter ``percentile_rank`` in ``rule_generate()`` as the percentile number of api filter rank.
+The parameter ``percentile_rank`` in ``rule_generate()`` as the percentile number of API filter rank.
 For example, if you want to keep the 20% least usage count APIs, set the percentile_rank as 0.2::
     
     radiocontrast.generate_rule(percentile_rank=0.2)
