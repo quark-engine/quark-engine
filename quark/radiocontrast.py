@@ -71,7 +71,8 @@ class RadioContrast:
         # Rescursive search for apis in target method.
         lower_funcs = set(self.apkinfo.lowerfunc(self.method))
         self.method_recursive_search(lower_funcs)
-        self.api_set, _ = api_filter(self.apkinfo, self.api_set, percentile_rank=percentile_rank)
+        self.api_set, _ = api_filter(
+            self.apkinfo, self.api_set, percentile_rank=percentile_rank)
 
         first_apis_pool = list(self.api_set)
         second_apis_pool = list(self.api_set)

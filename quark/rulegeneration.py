@@ -7,6 +7,7 @@ from quark.core.struct.ruleobject import RuleObject
 from quark.webreport.generate import ReportGenerator
 from quark.utils.tools import api_filter
 
+
 class RuleGeneration:
     """
     This module is for generating rules with the APIs
@@ -18,7 +19,8 @@ class RuleGeneration:
         self.apkinfo = self.quark.apkinfo
         self.api_set = self.apkinfo.android_apis
         self.output_dir = output_dir
-        self.first_api_set, self.second_api_set = api_filter(self.apkinfo, self.api_set, percentile_rank=0.2)
+        self.first_api_set, self.second_api_set = api_filter(
+            self.apkinfo, self.api_set, percentile_rank=0.2)
 
         return
 
