@@ -80,6 +80,37 @@ call graph, rules classification, summary report, label-based report, behaviors 
 
 ### Detail Report
 
+### Summary Report
+
+Examine with rules.
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
+```
+There is the possibility to select only one label to filter the rules:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s network
+```
+There is also the possibility to select only one rule:
+
+```bash
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s <path_to_the_rule>
+```
+
+<details>
+<summary>Result</summary>
+
+
+![](https://i.imgur.com/v7ehRW0.png)
+
+</details>
+
+Note that if you want to select the default rules of Quark, the path to the ruleset is `$HOME/.quark-engine/quark-rules/rules/`.
+
+
+### Detail Report
+
 This is how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
@@ -100,60 +131,6 @@ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d <path_to_the_rule>
 <summary>Result</summary>
 
 ![](https://i.imgur.com/LFLFpvc.png)
-
-</details>
-
-Note that if you want to select the default rules of Quark, the path to the ruleset is `$HOME/.quark-engine/quark-rules/rules/`.
-
-### Call Graph for Every Potential Malicious Activity
-You can add the `-g` option to the quark command, and you can
-get the call graph (only those rules match with 100% confidence)
-```bash
-quark -a Ahmyth.apk -s -g
-```
-
-<details>
-<summary>Result</summary>
-
-![](https://i.imgur.com/5xcrcdN.png)
-
-</details>
-
-### Rules Classification
-You can add the `-c` option to the quark command, and you can
-output the rules classification with the mutual parent function (only those rules match with 100% confidence).
-```bash
-quark -a Ahmyth.apk -s -c
-```
-
-<details>
-<summary>Result</summary>
-
-![](https://i.imgur.com/YTK8V1x.png)
-
-</details>
-
-### Summary Report
-Examine with rules.
-
-```bash
-quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
-```
-There is the possibility to select only one label to filter the rules:
-
-```bash
-quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s network
-```
-There is also the possibility to select only one rule:
-
-```bash
-quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s <path_to_the_rule>
-```
-
-<details>
-<summary>Result</summary>
-
-![](https://i.imgur.com/v7ehRW0.png)
 
 </details>
 
@@ -184,6 +161,40 @@ quark -a first.apk -a second.apk -C
 <summary>Result</summary>
 
 ![](https://i.imgur.com/ClRWOei.png)
+
+</details>
+
+### Call Graph for Every Potential Malicious Activity
+
+You can add the `-g` option to the quark command, and you can
+get the call graph (only those rules match with 100% confidence)
+
+```bash
+quark -a Ahmyth.apk -s -g
+```
+
+<details>
+<summary>Result</summary>
+
+
+![](https://i.imgur.com/5xcrcdN.png)
+
+</details>
+
+### Rules Classification
+
+You can add the `-c` option to the quark command, and you can
+output the rules classification with the mutual parent function (only those rules match with 100% confidence).
+
+```bash
+quark -a Ahmyth.apk -s -c
+```
+
+<details>
+<summary>Result</summary>
+
+
+![](https://i.imgur.com/YTK8V1x.png)
 
 </details>
 
