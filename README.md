@@ -85,14 +85,6 @@ This is how we examine a real android malware (candy corn) with one single rule 
 ```bash
 $ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
 ```
-
-<details>
-<summary>Result</summary>
-
-![](https://i.imgur.com/LFLFpvc.png)
-
-</details>
-
 There is the possibility to select only one label to filter the rules:
 
 ```bash
@@ -103,6 +95,14 @@ There is also the possibility to select only one rule:
 ```bash
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d <path_to_the_rule>
 ```
+
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/LFLFpvc.png)
+
+</details>
+
 Note that if you want to select the default rules of Quark, the path to the ruleset is `$HOME/.quark-engine/quark-rules/rules/`.
 
 ### Call Graph for Every Potential Malicious Activity
@@ -139,13 +139,6 @@ Examine with rules.
 ```bash
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
-<details>
-<summary>Result</summary>
-
-![](https://i.imgur.com/v7ehRW0.png)
-
-</details>
-
 There is the possibility to select only one label to filter the rules:
 
 ```bash
@@ -156,6 +149,14 @@ There is also the possibility to select only one rule:
 ```bash
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s <path_to_the_rule>
 ```
+
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/v7ehRW0.png)
+
+</details>
+
 Note that if you want to select the default rules of Quark, the path to the ruleset is `$HOME/.quark-engine/quark-rules/rules/`.
 
 ### Label-based Report
