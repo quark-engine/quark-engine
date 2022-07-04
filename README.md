@@ -26,8 +26,8 @@
     <a href="https://pypi.org/project/quark-engine/">
         <img alt="PyPi Download" src="https://pepy.tech/badge/quark-engine">
     </a><br>
-    <a href="https://t.me/joinchat/HrOyhhipvoFjOYc7mc941w">
-        <img alt="Telegram" src="https://img.shields.io/badge/telegram-eff?logo=telegram">
+    <a href="https://twitter.com/quarkengine">
+        <img alt="Twitter" src="https://img.shields.io/twitter/follow/quarkengine?style=social">
     </a><br>
     <b> An Obfuscation-Neglect Android Malware Scoring System</b>
     <img src="https://i.imgur.com/8GwkWei.png"/>
