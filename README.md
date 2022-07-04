@@ -74,11 +74,22 @@ Our Dalvik bytecode loader consists of functionalities such as 1. Finding cross 
 
 ## Easy to Use and Reading Friendly Report
 
-Quark is very easy to use and also provides flexible output formats. There are 6 types of output reports: detail report,
-call graph, rules classification, summary report, label-based report, behaviors comparison radar chart. Please see below for more details.
+Quark provides **7 flexible report formats** and **2 powerful features** to boost your analysis.
 
+7 Types of Report Formats:
+  + [Summary Report](https://github.com/quark-engine/quark-engine#summary-report)
+  + [Detail Report](https://github.com/quark-engine/quark-engine#detail-report)
+  + [Web Report](https://github.com/quark-engine/quark-engine#quark-web-report)
+  + [Label-based Report](https://github.com/quark-engine/quark-engine#label-based-report)
+  + [Behaviors Comparison Radar Chart](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
+  + [Call Graph](https://github.com/quark-engine/quark-engine#call-graph-for-every-potential-malicious-activity)
+  + [Rule Classification](https://github.com/quark-engine/quark-engine#rules-classification)
 
-### Detail Report
+2 Features to Boost Your Analysis:
+  + [Radiocontrast](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
+  + [Parallelizing Quark](https://github.com/quark-engine/quark-engine#parallelizing-quark)
+
+Please see below for more details.
 
 ### Summary Report
 
