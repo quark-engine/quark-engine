@@ -245,9 +245,8 @@ quark -a Ahmyth.apk -s --core-library rizin
 $ pip3 install -U quark-engine
 ```
 
-### Get the latest quark rules from our [quark-rules](https://github.com/quark-engine/quark-rules) repo
-
-Now you can download the quark-rules to your home directory with a simple command.
+### Get the Latest Rules
+Now you can download [the Quark official ruleset](https://github.com/quark-engine/quark-rules) to your home directory with a simple command.
 
 ```bash
 $ freshquark
