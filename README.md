@@ -83,7 +83,7 @@ call graph, rules classification, summary report, label-based report, behaviors 
 This is how we examine a real android malware (candy corn) with one single rule (crime).
 
 ```bash
-$ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
+quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
 ```
 There is the possibility to select only one label to filter the rules:
 
