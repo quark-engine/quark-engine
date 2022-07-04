@@ -91,6 +91,39 @@ Quark provides **7 flexible report formats** and **2 powerful features** to boos
 
 Please see below for more details.
 
+## Quick Start
+
+### Requirements
+-   Python 3.8+
+-   git
+-   graphviz
+-   click >= 8.0.1 (For CLI supports)
+
+### Installation
+
+```bash
+$ pip3 install -U quark-engine
+```
+
+### Get the Latest Rules
+Now you can download [the Quark official ruleset](https://github.com/quark-engine/quark-rules) to your home directory with a simple command.
+
+```bash
+$ freshquark
+```
+
+Check `--help` to see the detailed usage description.
+
+```bash
+$ quark --help
+```
+
+### Test It Out
+
+You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
+
+## Available Report or Features
+
 ### Summary Report
 
 Examine with rules.
@@ -252,37 +285,6 @@ Now Quark also supports [Rizin](https://github.com/rizinorg/rizin) as one of our
 ```bash
 quark -a Ahmyth.apk -s --core-library rizin
 ```
-
-## QuickStart
-
-### Requirements
--   Python 3.8+
--   git
--   graphviz
--   click >= 8.0.1 (For CLI supports)
-
-### Installation
-
-```bash
-$ pip3 install -U quark-engine
-```
-
-### Get the Latest Rules
-Now you can download [the Quark official ruleset](https://github.com/quark-engine/quark-rules) to your home directory with a simple command.
-
-```bash
-$ freshquark
-```
-
-Check `--help` to see the detailed usage description.
-
-```bash
-$ quark --help
-```
-
-### Test It Out
-
-You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
 
 ## Acknowledgments
 
