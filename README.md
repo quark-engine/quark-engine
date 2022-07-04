@@ -49,6 +49,11 @@ quark -a sample.apk -s -w quark_report.html
 
 ![](https://i.imgur.com/hG3Ag8t.png)
 
+## Navigate the Rules
+To navigate the latest rules for Quark, please visit the [Detection Rules Viewer](https://quark-engine.github.io/ruleviewer/)! In this viewer, you can use labels and keywords to search for the rules you need.
+
+![An illustration of the rule viewer](https://camo.githubusercontent.com/d2218ac92c2f4bff21dad45ddd693f1e2d61cc173fb89d4ce17c727d8375b379/68747470733a2f2f692e696d6775722e636f6d2f626f44535862662e676966)
+
 ## Why Quark?
 
 Android malware analysis engine is not a new story. Every antivirus company has their own secrets to build it. With curiosity, we develop a malware scoring system from the perspective of Taiwan Criminal Law in an easy but solid way.
