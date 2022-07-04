@@ -52,7 +52,13 @@ quark -a sample.apk -s -w quark_report.html
 ## Navigate the Rules
 To navigate the latest rules for Quark, please visit the [Detection Rules Viewer](https://quark-engine.github.io/ruleviewer/)! In this viewer, you can use labels and keywords to search for the rules you need.
 
+<details>
+<summary>Illustration</summary>
+
 ![An illustration of the rule viewer](https://camo.githubusercontent.com/d2218ac92c2f4bff21dad45ddd693f1e2d61cc173fb89d4ce17c727d8375b379/68747470733a2f2f692e696d6775722e636f6d2f626f44535862662e676966)
+
+</details>
+
 
 ## Why Quark?
 
@@ -80,9 +86,12 @@ This is how we examine a real android malware (candy corn) with one single rule 
 $ quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -d
 ```
 
-and the report will look like:
+<details>
+<summary>Result</summary>
 
-<img src="https://i.imgur.com/g28N7qk.png"/>
+![](https://i.imgur.com/LFLFpvc.png)
+
+</details>
 
 There is the possibility to select only one label to filter the rules:
 
@@ -102,7 +111,13 @@ get the call graph (only those rules match with 100% confidence)
 ```bash
 quark -a Ahmyth.apk -s -g
 ```
-<img src="https://i.imgur.com/5xcrcdN.png"/>
+
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/5xcrcdN.png)
+
+</details>
 
 ### Rules Classification
 You can add the `-c` option to the quark command, and you can
@@ -110,7 +125,13 @@ output the rules classification with the mutual parent function (only those rule
 ```bash
 quark -a Ahmyth.apk -s -c
 ```
-<img src="https://i.imgur.com/YTK8V1x.png"/>
+
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/YTK8V1x.png)
+
+</details>
 
 ### Summary Report
 Examine with rules.
@@ -118,7 +139,12 @@ Examine with rules.
 ```bash
 quark -a 14d9f1a92dd984d6040cc41ed06e273e.apk -s
 ```
-<img src="https://i.imgur.com/v7ehRW0.png"/>
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/v7ehRW0.png)
+
+</details>
 
 There is the possibility to select only one label to filter the rules:
 
@@ -138,7 +164,12 @@ Check which topic (indicated by [labels](https://github.com/quark-engine/quark-r
 ```bash
 quark -a Ahmyth.apk -l detailed
 ```
-<img src="https://i.imgur.com/0GbBDfn.png"/>
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/0GbBDfn.png)
+
+</details>
 
 ### Behaviors Comparison Radar Chart
 With the following command, you can compare different APK actions based on the max confidence of rule labels and generate
@@ -148,7 +179,12 @@ a radar chart.
 quark -a first.apk -a second.apk -C
 ```
 
-<img src="https://i.imgur.com/ClRWOei.png"/>
+<details>
+<summary>Result</summary>
+
+![](https://i.imgur.com/ClRWOei.png)
+
+</details>
 
 ### Radiocontrast
 Radiocontrast is a Quark API that quickly generates Quark rules from a specified method. It builds up 100% matched rules by using native APIs in that method. The feature lets you easily expose the behavior of a method, just like radiocontrast.
@@ -182,7 +218,7 @@ radiocontrast.generate_rule(percentile_rank=0.2, web_editor="ahmyth.html")
 ### Parallelizing Quark
 Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
 
-**Note:** Quark-Engine automatically limits this value to be less than or equal to the number of CPUs - 1. This restriction is done to avoid the CPU from running out of memory. 
+Note that Quark-Engine automatically limits this value to be less than or equal to the number of CPUs - 1. This restriction is done to avoid the CPU from running out of memory. 
 
 ```bash
 quark -a Ahmyth.apk -s --multi-process 4
