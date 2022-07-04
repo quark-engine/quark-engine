@@ -225,7 +225,7 @@ Note that Quark-Engine automatically limits this value to be less than or equal 
 quark -a Ahmyth.apk -s --multi-process 4
 ```
 
-### Upcoming unstable feature
+### Upcoming Unstable Feature
 Now Quark also supports [Rizin](https://github.com/rizinorg/rizin) as one of our Android analysis frameworks. You can use option `--core-library` with `rizin` to enable the Rizin-based analysis library.
 ```bash
 quark -a Ahmyth.apk -s --core-library rizin
