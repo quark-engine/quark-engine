@@ -136,8 +136,7 @@ class QuarkResult:
         self.quark.run(ruleInstance)
         self.rule = ruleInstance
 
-        # * 將 quark.quark_analysis 替換成新的 analysi
-        # TODO - 令 Quark 每次分析使用新的 QarkAnalysis 物件
+        # Reset the Quark object
         self.innerObj = self.quark.quark_analysis
         self.quark.quark_analysis = QuarkAnalysis()
 

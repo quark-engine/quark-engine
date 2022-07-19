@@ -89,18 +89,3 @@ class Objection:
         }
 
         self._sendRequest(ENDPOINT, data)
-
-    # def get_jobs(self) -> dict:
-    #     ENDPOINT = "jobsGet"
-    #     response = self._sendRequest(ENDPOINT)
-
-    #     return None if response[0] != requests.codes.ok else response[1]
-
-    # def kill_job(self, ident: Union[str, int]) -> bool:
-    #     if isinstance(ident, int):
-    #         ident = f"{ident:06}"
-
-    #     ENDPOINT = "jobsKill"
-    #     data = {"ident": ident}
-
-    #     return self._sendRequest(ENDPOINT, data)[0] == requests.codes.ok
