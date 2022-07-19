@@ -401,7 +401,7 @@ class TestQuark:
             source_str, pattern_list, keyword_item_list
         )
 
-        assert result is False
+        assert bool(result) is False
 
     def test_check_parameter_values_with_matched_str(self, simple_quark_obj):
         source_str = (
@@ -420,13 +420,13 @@ class TestQuark:
             " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
             " Ljava/lang/String;)Landroid/database/Cursor;",
         )
-        keyword_item_list = [("content://call_log/calls")]
+        keyword_item_list = [("content://call_log/calls",)]
 
         result = simple_quark_obj.check_parameter_values(
             source_str, pattern_list, keyword_item_list
         )
 
-        assert result is True
+        assert bool(result) is True
 
     def test_get_json_report(self, quark_obj):
         json_report = quark_obj.get_json_report()

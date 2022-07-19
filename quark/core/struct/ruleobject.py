@@ -4,6 +4,7 @@
 
 import json
 import os
+
 from quark.utils.tools import descriptor_to_androguard_format
 
 
@@ -21,19 +22,20 @@ class RuleObject:
         "_label",
     ]
 
-    def __init__(self, json_filename, json_data=None):
-        """
-        According to customized JSON rules, calculate the weighted score and assessing the stages of the crime.
+    def __init__(self, ruleJson: os.PathLike, jsonData: dict = None) -> None:
+        """Making detection rule a rule instance
 
-        :param json_filename:
+        :param ruleJson: Path of a single Quark rule
+        :param jsonData: Dictionary to directly assign to the content of this
+         Quark rule, defaults to None
         """
         # the state of five stages
         self.check_item = [False, False, False, False, False]
 
-        if json_data is not None:
-            self._json_obj = json_data
+        if jsonData is not None:
+            self._json_obj = jsonData
         else:
-            with open(json_filename) as json_file:
+            with open(ruleJson) as json_file:
                 self._json_obj = json.loads(json_file.read())
 
         self._crime = self._json_obj["crime"]
@@ -48,7 +50,7 @@ class RuleObject:
                 ] = descriptor_to_androguard_format(descriptor)
 
         self._score = self._json_obj["score"]
-        self.rule_filename = os.path.basename(json_filename)
+        self.rule_filename = os.path.basename(ruleJson)
         self._label = self._json_obj["label"]
 
     def __repr__(self):
@@ -111,7 +113,7 @@ class RuleObject:
         """
         if confidence == 0:
             return 0
-        return (2 ** (confidence - 1) * self._score) / 2 ** 4
+        return (2 ** (confidence - 1) * self._score) / 2**4
 
 
 if __name__ == "__main__":
