@@ -228,12 +228,12 @@ class Quark:
 
         :param usage_table: the usage of the involved registers
         :param first_method: the first API or the method calling the first APIs
-        :param second_method: the second API or the method calling the second 
-        APIs
-        :param keyword_item_list: keywords required to be present in the usage 
-        , defaults to None
-        :param regex: treat the keywords as regular expressions, defaults to 
-        False
+        :param second_method: the second API or the method calling the second
+         APIs
+        :param keyword_item_list: keywords required to be present in the usage
+         , defaults to None
+        :param regex: treat the keywords as regular expressions, defaults to
+         False
         :yield: _description_
         """
         first_method_pattern = (
@@ -359,9 +359,6 @@ class Quark:
                     )
 
                     state = True
-
-                # if "onCallStateChanged" in parent_function.full_name and "getMaxSystemAudio" in first_call_method.full_name and "setSystemAudioMax" in second_call_method.full_name:
-                #     print("Hit")
 
         return state
 
