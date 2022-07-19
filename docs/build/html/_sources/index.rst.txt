@@ -19,6 +19,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    :caption: Contents:
 
    install_index
+   quark_script
    addRules
    rule_generation
    integration
