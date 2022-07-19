@@ -35,81 +35,140 @@
 
 Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-listing), [BlackArch](https://blackarch.org/mobile.html).
 :shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. <https://twitter.com/quarkengine>
-# Quark Script - Ecosystem for Mobile Security Tools
-### Innovative & Interactive
+
+## Quark Script - Ecosystem for Mobile Security Tools
+
+#### Innovative & Interactive
 The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or pentest the targets.
 
 Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to __interact__ with staged results and perform __creative__ analysis with Quark Script.
 
-### Dynamic & Static Analysis
+#### Dynamic & Static Analysis
 In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).  
 
-### Re-Usable & Sharable
+#### Re-Usable & Sharable
 Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges. 
 
-### More APIs to come
+#### More APIs to come
 Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.  
 
-## Introduce of Quark Script APIs
+### Introduce of Quark Script APIs
 
-### Rule(rule.json)
+<details>
+<summary><b>  Rule(rule.json) </b></summary>
+
+<br>
+
 * Description: Making detection rule a rule instance
 * params: Path of a single Quark rule
 * return: Quark rule instance
 
-### runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+</details>
+
+<details>
+<summary><b>  runQuarkAnalysis(SAMPLE_PATH, ruleInstance) </b></summary>
+
+<br>
+
 * Description: Given detection rule and target sample, this instance runs the basic Quark analysis.
 * params: 1. Target file 2. Quark rule object
 * return: quarkResult instance
 
-### quarkResultInstance.behaviorOccurList
+</details>
+<details>
+<summary><b>  quarkResultInstance.behaviorOccurList </b></summary>
+
+<br>
+
 * Description: List that stores instances of detected behavior in different part of the target file.
 * params: none
 * return: detected behavior instance
 
-### behaviorInstance.firstAPI.fullName
+</details>
+<details>
+<summary><b>  behaviorInstance.firstAPI.fullName </b></summary>
+
+<br>
+
 * Description: Show the name of the first key API called in this behavior.
 * params: none
 * return: API name
 
-### behaviorInstance.secondAPI.fullName
+</details>
+<details>
+<summary><b>  behaviorInstance.secondAPI.fullName </b></summary>
+
+<br>
+
 * Description: Show the name of the second key API called in this behavior.
 * params: none
 * return: API name
 
-### behaviorInstance.hasUrl(none)
+</details>
+<details>
+<summary><b>  behaviorInstance.hasUrl(none) </b></summary>
+
+<br>
+
 * Description: Check if the behavior contains urls.
 * params: none
 * return: python list containing all detected urls.
 
-### behaviorInstance.methodCaller
+</details>
+<details>
+<summary><b>  behaviorInstance.methodCaller </b></summary>
+
+<br>
+
 * Description: Find method who calls this behavior (API1 & API2).
 * params: none
 * return: method instance 
 
-### methodInstance.getXrefFrom(none)
+</details>
+<details>
+<summary><b>  methodInstance.getXrefFrom(none) </b></summary>
+
+<br>
+
 * Description: Find out who call this method.
 * params: none
 * return: python list containing caller methods.
 
-### methodInstance.getXrefTo(none)
+</details>
+<details>
+<summary><b>  methodInstance.getXrefTo(none) </b></summary>
+
+<br>
+
 * Description: Find out who this method called.
 * params: none
 * return: python list containing tuples (callee methods, index).
 
-### Objection(none)
+</details>
+<details>
+<summary><b>  Objection(none) </b></summary>
+
+<br>
+
 * Description: Create an instance for Objection (dynamic analysis tool). 
 * params: Monitoring IP:port
 * return: objection instance
 
-### objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet)
+</details>
+<details>
+<summary><b> objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet) </b></summary>
+
+<br>
+
 * Description: Hook the target method with Objection.
 * params: 1. method: the tagrget API. (type: str or method instance) 2. watchArgs: Return Args information if True. (type: boolean) 3. watchBacktrace: Return backtrace information if True. (type: boolean) 4. watchRet: Return the return information of the target API if True (type: boolean).
 * return: none
 
-## Analyzing real case (InstaStealer) using Quark Script
+</details>
 
-### Quark Script that dynamic hooks the method containing urls 
+### Analyzing real case (InstaStealer) using Quark Script
+
+#### Quark Script that dynamic hooks the method containing urls 
 The scenario is simple! We'd like to dynamic hooking the methods in the malware that contains urls. We can use APIs above to write Quark Script.
 
 ```python
@@ -164,13 +223,13 @@ print("\nSee the hook results in Objection's terminal.")
 > 3. Or a rooted Android Device (Google Pixel 6) with frida installed.\
 Check the root guideline [here](https://forum.xda-developers.com/t/guide-root-pixel-6-with-magisk-android-12-1.4388733/), frida install guideline is the [same](https://frida.re/docs/android/) with Android Virtual Machine.
 
-### Quark Script Result
+#### Quark Script Result
 ![](https://i.imgur.com/elztZdC.png)
 
-### Logs on the Objection terminal (hooking)
+#### Logs on the Objection terminal (hooking)
 ![](https://i.imgur.com/XrtfgjY.jpg)
 
-### Method (callComponentMethod) with urls is detected triggered!
+#### Method (callComponentMethod) with urls is detected triggered!
 ![](https://i.imgur.com/ryV3f57.jpg)
 
 ## Quark Web Report
