@@ -1,0 +1,20 @@
+{
+    "crime": "Executes the specified string Linux command",
+    "permission": [],
+    "api": [
+        {
+            "class": "Ljava/lang/Runtime;",
+            "method": "getRuntime",
+            "descriptor": "()Ljava/lang/Runtime;"
+        },
+        {
+            "class": "Ljava/lang/Runtime;",
+            "method": "exec",
+            "descriptor": "(Ljava/lang/String;)Ljava/lang/Process;"
+        }
+    ],
+    "score": 1,
+    "label": [
+        "control"
+    ]
+}

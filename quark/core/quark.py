@@ -2,8 +2,11 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import collections
 import operator
 import os
+import re
+from typing import Generator, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -187,82 +190,151 @@ class Quark:
 
         return state
 
+    def _evaluate_method(self, method) -> List[List[str]]:
+        """
+        Evaluate the execution of the opcodes in the target method and return
+         the usage of each involved register.
+
+        :param method: Method to be evaluated
+        :return: Matrix that holds the usage of the registers
+        """
+        pyeval = PyEval(self.apkinfo)
+
+        for bytecode_obj in self.apkinfo.get_method_bytecode(method):
+            # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
+            instruction = [bytecode_obj.mnemonic]
+            if bytecode_obj.registers is not None:
+                instruction.extend(bytecode_obj.registers)
+            if bytecode_obj.parameter is not None:
+                instruction.append(bytecode_obj.parameter)
+
+            # for the case of MUTF8String
+            instruction = [str(x) for x in instruction]
+
+            if instruction[0] in pyeval.eval.keys():
+                pyeval.eval[instruction[0]](instruction)
+
+        return pyeval.show_table()
+
+    def check_parameter_on_single_method(
+        self,
+        usage_table,
+        first_method,
+        second_method,
+        keyword_item_list=None,
+        regex=False,
+    ) -> Generator[Tuple[str, List[str]], None, None]:
+        """Check the usage of the same parameter between two method.
+
+        :param usage_table: the usage of the involved registers
+        :param first_method: the first API or the method calling the first APIs
+        :param second_method: the second API or the method calling the second 
+        APIs
+        :param keyword_item_list: keywords required to be present in the usage 
+        , defaults to None
+        :param regex: treat the keywords as regular expressions, defaults to 
+        False
+        :yield: _description_
+        """
+        first_method_pattern = (
+            "{class_name}->{method_name}{descriptor}".format_map(
+                {
+                    "class_name": first_method.class_name,
+                    "method_name": first_method.name,
+                    "descriptor": first_method.descriptor,
+                }
+            )
+        )
+
+        second_method_pattern = (
+            "{class_name}->{method_name}{descriptor}".format_map(
+                {
+                    "class_name": second_method.class_name,
+                    "method_name": second_method.name,
+                    "descriptor": second_method.descriptor,
+                }
+            )
+        )
+
+        register_usage_records = (
+            c_func
+            for table in usage_table
+            for val_obj in table
+            for c_func in val_obj.called_by_func
+        )
+
+        matched_records = filter(
+            lambda r: first_method_pattern in r and second_method_pattern in r,
+            register_usage_records,
+        )
+
+        for record in matched_records:
+            if keyword_item_list and list(keyword_item_list):
+                matched_keyword_list = self.check_parameter_values(
+                    record,
+                    (first_method_pattern, second_method_pattern),
+                    keyword_item_list,
+                    regex,
+                )
+
+                if matched_keyword_list:
+                    yield (record, matched_keyword_list)
+
+            else:
+                yield (record, None)
+
     def check_parameter(
         self,
         parent_function,
         first_method_list,
         second_method_list,
         keyword_item_list=None,
+        regex=False,
     ):
         """
         Check the usage of the same parameter between two method.
 
-        :param parent_function: function that call the first function and second functions at the same time.
-        :param first_method_list: function which calls before the second method.
+        :param parent_function: function that call the first function and
+         second functions at the same time.
+        :param first_method_list: function which calls before the second
+         method.
         :param second_method_list: function which calls after the first method.
         :return: True or False
         """
+        if parent_function is None:
+            raise TypeError("Parent function is None.")
+
+        if first_method_list is None or second_method_list is None:
+            raise TypeError("First or second method list is None.")
+
+        if keyword_item_list:
+            keyword_item_list = list(keyword_item_list)
+            if not any(keyword_item_list):
+                keyword_item_list = None
+
         state = False
 
+        # Evaluate the opcode in the parent function
+        usage_table = self._evaluate_method(parent_function)
+
+        # Check if any of the target methods (the first and second methods)
+        #  used the same registers.
+        state = False
         for first_call_method in first_method_list:
             for second_call_method in second_method_list:
 
-                pyeval = PyEval(self.apkinfo)
-                # Check if there is an operation of the same register
+                result_generator = self.check_parameter_on_single_method(
+                    usage_table,
+                    first_call_method,
+                    second_call_method,
+                    keyword_item_list,
+                    regex,
+                )
 
-                for bytecode_obj in self.apkinfo.get_method_bytecode(
-                    parent_function
-                ):
-                    # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
-                    instruction = [bytecode_obj.mnemonic]
-                    if bytecode_obj.registers is not None:
-                        instruction.extend(bytecode_obj.registers)
-                    if bytecode_obj.parameter is not None:
-                        instruction.append(bytecode_obj.parameter)
-
-                    # for the case of MUTF8String
-                    instruction = [str(x) for x in instruction]
-
-                    if instruction[0] in pyeval.eval.keys():
-                        pyeval.eval[instruction[0]](instruction)
-
-                for table in pyeval.show_table():
-                    for val_obj in table:
-
-                        for c_func in val_obj.called_by_func:
-
-                            first_method_pattern = f"{first_call_method.class_name}->{first_call_method.name}{first_call_method.descriptor}"
-                            second_method_pattern = f"{second_call_method.class_name}->{second_call_method.name}{second_call_method.descriptor}"
-
-                            if (
-                                first_method_pattern in c_func
-                                and second_method_pattern in c_func
-                            ):
-                                state = True
-
-                                if keyword_item_list and any(
-                                    keyword_item_list
-                                ):
-                                    self.check_parameter_values(
-                                        c_func,
-                                        (
-                                            first_method_pattern,
-                                            second_method_pattern,
-                                        ),
-                                        keyword_item_list,
-                                    )
-
-                                # Record the mapping between the parent function and the wrapper method
-                                self.quark_analysis.parent_wrapper_mapping[
-                                    parent_function.full_name
-                                ] = self.apkinfo.get_wrapper_smali(
-                                    parent_function,
-                                    first_call_method,
-                                    second_call_method,
-                                )
+                found = next(result_generator, None) is not None
 
                 # Build for the call graph
-                if state:
+                if found:
                     call_graph_analysis = {
                         "parent": parent_function,
                         "first_call": first_call_method,
@@ -276,10 +348,29 @@ class Quark:
                         call_graph_analysis
                     )
 
+                    # Record the mapping between the parent function and the
+                    #  wrapper method
+                    self.quark_analysis.parent_wrapper_mapping[
+                        parent_function.full_name
+                    ] = self.apkinfo.get_wrapper_smali(
+                        parent_function,
+                        first_call_method,
+                        second_call_method,
+                    )
+
+                    state = True
+
+                # if "onCallStateChanged" in parent_function.full_name and "getMaxSystemAudio" in first_call_method.full_name and "setSystemAudioMax" in second_call_method.full_name:
+                #     print("Hit")
+
         return state
 
     @staticmethod
-    def check_parameter_values(source_str, pattern_list, keyword_item_list):
+    def check_parameter_values(
+        source_str, pattern_list, keyword_item_list, regex=False
+    ) -> List[str]:
+        matched_string_set = set()
+
         for pattern, keyword_item in zip(pattern_list, keyword_item_list):
             if keyword_item is None:
                 continue
@@ -301,10 +392,30 @@ class Quark:
             parameter_str = source_str[start_index:end_index]
 
             for keyword in keyword_item:
-                if str(keyword) not in parameter_str:
-                    return False
+                if regex:
+                    matched_strings = re.findall(keyword, parameter_str)
+                    if any(matched_strings):
+                        matched_strings = filter(bool, matched_strings)
+                        matched_strings = list(matched_strings)
 
-        return True
+                        element = matched_strings[0]
+                        if isinstance(
+                            element, collections.abc.Sequence
+                        ) and not isinstance(element, str):
+                            for str_list in matched_strings:
+                                matched_string_set.update(str_list)
+
+                        else:
+                            matched_string_set.update(matched_strings)
+                    else:
+                        return None
+                else:
+                    if str(keyword) in parameter_str:
+                        matched_string_set.add(keyword)
+                    else:
+                        return None
+
+        return [e for e in list(matched_string_set) if bool(e)]
 
     def find_api_usage(self, class_name, method_name, descriptor_name):
         method_list = []

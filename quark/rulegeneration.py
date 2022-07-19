@@ -89,7 +89,7 @@ class RuleGeneration:
                     "score": 1,
                     "label": [],
                 }
-                comb = RuleObject("test", json_data=generated_rule)
+                comb = RuleObject("test", jsonData=generated_rule)
 
                 try:
                     self.quark.run(comb)
