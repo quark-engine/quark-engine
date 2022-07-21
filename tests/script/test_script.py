@@ -184,7 +184,7 @@ class TestBehavior:
 
         first_api, second_api = behavior.getParamValues()
 
-        assert first_api == "ping www.baidu.com" and second_api == None
+        assert first_api == "ping www.baidu.com" and second_api is None
 
 
 class TestQuarkReuslt:
