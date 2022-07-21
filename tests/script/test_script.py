@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import os
+import statistics
 
 import pytest
 import requests
@@ -169,7 +170,21 @@ class TestBehavior:
         result = behavior.hasUrl()
 
         assert "www.baidu.com" in result
-
+        
+    @staticmethod
+    def testGetParamValueWithAES(QUARK_ANALYSIS_RESULT):
+        behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
+        behavior = next(
+            filter(
+                lambda b: "checkWifiCanOrNotConnectServer"
+                in b.methodCaller.fullName,
+                behaviorOccurList,
+            )
+        )
+        
+        first_api, second_api = behavior.getParamValues()
+        
+        assert first_api == "ping www.baidu.com" and second_api == None
 
 class TestQuarkReuslt:
     @staticmethod
@@ -212,6 +227,10 @@ class TestQuarkReuslt:
         caller_list = QUARK_ANALYSIS_RESULT.getMethodXrefFrom(method)
 
         assert expectedMethod in caller_list
+        
+    @staticmethod
+    def testgetAllStrings(QUARK_ANALYSIS_RESULT):
+        assert len(QUARK_ANALYSIS_RESULT.getAllStrings()) == 1005
 
 
 def testRunQuarkAnalysis(SAMPLE_PATH):

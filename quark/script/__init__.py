@@ -129,6 +129,26 @@ class Behavior:
         """
         return self.hasString(URL_REGEX, True)
 
+    def getParamValues(self) -> Any:
+        """Get first and second parameter values from behavior.
+
+        :return: strings of first and second parameter values
+        """
+        allResult = self.hasString(".*", True)
+
+        for result in allResult:
+            if result[0] == "(" and result[-1] == ")" and \
+                self.firstAPI.innerObj.class_name in result and \
+                self.secondAPI.innerObj.class_name in result:
+
+                params = result[1:-1].split(",")[1:]
+                    
+                if len(params) < 2:
+                    secondParam = None    
+                firstParam = params[0]
+                
+                return firstParam, secondParam
+
 
 class QuarkResult:
     def __init__(self, quark: Quark, ruleInstance: Rule) -> None:
@@ -191,6 +211,15 @@ class QuarkResult:
             return Method(self, methodObj)
         else:
             return None
+
+    def getAllStrings(self):
+        """
+        List all strings inside the target APK.
+
+        :return: python list containing all defined strings.
+        """
+        apkinfo = self.quark.apkinfo
+        return apkinfo.get_strings()
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
