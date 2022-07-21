@@ -3,7 +3,6 @@
 # See the file 'LICENSE' for copying permission.
 
 import os
-import statistics
 
 import pytest
 import requests
