@@ -170,9 +170,9 @@ class TestBehavior:
         result = behavior.hasUrl()
 
         assert "www.baidu.com" in result
-        
+
     @staticmethod
-    def testGetParamValueWithAES(QUARK_ANALYSIS_RESULT):
+    def testGetParamValues(QUARK_ANALYSIS_RESULT):
         behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
         behavior = next(
             filter(
@@ -181,10 +181,11 @@ class TestBehavior:
                 behaviorOccurList,
             )
         )
-        
+
         first_api, second_api = behavior.getParamValues()
-        
+
         assert first_api == "ping www.baidu.com" and second_api == None
+
 
 class TestQuarkReuslt:
     @staticmethod
@@ -227,7 +228,7 @@ class TestQuarkReuslt:
         caller_list = QUARK_ANALYSIS_RESULT.getMethodXrefFrom(method)
 
         assert expectedMethod in caller_list
-        
+
     @staticmethod
     def testgetAllStrings(QUARK_ANALYSIS_RESULT):
         assert len(QUARK_ANALYSIS_RESULT.getAllStrings()) == 1005

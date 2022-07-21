@@ -138,15 +138,15 @@ class Behavior:
 
         for result in allResult:
             if result[0] == "(" and result[-1] == ")" and \
-                self.firstAPI.innerObj.class_name in result and \
-                self.secondAPI.innerObj.class_name in result:
+                    self.firstAPI.innerObj.class_name in result and \
+                    self.secondAPI.innerObj.class_name in result:
 
                 params = result[1:-1].split(",")[1:]
-                    
+
                 if len(params) < 2:
-                    secondParam = None    
+                    secondParam = None
                 firstParam = params[0]
-                
+
                 return firstParam, secondParam
 
 
