@@ -132,7 +132,7 @@ class Behavior:
     def getParamValues(self) -> List[str]:
         """Get parameter values from behavior.
 
-        :return: python containing parameter values
+        :return: python list containing parameter values
         """
         allResult = self.hasString(".*", True)
 
