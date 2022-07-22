@@ -170,6 +170,19 @@ class TestBehavior:
 
         assert "www.baidu.com" in result
 
+    @staticmethod
+    def testGetParamValues(QUARK_ANALYSIS_RESULT):
+        behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
+        behavior = next(
+            filter(
+                lambda b: "checkWifiCanOrNotConnectServer"
+                in b.methodCaller.fullName,
+                behaviorOccurList,
+            )
+        )
+
+        assert behavior.getParamValues()[0] == "ping www.baidu.com"
+
 
 class TestQuarkReuslt:
     @staticmethod
@@ -212,6 +225,10 @@ class TestQuarkReuslt:
         caller_list = QUARK_ANALYSIS_RESULT.getMethodXrefFrom(method)
 
         assert expectedMethod in caller_list
+
+    @staticmethod
+    def testgetAllStrings(QUARK_ANALYSIS_RESULT):
+        assert len(QUARK_ANALYSIS_RESULT.getAllStrings()) == 1005
 
 
 def testRunQuarkAnalysis(SAMPLE_PATH):
