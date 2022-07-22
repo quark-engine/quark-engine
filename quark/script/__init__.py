@@ -151,7 +151,7 @@ class Behavior:
                 if len(params) >= 2:
                     secondParam = params[1]
 
-                return firstParam, secondParam
+        return firstParam, secondParam
 
 
 class QuarkResult:
