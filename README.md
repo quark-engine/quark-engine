@@ -39,7 +39,7 @@ Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-list
 ## Quark Script - Ecosystem for Mobile Security Tools
 
 #### Innovative & Interactive
-The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or pentest the targets.
+The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or __pentest__ the targets.
 
 Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to __interact__ with staged results and perform __creative__ analysis with Quark Script.
 
@@ -64,7 +64,6 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 * return: Quark rule instance
 
 </details>
-
 <details>
 <summary><b>  runQuarkAnalysis(SAMPLE_PATH, ruleInstance) </b></summary>
 
@@ -83,6 +82,16 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 * Description: List that stores instances of detected behavior in different part of the target file.
 * params: none
 * return: detected behavior instance
+
+</details>
+<details>
+<summary><b>  quarkResultInstance.getAllStrings(none) </b></summary>
+
+<br>
+
+* Description: Get all strings inside the target APK file.
+* params: none
+* return: python list containing all strings inside the target APK file.
 
 </details>
 <details>
@@ -126,6 +135,16 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 
 </details>
 <details>
+<summary><b>  behaviorInstance.getParamValues(none) </b></summary>
+
+<br>
+
+* Description: Get parameter values that API1 sends to API2 in the behavior.
+* params: none
+* return: python list containing parameter values.
+
+</details>
+<details>
 <summary><b>  methodInstance.getXrefFrom(none) </b></summary>
 
 <br>
@@ -146,7 +165,7 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 
 </details>
 <details>
-<summary><b>  Objection(none) </b></summary>
+<summary><b>  Objection(host) </b></summary>
 
 <br>
 
@@ -156,7 +175,7 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 
 </details>
 <details>
-<summary><b> objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet) </b></summary>
+<summary><b>  objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet) </b></summary>
 
 <br>
 
@@ -167,7 +186,6 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 </details>
 
 ### Analyzing real case (InstaStealer) using Quark Script
-
 #### Quark Script that dynamic hooks the method containing urls 
 The scenario is simple! We'd like to dynamic hooking the methods in the malware that contains urls. We can use APIs above to write Quark Script.
 
@@ -216,12 +234,11 @@ for behaviorInstance in quarkResult.behaviorOccurList:
             
 print("\nSee the hook results in Objection's terminal.")
 ```
-
-> __Note:__ Please make sure you have the dynamic analysis environment ready before executing the script.
+> Note: Please make sure you have the dynamic analysis environment ready before executing the script.
 > 1. Objection installed and running. Check the guideline [here](https://github.com/sensepost/objection/wiki/Installation).
 > 2. Android Virtual Machine with frida installed. Check the guideline [here](https://frida.re/docs/android/).
-> 3. Or a rooted Android Device (Google Pixel 6) with frida installed.\
-Check the root guideline [here](https://forum.xda-developers.com/t/guide-root-pixel-6-with-magisk-android-12-1.4388733/), frida install guideline is the [same](https://frida.re/docs/android/) with Android Virtual Machine.
+> 3. Or a rooted Android Device (Google Pixel 6) with frida installed. 
+> Check the root guideline [here](https://forum.xda-developers.com/t/guide-root-pixel-6-with-magisk-android-12-1.4388733/), frida install guideline is the [same]((https://frida.re/docs/android/)) with Android Virtual Machine.
 
 #### Quark Script Result
 ![](https://i.imgur.com/elztZdC.png)
@@ -231,6 +248,84 @@ Check the root guideline [here](https://forum.xda-developers.com/t/guide-root-pi
 
 #### Method (callComponentMethod) with urls is detected triggered!
 ![](https://i.imgur.com/ryV3f57.jpg)
+
+### Quark Script used as a vulnerability finder
+
+####  Detect CWE-798 in Android Application
+
+This scenario seeks to find hard-coded credentials in the APK file. See [CWE-798](https://cwe.mitre.org/data/definitions/798.html) for more details.
+
+Let's use this [APK](https://github.com/oversecured/ovaa) and the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule `findSecretKeySpec.json` to spot on behavior uses method SecretKeySpec. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+
+#### Quark Scipt: cwe-798.py
+```python
+import re
+from quark.script import runQuarkAnalysis, Rule
+
+SAMPLE_PATH = "ovaa.apk"
+RULE_PATH = "findSecretKeySpec.json"
+
+ruleInstance = Rule(RULE_PATH)
+quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+for secretKeySpec in quarkResult.behaviorOccurList:
+    
+    allStrings = quarkResult.getAllStrings()
+    
+    firstParam = secretKeySpec.getParamValues()[0]
+    secondParam = secretKeySpec.getParamValues()[1]
+    
+    if secondParam == "AES":
+        AESKey = re.findall(r'\((.*?)\)', firstParam)[1]
+        
+    if AESKey in allStrings:
+        print(f"Found hard-coded {secondParam} key {AESKey}")
+```
+
+#### Quark Rule: findSecretKeySpec.json
+```json
+{
+    "crime": "Detect APK using SecretKeySpec.",
+    "permission": [],
+    "api": [
+        {
+            "descriptor": "()[B",
+            "class": "Ljava/lang/String;",
+            "method": "getBytes"
+        },
+        {
+            "descriptor": "([BLjava/lang/String;)V",
+            "class": "Ljavax/crypto/spec/SecretKeySpec;",
+            "method": "<init>"
+        }
+    ],
+    "score": 1,
+    "label": []
+}
+```
+
+#### Quark Script Result
+```bash
+$ python3 findSecretKeySpec.py 
+
+Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+```
+
+#### Hard-Coded AES key in the APK file
+```
+const-string v2, "49u5gh249gh24985ghf429gh4ch8f23f"
+
+invoke-virtual {v2}, Ljava/lang/String;->getBytes()[B
+
+move-result-object v2
+
+invoke-direct {v1, v2, v0}, Ljavax/crypto/spec/SecretKeySpec;-><init>([BLjava/lang/String;)V
+```
+
+
+
 
 ## Quark Web Report
 

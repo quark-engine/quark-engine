@@ -10,6 +10,7 @@ Subpackages
    quark.core
    quark.evaluator
    quark.forensic
+   quark.script
    quark.utils
    quark.webreport
 

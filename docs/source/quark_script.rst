@@ -8,7 +8,7 @@ Ecosystem for Mobile Security Tools
 Innovative & Interactive
 =========================
 
-The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or pentest the targets.
+The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets.
 
 Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
 
@@ -50,6 +50,14 @@ quarkResultInstance.behaviorOccurList
 * params: none
 * return: detected behavior instance
 
+quarkResultInstance.getAllStrings(none)
+=====================================
+
+* Description: Get all strings inside the target APK file.
+* params: none
+* return: python list containing all strings inside the target APK file.
+
+
 behaviorInstance.firstAPI.fullName
 ==================================
 
@@ -78,6 +86,14 @@ behaviorInstance.methodCaller
 * params: none
 * return: method instance 
 
+behaviorInstance.getParamValues(none)
+=====================================
+
+* Description: Get parameter values that API1 sends to API2 in the behavior.
+* params: none
+* return: python list containing parameter values.
+
+
 methodInstance.getXrefFrom(none)
 ================================
 
@@ -92,7 +108,7 @@ methodInstance.getXrefTo(none)
 * params: none
 * return: python list containing tuples (callee methods, index).
 
-Objection(none)
+Objection(host)
 ===============
 
 * Description: Create an instance for Objection (dynamic analysis tool). 
@@ -181,4 +197,92 @@ Method (callComponentMethod) with urls is detected triggered!
 
 .. image:: https://i.imgur.com/ryV3f57.jpg
 
+
+Quark Script used as a vulnerability finder
+-------------------------------------------
+
+Detect CWE-798 in Android Application
+======================================
+
+This scenario seeks to find hard-coded credentials in the APK file. See `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`_ for more details.
+
+Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method SecretKeySpec. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+
+Quark Scipt: cwe-798.py
+========================
+
+.. code-block:: python
+
+    import re
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "ovaa.apk"
+    RULE_PATH = "findSecretKeySpec.json"
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for secretKeySpec in quarkResult.behaviorOccurList:
+        
+        allStrings = quarkResult.getAllStrings()
+        
+        firstParam = secretKeySpec.getParamValues()[0]
+        secondParam = secretKeySpec.getParamValues()[1]
+        
+        if secondParam == "AES":
+            AESKey = re.findall(r'\((.*?)\)', firstParam)[1]
+            
+        if AESKey in allStrings:
+            print(f"Found hard-coded {secondParam} key {AESKey}")
+
+
+Quark Rule: findSecretKeySpec.json
+==================================
+
+.. code-block:: json
+
+    {
+        "crime": "Detect APK using SecretKeySpec.",
+        "permission": [],
+        "api": [
+            {
+                "descriptor": "()[B",
+                "class": "Ljava/lang/String;",
+                "method": "getBytes"
+            },
+            {
+                "descriptor": "([BLjava/lang/String;)V",
+                "class": "Ljavax/crypto/spec/SecretKeySpec;",
+                "method": "<init>"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+
+Quark Script Result
+=====================
+
+.. code-block:: TEXT
+
+    $ python3 findSecretKeySpec.py 
+
+    Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+
+
+Hard-Coded AES key in the APK file
+===================================
+
+.. code-block:: TEXT
+
+    const-string v2, "49u5gh249gh24985ghf429gh4ch8f23f"
+
+    invoke-virtual {v2}, Ljava/lang/String;->getBytes()[B
+
+    move-result-object v2
+
+    invoke-direct {v1, v2, v0}, Ljavax/crypto/spec/SecretKeySpec;-><init>([BLjava/lang/String;)V
 

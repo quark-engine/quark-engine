@@ -185,12 +185,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.interface.html#quark.core.interface.baseapkinfo.BaseApkinfo">BaseApkinfo (class in quark.core.interface.baseapkinfo)</a>
 </li>
-      <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.BINOP_KIND">BINOP_KIND() (quark.evaluator.pyeval.PyEval method)</a>
+      <li><a href="quark.script.html#quark.script.Behavior">Behavior (class in quark.script)</a>
 </li>
-      <li><a href="quark.utils.html#quark.utils.colors.black">black() (in module quark.utils.colors)</a>
+      <li><a href="quark.script.html#quark.script.QuarkResult.behaviorOccurList">behaviorOccurList (quark.script.QuarkResult property)</a>
+</li>
+      <li><a href="quark.evaluator.html#quark.evaluator.pyeval.PyEval.BINOP_KIND">BINOP_KIND() (quark.evaluator.pyeval.PyEval method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.utils.html#quark.utils.colors.black">black() (in module quark.utils.colors)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.colors.blue">blue() (in module quark.utils.colors)</a>
 </li>
       <li><a href="quark.utils.html#quark.utils.colors.bold">bold() (in module quark.utils.colors)</a>
@@ -222,6 +226,8 @@
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject.check_item">check_item (quark.core.struct.ruleobject.RuleObject attribute)</a>
 </li>
       <li><a href="quark.core.html#quark.core.quark.Quark.check_parameter">check_parameter() (quark.core.quark.Quark method)</a>
+</li>
+      <li><a href="quark.core.html#quark.core.quark.Quark.check_parameter_on_single_method">check_parameter_on_single_method() (quark.core.quark.Quark method)</a>
 </li>
       <li><a href="quark.core.html#quark.core.quark.Quark.check_parameter_values">check_parameter_values() (quark.core.quark.Quark static method)</a>
 </li>
@@ -261,6 +267,8 @@
 </li>
       <li><a href="quark.utils.html#quark.utils.tools.contains">contains() (in module quark.utils.tools)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.objection.convertMethodToString">convertMethodToString() (in module quark.script.objection)</a>
+</li>
       <li><a href="quark.core.interface.html#quark.core.interface.baseapkinfo.BaseApkinfo.core_library">core_library (quark.core.interface.baseapkinfo.BaseApkinfo attribute)</a>
 
       <ul>
@@ -293,10 +301,12 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.html#quark.core.apkinfo.AndroguardImp.dalvikvmformat">dalvikvmformat (quark.core.apkinfo.AndroguardImp attribute)</a>
 </li>
-      <li><a href="quark.core.struct.html#quark.core.struct.methodobject.MethodObject.descriptor">descriptor (quark.core.struct.methodobject.MethodObject attribute)</a>
+      <li><a href="quark.script.html#quark.script.DefaultRuleset">DefaultRuleset (class in quark.script)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.core.struct.html#quark.core.struct.methodobject.MethodObject.descriptor">descriptor (quark.core.struct.methodobject.MethodObject attribute)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.tools.descriptor_to_androguard_format">descriptor_to_androguard_format() (in module quark.utils.tools)</a>
 </li>
       <li><a href="quark.html#quark.freshquark.download">download() (in module quark.freshquark)</a>
@@ -357,6 +367,8 @@
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.methodobject.MethodObject.full_name">full_name (quark.core.struct.methodobject.MethodObject property)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.Method.fullName">fullName (quark.script.Method property)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -407,10 +419,10 @@
         <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp.get_method_bytecode">(quark.core.rzapkinfo.RizinImp method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.struct.html#quark.core.struct.tableobject.TableObject.get_obj_list">get_obj_list() (quark.core.struct.tableobject.TableObject method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.html#quark.report.Report.get_report">get_report() (quark.report.Report method)</a>
 </li>
       <li><a href="quark.forensic.html#quark.forensic.vt_analysis.VTAnalysis.get_reports">get_reports() (quark.forensic.vt_analysis.VTAnalysis method)</a>
@@ -445,6 +457,18 @@
         <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp.get_wrapper_smali">(quark.core.rzapkinfo.RizinImp method)</a>
 </li>
       </ul></li>
+      <li><a href="quark.script.html#quark.script.QuarkResult.getAllStrings">getAllStrings() (quark.script.QuarkResult method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.QuarkResult.getMethodXrefFrom">getMethodXrefFrom() (quark.script.QuarkResult method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.QuarkResult.getMethodXrefTo">getMethodXrefTo() (quark.script.QuarkResult method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.Behavior.getParamValues">getParamValues() (quark.script.Behavior method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.Method.getXrefFrom">getXrefFrom() (quark.script.Method method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.Method.getXrefTo">getXrefTo() (quark.script.Method method)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.colors.green">green() (in module quark.utils.colors)</a>
 </li>
   </ul></td>
@@ -455,11 +479,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.struct.html#quark.core.struct.registerobject.RegisterObject.hash_index">hash_index (quark.core.struct.registerobject.RegisterObject property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.struct.html#quark.core.struct.tableobject.TableObject.hash_table">hash_table (quark.core.struct.tableobject.TableObject attribute)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.Behavior.hasString">hasString() (quark.script.Behavior method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.script.html#quark.script.Behavior.hasUrl">hasUrl() (quark.script.Behavior method)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.weight.LEVEL_INFO.High">High (quark.utils.weight.LEVEL_INFO attribute)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.objection.Objection.hookMethod">hookMethod() (quark.script.objection.Objection method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -561,6 +591,8 @@
 </li>
       <li><a href="quark.core.interface.html#quark.core.interface.baseapkinfo.BaseApkinfo.md5">md5 (quark.core.interface.baseapkinfo.BaseApkinfo property)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.Method">Method (class in quark.script)</a>
+</li>
       <li><a href="quark.core.html#quark.core.quark.Quark.method_recursive_search">method_recursive_search() (quark.core.quark.Quark method)</a>
 
       <ul>
@@ -633,6 +665,10 @@
 </li>
         <li><a href="quark.html#module-quark.rulegeneration">quark.rulegeneration</a>
 </li>
+        <li><a href="quark.script.html#module-quark.script">quark.script</a>
+</li>
+        <li><a href="quark.script.html#module-quark.script.objection">quark.script.objection</a>
+</li>
         <li><a href="quark.utils.html#module-quark.utils">quark.utils</a>
 </li>
         <li><a href="quark.utils.html#module-quark.utils.colors">quark.utils.colors</a>
@@ -686,6 +722,8 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="quark.script.html#quark.script.objection.Objection">Objection (class in quark.script.objection)</a>
+</li>
       <li><a href="quark.utils.html#quark.utils.output.output_parent_function_graph">output_parent_function_graph() (in module quark.utils.output)</a>
 </li>
   </ul></td>
@@ -871,8 +909,6 @@
         <li><a href="quark.evaluator.html#module-quark.evaluator">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.evaluator.pyeval
 
@@ -880,6 +916,8 @@
         <li><a href="quark.evaluator.html#module-quark.evaluator.pyeval">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.forensic
 
@@ -934,6 +972,20 @@
 
       <ul>
         <li><a href="quark.html#module-quark.rulegeneration">module</a>
+</li>
+      </ul></li>
+      <li>
+    quark.script
+
+      <ul>
+        <li><a href="quark.script.html#module-quark.script">module</a>
+</li>
+      </ul></li>
+      <li>
+    quark.script.objection
+
+      <ul>
+        <li><a href="quark.script.html#module-quark.script.objection">module</a>
 </li>
       </ul></li>
       <li>
@@ -1008,6 +1060,8 @@
       </ul></li>
       <li><a href="quark.core.html#quark.core.analysis.QuarkAnalysis">QuarkAnalysis (class in quark.core.analysis)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.QuarkResult">QuarkResult (class in quark.script)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1032,14 +1086,14 @@
 </li>
       <li><a href="quark.core.axmlreader.html#quark.core.axmlreader.Res_value_type">Res_value_type (class in quark.core.axmlreader)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.core.interface.html#quark.core.interface.baseapkinfo.BaseApkinfo.ret_type">ret_type (quark.core.interface.baseapkinfo.BaseApkinfo attribute)</a>
 
       <ul>
         <li><a href="quark.core.html#quark.core.rzapkinfo.RizinImp.ret_type">(quark.core.rzapkinfo.RizinImp attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="quark.forensic.html#quark.forensic.vt_analysis.VTAnalysis.retreive_report">retreive_report() (quark.forensic.vt_analysis.VTAnalysis method)</a>
 </li>
       <li><a href="quark.core.html#quark.core.rzapkinfo.RizinCache">RizinCache (in module quark.core.rzapkinfo)</a>
@@ -1052,12 +1106,16 @@
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.ruleobject.RuleObject">RuleObject (class in quark.core.struct.ruleobject)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.Ruleset">Ruleset (class in quark.script)</a>
+</li>
       <li><a href="quark.core.html#quark.core.parallelquark.ParallelQuark.run">run() (quark.core.parallelquark.ParallelQuark method)</a>
 
       <ul>
         <li><a href="quark.core.html#quark.core.quark.Quark.run">(quark.core.quark.Quark method)</a>
 </li>
       </ul></li>
+      <li><a href="quark.script.html#quark.script.runQuarkAnalysis">runQuarkAnalysis() (in module quark.script)</a>
+</li>
   </ul></td>
 </tr></table>
 
