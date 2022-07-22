@@ -129,29 +129,22 @@ class Behavior:
         """
         return self.hasString(URL_REGEX, True)
 
-    def getParamValues(self) -> Tuple[str, str]:
-        """Get first and second parameter values from behavior.
+    def getParamValues(self) -> List[str]:
+        """Get parameter values from behavior.
 
-        :return: strings of first and second parameter values
+        :return: python containing parameter values
         """
         allResult = self.hasString(".*", True)
 
-        secondParam = None
-        firstParam = None
+        paramValues = []
         for result in allResult:
             if result[0] == "(" and result[-1] == ")" and \
                     self.firstAPI.innerObj.class_name in result and \
                     self.secondAPI.innerObj.class_name in result:
 
-                params = result[1:-1].split(",")[1:]
-                secondParam = None
+                paramValues = result[1:-1].split(",")[1:]
 
-                if len(params) >= 1:
-                    firstParam = params[0]
-                if len(params) >= 2:
-                    secondParam = params[1]
-
-        return firstParam, secondParam
+        return paramValues
 
 
 class QuarkResult:
