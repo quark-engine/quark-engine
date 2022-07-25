@@ -250,10 +250,10 @@ class QuarkResult:
         """
         Check if target method is in caller method.
 
-        :params callerMethod: python list contains class name, method name and 
-        descriptor of caller method.
-        :params targetMethod: python list contains class name, method name and 
-        descriptor of target method.
+        :params callerMethod: python list contains class name,
+        method name and descriptor of caller method.
+        :params targetMethod: python list contains class name,
+        method name and descriptor of target method.
         :return: True/False
         """
 
