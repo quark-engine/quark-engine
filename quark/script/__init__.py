@@ -85,6 +85,30 @@ class Method:
         """
         return self.innerObj.full_name
 
+    @property
+    def className(self) -> str:
+        """Show the class name of the method.
+
+        :return: the string of the method class name
+        """
+        return self.innerObj.class_name
+
+    @property
+    def methodName(self) -> str:
+        """Show the method name of the method.
+
+        :return: the string of the method name
+        """
+        return self.innerObj.name
+
+    @property
+    def descriptor(self) -> str:
+        """Show the descriptor of the method.
+
+        :return: the string of the method descriptor
+        """
+        return self.innerObj.descriptor
+
 
 class Behavior:
     def __init__(
@@ -217,6 +241,41 @@ class QuarkResult:
         """
         apkinfo = self.quark.apkinfo
         return apkinfo.get_strings()
+
+    def findMethodInCaller(
+        self,
+        callerMethod: List[str],
+        targetMethod: List[str]
+    ) -> bool:
+        """
+        Check if target method is in caller method.
+
+        :params callerMethod: python list contains class name,
+        method name and descriptor of caller method.
+        :params targetMethod: python list contains class name,
+        method name and descriptor of target method.
+        :return: True/False
+        """
+
+        apkinfo = self.quark.apkinfo
+
+        callerMethodObj = apkinfo.find_method(
+            class_name=callerMethod[0],
+            method_name=callerMethod[1],
+            descriptor=callerMethod[2])
+
+        if not callerMethodObj:
+            print("Caller method not Found!")
+            raise ValueError
+
+        callerMethodInstance = Method(self, callerMethodObj)
+
+        for calleeMethod, _ in callerMethodInstance.getXrefTo():
+            if calleeMethod.innerObj.class_name == targetMethod[0] and \
+                    calleeMethod.innerObj.name == targetMethod[1] and \
+                    calleeMethod.innerObj.descriptor == targetMethod[2]:
+                return True
+        return False
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:

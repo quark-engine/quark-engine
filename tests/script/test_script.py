@@ -230,6 +230,22 @@ class TestQuarkReuslt:
     def testgetAllStrings(QUARK_ANALYSIS_RESULT):
         assert len(QUARK_ANALYSIS_RESULT.getAllStrings()) == 1005
 
+    @staticmethod
+    def testfindMethodInCaller(QUARK_ANALYSIS_RESULT):
+        callerMethod = [
+            "Lcom/google/progress/WifiCheckTask;",
+            "checkWifiCanOrNotConnectServer",
+            "([Ljava/lang/String;)Z",
+        ]
+        targetMethod = [
+            "Landroid/util/Log;",
+            "e",
+            "(Ljava/lang/String; Ljava/lang/String;)I",
+        ]
+
+        assert QUARK_ANALYSIS_RESULT.findMethodInCaller(
+            callerMethod, targetMethod)
+
 
 def testRunQuarkAnalysis(SAMPLE_PATH):
     ruleset = Ruleset(RULE_FOLDER_PATH)
