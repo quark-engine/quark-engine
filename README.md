@@ -38,22 +38,22 @@ Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-list
 
 ## Quark Script - Ecosystem for Mobile Security Tools
 
-#### Innovative & Interactive
+### Innovative & Interactive
 The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or __pentest__ the targets.
 
 Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to __interact__ with staged results and perform __creative__ analysis with Quark Script.
 
-#### Dynamic & Static Analysis
+### Dynamic & Static Analysis
 In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).  
 
-#### Re-Usable & Sharable
+### Re-Usable & Sharable
 Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges. 
 
-#### More APIs to come
+### More APIs to come
 Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.  
 
-__See our APIs [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).__
-#### 2022 CWE Top 25 Showcases
+__See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).__
+### 2022 CWE Top 25 Showcases
 * [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)
 * [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-scipt-cwe-94-py)
 
