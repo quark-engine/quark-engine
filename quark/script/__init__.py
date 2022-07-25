@@ -248,14 +248,12 @@ class QuarkResult:
         targetMethod: List[str]
     ) -> bool:
         """
-        Check if target method in caller method.
+        Check if target method is in caller method.
 
-        :params callerMethod: python list contains class name, method name and
+        :params callerMethod: python list contains class name, method name and 
         descriptor of caller method.
-
-        :params targetMethod: python list contains class name, method name and
+        :params targetMethod: python list contains class name, method name and 
         descriptor of target method.
-
         :return: True/False
         """
 
@@ -292,17 +290,3 @@ def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
     analysis = QuarkResult(quark, ruleInstance)
 
     return analysis
-
-
-def strToMethodObj(method: str) -> MethodObject:
-    result = method.replace(" ", "").split("->")
-    className = result[0]
-    methodName = result[1].split("(")[0]
-    descriptor = f"({result[1].split('(')[1]}"
-
-    methodObj = MethodObject(class_name=className,
-                             name=methodName, descriptor=descriptor)
-    print(methodObj)
-    # methodInstance = Method(methodObj=methodObj)
-
-    return methodObj
