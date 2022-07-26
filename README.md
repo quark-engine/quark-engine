@@ -55,7 +55,7 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 __See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).__
 ### 2022 CWE Top 25 Showcases
 * [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)
-* [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-scipt-cwe-94-py)
+* [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)
 
 ## Quark Web Report
 
