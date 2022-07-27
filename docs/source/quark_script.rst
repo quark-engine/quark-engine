@@ -220,7 +220,7 @@ Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs t
 
 First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method SecretKeySpec. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
 
-Quark Scipt: cwe-798.py
+Quark Scipt: CWE-798.py
 ========================
 
 .. code-block:: python
@@ -372,3 +372,66 @@ Quark Script Result
 
     Method: checkSignatures not found!
     CWE-94 is detected in ovaa.apk
+
+
+Detect CWE-921 in Android Application (ovaa.apk)
+------------------------------------------------
+
+This scenario seeks to find unsecure storage mechanism of data in the APK file. See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
+
+Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exist on given storage mechanism. Then, we use API ``getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains keyword ``sdcard``.
+
+Quark Script CWE-921.py
+========================
+
+.. code-block:: python
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "ovaa.apk"
+    RULE_PATH = "checkFileExistence.json"
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for existingFile in quarkResult.behaviorOccurList:
+        filePath = existingFile.getParamValues()[0]
+        if "sdcard" in filePath:
+            print(f"This file is stored inside the SDcard\n")
+            print(f"CWE-921 is detected in {SAMPLE_PATH}.")
+
+Quark Rule: checkFileExistence.json
+====================================
+
+.. code-block:: json
+
+    {
+        "crime": "Check file existence",
+        "permission": [],
+        "api": [
+            {
+                "descriptor": "(Ljava/lang/String;)V",
+                "class": "Ljava/io/File;",
+                "method": "<init>"
+            },
+            {
+                "descriptor": "()Z",
+                "class": "Ljava/io/File;",
+                "method": "exists"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-921.py 
+    This file is stored inside the SDcard
+
+    CWE-921 is detected in ovaa.apk.
