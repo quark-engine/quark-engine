@@ -7,7 +7,12 @@ import os
 import pytest
 import requests
 from quark.core.struct.methodobject import MethodObject
-from quark.script import DefaultRuleset, Method, Ruleset, runQuarkAnalysis
+from quark.script import (
+    DefaultRuleset,
+    Method,
+    Ruleset,
+    runQuarkAnalysis,
+)
 
 SAMPLE_SOURCE_URL = (
     "https://github.com/quark-engine/apk-malware-samples"
@@ -16,8 +21,8 @@ SAMPLE_SOURCE_URL = (
 SAMPLE_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 RULE_FOLDER_PATH = "tests/script/rules"
-RULE_FILENAME = "00068.json"
-RULE_PATH = os.path.join(RULE_FOLDER_PATH, RULE_FILENAME)
+RULE_68_FILENAME = "00068.json"
+RULE_193_FILENAME = "00193.json"
 
 
 @pytest.fixture(scope="session")
@@ -36,9 +41,15 @@ def SAMPLE_PATH(tmp_path_factory: pytest.TempPathFactory) -> str:
 
 
 @pytest.fixture(scope="class")
-def QUARK_ANALYSIS_RESULT(SAMPLE_PATH):
+def QUARK_ANALYSIS_RESULT_FOR_RULE_68(SAMPLE_PATH):
     ruleset = Ruleset(RULE_FOLDER_PATH)
-    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_FILENAME])
+    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_68_FILENAME])
+
+
+@pytest.fixture(scope="class")
+def QUARK_ANALYSIS_RESULT_FOR_RULE_193(SAMPLE_PATH):
+    ruleset = Ruleset(RULE_FOLDER_PATH)
+    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_193_FILENAME])
 
 
 class TestRuleset:
@@ -50,7 +61,7 @@ class TestRuleset:
     def testGetExistentRule():
         ruleset = Ruleset(RULE_FOLDER_PATH)
 
-        rule = ruleset[RULE_FILENAME]
+        rule = ruleset[RULE_68_FILENAME]
 
         assert rule.crime == "Executes the specified string Linux command"
 
@@ -82,14 +93,14 @@ class TestDefaultRuleset:
 
 class TestMethod:
     @staticmethod
-    def testInit(QUARK_ANALYSIS_RESULT):
+    def testInit(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         methodObj = MethodObject(
             class_name="Lcom/google/progress/WifiCheckTask;",
             name="checkWifiCanOrNotConnectServer",
             descriptor="()Z",
         )
 
-        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         assert (
             method.fullName
@@ -98,16 +109,18 @@ class TestMethod:
         )
 
     @staticmethod
-    def testGetXrefTo(QUARK_ANALYSIS_RESULT):
-        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
-            "Lcom/google/progress/WifiCheckTask;",
-            "checkWifiCanOrNotConnectServer",
-            "()Z",
+    def testGetXrefTo(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "()Z",
+            )
         )
-        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         expectedMethod = Method(
-            QUARK_ANALYSIS_RESULT,
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
             MethodObject(
                 "Landroid/util/Log;",
                 "e",
@@ -121,16 +134,18 @@ class TestMethod:
         assert (expectedMethod, expectedOffset) in callee_list
 
     @staticmethod
-    def testGetXrefFrom(QUARK_ANALYSIS_RESULT):
-        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
-            "Lcom/google/progress/WifiCheckTask;",
-            "checkWifiCanOrNotConnectServer",
-            "([Ljava/lang/String;)Z",
+    def testGetXrefFrom(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "([Ljava/lang/String;)Z",
+            )
         )
-        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         expectedMethod = Method(
-            QUARK_ANALYSIS_RESULT,
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
             MethodObject("Lcom/google/progress/WifiCheckTask;", "test", "()V"),
         )
 
@@ -141,8 +156,8 @@ class TestMethod:
 
 class TestBehavior:
     @staticmethod
-    def testHasString(QUARK_ANALYSIS_RESULT):
-        behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
+    def testHasString(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        behaviorOccurList = QUARK_ANALYSIS_RESULT_FOR_RULE_68.behaviorOccurList
         behavior = next(
             filter(
                 lambda b: "checkWifiCanOrNotConnectServer"
@@ -156,8 +171,8 @@ class TestBehavior:
         assert result
 
     @staticmethod
-    def testHasUrl(QUARK_ANALYSIS_RESULT):
-        behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
+    def testHasUrl(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        behaviorOccurList = QUARK_ANALYSIS_RESULT_FOR_RULE_68.behaviorOccurList
         behavior = next(
             filter(
                 lambda b: "checkWifiCanOrNotConnectServer"
@@ -171,8 +186,8 @@ class TestBehavior:
         assert "www.baidu.com" in result
 
     @staticmethod
-    def testGetParamValues(QUARK_ANALYSIS_RESULT):
-        behaviorOccurList = QUARK_ANALYSIS_RESULT.behaviorOccurList
+    def testGetParamValues(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        behaviorOccurList = QUARK_ANALYSIS_RESULT_FOR_RULE_68.behaviorOccurList
         behavior = next(
             filter(
                 lambda b: "checkWifiCanOrNotConnectServer"
@@ -183,19 +198,37 @@ class TestBehavior:
 
         assert behavior.getParamValues()[0] == "ping www.baidu.com"
 
+    @staticmethod
+    def testIsArgFromMethod(QUARK_ANALYSIS_RESULT_FOR_RULE_193):
+        behaviorOccurList = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_193.behaviorOccurList
+        )
+        behavior = behaviorOccurList[0]
+
+        expectedMethod = [
+            "Landroid/app/PendingIntent;",
+            "getBroadcast",
+            "(Landroid/content/Context; I Landroid/content/Intent;"
+            " I)Landroid/app/PendingIntent;",
+        ]
+
+        assert behavior.isArgFromMethod(expectedMethod)
+
 
 class TestQuarkReuslt:
     @staticmethod
-    def testMethodGetXrefTo(QUARK_ANALYSIS_RESULT):
-        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
-            "Lcom/google/progress/WifiCheckTask;",
-            "checkWifiCanOrNotConnectServer",
-            "()Z",
+    def testMethodGetXrefTo(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "()Z",
+            )
         )
-        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         expectedMethod = Method(
-            QUARK_ANALYSIS_RESULT,
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
             MethodObject(
                 "Landroid/util/Log;",
                 "e",
@@ -204,34 +237,38 @@ class TestQuarkReuslt:
         )
         expectedOffset = 116
 
-        callee_list = QUARK_ANALYSIS_RESULT.getMethodXrefTo(method)
+        callee_list = QUARK_ANALYSIS_RESULT_FOR_RULE_68.getMethodXrefTo(method)
 
         assert (expectedMethod, expectedOffset) in callee_list
 
     @staticmethod
-    def testMethodGetXrefFrom(QUARK_ANALYSIS_RESULT):
-        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
-            "Lcom/google/progress/WifiCheckTask;",
-            "checkWifiCanOrNotConnectServer",
-            "([Ljava/lang/String;)Z",
+    def testMethodGetXrefFrom(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "([Ljava/lang/String;)Z",
+            )
         )
-        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         expectedMethod = Method(
-            QUARK_ANALYSIS_RESULT,
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
             MethodObject("Lcom/google/progress/WifiCheckTask;", "test", "()V"),
         )
 
-        caller_list = QUARK_ANALYSIS_RESULT.getMethodXrefFrom(method)
+        caller_list = QUARK_ANALYSIS_RESULT_FOR_RULE_68.getMethodXrefFrom(
+            method
+        )
 
         assert expectedMethod in caller_list
 
     @staticmethod
-    def testgetAllStrings(QUARK_ANALYSIS_RESULT):
-        assert len(QUARK_ANALYSIS_RESULT.getAllStrings()) == 1005
+    def testgetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
 
     @staticmethod
-    def testfindMethodInCaller(QUARK_ANALYSIS_RESULT):
+    def testfindMethodInCaller(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         callerMethod = [
             "Lcom/google/progress/WifiCheckTask;",
             "checkWifiCanOrNotConnectServer",
@@ -243,13 +280,14 @@ class TestQuarkReuslt:
             "(Ljava/lang/String; Ljava/lang/String;)I",
         ]
 
-        assert QUARK_ANALYSIS_RESULT.findMethodInCaller(
-            callerMethod, targetMethod)
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.findMethodInCaller(
+            callerMethod, targetMethod
+        )
 
 
 def testRunQuarkAnalysis(SAMPLE_PATH):
     ruleset = Ruleset(RULE_FOLDER_PATH)
-    ruleObj = ruleset[RULE_FILENAME]
+    ruleObj = ruleset[RULE_68_FILENAME]
 
     analysisResult = runQuarkAnalysis(SAMPLE_PATH, ruleObj)
 

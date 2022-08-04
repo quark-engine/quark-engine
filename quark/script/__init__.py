@@ -170,6 +170,19 @@ class Behavior:
 
         return paramValues
 
+    def isArgFromMethod(self, targetMethod: List[str]) -> bool:
+        """Check if there are any argument from the target method.
+
+        :param targetMethod: python list contains class name, method name, and
+         descriptor of target method
+        :return: True/False-
+        """
+        className, methodName, descriptor = targetMethod
+
+        pattern = f"{className}->{methodName}{descriptor}"
+
+        return bool(self.hasString(pattern))
+
 
 class QuarkResult:
     def __init__(self, quark: Quark, ruleInstance: Rule) -> None:
