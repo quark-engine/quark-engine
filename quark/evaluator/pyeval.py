@@ -713,6 +713,9 @@ class PyEval:
             )
 
     def _lookup_implement(self, instance_type, method_full_name, skip_self=False):
+        if not instance_type:
+            return method_full_name
+
         class_name, signature = method_full_name.split("->")
         index = signature.index("(")
         method_name, descriptor = signature[:index], signature[index:]
