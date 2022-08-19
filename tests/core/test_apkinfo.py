@@ -163,9 +163,9 @@ class TestApkinfo:
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
-    def test_package_name(self, apkinfo):
+    @staticmethod
+    def test_package_name(apkinfo):
         assert apkinfo.package_name == "com.example.google.service"
-
 
     def test_find_method(self, apkinfo):
         result = apkinfo.find_method(
@@ -212,6 +212,7 @@ class TestApkinfo:
 
         assert (expect_method, expect_offset) in upper_methods
 
+    @staticmethod
     def test_get_number_of_registers(self, apkinfo):
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
@@ -223,6 +224,7 @@ class TestApkinfo:
 
         assert num_of_register == 8
 
+    @staticmethod
     def test_get_number_of_parameter_registers(self, apkinfo):
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",

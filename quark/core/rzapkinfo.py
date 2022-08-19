@@ -381,7 +381,8 @@ class RizinImp(BaseApkinfo):
         method_data = rz.cmdj(f"afij @ {address}")[0]
         return method_data.get("nbbs", None)
 
-    def __get_number_of_register_used_by_type(self, parameterType: str) -> int:
+    @staticmethod
+    def __get_number_of_register_used_by_type(parameterType: str) -> int:
         num_of_register = 1
         if parameterType in (
             PRIMITIVE_TYPE_MAPPING["boolean"],
