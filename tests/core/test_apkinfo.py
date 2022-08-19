@@ -163,6 +163,10 @@ class TestApkinfo:
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
+    def test_package_name(self, apkinfo):
+        assert apkinfo.package_name == "com.example.google.service"
+
+
     def test_find_method(self, apkinfo):
         result = apkinfo.find_method(
             "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
@@ -207,6 +211,30 @@ class TestApkinfo:
         upper_methods = apkinfo.lowerfunc(method)
 
         assert (expect_method, expect_offset) in upper_methods
+
+    def test_get_number_of_registers(self, apkinfo):
+        method = apkinfo.find_method(
+            "Lcom/example/google/service/SMSReceiver;",
+            "isContact",
+            "(Ljava/lang/String;)Ljava/lang/Boolean;",
+        )
+
+        num_of_register = apkinfo.get_number_of_registers_used_by(method)
+
+        assert num_of_register == 8
+
+    def test_get_number_of_parameter_registers(self, apkinfo):
+        method = apkinfo.find_method(
+            "Lcom/example/google/service/SMSReceiver;",
+            "isContact",
+            "(Ljava/lang/String;)Ljava/lang/Boolean;",
+        )
+
+        num_of_parameter_register = (
+            apkinfo.get_number_of_parameter_registers_used_by(method)
+        )
+
+        assert num_of_parameter_register == 2
 
     def test_get_method_bytecode(self, apkinfo):
         expected_bytecode_list = [

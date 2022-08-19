@@ -14,7 +14,9 @@ class RegisterObject:
         "_type_history",
     ]
 
-    def __init__(self, register_name, value, called_by_func=None, value_type=None):
+    def __init__(
+        self, register_name, value, called_by_func=None, value_type=None
+    ):
         """
         A data structure for creating the bytecode variable object, which
         used to record the state of each register.
@@ -36,7 +38,13 @@ class RegisterObject:
             self._called_by_func.append(called_by_func)
 
     def __repr__(self):
-        return f"<VarabileObject-register:{self._register_name}, value:{self._value}, called_by_func:{','.join(self._called_by_func)}, current_type:{self._value_type}>"
+        return (
+            f"<VarabileObject-",
+            f"register:{self._register_name}, ",
+            f"value:{self._value}, ",
+            f"called_by_func:{','.join(self._called_by_func)}, ",
+            f"current_type:{self._current_type}>"
+        )
 
     def __eq__(self, obj):
         return (

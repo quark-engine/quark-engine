@@ -2,9 +2,11 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+from enum import Enum
 import functools
 from os import PathLike
 from os.path import abspath, isfile, join
+import re
 from typing import Any, List, Tuple, Union
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
@@ -47,6 +49,14 @@ class DefaultRuleset(Ruleset):
 DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
 
 
+class BytecodeRegex(Enum):
+    IfKindForZero = re.compile(r"^if-((eq)|(ne)|(lt)|(le)|(ge)|(gt))z\(")
+    IfKindForTwoValues = re.compile(
+        r"^if-((test)|(eq)|(ne)|(lt)|(le)|(ge)|(gt))\("
+    )
+    CmpKind = re.compile(r"((cmp-long)|(cmp[lg]-((float)|(double))))\(")
+
+
 class Method:
     def __init__(
         self, quarkResultInstance: "QuarkResult", methodObj: MethodObject
@@ -76,6 +86,85 @@ class Method:
         :return: python list containing caller methods
         """
         return self.quarkResult.getMethodXrefFrom(self)
+
+    @staticmethod
+    def __findComparisonByPatternMatching(
+        records: List[str],
+        searchPattern: str,
+        regex: re.Pattern,
+    ):
+        targetRecords = (
+            record
+            for record in records
+            if re.search(regex, record) and searchPattern in record
+        )
+
+        return next(targetRecords, None)
+
+    def __findIfKindComparisonWithOneValueAndZero(
+        self, records: List[str], valueA: str
+    ) -> str:
+        searchPattern = f"({valueA})"
+        regex = BytecodeRegex.IfKindForZero.value
+        return self.__findComparisonByPatternMatching(
+            records, searchPattern, regex
+        )
+
+    def __findIfKindComparisonWithTwoValues(
+        self, records: List[str], valueA: str, valueB: str
+    ) -> str:
+        searchPattern = f"({valueA},{valueB})"
+        regex = BytecodeRegex.IfKindForTwoValues.value
+        return self.__findComparisonByPatternMatching(
+            records, searchPattern, regex
+        )
+
+    def __findCmpKindComparison(
+        self, records: List[str], valueA: str, valueB: str
+    ) -> str:
+        searchPattern = f"({valueA},{valueB})"
+        regex = BytecodeRegex.CmpKind.value
+        return self.__findComparisonByPatternMatching(
+            records, searchPattern, regex
+        )
+
+    def compareValueOf(
+        self, valueA: str, valueB: Union[str, int, bool]
+    ) -> bool:
+        """Check if two values are compared in the method.
+
+        :param valueA: string that holds the value of a register
+        :param valueB: another string or constant compared with the above
+         register
+        :return: True/False
+        """
+        usageTable = self.quarkResult.quark._evaluate_method(self.innerObj)
+
+        allRecords = [
+            historicalValue
+            for register in usageTable
+            for history in register
+            for historicalValue in history.called_by_func
+        ]
+
+        if isinstance(valueB, bool):
+            valueB = int(valueB)
+
+        if valueB in (0, None):
+            matchedRecord = self.__findIfKindComparisonWithOneValueAndZero(
+                allRecords, valueA
+            )
+        else:
+            matchedRecord = self.__findIfKindComparisonWithTwoValues(
+                allRecords, valueA, valueB
+            )
+
+        if not matchedRecord:
+            matchedRecord = self.__findCmpKindComparison(
+                allRecords, valueA, valueB
+            )
+
+        return bool(matchedRecord)
 
     @property
     def fullName(self) -> str:
@@ -169,6 +258,19 @@ class Behavior:
                 paramValues = result[1:-1].split(",")[1:]
 
         return paramValues
+
+    def isArgFromMethod(self, targetMethod: List[str]) -> bool:
+        """Check if there are any argument from the target method.
+
+        :param targetMethod: python list contains class name, method name, and
+         descriptor of target method
+        :return: True/False-
+        """
+        className, methodName, descriptor = targetMethod
+
+        pattern = f"{className}->{methodName}{descriptor}"
+
+        return bool(self.hasString(pattern))
 
 
 class QuarkResult:
@@ -290,3 +392,14 @@ def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
     analysis = QuarkResult(quark, ruleInstance)
 
     return analysis
+
+
+def getPackageName(samplePath: PathLike) -> str:
+    """Get the package name of a target sample.
+
+    :param samplePath: target file
+    :return: string containing the package name
+    """
+
+    quark = _getQuark(samplePath)
+    return quark.apkinfo.package_name

@@ -256,6 +256,35 @@ def binop_lit_kind(request):
     return request.param
 
 
+IF_KIND = ["if-eq", "if-ne", "if-lt", "if-ge", "if-gt", "if-le"]
+
+IF_KIND_FOR_ZERO = [ins + "z" for ins in IF_KIND]
+
+
+@pytest.fixture(scope="module", params=IF_KIND)
+def if_kind(request):
+    return request.param
+
+
+@pytest.fixture(scope="module", params=IF_KIND_FOR_ZERO)
+def if_kind_for_zero(request):
+    return request.param
+
+
+CMP_KIND = [
+    "cmpl-float",
+    "cmpg-float",
+    "cmpl-double",
+    "cmpg-double",
+    "cmp-long",
+]
+
+
+@pytest.fixture(scope="module", params=CMP_KIND)
+def cmp_kind(request):
+    return request.param
+
+
 class TestPyEval:
     def test_init(self, apkinfo):
         pyeval = PyEval(apkinfo)
@@ -911,6 +940,44 @@ class TestPyEval:
 
         assert pyeval.table_obj.pop(6) == RegisterObject(
             "v6", "Embedded-array-data()[", value_type="[I"
+        )
+
+    def test_if_kind(self, pyeval, if_kind):
+        instruction = [if_kind, "v4", "v5", "offset"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert (
+            f"{if_kind}()V(Lcom/google/progress/SMSHelper;,some_number)"
+            in pyeval.table_obj.pop(4).called_by_func
+        )
+        assert (
+            f"{if_kind}()V(Lcom/google/progress/SMSHelper;,some_number)"
+            in pyeval.table_obj.pop(5).called_by_func
+        )
+
+    def test_if_kind_for_zero(self, pyeval, if_kind_for_zero):
+        instruction = [if_kind_for_zero, "v4", "offset"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert (
+            f"{if_kind_for_zero}()V(Lcom/google/progress/SMSHelper;)"
+            in pyeval.table_obj.pop(4).called_by_func
+        )
+
+    def test_cmp_kind(self, pyeval, cmp_kind):
+        instruction = [cmp_kind, "v4", "v4", "v5"]
+
+        pyeval.eval[instruction[0]](instruction)
+
+        assert (
+            f"{cmp_kind}(Lcom/google/progress/SMSHelper;,some_number)"
+            in pyeval.table_obj.pop(4).value
+        )
+        assert (
+            f"{cmp_kind}(Lcom/google/progress/SMSHelper;,some_number)"
+            not in pyeval.table_obj.pop(5).value
         )
 
     def test_show_table(self, pyeval):
