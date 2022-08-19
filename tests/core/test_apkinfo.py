@@ -213,7 +213,7 @@ class TestApkinfo:
         assert (expect_method, expect_offset) in upper_methods
 
     @staticmethod
-    def test_get_number_of_registers(self, apkinfo):
+    def test_get_number_of_registers(apkinfo):
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
@@ -225,7 +225,7 @@ class TestApkinfo:
         assert num_of_register == 8
 
     @staticmethod
-    def test_get_number_of_parameter_registers(self, apkinfo):
+    def test_get_number_of_parameter_registers(apkinfo):
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",

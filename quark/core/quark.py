@@ -14,6 +14,7 @@ import pandas as pd
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
+from quark.core.struct.methodobject import MethodObject
 from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
 from quark.utils.colors import (
@@ -199,10 +200,17 @@ class Quark:
         :return: Matrix that holds the usage of the registers
         """
 
-        def getParameterType(method):
+        def getRegisterTypes(method: MethodObject) -> List[str]:
             descriptor = method.descriptor
             parameterTypes = descriptor[1 : descriptor.find(")")].split()
-            return parameterTypes
+
+            registerTypes = []
+            for paramType in parameterTypes:
+                if paramType in ["J", "D"]:
+                    registerTypes.append(paramType)
+                registerTypes.append(paramType)
+
+            return registerTypes
 
         pyeval = PyEval(self.apkinfo)
 
@@ -212,9 +220,12 @@ class Quark:
         )
 
         idx_of_first_param_register = num_of_register - num_of_param_register
-        parameterTypes = getParameterType(method)
+        registerTypes = getRegisterTypes(method)
+        if len(registerTypes) < num_of_param_register:
+            registerTypes.insert(0, method.class_name)
+
         for register, parameterType in zip(
-            range(idx_of_first_param_register, num_of_register), parameterTypes
+            range(idx_of_first_param_register, num_of_register), registerTypes
         ):
             initailize_param_register = [
                 "const",
