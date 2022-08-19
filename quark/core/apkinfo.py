@@ -68,6 +68,10 @@ class AndroguardImp(BaseApkinfo):
             for meth_analysis in self.analysis.get_methods()
         }
 
+    @property
+    def package_name(self) -> str:
+        return self.apk.package
+
     @functools.lru_cache()
     def find_method(
         self,
