@@ -198,6 +198,11 @@ class Quark:
         :param method: Method to be evaluated
         :return: Matrix that holds the usage of the registers
         """
+        def getParameterType(method):
+            descriptor = method.descriptor
+            parameterTypes = descriptor[1:descriptor.find(')')].split()
+            return parameterTypes
+
         pyeval = PyEval(self.apkinfo)
 
         num_of_register = self.apkinfo.get_number_of_registers_used_by(method)
@@ -206,15 +211,14 @@ class Quark:
         )
 
         idx_of_first_param_register = num_of_register - num_of_param_register
-        for register in range(idx_of_first_param_register, num_of_register):
+        parameterTypes = getParameterType(method)
+        for register, parameterType in zip(range(idx_of_first_param_register, num_of_register), parameterTypes):
             initailize_param_register = [
                 "const",
                 f"v{register}",
                 f"v{register}",
             ]
-            pyeval.eval[initailize_param_register[0]](
-                initailize_param_register
-            )
+            pyeval._assign_value(initailize_param_register, value_type=parameterType)
 
         for bytecode_obj in self.apkinfo.get_method_bytecode(method):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
