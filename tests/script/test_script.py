@@ -5,40 +5,24 @@
 import os
 
 import pytest
-import requests
 from quark.core.struct.methodobject import MethodObject
-from quark.script import DefaultRuleset, Method, Ruleset, runQuarkAnalysis
-
-SAMPLE_SOURCE_URL = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+from quark.script import (
+    DefaultRuleset,
+    Method,
+    Ruleset,
+    getActivities,
+    runQuarkAnalysis,
 )
-SAMPLE_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 RULE_FOLDER_PATH = "tests/script/rules"
 RULE_FILENAME = "00068.json"
 RULE_PATH = os.path.join(RULE_FOLDER_PATH, RULE_FILENAME)
 
 
-@pytest.fixture(scope="session")
-def SAMPLE_PATH(tmp_path_factory: pytest.TempPathFactory) -> str:
-    folder = os.path.splitext(os.path.basename(__file__))[0]
-    folder = tmp_path_factory.mktemp(folder)
-
-    sample_path = folder / SAMPLE_FILENAME
-
-    response = requests.get(SAMPLE_SOURCE_URL, allow_redirects=True)
-    file = open(sample_path, "wb")
-    file.write(response.content)
-    file.close()
-
-    return str(sample_path)
-
-
 @pytest.fixture(scope="class")
-def QUARK_ANALYSIS_RESULT(SAMPLE_PATH):
+def QUARK_ANALYSIS_RESULT(SAMPLE_PATH_14d9f):
     ruleset = Ruleset(RULE_FOLDER_PATH)
-    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_FILENAME])
+    return runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleset[RULE_FILENAME])
 
 
 class TestRuleset:
@@ -80,6 +64,28 @@ class TestDefaultRuleset:
             _ = ruleset[1]
 
 
+class TestActivity:
+    @staticmethod
+    def testHasNoIntentFilter(SAMPLE_PATH_14d9f):
+        activity = getActivities(SAMPLE_PATH_14d9f)[0]
+        assert activity.hasIntentFilter() is False
+
+    @staticmethod
+    def testHasIntentFilter(SAMPLE_PATH_13667):
+        activity = getActivities(SAMPLE_PATH_13667)[0]
+        assert activity.hasIntentFilter() is True
+
+    @staticmethod
+    def testIsNotExported(SAMPLE_PATH_14d9f):
+        activity = getActivities(SAMPLE_PATH_14d9f)[0]
+        assert activity.isExported() is False
+
+    @staticmethod
+    def testIsExported(SAMPLE_PATH_13667):
+        activity = getActivities(SAMPLE_PATH_13667)[0]
+        assert activity.isExported() is True
+
+
 class TestMethod:
     @staticmethod
     def testInit(QUARK_ANALYSIS_RESULT):
@@ -92,8 +98,7 @@ class TestMethod:
         method = Method(QUARK_ANALYSIS_RESULT, methodObj)
 
         assert (
-            method.fullName
-            == "Lcom/google/progress/WifiCheckTask;"
+            method.fullName == "Lcom/google/progress/WifiCheckTask;"
             " checkWifiCanOrNotConnectServer ()Z"
         )
 
@@ -244,13 +249,21 @@ class TestQuarkReuslt:
         ]
 
         assert QUARK_ANALYSIS_RESULT.findMethodInCaller(
-            callerMethod, targetMethod)
+            callerMethod, targetMethod
+        )
 
 
-def testRunQuarkAnalysis(SAMPLE_PATH):
+def testRunQuarkAnalysis(SAMPLE_PATH_14d9f):
     ruleset = Ruleset(RULE_FOLDER_PATH)
     ruleObj = ruleset[RULE_FILENAME]
 
-    analysisResult = runQuarkAnalysis(SAMPLE_PATH, ruleObj)
+    analysisResult = runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleObj)
 
     assert len(analysisResult.behaviorOccurList) == 1
+
+
+def testGetActivities(SAMPLE_PATH_14d9f) -> None:
+    activities = getActivities(SAMPLE_PATH_14d9f)
+
+    assert len(activities) == 1
+    assert str(activities[0]) == "com.google.progress.BackGroundActivity"
