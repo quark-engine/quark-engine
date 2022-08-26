@@ -103,6 +103,18 @@ class TestApkinfo:
         ]
         assert set(apkinfo.permissions) == set(ans)
 
+    @staticmethod
+    def test_activities(apkinfo):
+        activities = apkinfo.activities
+
+        assert len(activities) == 1
+        assert (
+            activities[0].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.MainActivity"
+        )
+
     def test_android_apis(self, apkinfo):
         api = {
             MethodObject(
