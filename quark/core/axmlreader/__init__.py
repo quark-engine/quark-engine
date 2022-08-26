@@ -1,8 +1,11 @@
 import enum
 import functools
 import os.path
-import pkg_resources
+from typing import Any, Dict, Iterator
+from xml.etree.ElementTree import Element as XMLElement  # nosec B405
+from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
+import pkg_resources
 import rzpipe
 
 # Resource Types Definition
@@ -35,25 +38,25 @@ RES_TABLE_OVERLAYABLE_POLICY_TYPE = 0x0205
 
 
 class Res_value_type(enum.Enum):
-    TYPE_NULL = (0x00,)
-    TYPE_REFERENCE = (0x01,)
-    TYPE_ATTRIBUTE = (0x02,)
-    TYPE_STRING = (0x03,)
-    TYPE_FLOAT = (0x04,)
-    TYPE_DIMENSION = (0x05,)
-    TYPE_FRACTION = (0x06,)
-    TYPE_DYNAMIC_REFERENCE = (0x07,)
-    TYPE_DYNAMIC_ATTRIBUTE = (0x08,)
-    TYPE_FIRST_INT = (0x10,)
-    TYPE_INT_DEC = (0x10,)
-    TYPE_INT_HEX = (0x11,)
-    TYPE_INT_BOOLEAN = (0x12,)
-    TYPE_FIRST_COLOR_INT = (0x1C,)
-    TYPE_INT_COLOR_ARGB8 = (0x1C,)
-    TYPE_INT_COLOR_RGB8 = (0x1D,)
-    TYPE_INT_COLOR_ARGB4 = (0x1E,)
-    TYPE_INT_COLOR_RGB4 = (0x1F,)
-    TYPE_LAST_COLOR_INT = (0x1F,)
+    TYPE_NULL = 0x00
+    TYPE_REFERENCE = 0x01
+    TYPE_ATTRIBUTE = 0x02
+    TYPE_STRING = 0x03
+    TYPE_FLOAT = 0x04
+    TYPE_DIMENSION = 0x05
+    TYPE_FRACTION = 0x06
+    TYPE_DYNAMIC_REFERENCE = 0x07
+    TYPE_DYNAMIC_ATTRIBUTE = 0x08
+    TYPE_FIRST_INT = 0x10
+    TYPE_INT_DEC = 0x10
+    TYPE_INT_HEX = 0x11
+    TYPE_INT_BOOLEAN = 0x12
+    TYPE_FIRST_COLOR_INT = 0x1C
+    TYPE_INT_COLOR_ARGB8 = 0x1C
+    TYPE_INT_COLOR_RGB8 = 0x1D
+    TYPE_INT_COLOR_ARGB4 = 0x1E
+    TYPE_INT_COLOR_RGB4 = 0x1F
+    TYPE_LAST_COLOR_INT = 0x1F
     TYPE_LAST_INT = 0x1F
 
 
@@ -285,6 +288,72 @@ class AxmlReader(object):
             attrAddress = attrAddress + attributeSize
 
         return result
+
+    def __convert_tag_to_xml_element(self, tag: Dict[str, Any]) -> XMLElement:
+        tag_name = self.get_string(tag["Name"])
+
+        tag_attributes = {}
+        for raw_attribute in self.get_attributes(tag):
+            namespace = self.get_string(raw_attribute["Namespace"])
+            name = self.get_string(raw_attribute["Name"])
+
+            data_type = raw_attribute["Type"]
+            raw_data = raw_attribute["Data"]
+            if data_type == Res_value_type.TYPE_STRING.value:
+                value = self.get_string(raw_data)
+            elif data_type == Res_value_type.TYPE_INT_BOOLEAN.value:
+                value = bool(abs(raw_data))
+            else:
+                value = raw_attribute["Data"]
+
+            if namespace:
+                name = "{" + namespace + "}" + name
+
+            tag_attributes[name] = value
+
+        return XMLElement(tag_name, tag_attributes)
+
+    def __find_manifest(
+        self, file_iterator: Iterator[Dict[str, str]]
+    ) -> XMLElement:
+        manifest_tag = next(
+            (
+                tag
+                for tag in file_iterator
+                if tag["Type"] == RES_XML_START_ELEMENT_TYPE
+                and self.get_string(tag["Name"]) == "manifest"
+            ),
+            None,
+        )
+
+        if manifest_tag:
+            return self.__convert_tag_to_xml_element(manifest_tag)
+
+    def get_xml_tree(self) -> XMLElementTree:
+        """
+        Return the parsed XML corresponding to the AndroidManifest.xml file.
+
+        :return: the content of the file
+        """
+        file_iterator = iter(self)
+        root = self.__find_manifest(file_iterator)
+
+        stack = [root]
+        for tag in file_iterator:
+            tag_type = tag["Type"]
+
+            if tag_type == RES_XML_END_ELEMENT_TYPE:
+                stack.pop()
+
+            elif tag_type == RES_XML_START_ELEMENT_TYPE:
+                element = self.__convert_tag_to_xml_element(tag)
+
+                parent = stack[-1]
+                parent.append(element)
+
+                stack.append(element)
+
+        return XMLElementTree(root)
 
     def __del__(self):
         try:
