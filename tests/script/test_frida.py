@@ -167,7 +167,7 @@ class TestMethodCallEventDispatcher:
 class TestBehavior:
     @staticmethod
     def testHasString(methodCallMessages):
-        behavior = Behavior(methodCallMessages[0])
+        behavior = Behavior(methodCallMessages[0])  # nosec E1120
         capturedStrings = behavior.hasString("SimpleString")
         assert capturedStrings == ["SimpleString"]
 
