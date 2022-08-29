@@ -11,7 +11,6 @@ from time import sleep
 from typing import Any, Dict, List, Tuple
 
 import pkg_resources
-from quark.script import Behavior
 from quark.utils.regex import URL_REGEX
 
 import frida
@@ -38,9 +37,9 @@ class MethodCallEventDispatcher:
         :return: python list that holds calls to the target method
         """
         messageBuffer = []
-        id = self._getMethodIdentifier(targetMethod, methodParamTypes)
+        methodId = self._getMethodIdentifier(targetMethod, methodParamTypes)
 
-        self.watchedMethods[id] = messageBuffer
+        self.watchedMethods[methodId] = messageBuffer
         self.script.exports.watch_method_call(targetMethod, methodParamTypes)
 
         return messageBuffer
@@ -53,10 +52,10 @@ class MethodCallEventDispatcher:
         :param targetMethod: the target API
         :param methodParamTypes: the parameter types of the target API
         """
-        id = self._getMethodIdentifier(targetMethod, methodParamTypes)
+        methodId = self._getMethodIdentifier(targetMethod, methodParamTypes)
 
-        if id in self.watchedMethods:
-            del self.watchedMethods[id]
+        if methodId in self.watchedMethods:
+            del self.watchedMethods[methodId]
 
     def receiveMessage(self, messageFromFridaAgent: dict, _) -> None:
         if messageFromFridaAgent["type"] == "error":
@@ -69,15 +68,15 @@ class MethodCallEventDispatcher:
         eventType = receivedEvent.get("type", None)
 
         if eventType == "CallCaptured":
-            id = tuple(receivedEvent["identifier"][0:2])
+            methodId = tuple(receivedEvent["identifier"][0:2])
 
-            if id in self.watchedMethods:
-                messageBuffer = self.watchedMethods[id]
+            if methodId in self.watchedMethods:
+                messageBuffer = self.watchedMethods[methodId]
                 messageBuffer.append(receivedEvent)
 
         elif eventType == "FailedToWatch":
-            id = tuple(receivedEvent["identifier"])
-            self.watchedMethods.pop(id)
+            methodId = tuple(receivedEvent["identifier"])
+            self.watchedMethods.pop(methodId)
 
 
 @functools.lru_cache

@@ -47,8 +47,8 @@ function watchMethodCall(classAndMethodName, methodParamTypes) {
             const paramTypesOfPossibleMethod = possibleMethod.argumentTypes.map((argument) => argument.className);
             return paramTypesOfPossibleMethod.join(",") === methodParamTypes;
         }).forEach((matchedMethod) => {
-            const retType = matchedMethod.returnType.name
-            replaceMethodImplementation(matchedMethod, classAndMethodName, methodParamTypes, retType)
+            const retType = matchedMethod.returnType.name;
+            replaceMethodImplementation(matchedMethod, classAndMethodName, methodParamTypes, retType);
         }
         );
 
