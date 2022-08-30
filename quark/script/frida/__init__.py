@@ -62,6 +62,11 @@ class MethodCallEventDispatcher:
     def receiveMessage(self, messageFromFridaAgent: dict, _) -> None:
         if messageFromFridaAgent["type"] == "error":
             errorDescription = messageFromFridaAgent["description"]
+        """Send the event captured by Frida to the corresponding
+         buffers.
+
+        :param eventWrapperFromFrida: python dict containing captured events
+        """
             print(errorDescription, file=sys.stderr)
             return
 
