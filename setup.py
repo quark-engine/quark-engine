@@ -34,6 +34,9 @@ setuptools.setup(
         "quark.webreport": [
             "analysis_report_layout.html",
             "genrule_report_layout.html"
+        ],
+        "quark.script.frida": [
+            "agent.js"
         ]
     },
     entry_points={
