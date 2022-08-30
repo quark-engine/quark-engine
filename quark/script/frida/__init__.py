@@ -2,6 +2,7 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+from ctypes import Union
 import functools
 import json
 import re
@@ -17,6 +18,8 @@ import frida
 from frida.core import Device
 from frida.core import Session as FridaSession
 
+MethodCallEvent = Dict[str, Union[List[str], str]]
+
 
 class MethodCallEventDispatcher:
     def __init__(self, frida: FridaSession) -> None:
@@ -29,20 +32,20 @@ class MethodCallEventDispatcher:
 
     def startWatchingMethodCall(
         self, targetMethod: str, methodParamTypes: str
-    ) -> List["Behavior"]:
+    ) -> List[MethodCallEvent]:
         """Start tracking calls to the target method.
 
         :param targetMethod: the target API
         :param methodParamTypes: the parameter types of the target API
         :return: python list that holds calls to the target method
         """
-        messageBuffer = []
+        eventBuffer = []
         methodId = self._getMethodIdentifier(targetMethod, methodParamTypes)
 
-        self.watchedMethods[methodId] = messageBuffer
+        self.watchedMethods[methodId] = eventBuffer
         self.script.exports.watch_method_call(targetMethod, methodParamTypes)
 
-        return messageBuffer
+        return eventBuffer
 
     def stopWatchingMethodCall(
         self, targetMethod: str, methodParamTypes: str
@@ -80,9 +83,17 @@ class MethodCallEventDispatcher:
 
 
 @functools.lru_cache
-def _setupFrida(
+def _spawnApp(
     appPackageName: str, protocol="usb", **kwargs: Any
 ) -> Tuple[Device, FridaSession, int]:
+    """Spawn the target APP with Frida
+
+    :param appPackageName: the package name of the target APP
+    :param protocol: string that holds the protocol to communicate with the
+     Frida server, defaults to "usb"
+    :return: tuple containing the device ID, the Frida instance and the process
+     ID of the APP.
+    """
     device = None
     if protocol == "usb":
         device = frida.get_usb_device(**kwargs)
@@ -99,6 +110,12 @@ def _setupFrida(
 
 @functools.lru_cache
 def _injectAgent(frida: FridaSession) -> MethodCallEventDispatcher:
+    """Inject a Frida agent to help track method calls.
+
+    :param frida: Frida instance to be injected
+    :return: dispatcher that stores the captured calls to the appropriate
+     buffers
+    """
     dispatcher = MethodCallEventDispatcher(frida)
 
     pathToFridaAgentSource = pkg_resources.resource_filename(
@@ -116,7 +133,7 @@ def _injectAgent(frida: FridaSession) -> MethodCallEventDispatcher:
 
 @dataclass
 class Behavior:
-    _message: Dict[str, str]
+    _callEvent: MethodCallEvent
 
     def hasString(self, pattern: str, regex: bool = False) -> List[str]:
         """Check if the behavior contains strings
@@ -153,12 +170,12 @@ class Behavior:
 
         :return: python list containing parameter values
         """
-        return self._message["paramValues"]
+        return self._callEvent["paramValues"]
 
 
 @dataclass
 class FridaResult:
-    _messageBuffer: List[str]
+    _eventBuffer: List[MethodCallEvent]
 
     @property
     def behaviorOccurList(self) -> List[Behavior]:
@@ -167,7 +184,7 @@ class FridaResult:
 
         :return: detected behavior instance
         """
-        return [Behavior(message) for message in self._messageBuffer]
+        return [Behavior(message) for message in self._eventBuffer]
 
 
 def runFridaHook(
@@ -178,20 +195,22 @@ def runFridaHook(
 ) -> FridaResult:
     """Track calls to the specified method for given seconds.
 
-    :param apkPackageName: the target APK
+    :param apkPackageName: the package name of the target APP
     :param targetMethod: the target API
     :param methodParamTypes: string that holds the parameters used by the
      target API
-    :param secondToWait: seconds to wait for method calls
+    :param secondToWait: seconds to wait for method calls, defaults to 10
     :return: FridaResult instance
     """
-    device, frida, appProcess = _setupFrida(apkPackageName)
+    device, frida, appProcess = _spawnApp(apkPackageName)
     dispatcher = _injectAgent(frida)
 
-    buffer = dispatcher.startWatchingMethodCall(targetMethod, methodParamTypes)
+    eventBuffer = dispatcher.startWatchingMethodCall(
+        targetMethod, methodParamTypes
+    )
     device.resume(appProcess)
 
     sleep(secondToWait)
     dispatcher.stopWatchingMethodCall(targetMethod, methodParamTypes)
 
-    return FridaResult(buffer)
+    return FridaResult(eventBuffer)
