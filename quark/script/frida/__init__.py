@@ -174,7 +174,7 @@ def runFridaHook(
     apkPackageName: str,
     targetMethod: str,
     methodParamTypes: str,
-    secondToWait: int,
+    secondToWait: int = 10,
 ) -> FridaResult:
     """Track calls to the specified method for given seconds.
 
