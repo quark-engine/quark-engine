@@ -2,14 +2,13 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from ctypes import Union
 import functools
 import json
 import re
 import sys
 from dataclasses import dataclass
 from time import sleep
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 
 import pkg_resources
 from quark.utils.regex import URL_REGEX
