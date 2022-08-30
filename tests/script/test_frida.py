@@ -87,7 +87,7 @@ class TestMethodCallEventDispatcher:
             ),
         }
 
-        dispatcher.receiveMessage(failedToWatchMessage, None)
+        dispatcher.handleCapturedEvent(failedToWatchMessage, None)
 
         assert (
             dispatcher._getMethodIdentifier(targetMethod, methodParamTypes)
@@ -147,7 +147,7 @@ class TestMethodCallEventDispatcher:
             "payload": json.dumps(expectedEvent),
         }
 
-        dispatcher.receiveMessage(callMessage, None)
+        dispatcher.handleCapturedEvent(callMessage, None)
 
         assert expectedEvent in buffer
 
@@ -157,7 +157,7 @@ class TestMethodCallEventDispatcher:
 
         errorMessage = {"type": "error", "description": "Any description."}
 
-        dispatcher.receiveMessage(errorMessage, None)
+        dispatcher.handleCapturedEvent(errorMessage, None)
 
         captured = capsys.readouterr()
 

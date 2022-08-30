@@ -59,30 +59,30 @@ class MethodCallEventDispatcher:
         if methodId in self.watchedMethods:
             del self.watchedMethods[methodId]
 
-    def receiveMessage(self, messageFromFridaAgent: dict, _) -> None:
-        if messageFromFridaAgent["type"] == "error":
-            errorDescription = messageFromFridaAgent["description"]
+    def handleCapturedEvent(self, eventWrapperFromFrida: dict, _) -> None:
         """Send the event captured by Frida to the corresponding
          buffers.
 
         :param eventWrapperFromFrida: python dict containing captured events
         """
+        if eventWrapperFromFrida["type"] == "error":
+            errorDescription = eventWrapperFromFrida["description"]
             print(errorDescription, file=sys.stderr)
             return
 
-        receivedEvent = json.loads(messageFromFridaAgent["payload"])
+        methodCallEvent = json.loads(eventWrapperFromFrida["payload"])
 
-        eventType = receivedEvent.get("type", None)
+        eventType = methodCallEvent.get("type", None)
 
         if eventType == "CallCaptured":
-            methodId = tuple(receivedEvent["identifier"][0:2])
+            methodId = tuple(methodCallEvent["identifier"][0:2])
 
             if methodId in self.watchedMethods:
                 messageBuffer = self.watchedMethods[methodId]
-                messageBuffer.append(receivedEvent)
+                messageBuffer.append(methodCallEvent)
 
         elif eventType == "FailedToWatch":
-            methodId = tuple(receivedEvent["identifier"])
+            methodId = tuple(methodCallEvent["identifier"])
             self.watchedMethods.pop(methodId)
 
 
@@ -128,7 +128,7 @@ def _injectAgent(frida: FridaSession) -> MethodCallEventDispatcher:
 
     with open(pathToFridaAgentSource, "r") as fridaAgentSource:
         fridaAgent = dispatcher.frida.create_script(fridaAgentSource.read())
-        fridaAgent.on("message", dispatcher.receiveMessage)
+        fridaAgent.on("message", dispatcher.handleCapturedEvent)
         fridaAgent.load()
         dispatcher.script = fridaAgent
 
