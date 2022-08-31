@@ -8,6 +8,7 @@
 
 import logging
 from datetime import datetime
+from typing import List
 
 from quark import config
 from quark.core.struct.registerobject import RegisterObject
@@ -69,6 +70,19 @@ class PyEval:
             "const-wide/32": self.CONST_WIDE_THIRTY_TWO,
             "const-wide/high16": self.CONST_WIDE_HIGHSIXTEEN,
         }
+
+        # if-kind
+        IF_KIND_POSTFIX = ("eq", "ne", "lt", "le", "ge", "gt")
+        for postfix in IF_KIND_POSTFIX:
+            self.eval[f"if-{postfix}"] = self.IF_KIND
+            self.eval[f"if-{postfix}z"] = self.IF_KIND
+
+        # cmp-kind
+        CMP_KIND_POSTFIX = ("float", "double")
+        for postfix in CMP_KIND_POSTFIX:
+            self.eval[f"cmpl-{postfix}"] = self.CMP_KIND
+            self.eval[f"cmpg-{postfix}"] = self.CMP_KIND
+        self.eval[f"cmp-long"] = self.CMP_KIND
 
         # move-kind
         for prefix in ("move", "move-object", "move-wide"):
@@ -503,7 +517,6 @@ class PyEval:
     def AGET_WIDE_KIND(self, instruction):
         array_reg_index = int(instruction[2][1:])
 
-
         try:
             value_type = self.table_obj.pop(array_reg_index).current_type[1:]
             destination = int(instruction[1][1:])
@@ -634,6 +647,48 @@ class PyEval:
         except IndexError as e:
             log.exception(f"{e} in BINOP_KIND")
 
+    @logger
+    def IF_KIND(self, instruction: List[str]):
+        """
+        Simulate the execution of the if-kind instructions.
+
+        :param instruction: python list containing the mnemonic, the register,
+         and the branch offset
+        :return: None
+        """
+
+        def convert_to_method_call(instruction: List[str]):
+            # Drop the last argument since it's the branch address.
+            return (
+                ["invoke-static"]
+                + instruction[1:-1]
+                + [f"{instruction[0]}()V"]
+            )
+
+        instruction = convert_to_method_call(instruction)
+
+        self._invoke(instruction, look_up=False, skip_self=False)
+
+    @logger
+    def CMP_KIND(self, instruction: List[str]):
+        """
+        Simulate the execution of the cmp-kind instructions.
+
+        :param instruction: python list containing the mnemonic and two
+         registers
+        :return: None
+        """
+        mnemonic = instruction[0]
+        value_type = mnemonic[mnemonic.index("-") + 1:]
+        wide = value_type in ["double", "long"]
+
+        self._move_value_to_register(
+            instruction,
+            f"{instruction[0]}({{src0}},{{src1}})",
+            wide,
+            value_type=value_type,
+        )
+
     def show_table(self):
         return self.table_obj.get_table()
 
@@ -658,6 +713,9 @@ class PyEval:
             )
 
     def _lookup_implement(self, instance_type, method_full_name, skip_self=False):
+        if not instance_type:
+            return method_full_name
+
         class_name, signature = method_full_name.split("->")
         index = signature.index("(")
         method_name, descriptor = signature[:index], signature[index:]

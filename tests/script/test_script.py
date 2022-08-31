@@ -5,34 +5,12 @@
 import os
 
 import pytest
-import requests
 from quark.core.struct.methodobject import MethodObject
 from quark.script import DefaultRuleset, Method, Ruleset, runQuarkAnalysis
-
-SAMPLE_SOURCE_URL = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
-)
-SAMPLE_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 RULE_FOLDER_PATH = "tests/script/rules"
 RULE_FILENAME = "00068.json"
 RULE_PATH = os.path.join(RULE_FOLDER_PATH, RULE_FILENAME)
-
-
-@pytest.fixture(scope="session")
-def SAMPLE_PATH(tmp_path_factory: pytest.TempPathFactory) -> str:
-    folder = os.path.splitext(os.path.basename(__file__))[0]
-    folder = tmp_path_factory.mktemp(folder)
-
-    sample_path = folder / SAMPLE_FILENAME
-
-    response = requests.get(SAMPLE_SOURCE_URL, allow_redirects=True)
-    file = open(sample_path, "wb")
-    file.write(response.content)
-    file.close()
-
-    return str(sample_path)
 
 
 @pytest.fixture(scope="class")
@@ -92,8 +70,7 @@ class TestMethod:
         method = Method(QUARK_ANALYSIS_RESULT, methodObj)
 
         assert (
-            method.fullName
-            == "Lcom/google/progress/WifiCheckTask;"
+            method.fullName == "Lcom/google/progress/WifiCheckTask;"
             " checkWifiCanOrNotConnectServer ()Z"
         )
 
@@ -137,6 +114,54 @@ class TestMethod:
         caller_list = method.getXrefFrom()
 
         assert expectedMethod in caller_list
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "testValueSet", [("v4", "v0"), ("cmp-long(v4,v0)")]
+    )
+    def testCompareValueOfWithTwoValues(QUARK_ANALYSIS_RESULT, testValueSet):
+        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
+            "Lorg/apache/commons/net/ftp/FTPSClient;",
+            "execPBSZ",
+            "(J)V",
+        )
+        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+
+        testValueSet = ("v4", "v0")
+
+        foundComparison = method.compareValueOf(*testValueSet)
+
+        assert foundComparison
+
+    @staticmethod
+    def testCompareValueOfWithZero(QUARK_ANALYSIS_RESULT):
+        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
+            "Lorg/apache/commons/net/smtp/SMTP;",
+            "__sendCommand",
+            "(Ljava/lang/String; Ljava/lang/String; Z)I",
+        )
+        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+
+        testValueSet = ("v5", 0)
+
+        foundComparison = method.compareValueOf(*testValueSet)
+
+        assert foundComparison
+
+    @staticmethod
+    def testCompareValueOfNotFound(QUARK_ANALYSIS_RESULT):
+        methodObj = QUARK_ANALYSIS_RESULT.quark.apkinfo.find_method(
+            "Lorg/apache/commons/net/smtp/SMTP;",
+            "__sendCommand",
+            "(Ljava/lang/String; Ljava/lang/String; Z)I",
+        )
+        method = Method(QUARK_ANALYSIS_RESULT, methodObj)
+
+        testValueSet = ("v5", 100)
+
+        foundComparison = method.compareValueOf(*testValueSet)
+
+        assert foundComparison is False
 
 
 class TestBehavior:
@@ -244,7 +269,8 @@ class TestQuarkReuslt:
         ]
 
         assert QUARK_ANALYSIS_RESULT.findMethodInCaller(
-            callerMethod, targetMethod)
+            callerMethod, targetMethod
+        )
 
 
 def testRunQuarkAnalysis(SAMPLE_PATH):

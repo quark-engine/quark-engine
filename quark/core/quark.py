@@ -14,6 +14,7 @@ import pandas as pd
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
+from quark.core.struct.methodobject import MethodObject
 from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
 from quark.utils.colors import (
@@ -198,7 +199,42 @@ class Quark:
         :param method: Method to be evaluated
         :return: Matrix that holds the usage of the registers
         """
+
+        def getRegisterTypes(method: MethodObject) -> List[str]:
+            descriptor = method.descriptor
+            parameterTypes = descriptor[1 : descriptor.find(")")].split()
+
+            registerTypes = []
+            for paramType in parameterTypes:
+                if paramType in ["J", "D"]:
+                    registerTypes.append(paramType)
+                registerTypes.append(paramType)
+
+            return registerTypes
+
         pyeval = PyEval(self.apkinfo)
+
+        num_of_register = self.apkinfo.get_number_of_registers_used_by(method)
+        num_of_param_register = (
+            self.apkinfo.get_number_of_parameter_registers_used_by(method)
+        )
+
+        idx_of_first_param_register = num_of_register - num_of_param_register
+        registerTypes = getRegisterTypes(method)
+        if len(registerTypes) < num_of_param_register:
+            registerTypes.insert(0, method.class_name)
+
+        for register, parameterType in zip(
+            range(idx_of_first_param_register, num_of_register), registerTypes
+        ):
+            initailize_param_register = [
+                "const",
+                f"v{register}",
+                f"v{register}",
+            ]
+            pyeval._assign_value(
+                initailize_param_register, value_type=parameterType
+            )
 
         for bytecode_obj in self.apkinfo.get_method_bytecode(method):
             # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]

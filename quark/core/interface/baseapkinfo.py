@@ -98,6 +98,15 @@ class BaseApkinfo:
         """
         pass
 
+    @property
+    def package_name(self) -> str:
+        """
+        Return the package name of the target APK.
+
+        :return: string containing the package name
+        """
+        pass
+
     @abstractmethod
     def find_method(
         self,
@@ -137,7 +146,33 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
+    def get_number_of_registers_used_by(
+        self, method_object: MethodObject
+    ) -> int:
+        """
+        Get the number of registers that are used by the method.
+
+        :param method_object: the MethodObject instance
+        :return: the number of used registers
+        """
+        pass
+
+    @abstractmethod
+    def get_number_of_parameter_registers_used_by(
+        self, method_object: MethodObject
+    ) -> int:
+        """
+        Get the number of registers that stores the parameters.
+
+        :param method_object: the MethodObject instance
+        :return: the number of registers for the parameters
+        """
+        pass
+
+    @abstractmethod
+    def get_method_bytecode(
+        self, method_object: MethodObject
+    ) -> Set[MethodObject]:
         """
         Return the corresponding bytecode according to the
         given class name and method name.

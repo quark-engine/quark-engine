@@ -262,6 +262,21 @@ class RizinImp(BaseApkinfo):
 
         return method_set
 
+    @functools.cached_property
+    def package_name(self) -> str:
+        axml = AxmlReader(self._manifest)
+
+        for tag in axml:
+            label = tag.get("Name")
+            if label and axml.get_string(label) == "manifest":
+                attrs = axml.get_attributes(tag)
+
+                for attr in attrs:
+                    if axml.get_string(attr["Name"]) == "package":
+                        return axml.get_string(attr["Value"])
+
+        return None
+
     def find_method(
         self,
         class_name: Optional[str] = ".*",
@@ -352,6 +367,59 @@ class RizinImp(BaseApkinfo):
                 )
 
         return lowerfunc_set
+
+    def get_number_of_registers_used_by(
+        self, method_object: MethodObject
+    ) -> int:
+        address, dex_index, imported = method_object.cache
+
+        rz = self._get_rz(dex_index)
+
+        if imported:
+            return None
+
+        method_data = rz.cmdj(f"afij @ {address}")[0]
+        return method_data.get("nbbs", None)
+
+    @staticmethod
+    def __get_number_of_register_used_by_type(parameterType: str) -> int:
+        num_of_register = 1
+        if parameterType in (
+            PRIMITIVE_TYPE_MAPPING["boolean"],
+            PRIMITIVE_TYPE_MAPPING["long"],
+        ):
+            num_of_register += 1
+
+        return num_of_register
+
+    def __is_method_static(self, method_object: MethodObject) -> bool:
+        address, dex_index, _ = method_object.cache
+
+        rz = self._get_rz(dex_index)
+        method_data = rz.cmdj(f"is.j @ {address}")[0]
+
+        bind_state = method_data.get("bind", None)
+        if bind_state:
+            return bind_state == "GLOBAL"
+        else:
+            return None
+
+    def get_number_of_parameter_registers_used_by(
+        self, method_object: MethodObject
+    ) -> int:
+        descriptor = method_object.descriptor
+        parameters = descriptor[1: descriptor.index(")")].split()
+
+        register_count_for_each_parameter = [
+            self.__get_number_of_register_used_by_type(parameter)
+            for parameter in parameters
+        ]
+        num_of_register = sum(register_count_for_each_parameter)
+
+        if not self.__is_method_static(method_object):
+            num_of_register += 1
+
+        return num_of_register
 
     def get_method_bytecode(
         self, method_object: MethodObject
