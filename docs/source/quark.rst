@@ -10,7 +10,9 @@ Subpackages
    quark.core
    quark.evaluator
    quark.forensic
+   quark.script
    quark.utils
+   quark.webreport
 
 Submodules
 ----------
@@ -47,10 +49,26 @@ quark.logo module
    :undoc-members:
    :show-inheritance:
 
+quark.radiocontrast module
+--------------------------
+
+.. automodule:: quark.radiocontrast
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 quark.report module
 -------------------
 
 .. automodule:: quark.report
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+quark.rulegeneration module
+---------------------------
+
+.. automodule:: quark.rulegeneration
    :members:
    :undoc-members:
    :show-inheritance:

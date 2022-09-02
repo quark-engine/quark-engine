@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -40,7 +41,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="install_index.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quark_script.html">Quark Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rule_generation.html">Rule Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dev_index.html">Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contribution.html">Contribution</a></li>
@@ -76,7 +79,7 @@
            <div itemprop="articleBody">
              
   <section id="quark-engine-book">
-<h1>Quark-Engine Book<a class="headerlink" href="#quark-engine-book" title="Permalink to this headline"></a></h1>
+<h1>Quark-Engine Book<a class="headerlink" href="#quark-engine-book" title="Permalink to this heading"></a></h1>
 <p>Quark Engine is an <em>open source</em> software for automating analysis of suspicious
 Android application. To do so it makes use of custom Dalvik Bytecode Loader and
 unique scoring system that detect malicious behaviors and calculate threat
@@ -90,7 +93,24 @@ level within seconds.</p>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Quark-Engine</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="quark_script.html">Quark Script</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#ecosystem-for-mobile-security-tools">Ecosystem for Mobile Security Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#introduce-of-quark-script-apis">Introduce of Quark Script APIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#analyzing-real-case-instastealer-using-quark-script">Analyzing real case (InstaStealer) using Quark Script</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-798-in-android-application-ovaa-apk">Detect CWE-798 in Android Application (ovaa.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-94-in-android-application-ovaa-apk">Detect CWE-94 in Android Application (ovaa.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-921-in-android-application-ovaa-apk">Detect CWE-921 in Android Application (ovaa.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-312-in-android-application-ovaa-apk">Detect CWE-312 in Android Application (ovaa.apk)</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rule_generation.html">Rule Generation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rule_generation.html#cli-usage">CLI Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rule_generation.html#api-usage">API Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rule_generation.html#web-editor-tutorial">Web Editor Tutorial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rule_generation.html#radiocontrast">Radiocontrast</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="integration.html#first-step-installation">First Step: Installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="integration.html#second-step-code-snippet-as-you-go">Second Step: Code Snippet As You Go</a></li>
@@ -137,7 +157,7 @@ level within seconds.</p>
 </ul>
 </div>
 <section id="indices-and-tables">
-<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline"></a></h2>
+<h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading"></a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>

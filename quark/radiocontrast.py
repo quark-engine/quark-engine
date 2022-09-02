@@ -7,6 +7,8 @@ import json
 from tqdm import tqdm
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
+from quark.webreport.generate import ReportGenerator
+from quark.utils.tools import filter_api_by_usage_count
 
 
 class RadioContrast:
@@ -60,15 +62,20 @@ class RadioContrast:
 
             self.method_recursive_search(self.apkinfo.lowerfunc(md[0]), depth)
 
-    def rule_generate(self):
+    def generate_rule(self, percentile_rank=0.2, web_editor=None):
         """
         Generate rules and export them to the output directory.
 
+        :param percentile_rank: The percentile rank
+                                for filter APIs by used count.
+        :param web_editor: The path of the web editor html file.
         :return: None
         """
         # Rescursive search for apis in target method.
         lower_funcs = set(self.apkinfo.lowerfunc(self.method))
         self.method_recursive_search(lower_funcs)
+        self.api_set, _ = filter_api_by_usage_count(
+            self.apkinfo, self.api_set, percentile_rank=percentile_rank)
 
         first_apis_pool = list(self.api_set)
         second_apis_pool = list(self.api_set)
@@ -76,6 +83,8 @@ class RadioContrast:
         # Setup progress bar.
         second_api_pool_num = len(second_apis_pool)
         outter_loop = tqdm(first_apis_pool)
+
+        self.generated_result = list()
 
         # The number of rule file.
         rule_number = 1
@@ -109,7 +118,7 @@ class RadioContrast:
                     "score": 1,
                     "label": [],
                 }
-                comb = RuleObject("test", json_data=generated_rule)
+                comb = RuleObject("test", jsonData=generated_rule)
 
                 try:
                     self.quark.run(comb)
@@ -125,6 +134,14 @@ class RadioContrast:
                     continue
 
                 if comb.check_item[4]:
+                    continue
+
+                if web_editor:
+                    generated_rule["number"] = rule_number
+                    self.generated_result.append(generated_rule)
+                    rule_number += 1
+
+                else:
                     rule_name = f"{rule_number}.json"
                     rule_path = os.path.join(self.output_dir, rule_name)
                     with open(rule_path, "w") as rule_file:
@@ -132,11 +149,25 @@ class RadioContrast:
 
                     rule_number += 1
 
+        if web_editor:
+            web_editor_data = {
+                "apk_filename": self.quark.apkinfo.filename,
+                "md5": self.quark.apkinfo.md5,
+                "size_bytes": self.quark.apkinfo.filesize,
+                "result": self.generated_result
+            }
+
+            editor_html = ReportGenerator(
+                web_editor_data).get_rule_generate_editor_html()
+
+            if ".html" not in web_editor:
+                web_editor = f"{web_editor}.html"
+
+            with open(web_editor, "w") as file:
+                file.write(editor_html)
+                file.close()
+
         # Clear progress bar
         outter_loop.clear()
         outter_loop.close()
         return
-
-
-if __name__ == "__main__":
-    pass

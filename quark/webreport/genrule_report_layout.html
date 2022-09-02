@@ -1,0 +1,628 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Quark Report</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,300,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://kit.fontawesome.com/453c20c79d.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        h4,
+        h3 {
+            font-size: 1.8rem;
+        }
+
+        .container {
+            max-width: 1540px;
+            max-width: 96%;
+        }
+
+        .label-group {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .label-container {
+            font-size: 0.9rem;
+            background: #cdeeff;
+            display: inline-block;
+            position: relative;
+            padding-left: 55px;
+            padding-top: 6px;
+            margin-bottom: 12px;
+            margin-right: 15px;
+            width: 175px;
+            height: 35px;
+            user-select: none;
+        }
+
+        .label-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 35px;
+            width: 40px;
+            background-color: #eee;
+        }
+
+        /* On mouse-over, add a grey background color */
+        .label-container:hover input~.checkmark {
+            background-color: #ccc;
+        }
+
+        /* When the checkbox is checked, add a blue background */
+        .label-container input:checked~.checkmark {
+            background-color: #2196F3;
+        }
+
+        /* Create the checkmark/indicator (hidden when not checked) */
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        /* Show the checkmark when checked */
+        .label-container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        /* Style the checkmark/indicator */
+        .label-container .checkmark:after {
+            left: 17px;
+            top: 8px;
+            width: 7px;
+            height: 14px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        body {
+            background-color: #f1f1f1;
+            color: #6b6a6a;
+        }
+
+        .input-box {
+            background-image: url('/css/searchicon.png');
+            background-position: 10px 12px;
+            background-repeat: no-repeat;
+            width: 100%;
+            font-size: 1.25rem;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+        }
+
+        .table td,
+        .table th {
+            padding: 0.75rem;
+            padding-left: 50px;
+            padding-right: 20px;
+            vertical-align: top;
+            border-top: 1px solid #dee2e6;
+            padding-top: 16px;
+        }
+
+        .filter-bar {
+            margin-top: 20px;
+            box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+            padding: 25px;
+            padding-bottom: 40px;
+            background-color: white;
+        }
+
+        .logo {
+            width: 460px;
+            margin-top: 60px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .report-crimes {
+            box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%);
+            margin-top: 20px;
+        }
+
+        .table-wrap {
+            width: 100%;
+        }
+
+        tbody tr {
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Modal Content */
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s;
+            padding: 10px;
+        }
+
+        /* Add Animation */
+        @-webkit-keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        @keyframes animatetop {
+            from {
+                top: -300px;
+                opacity: 0
+            }
+
+            to {
+                top: 0;
+                opacity: 1
+            }
+        }
+
+        /* The Close Button */
+        .close {
+            width: 80px;
+            height: 40px;
+            font-size: 1.3rem;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .export-button {
+            float: right;
+            line-height: 1;
+            color: rgb(0 16 192);
+            text-shadow: 0 1px 0 #fff;
+            opacity: .5;
+            font-weight: 700;
+            padding: 0;
+            background-color: transparent;
+            border: 0;
+            appearance: none;
+            width: 80px;
+            height: 40px;
+            font-size: 1.3rem;
+        }
+
+        .export-button:hover,
+        .export-button:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-header {
+            display: block;
+            background-color: #fff;
+            color: #636363;
+            border-bottom: none
+        }
+
+        .modal-body {
+            padding: 2px 16px;
+        }
+
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #fff;
+            color: #636363;
+            border-top: none;
+            height: 70px;
+        }
+
+        .api-td {
+            word-break: break-all;
+        }
+        .search-box {
+            background-image: url(/css/searchicon.png);
+            background-position: 10px 12px;
+            background-repeat: no-repeat;
+            width: 90%;
+            font-size: 1.25rem;
+            padding: 12px 20px 12px 40px;
+            border: 1px solid #ddd;
+            margin-top: 10px;
+        }
+        #title{
+            text-align: center;
+            margin-bottom: 50px;
+            color: #28809c;
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5"><img class="logo"
+                        src="https://quark-engine.github.io/ruleviewer/quark-logo.png"></div>
+            </div>
+            <div clsas="row">
+                <h1 id="title">Quark Rule Generation Reviewer & Editor</h1>
+            </div>
+            <div class="row filter-bar">
+                
+                <div class="row">
+                <div class="col-md-6">
+                    <label>Sample Information</label>
+                    <div class="row" style="margin-left: auto;margin-top: 20px;">
+                        <dt class="col-sm-3 sample-info-lable">File name</dt>
+                        <dd class="col-sm-9 sample-info-lable">Ahmyth.apk</dd>
+                        <dt class="col-sm-3 sample-info-lable">File size</dt>
+                        <dd class="col-sm-9 sample-info-lable">0.26 Mb</dd>
+                        <dt class="col-sm-3 sample-info-lable">MD5</dt>
+                        <dd class="col-sm-9 sample-info-lable">893e05aabd8754236ea70d3da8363d52</dd>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <label> The Number of Generated Rules: <span style="color:#ff9928">$rule_numbers$</span></label>
+                    </div>
+                    
+                    <div class="row" style="margin-top: 20px;">
+                        <dt class="col-sm-6 sample-info-lable" style="font-size:110%">Search Rules</dt>
+                        <dd class="col-sm-6 sample-info-lable"></dd>
+                        <input type="text" class="search-box" id="search" onkeyup="search()"
+                            placeholder="Search rules by keywords..">
+                    </div>
+                </div>
+                </div>
+            </div>
+            <!-- The Modal -->
+            <div id="editModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Edit rule information</h2>
+                    </div>
+                    <div class="modal-body">
+                        <p style="font-size: 1.5rem;margin-top: 15px;">Description</p>
+                        <input type="text" class="input-box" id="rule-description"
+                            placeholder="Input rule description..">
+                        <p style="font-size: 1.5rem;margin-top: 15px;">Score</p>
+                        <input type="number" class="input-box" id="rule-score" placeholder="Input rule score.."
+                            value="1">
+                        <p style="font-size: 1.5rem;margin-top: 15px;">Labels</p>
+                        <div class="label-group">
+
+                            <label id="collection" class="label-container">telephony
+                                <input class="rule-label" type="checkbox" name="label" value="telephony">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">command
+                                <input class="rule-label" type="checkbox" name="label" value="command">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">privacy
+                                <input class="rule-label" type="checkbox" name="label" value="privacy">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">control
+                                <input class="rule-label" type="checkbox" name="label" value="control">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">connection
+                                <input class="rule-label" type="checkbox" name="label" value="connection">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">calllog
+                                <input class="rule-label" type="checkbox" name="label" value="calllog">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">sms
+                                <input class="rule-label" type="checkbox" name="label" value="sms">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">power
+                                <input class="rule-label" type="checkbox" name="label" value="power manager">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">exec
+                                <input class="rule-label" type="checkbox" name="label" value="exec">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">applications
+                                <input class="rule-label" type="checkbox" name="label" value="applications">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">wifi
+                                <input class="rule-label" type="checkbox" name="label" value="wifi">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">account
+                                <input class="rule-label" type="checkbox" name="label" value="account">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">camera
+                                <input class="rule-label" type="checkbox" name="label" value="camera">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">phone
+                                <input class="rule-label" type="checkbox" name="label" value="phone">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">contact
+                                <input class="rule-label" type="checkbox" name="label" value="contact">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">network
+                                <input class="rule-label" type="checkbox" name="label" value="network">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">evasion
+                                <input class="rule-label" type="checkbox" name="label" value="evasion">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">record
+                                <input class="rule-label" type="checkbox" name="label" value="record">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">so
+                                <input class="rule-label" type="checkbox" name="label" value="so">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">pin
+                                <input class="rule-label" type="checkbox" name="label" value="pin">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">reflection
+                                <input class="rule-label" type="checkbox" name="label" value="reflection">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">notification
+                                <input class="rule-label" type="checkbox" name="label" value="notification">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">permission
+                                <input class="rule-label" type="checkbox" name="label" value="permission">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">http
+                                <input class="rule-label" type="checkbox" name="label" value="http">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">file
+                                <input class="rule-label" type="checkbox" name="label" value="file">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">collection
+                                <input class="rule-label" type="checkbox" name="label" value="collection">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">accounts
+                                <input class="rule-label" type="checkbox" name="label" value="accounts">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">socket
+                                <input class="rule-label" type="checkbox" name="label" value="socket">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">dexClassLoader
+                                <input class="rule-label" type="checkbox" name="label" value="dexClassLoader">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">calendar
+                                <input class="rule-label" type="checkbox" name="label" value="calendar">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">lock
+                                <input class="rule-label" type="checkbox" name="label" value="lock">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">accessibility
+                                <input class="rule-label" type="checkbox" name="label" value="accessibility service">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">location
+                                <input class="rule-label" type="checkbox" name="label" value="location">
+                                <span class="checkmark"></span>
+                            </label>
+
+                            <label id="collection" class="label-container">packer
+                                <input class="rule-label" type="checkbox" name="label" value="packer">
+                                <span class="checkmark"></span>
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="close">Close</button>
+                        <button id="export" class="export-button">Save</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row report-crimes">
+                <div class="table-wrap border">
+                    <table id="report" class="table align-middle mb-0 bg-white">
+                        <thead class="bg-light">
+                            <tr>
+                                <th width="10%">No.</th>
+                                <th width="35%">API 1</th>
+                                <th width="35%">API 2</th>
+                                <th width="20%">Edit & Save</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            $genrule_report$
+                        </tbody>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
+        </script>
+
+    $report_data$
+
+    <script>
+        var modal = document.getElementById("editModal");
+        var editRule = NaN
+
+        $(".edit-btn").click(function () {
+            modal.style.display = "block";
+            editRule = $(this).closest('tr').prop('id')
+            console.log(editRule)
+
+        });
+        $("#export").click(function () {
+            var description = document.getElementById("rule-description").value;
+            var score = document.getElementById("rule-score").value;
+            var labels = []
+            $("input:checkbox[name=label]:checked").each(function () {
+                labels.push($(this).val());
+            });
+
+            for (let index = 0; index < reportData.length; index++) {
+                var rule = reportData[index];
+                if (rule.number == editRule) {
+
+                    var export_rule = JSON.parse(JSON.stringify(rule));
+                    delete export_rule["number"];
+                    export_rule["crime"] = description;
+                    export_rule["label"] = labels;
+                    export_rule["score"] = parseInt(score)
+
+                    let dataStr = JSON.stringify(export_rule, null, 4);
+                    let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+
+                    let exportFileDefaultName = editRule + '.json';
+
+                    let linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                    break;
+                }
+            }
+        })
+
+        $(".close").click(function () {
+            var modal = document.getElementById("editModal");
+            modal.style.display = "none";
+        });
+
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+    <script>
+        function search() {
+            // Declare variables 
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("search");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("report");
+            tr = table.getElementsByTagName("tr");
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

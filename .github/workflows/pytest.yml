@@ -23,12 +23,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest pipenv rzpipe meson ninja coverage
+        python -m pip install pytest rzpipe meson==0.62.0 ninja coverage ciphey frida objection
         sudo apt-get install -y ninja-build
         
         # Install graphviz
         sudo apt-get -y install graphviz
-        
         
         # Install Rizin
         sudo git clone --branch v0.3.4 https://github.com/rizinorg/rizin /opt/rizin/
@@ -39,12 +38,19 @@ jobs:
         sudo ldconfig -v
         cd -
         
-        
+        # Install click >= 8.0.0 for CLI supports
+        python -m pip install click==8.0.3
+
+    - name: Install Quark-Engine
+      run: |
+        python setup.py build
+        python setup.py install
+
     - name: Test with pytest
       run: |
-          pipenv install --dev
-          pipenv install coveralls codecov pytest-cov --skip-lock
-          pipenv run pytest --cov=./
+        python -m pip install black pytest sphinx sphinx-rtd-theme
+        python -m pip install coveralls codecov pytest-cov
+        pytest --cov=./
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
