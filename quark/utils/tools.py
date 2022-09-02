@@ -256,7 +256,7 @@ def update_rizin(source_path, target_commit) -> Boolean:
         for line in _execute_command(["rm", "-rf", "build"], cwd=source_path):
             print_info(line)
 
-        # Clean out old subproject
+        # Clean out old subprojects
         for line in _execute_command(
             ["git", "clean", "-dxff", "subprojects/"], cwd=source_path
         ):
@@ -296,7 +296,7 @@ def update_rizin(source_path, target_commit) -> Boolean:
 
     except CalledProcessError as error:
         pass
-    except OSError:
+    except OSError as error:
         pass
 
     print_error("An error occurred when updating Rizin.\n")
@@ -323,7 +323,7 @@ def find_rizin_instance(
 
     :param rizin_source_path: a path to the source code of Rizin. Defaults to
     RIZIN_DIR
-    :param target_commit: a commmit specifying the Rizin version to compile.
+    :param target_commit: a commit specifying the Rizin version to compile.
     Defaults to RIZIN_COMMIT
     :param disable_rizin_installation: a flag to disable the automatic
     installation of Rizin. Defaults to False

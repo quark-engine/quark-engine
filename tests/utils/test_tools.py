@@ -1,7 +1,8 @@
 import os
 import re
 import shutil
-from subprocess import PIPE, CalledProcessError, run  # nosec
+from subprocess import PIPE, CalledProcessError, Popen, run
+from sys import stderr  # nosec
 from unittest.mock import patch
 
 import pytest
@@ -26,7 +27,7 @@ def rizin_in_system_path():
 
 
 @pytest.fixture(scope="module")
-def rizin_version():
+def version_of_rizin_installed_on_system():
     rizin_in_system_path = shutil.which("rizin")
     try:
         process = run(  # nosec
@@ -164,9 +165,9 @@ def test_descriptor_to_androguard_format_with_combination():
 
 
 def test_get_rizin_version_with_valid_path(
-    rizin_in_system_path, rizin_version
+    rizin_in_system_path, version_of_rizin_installed_on_system
 ):
-    expected_version = rizin_version
+    expected_version = version_of_rizin_installed_on_system
 
     found_version = _get_rizin_version(rizin_in_system_path)
 
@@ -180,15 +181,15 @@ def test_get_rizin_version_with_invalid_path(tmp_path):
 def test_download_rizin_successfully(tmp_path):
     target_path = tmp_path / "rizin"
 
-    download_rizin(target_path)
-
-    assert os.access(target_path, os.F_OK | os.X_OK)
+    with patch("quark.utils.tools._execute_command") as mock:        
+        download_rizin(target_path)
+        mock.assert_called_once()
 
 
 def test_fail_to_download_rizin_due_to_unavailable_network(tmp_path):
     target_path = tmp_path / "rizin"
 
-    with patch("subprocess.Popen") as mock:
+    with patch("subprocess.Popen.__new__") as mock:
         mock.side_effect = CalledProcessError(
             "1",
             "mock command",
@@ -202,7 +203,7 @@ def test_fail_to_download_rizin_due_to_unavailable_network(tmp_path):
 def test_fail_to_download_rizin_due_to_unknown_errors(tmp_path):
     target_path = tmp_path / "rizin"
 
-    with patch("subprocess.Popen") as mock:
+    with patch("subprocess.Popen.__new__") as mock:
         mock.side_effect = CalledProcessError("1", "mock command", stderr=b"")
 
         assert not download_rizin(target_path)
@@ -254,13 +255,13 @@ def test_find_rizin_instance_installed_in_quark_directory():
     target_commit = "Unused"
 
     with patch("shutil.which") as mocked_which:
-        # Pretent there is no Rizin instance installed in the system.
+        # Pretend there is no Rizin instance installed in the system.
         mocked_which.return_value = None
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretent the Rizin instance installed in the Quark directory is
+            # Pretend the Rizin instance installed in the Quark directory is
             # compatible.
             mocked_get_version.return_value = config.COMPATIBLE_RAZIN_VERSIONS[
                 0
@@ -286,20 +287,20 @@ def test_find_outdated_rizin_instance_installed_in_quark_directory(
     target_commit = "Unused"
 
     with patch("shutil.which") as mocked_which:
-        # Pretent there is no Rizin instance installed in the system.
+        # Pretend there is no Rizin instance installed in the system.
         mocked_which.return_value = None
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretent the Rizin instance installed in the Quark directory is
+            # Pretend the Rizin instance installed in the Quark directory is
             # not compatible.
             mocked_get_version.return_value = "0.0.0"
 
             with patch(
                 "quark.utils.tools.update_rizin"
             ) as mocked_update_rizin:
-                # Pretent the upgrade is finished successfully.
+                # Pretend the upgrade is finished successfully.
                 mocked_update_rizin.return_value = True
 
                 # Must use the instance in the Quark directory.
@@ -342,13 +343,13 @@ def test_find_broken_rizin_instance_installed_in_quark_directory(
     target_commit = "Unused"
 
     with patch("shutil.which") as mocked_which:
-        # Pretent there is no Rizin instance installed in the system.
+        # Pretend there is no Rizin instance installed in the system.
         mocked_which.return_value = "rizin_installed_in_system"
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretent -
+            # Pretend -
             # 1. the Rizin instance in the system path is not compatible
             # 2. the Rizin instance in the Quark directory is broken.
             mocked_get_version.side_effect = (
@@ -360,7 +361,7 @@ def test_find_broken_rizin_instance_installed_in_quark_directory(
             with patch(
                 "quark.utils.tools.download_rizin"
             ) as mocked_download_rizin:
-                # Pretent we can download the source code successfully.
+                # Pretend we can download the source code successfully.
                 mocked_download_rizin.side_effect = (
                     _side_effort_for_downloading_rizin
                 )
@@ -368,7 +369,7 @@ def test_find_broken_rizin_instance_installed_in_quark_directory(
                 with patch(
                     "quark.utils.tools.update_rizin"
                 ) as mocked_update_rizin:
-                    # Pretent we can finish the upgrade successfully.
+                    # Pretend we can finish the upgrade successfully.
                     mocked_update_rizin.return_value = True
 
                     result = find_rizin_instance(
@@ -406,13 +407,13 @@ def test_find_rizin_instance_failed_to_download_the_source():
     target_commit = "Unused"
 
     with patch("shutil.which") as mocked_which:
-        # Pretent there is no Rizin instance installed in the system.
+        # Pretend there is no Rizin instance installed in the system.
         mocked_which.return_value = None
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretent the Rizin instance installed in the Quark directory is
+            # Pretend the Rizin instance installed in the Quark directory is
             # broken.
             mocked_get_version.return_value = None
 
@@ -442,20 +443,20 @@ def test_find_rizin_instance_failed_to_compile_or_update_the_source():
     target_commit = "Unused"
 
     with patch("shutil.which") as mocked_which:
-        # Pretent there is no Rizin instance installed in the system.
+        # Pretend there is no Rizin instance installed in the system.
         mocked_which.return_value = None
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretent the Rizin instance installed in the Quark directory is
+            # Pretend the Rizin instance installed in the Quark directory is
             # not compatible.
             mocked_get_version.return_value = "0.0.0"
 
             with patch(
                 "quark.utils.tools.update_rizin"
             ) as mocked_update_rizin:
-                # Pretent the upgrade is finished successfully.
+                # Pretend the upgrade is finished successfully.
                 mocked_update_rizin.return_value = False
 
                 # Must use the instance in the Quark directory.
