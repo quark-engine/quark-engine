@@ -1,8 +1,7 @@
 import os
 import re
 import shutil
-from subprocess import PIPE, CalledProcessError, Popen, run
-from sys import stderr  # nosec
+from subprocess import PIPE, CalledProcessError, run  # nosec B404
 from unittest.mock import patch
 
 import pytest
@@ -181,7 +180,7 @@ def test_get_rizin_version_with_invalid_path(tmp_path):
 def test_download_rizin_successfully(tmp_path):
     target_path = tmp_path / "rizin"
 
-    with patch("quark.utils.tools._execute_command") as mock:        
+    with patch("quark.utils.tools._execute_command") as mock:
         download_rizin(target_path)
         mock.assert_called_once()
 
