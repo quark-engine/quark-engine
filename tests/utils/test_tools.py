@@ -188,7 +188,7 @@ def test_download_rizin_successfully(tmp_path):
 def test_fail_to_download_rizin_due_to_unavailable_network(tmp_path):
     target_path = tmp_path / "rizin"
 
-    with patch("subprocess.Popen.__new__") as mock:
+    with patch("quark.utils.tools._execute_command") as mock:
         mock.side_effect = CalledProcessError(
             "1",
             "mock command",
@@ -202,7 +202,7 @@ def test_fail_to_download_rizin_due_to_unavailable_network(tmp_path):
 def test_fail_to_download_rizin_due_to_unknown_errors(tmp_path):
     target_path = tmp_path / "rizin"
 
-    with patch("subprocess.Popen.__new__") as mock:
+    with patch("quark.utils.tools._execute_command") as mock:
         mock.side_effect = CalledProcessError("1", "mock command", stderr=b"")
 
         assert not download_rizin(target_path)
