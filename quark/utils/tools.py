@@ -295,16 +295,15 @@ def update_rizin(source_path, target_commit) -> Boolean:
         return True
 
     except CalledProcessError as error:
-        pass
+        print_error("An error occurred when updating Rizin.\n")
+
+        for line in error.stderr.decode().splitlines():
+            print_error(line)
     except OSError as error:
-        pass
+        print_error("An error occurred when downloading Rizin.\n")
 
-    print_error("An error occurred when updating Rizin.\n")
-
-    for line in error.stderr.decode().splitlines():
-        print_error(line)
-
-    print_error("An error occurred when downloading Rizin.\n")
+        for line in error.stderr.decode().splitlines():
+            print_error(line)
 
     return False
 
