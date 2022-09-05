@@ -175,7 +175,7 @@ class Behavior:
 
         :param targetMethod: python list contains class name, method name, and
          descriptor of target method
-        :return: True/False-
+        :return: True/False
         """
         className, methodName, descriptor = targetMethod
 
