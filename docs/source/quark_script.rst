@@ -41,8 +41,8 @@ runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
 - **Description**: Given detection rule and target sample, this instance runs the basic Quark analysis.
 - **params**: 
-    1. Target file 
-    2. Quark rule object
+    1. SAMPLE_PATH: Target file 
+    2. ruleInstance: Quark rule object
 - **return**: quarkResult instance
 
 quarkResultInstance.behaviorOccurList
@@ -63,8 +63,8 @@ quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
 ==================================================================
 - **Description**: Check if target method is in caller method.
 - **params**: 
-    1. python list contains class name, method name and descriptor of caller method.
-    2. python list contains class name, method name and descriptor of target method.
+    1. callerMethod: python list contains class name, method name and descriptor of caller method.
+    2. targetMethod: python list contains class name, method name and descriptor of target method.
 - **return**: True/False
 
 behaviorInstance.firstAPI.fullName
@@ -102,6 +102,13 @@ behaviorInstance.getParamValues(none)
 - **params**: none
 - **return**: python list containing parameter values.
 
+behaviorInstance.isArgFromMethod(targetMethod)
+==============================================
+
+- **Description**: Check if there are any arguments from the target method.
+- **params**: 
+    1. targetMethod: python list contains class name, method name, and descriptor of target method
+- **return**: True/False
 
 methodInstance.getXrefFrom(none)
 ================================
@@ -132,7 +139,7 @@ objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet)
     1. method: the tagrget API. (type: str or method instance) 
     2. watchArgs: Return Args information if True. (type: boolean) 
     3. watchBacktrace: Return backtrace information if True. (type: boolean) 
-    4. watchRet: Return the return information of the target API if True (type: boolean).
+    4. watchRet: Return the return information of the target API if True. (type: boolean)
 - **return**: none
 
 runFridaHook(apkPackageName, targetMethod, methodParamTypes, secondToWait)
@@ -423,7 +430,7 @@ Quark Script CWE-921.py
             print(f"CWE-921 is detected in {SAMPLE_PATH}.")
 
 Quark Rule: checkFileExistence.json
-====================================
+===================================
 
 .. code-block:: json
 
@@ -569,3 +576,70 @@ Quark Script Result
     $ python3 CWE-312.py
     The CWE-312 vulnerability is found. The cleartext is "test@email.com"
     The CWE-312 vulnerability is found. The cleartext is "password"
+
+Detect CWE-89 in Android Application (AndroGoat.apk)
+----------------------------------------------------
+
+This scenario seeks to find SQL injection in the APK file. See `CWE-89 <https://cwe.mitre.org/data/definitions/89.html>`_ for more details.
+
+Let's use this `APK <https://github.com/satishpatnayak/AndroGoat>`_ and the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``isArgFromMethod`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
+
+Quark Script CWE-89.py
+======================
+
+.. code-block:: python
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "AndroGoat.apk"
+    RULE_PATH = "executeSQLCommand.json"
+
+    targetMethod = [
+        "Landroid/widget/EditText;", # class name 
+        "getText",                   # method name
+        "()Landroid/text/Editable;", # descriptor
+    ]
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for sqlCommandExecution in quarkResult.behaviorOccurList:
+        if sqlCommandExecution.isArgFromMethod(
+            targetMethod
+        ):
+            print(f"CWE-89 is detected in {SAMPLE_PATH}")
+
+Quark Rule: executeSQLCommand.json
+==================================
+
+.. code-block:: json
+
+    {
+        "crime": "Execute SQL Command",
+        "permission": [],
+        "api": [
+            {
+                "class": "Ljava/lang/StringBuilder;",
+                "method": "append",
+                "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
+            },
+            {
+                "class": "Landroid/database/sqlite/SQLiteDatabase;",
+                "method": "rawQuery",
+                "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-89.py
+
+    CWE-89 is detected in AndroGoat.apk
