@@ -1,8 +1,8 @@
 import pytest
-
 from quark.utils.tools import (
     contains,
     descriptor_to_androguard_format,
+    get_parenthetic_contents,
     remove_dup_list,
 )
 
@@ -112,3 +112,18 @@ def test_descriptor_to_androguard_format_with_combination():
     result = descriptor_to_androguard_format(descriptor)
 
     assert result == "(I Ljava/lang/String; [B J)"
+
+
+@pytest.mark.parametrize(
+    "source, expected",
+    [
+        ("(a)(b)(c)", "(a)"),
+        ("(((a))(b))", "(((a))(b))"),
+        ("f1(a,f2(b))", "(a,f2(b))"),
+        ("()", "()"),
+        ("((((b)", "((((b)"),
+    ],
+)
+def test_get_parenthetic_contents(source, expected):
+    content = get_parenthetic_contents(source, 0)
+    assert expected == content

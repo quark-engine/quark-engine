@@ -79,8 +79,10 @@ def filter_api_by_usage_count(data, api_pool, percentile_rank=0.2):
             statistic_result[str(api)] = api_called_count
             str_statistic_result[str(api)] = api
 
-    sorted_key = {k: v for k, v in sorted(
-        statistic_result.items(), key=lambda item: item[1])}
+    sorted_key = {
+        k: v
+        for k, v in sorted(statistic_result.items(), key=lambda item: item[1])
+    }
     sorted_result = {k: v for k, v in sorted(sorted_key.items())}
 
     threshold = len(api_pool) * percentile_rank
@@ -94,3 +96,28 @@ def filter_api_by_usage_count(data, api_pool, percentile_rank=0.2):
         S_set.append(str_statistic_result[api])
 
     return P_set, S_set
+
+
+def get_parenthetic_contents(string: str, start_index: int) -> str:
+    """Get the content between a pair of parentheses.
+
+    :param string: string to be parsed
+    :param start_index: index to specify the parenthesis
+    :return: string holding the content
+    """
+    start_index = string.find("(", start_index)
+    if start_index == -1:
+        return string
+
+    parenthetic_counter = 0
+    for idx, char in enumerate(string[start_index:]):
+        if char == "(":
+            parenthetic_counter += 1
+        elif char == ")":
+            parenthetic_counter -= 1
+
+        if parenthetic_counter == 0:
+            end_index = idx + start_index + 1
+            return string[start_index:end_index]
+
+    return string[start_index:]

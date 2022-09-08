@@ -368,25 +368,18 @@ class Quark:
     ) -> List[str]:
         matched_string_set = set()
 
-        for pattern, keyword_item in zip(pattern_list, keyword_item_list):
+        parameter_strs = [
+            tools.get_parenthetic_contents(
+                source_str, source_str.index(pattern) + len(pattern)
+            )
+            for pattern in pattern_list
+        ]
+
+        for parameter_str, keyword_item in zip(
+            parameter_strs, keyword_item_list
+        ):
             if keyword_item is None:
                 continue
-
-            start_index = source_str.index(pattern) + len(pattern)
-
-            end_index = -1
-            brackets_count = 1
-            for idx, char in enumerate(source_str[start_index:]):
-                if char == "(":
-                    brackets_count += 1
-                elif char == ")":
-                    brackets_count -= 1
-
-                if brackets_count == 0:
-                    end_index = idx + start_index
-                    break
-
-            parameter_str = source_str[start_index:end_index]
 
             for keyword in keyword_item:
                 if regex:
