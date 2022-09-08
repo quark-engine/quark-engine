@@ -397,13 +397,10 @@ class Quark:
 
                         else:
                             matched_string_set.update(matched_strings)
-                    else:
-                        return None
+
                 else:
                     if str(keyword) in parameter_str:
                         matched_string_set.add(keyword)
-                    else:
-                        return None
 
         return [e for e in list(matched_string_set) if bool(e)]
 
