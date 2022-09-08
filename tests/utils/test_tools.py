@@ -1,7 +1,12 @@
 import os
 import re
 import shutil
-from subprocess import PIPE, CalledProcessError, run  # nosec B404
+from subprocess import (  # nosec B404
+    PIPE,
+    CalledProcessError,
+    check_output,
+    run,
+)
 from unittest.mock import patch
 
 import pytest
@@ -208,16 +213,16 @@ def test_update_rizin(tmp_path):
     download_rizin(target_path)
 
     update_rizin(target_path, target_version_tag)
-    check_commit = run(  # nosec
-        ["git", "rev-parse", "HEAD"],
-        stdout=PIPE,
-        stderr=PIPE,
-        check=True,
-        cwd=target_path,
+    current_tag = (
+        check_output(  # nosec
+            ["git", "describe", "--tags"],
+            cwd=target_path,
+        )
+        .decode()
+        .strip()
     )
-    real_commit = check_commit.stdout.strip().decode()
 
-    assert real_commit == target_version_tag
+    assert current_tag == target_version_tag
     assert os.access(
         target_path / "build" / "binrz" / "rizin" / "rizin", os.F_OK | os.X_OK
     )
