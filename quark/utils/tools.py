@@ -3,26 +3,23 @@
 # See the file 'LICENSE' for copying permission.
 
 import copy
+import os.path
 import re
 import shutil
+from os import F_OK, PathLike, access, mkdir
 from subprocess import (  # nosec
+    PIPE,
     STDOUT,
     CalledProcessError,
     Popen,
-    PIPE,
     check_output,
 )
-from ast import Str
-from os import F_OK, PathLike, access, mkdir
+from typing import List, Tuple
 from xmlrpc.client import Boolean
 
-from quark.config import COMPATIBLE_RAZIN_VERSIONS, RIZIN_COMMIT, RIZIN_DIR
-from quark.utils.pprint import (
-    clear_the_last_line,
-    print_error,
-    print_info,
-    print_success,
-)
+from click import confirm, prompt
+from quark.config import COMPATIBLE_RAZIN_VERSIONS, RIZIN_DIR
+from quark.utils.pprint import clear_the_last_line, print_error, print_info
 
 
 def remove_dup_list(element):
@@ -98,8 +95,10 @@ def filter_api_by_usage_count(data, api_pool, percentile_rank=0.2):
             statistic_result[str(api)] = api_called_count
             str_statistic_result[str(api)] = api
 
-    sorted_key = {k: v for k, v in sorted(
-        statistic_result.items(), key=lambda item: item[1])}
+    sorted_key = {
+        k: v
+        for k, v in sorted(statistic_result.items(), key=lambda item: item[1])
+    }
     sorted_result = {k: v for k, v in sorted(sorted_key.items())}
 
     threshold = len(api_pool) * percentile_rank
@@ -164,7 +163,7 @@ def _execute_command(command, stderr=PIPE, cwd=None):
         process.stderr.close()
 
 
-def _get_rizin_version(rizin_path) -> Str:
+def _get_rizin_version(executable_path) -> str:
     """
     Get the version number of the Rizin instance in the path.
 
@@ -172,7 +171,7 @@ def _get_rizin_version(rizin_path) -> Str:
     :return: the version number of the Rizin instance
     """
     try:
-        result = check_output([rizin_path, "-v"], timeout=5)  # nosec
+        result = check_output([executable_path, "-v"], timeout=5)  # nosec
         result = str(result)
 
         matched_versions = re.finditer(
@@ -181,7 +180,7 @@ def _get_rizin_version(rizin_path) -> Str:
         first_matched = next(matched_versions, None)
 
         if first_matched:
-            return first_matched.group(0)
+            return "v" + first_matched.group(0)
         else:
             return None
 
@@ -231,7 +230,7 @@ def download_rizin(target_path) -> Boolean:
     return False
 
 
-def update_rizin(source_path, target_commit) -> Boolean:
+def update_rizin(source_path, tag) -> bool:
     """
     Checkout the specified commit in the Rizin repository. Then, compile the
     source code to build a Rizin executable.
@@ -243,12 +242,20 @@ def update_rizin(source_path, target_commit) -> Boolean:
     :return: a boolean indicating the operation is success or not
     """
 
+    def _print_error(error: CalledProcessError):
+        error_output = error.stderr
+        if isinstance(error_output, (bytes, bytearray)):
+            error_output = error_output.decode()
+
+        for line in error_output.splitlines():
+            print_error(line)
+
     try:
         print()
 
         # Checkout to target commit
         for line in _execute_command(
-            ["git", "checkout", target_commit], cwd=source_path
+            ["git", "checkout", tag], cwd=source_path
         ):
             print_info(line)
 
@@ -263,17 +270,12 @@ def update_rizin(source_path, target_commit) -> Boolean:
             print_info(line)
 
     except CalledProcessError as error:
-        print_error("An error occurred when updating Rizin.\n")
-
-        for line in error.stderr.decode().splitlines():
-            print_error(line)
-
+        _print_error(error)
         return False
 
     except OSError as error:
         print_error("An error occurred when updating Rizin.\n")
         print_error(error)
-
         return False
 
     # Compile Rizin
@@ -295,85 +297,89 @@ def update_rizin(source_path, target_commit) -> Boolean:
         return True
 
     except CalledProcessError as error:
-        print_error("An error occurred when updating Rizin.\n")
+        _print_error(error)
 
-        for line in error.stderr.decode().splitlines():
-            print_error(line)
     except OSError as error:
-        print_error("An error occurred when downloading Rizin.\n")
-
-        for line in error.stderr.decode().splitlines():
-            print_error(line)
+        print_error("an error occurred when building rizin.\n")
+        print_error(error)
 
     return False
 
 
-def find_rizin_instance(
-    rizin_source_path: PathLike = RIZIN_DIR,
-    target_commit: Str = RIZIN_COMMIT,
-    disable_rizin_installation: Boolean = False,
-) -> Str:
+def find_rizin_in_PATH(compatible_versions: List[str]) -> PathLike:
+    """Search the system variable, PATH, to find an appropriate Rizin
+     executable.
+
+    :param compatible_versions: python list containing compatible Rizin
+     versions
+    :return: path to the Rizin executable
     """
-    Search the system PATH and the Quark directory (~/.quark-engine)
-    respectively to find an appropriate Rizin executable. If none of them are
-    usable and the user doesn't disable the automatic installation feature,
-    this method will download the source code and compile a Rizin executable
-    for Quark.
+    executable_path = shutil.which("rizin")
+    if executable_path:
+        version = _get_rizin_version(executable_path)
+        if version in compatible_versions:
+            return executable_path
 
-    :param rizin_source_path: a path to the source code of Rizin. Defaults to
-    RIZIN_DIR
-    :param target_commit: a commit specifying the Rizin version to compile.
-    Defaults to RIZIN_COMMIT
-    :param disable_rizin_installation: a flag to disable the automatic
-    installation of Rizin. Defaults to False
-    :return: a path if an appropriate Rizin executable is found, otherwise
-    None
+
+def find_rizin_in_configuration_folder(
+    compatible_versions: List[str],
+) -> Tuple[str, str]:
+    """Search the configuration folder of Quark (~/.quark-engine) to find
+     an appropriate Rizin executable.
+
+    :param compatible_versions: python list containing compatible Rizin
+     versions
+    :return: path to the Rizin executable
     """
-
-    # Search Rizin in PATH
-    which_result = shutil.which("rizin")
-    if which_result:
-        version = _get_rizin_version(which_result)
-        if version in COMPATIBLE_RAZIN_VERSIONS:
-            return which_result
-
-    # Otherwise, search the home path
-    rizin_executable_path = rizin_source_path + "build/binrz/rizin/rizin"
-    current_version = _get_rizin_version(rizin_executable_path)
-
-    if not current_version and not disable_rizin_installation:
-        print_info("Cannot find a compatible Rizin instance.")
-        print_info("Automatically install Rizin into the Quark directory.")
-        for _ in range(3):
-            result = download_rizin(rizin_source_path)
-            if result:
-                break
-
-        result = update_rizin(rizin_source_path, target_commit)
-        if result:
-            print_success("Successfully install Rizin.")
-            return rizin_executable_path
+    executable_path = RIZIN_DIR + "build/binrz/rizin/rizin"
+    if os.path.exists(executable_path):
+        version = _get_rizin_version(executable_path)
+        if version in compatible_versions:
+            return executable_path, "ready"
         else:
-            return None
+            return executable_path, "outdated"
 
-    if not current_version:
-        return None
+    return None, "Not found"
 
-    if current_version in COMPATIBLE_RAZIN_VERSIONS:
-        return rizin_executable_path
 
-    # The current version is not compatible
-    print_info(
-        "Find an outdated Rizin executable in the Quark directory. Try to"
-        + " update it."
+def find_rizin() -> PathLike:
+    """
+    Search the system PATH and the configuration folder of Quark
+     (~/.quark-engine) to find an appropriate Rizin executable. If none of them
+      are usable, this method will ask users to specify one.
+
+    :return: path to an Rizin executable
+    """
+
+    compatible_versions = COMPATIBLE_RAZIN_VERSIONS
+    recommend_version = compatible_versions[0]
+
+    # Search Rizin in Path
+    executable_path = find_rizin_in_PATH(compatible_versions)
+    if executable_path:
+        return executable_path
+
+    # Otherwise, search the configuration folder of Quark
+    executable_path, state = find_rizin_in_configuration_folder(
+        compatible_versions
     )
+    if executable_path:
+        if state == "outdated":
+            update_rizin(RIZIN_DIR, recommend_version)
+            return executable_path
+        elif state == "ready":
+            return executable_path
 
-    if disable_rizin_installation:
-        return rizin_executable_path
-    else:
-        # Update and compile the source code
-        result = update_rizin(rizin_source_path, target_commit)
-        if result:
-            return rizin_executable_path
-        else:
-            return None
+    # Ask if the user is willing to install Rizin
+    install_rizin = confirm(
+        f"Do you want to install Rizin {recommend_version}?", show_default=True
+    )
+    if install_rizin:
+        # download_rizin(RIZIN_DIR)
+        update_rizin(RIZIN_DIR, recommend_version)
+
+        return os.path.join(RIZIN_DIR, "build", "binrz", "rizin", "rizin")
+
+    # Otherwise, ask for the path to a Rizin executable
+    executable_path = prompt("Please specify a path to the Rizin executable")
+    return executable_path

@@ -29,6 +29,7 @@ Once you see the following msg, then you're all set::
       -d, --detail TEXT               Show detail report. Optionally specify the
                                       name of a rule/label
       -o, --output FILE               Output report in JSON
+      -w, --webreport FILE            Generate web report
       -a, --apk FILE                  APK file  [required]
       -r, --rule PATH                 Rules directory  [default:
                                       /home/$USER/.quark-engine/quark-rules]
@@ -49,12 +50,7 @@ Once you see the following msg, then you're all set::
       --multi-process INTEGER RANGE   Allow analyzing APK with N processes, where
                                       N doesn't exceeds the number of usable CPUs
                                       - 1 to avoid memory exhaustion.  [x>=1]
-      --rizin-path FILE               Specify a Rizin executable for Quark to
-                                      perform analyses.
-      --disable-rizin-installation    Don't install Rizin automatically when no
-                                      Rizin instance with a compatible version is
-                                      found.
-      --version                       Show the version and exit.
+     --version                       Show the version and exit.
       --help                          Show this message and exit.
 
 To learn how to scan multiple samples in a directory, please have a look at :ref:`Directory Scanning <dir_scan>`

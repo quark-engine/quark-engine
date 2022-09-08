@@ -11,7 +11,8 @@ from quark.utils.tools import (
     contains,
     descriptor_to_androguard_format,
     download_rizin,
-    find_rizin_instance,
+    find_rizin_in_configuration_folder,
+    find_rizin_in_PATH,
     remove_dup_list,
     update_rizin,
 )
@@ -41,19 +42,11 @@ def version_of_rizin_installed_on_system():
 
         assert first_matched
 
-        return first_matched.group(0)
+        return "v" + first_matched.group(0)
     except TimeoutError:
         assert False
     except CalledProcessError:
         assert False
-
-
-@pytest.fixture(
-    scope="function",
-    params=((True), (False)),
-)
-def disable_rizin_installation(request):
-    return request.param
 
 
 def test_remove_dup_list_with_invalid_arg():
@@ -210,11 +203,11 @@ def test_fail_to_download_rizin_due_to_unknown_errors(tmp_path):
 
 def test_update_rizin(tmp_path):
     target_path = tmp_path / "rizin"
-    target_commit = config.RIZIN_COMMIT
+    target_version_tag = config.COMPATIBLE_RAZIN_VERSIONS[0]
 
     download_rizin(target_path)
 
-    update_rizin(target_path, target_commit)
+    update_rizin(target_path, target_version_tag)
     check_commit = run(  # nosec
         ["git", "rev-parse", "HEAD"],
         stdout=PIPE,
@@ -224,7 +217,7 @@ def test_update_rizin(tmp_path):
     )
     real_commit = check_commit.stdout.strip().decode()
 
-    assert real_commit == target_commit
+    assert real_commit == target_version_tag
     assert os.access(
         target_path / "build" / "binrz" / "rizin" / "rizin", os.F_OK | os.X_OK
     )
@@ -232,242 +225,58 @@ def test_update_rizin(tmp_path):
 
 def test_fail_to_update_rizin_due_to_any_errors(tmp_path):
     target_path = tmp_path / "rizin"
-    target_commit = config.RIZIN_COMMIT
+    target_version_tag = config.COMPATIBLE_RAZIN_VERSIONS[0]
 
     with patch("subprocess.Popen") as mock:
         mock.side_effect = CalledProcessError(
             "1", "mock command", stderr=b"Error message"
         )
 
-        assert not update_rizin(target_path, target_commit)
+        assert not update_rizin(target_path, target_version_tag)
 
 
-def test_find_rizin_instance_in_system_path(rizin_in_system_path):
-    rizin_path = find_rizin_instance()
-
+def test_find_rizin_in_path(rizin_in_system_path):
+    rizin_path = find_rizin_in_PATH(config.COMPATIBLE_RAZIN_VERSIONS)
     assert rizin_path == rizin_in_system_path
 
 
-def test_find_rizin_instance_installed_in_quark_directory():
-    rizin_source_path = "rizin_source_path"
-    rizin_executable_path = rizin_source_path + "build/binrz/rizin/rizin"
-    target_commit = "Unused"
+def test_find_rizin_in_configuration_folder():
+    expected_executable_path = config.RIZIN_DIR + "build/binrz/rizin/rizin"
 
-    with patch("shutil.which") as mocked_which:
-        # Pretend there is no Rizin instance installed in the system.
-        mocked_which.return_value = None
+    with patch("os.path.exists") as mocked_exists:
+        mocked_exists.return_value = True
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretend the Rizin instance installed in the Quark directory is
-            # compatible.
             mocked_get_version.return_value = config.COMPATIBLE_RAZIN_VERSIONS[
                 0
             ]
 
-            # Must use the instance in the Quark directory.
-            assert (
-                find_rizin_instance(rizin_source_path, target_commit)
-                == rizin_executable_path
+            executable_path, state = find_rizin_in_configuration_folder(
+                config.COMPATIBLE_RAZIN_VERSIONS
             )
 
-            # Must check the system path first.
-            mocked_which.assert_called()
-            # Must check the version of the instance in the Quark directory.
-            mocked_get_version.assert_called()
+            assert executable_path == expected_executable_path
+            assert state == "ready"
+            mocked_get_version.assert_called_once_with(executable_path)
 
 
-def test_find_outdated_rizin_instance_installed_in_quark_directory(
-    disable_rizin_installation,
-):
-    rizin_source_path = "rizin_source_path"
-    rizin_executable_path = rizin_source_path + "build/binrz/rizin/rizin"
-    target_commit = "Unused"
+def test_find_outdated_rizin_in_configuration_directory():
+    expected_executable_path = config.RIZIN_DIR + "build/binrz/rizin/rizin"
 
-    with patch("shutil.which") as mocked_which:
-        # Pretend there is no Rizin instance installed in the system.
-        mocked_which.return_value = None
+    with patch("os.path.exists") as mocked_exists:
+        mocked_exists.return_value = True
 
         with patch(
             "quark.utils.tools._get_rizin_version"
         ) as mocked_get_version:
-            # Pretend the Rizin instance installed in the Quark directory is
-            # not compatible.
-            mocked_get_version.return_value = "0.0.0"
+            mocked_get_version.return_value = "Outdated or broken version"
 
-            with patch(
-                "quark.utils.tools.update_rizin"
-            ) as mocked_update_rizin:
-                # Pretend the upgrade is finished successfully.
-                mocked_update_rizin.return_value = True
-
-                # Must use the instance in the Quark directory.
-                assert (
-                    find_rizin_instance(
-                        rizin_source_path,
-                        target_commit,
-                        disable_rizin_installation,
-                    )
-                    == rizin_executable_path
-                )
-
-                # Must check the system path first.
-                mocked_which.assert_called()
-                # Must check the version of the instance in the Quark
-                # directory.
-                mocked_get_version.assert_called()
-                if disable_rizin_installation:
-                    # Must not update the instance
-                    mocked_update_rizin.assert_not_called()
-                else:
-                    # Must update the instance to a compatible version
-                    mocked_update_rizin.assert_called()
-
-
-_compatible_trigger = None
-
-
-def _side_effort_for_downloading_rizin(arg):
-    global _compatible_trigger
-    _compatible_trigger = True
-    return True
-
-
-def test_find_broken_rizin_instance_installed_in_quark_directory(
-    disable_rizin_installation,
-):
-    rizin_source_path = "rizin_source_path"
-    rizin_executable_path = rizin_source_path + "build/binrz/rizin/rizin"
-    target_commit = "Unused"
-
-    with patch("shutil.which") as mocked_which:
-        # Pretend there is no Rizin instance installed in the system.
-        mocked_which.return_value = "rizin_installed_in_system"
-
-        with patch(
-            "quark.utils.tools._get_rizin_version"
-        ) as mocked_get_version:
-            # Pretend -
-            # 1. the Rizin instance in the system path is not compatible
-            # 2. the Rizin instance in the Quark directory is broken.
-            mocked_get_version.side_effect = (
-                lambda x: "0.0.0"
-                if x == "rizin_installed_in_system"
-                else _compatible_trigger
+            executable_path, state = find_rizin_in_configuration_folder(
+                config.COMPATIBLE_RAZIN_VERSIONS
             )
 
-            with patch(
-                "quark.utils.tools.download_rizin"
-            ) as mocked_download_rizin:
-                # Pretend we can download the source code successfully.
-                mocked_download_rizin.side_effect = (
-                    _side_effort_for_downloading_rizin
-                )
-
-                with patch(
-                    "quark.utils.tools.update_rizin"
-                ) as mocked_update_rizin:
-                    # Pretend we can finish the upgrade successfully.
-                    mocked_update_rizin.return_value = True
-
-                    result = find_rizin_instance(
-                        rizin_source_path,
-                        target_commit,
-                        disable_rizin_installation,
-                    )
-                    if disable_rizin_installation:
-                        # No Rizin instance exists
-                        assert result is None
-                    else:
-                        # Must use the instance in the Quark directory.
-                        assert result == rizin_executable_path
-
-                    # Must check the system path first.
-                    mocked_which.assert_called()
-                    # Must check the version of the instance in the Quark
-                    # directory.
-                    mocked_get_version.assert_called()
-
-                    if disable_rizin_installation:
-                        # Must not download the source code.
-                        mocked_download_rizin.assert_not_called()
-                        # Must not update and compile a Rizin instance.
-                        mocked_update_rizin.assert_not_called()
-                    else:
-                        # Must download the source code.
-                        mocked_download_rizin.assert_called()
-                        # Must update and compile a Rizin instance.
-                        mocked_update_rizin.assert_called()
-
-
-def test_find_rizin_instance_failed_to_download_the_source():
-    rizin_source_path = "rizin_source_path"
-    target_commit = "Unused"
-
-    with patch("shutil.which") as mocked_which:
-        # Pretend there is no Rizin instance installed in the system.
-        mocked_which.return_value = None
-
-        with patch(
-            "quark.utils.tools._get_rizin_version"
-        ) as mocked_get_version:
-            # Pretend the Rizin instance installed in the Quark directory is
-            # broken.
-            mocked_get_version.return_value = None
-
-            with patch(
-                "quark.utils.tools.download_rizin"
-            ) as mocked_download_rizin:
-                # Fail to download the source of Rizin.
-                mocked_download_rizin.return_value = False
-
-                # Must use the instance in the Quark directory.
-                assert (
-                    find_rizin_instance(rizin_source_path, target_commit)
-                    is None
-                )
-
-                # Must check the system path first.
-                mocked_which.assert_called()
-                # Must check the version of the instance in the Quark
-                # directory.
-                mocked_get_version.assert_called()
-                # Must try to download the source code of the Rizin.
-                mocked_download_rizin.assert_called()
-
-
-def test_find_rizin_instance_failed_to_compile_or_update_the_source():
-    rizin_source_path = "rizin_source_path"
-    target_commit = "Unused"
-
-    with patch("shutil.which") as mocked_which:
-        # Pretend there is no Rizin instance installed in the system.
-        mocked_which.return_value = None
-
-        with patch(
-            "quark.utils.tools._get_rizin_version"
-        ) as mocked_get_version:
-            # Pretend the Rizin instance installed in the Quark directory is
-            # not compatible.
-            mocked_get_version.return_value = "0.0.0"
-
-            with patch(
-                "quark.utils.tools.update_rizin"
-            ) as mocked_update_rizin:
-                # Pretend the upgrade is finished successfully.
-                mocked_update_rizin.return_value = False
-
-                # Must use the instance in the Quark directory.
-                assert (
-                    find_rizin_instance(rizin_source_path, target_commit)
-                    is None
-                )
-
-                # Must check the system path first.
-                mocked_which.assert_called()
-                # Must check the version of the instance in the Quark
-                # directory.
-                mocked_get_version.assert_called()
-                # Must try to update and compile a Rizin instance.
-                mocked_update_rizin.assert_called()
+            assert executable_path == expected_executable_path
+            assert state == "outdated"
+            mocked_get_version.assert_called_once_with(executable_path)

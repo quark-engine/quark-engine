@@ -6,7 +6,7 @@ import os
 
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
-from quark.utils.tools import find_rizin_instance
+from quark.utils.tools import find_rizin
 
 
 class Report:
@@ -46,7 +46,7 @@ class Report:
             if rizin_path:
                 self.rizin_path = rizin_path
             elif not self.rizin_path:
-                self.rizin_path = find_rizin_instance(
+                self.rizin_path = find_rizin(
                     disable_rizin_installation=self.disable_rizin_installation
                 )
 

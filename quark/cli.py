@@ -17,14 +17,9 @@ from quark.logo import logo
 from quark.rulegeneration import RuleGeneration
 from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
-from quark.utils.pprint import (
-    print_error,
-    print_info,
-    print_success,
-    print_warning,
-)
+from quark.utils.pprint import print_info, print_success, print_warning
+from quark.utils.tools import find_rizin
 from quark.utils.weight import Weight
-from quark.utils.tools import find_rizin_instance, _get_rizin_version
 from quark.webreport.generate import ReportGenerator
 
 logo()
@@ -152,20 +147,6 @@ logo()
     required=False,
     default=1,
 )
-@click.option(
-    "--rizin-path",
-    "rizin_path",
-    type=click.Path(exists=True, file_okay=True, dir_okay=False),
-    help="Specify a Rizin executable for Quark to perform analyses.",
-)
-@click.option(
-    "--disable-rizin-installation",
-    "disable_rizin_installation",
-    default=False,
-    is_flag=True,
-    help="Don't install Rizin automatically when no Rizin instance with"
-    + " a compatible version is found.",
-)
 def entry_point(
     summary,
     detail,
@@ -183,45 +164,16 @@ def entry_point(
     comparison,
     core_library,
     num_of_process,
-    rizin_path,
-    disable_rizin_installation,
 ):
     """Quark is an Obfuscation-Neglect Android Malware Scoring System"""
     # Load rules
     rule_buffer_list = []
     rule_filter = summary or detail
 
-    # Check Rizin version
     if core_library.lower() == "rizin":
-        if not rizin_path:
-            if disable_rizin_installation:
-                print_info("Disable automatic Rizin installation.")
-
-            rizin_path = find_rizin_instance(
-                disable_rizin_installation=disable_rizin_installation
-            )
-
-            if not rizin_path:
-                print_error(
-                    "No valid Rizin executable found. Please specify the path"
-                    + "to the Rizin executable by using option --rizin-path."
-                )
-                return
-            else:
-                version = _get_rizin_version(rizin_path)
-                if rizin_path.startswith(config.HOME_DIR):
-                    print_info(
-                        f"Use the Rizin executable (version {version})"
-                        + " installed in the Quark directory."
-                    )
-                else:
-                    print_info(
-                        f"Use the Rizin executable (version {version})"
-                        + " installed in the system PATH."
-                    )
-
-        else:
-            print_info(f"Use the user-specified Rizin executable.")
+        rizin_path = find_rizin()
+    else:
+        rizin_path = ""
 
     # Determine the location of rules
     if rule_filter and rule_filter.endswith("json"):
@@ -469,7 +421,8 @@ def entry_point(
 
             json_report = data.get_json_report()
             report_html = ReportGenerator(
-                json_report).get_analysis_report_html()
+                json_report
+            ).get_analysis_report_html()
 
             if ".html" not in webreport:
                 webreport = f"{webreport}.html"
