@@ -196,7 +196,7 @@ class TestBehavior:
             )
         )
 
-        assert behavior.getParamValues()[0] == "ping www.baidu.com"
+        assert behavior.getParamValues()[1] == "ping www.baidu.com"
 
     @staticmethod
     def testIsArgFromMethod(QUARK_ANALYSIS_RESULT_FOR_RULE_193):
