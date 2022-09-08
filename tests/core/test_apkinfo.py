@@ -221,7 +221,10 @@ class TestApkinfo:
             BytecodeObject(
                 "invoke-direct",
                 ["v5", "v6"],
-                ("Ljava/lang/IllegalStateException;" "-><init>(Ljava/lang/String;)V"),
+                (
+                    "Ljava/lang/IllegalStateException;"
+                    "-><init>(Ljava/lang/String;)V"
+                ),
             ),
             BytecodeObject("array-length", ["v5", "v5"], None),
             BytecodeObject(
@@ -230,6 +233,8 @@ class TestApkinfo:
                 "Landroid/os/Looper;->myLooper()Landroid/os/Looper;",
             ),
             BytecodeObject("return", ["v0"], None),
+            BytecodeObject("const/4", ["v3"], 0),
+            BytecodeObject("add-int/lit8", ["v2", "v2"], 1),
         ]
 
         method = apkinfo.find_method(

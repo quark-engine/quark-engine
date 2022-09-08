@@ -103,7 +103,9 @@ class AndroguardImp(BaseApkinfo):
             for _, call, offset in method_analysis.get_xref_to()
         }
 
-    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
+    def get_method_bytecode(
+        self, method_object: MethodObject
+    ) -> Set[MethodObject]:
         method_analysis = method_object.cache
         try:
             for (
@@ -111,7 +113,7 @@ class AndroguardImp(BaseApkinfo):
                 ins,
             ) in method_analysis.get_method().get_instructions_idx():
                 bytecode_obj = None
-                reg_list = []
+                register_list = []
 
                 # count the number of the registers.
                 length_operands = len(ins.get_operands())
@@ -125,28 +127,37 @@ class AndroguardImp(BaseApkinfo):
                 else:
                     index_of_parameter_starts = None
                     for i in range(length_operands - 1, -1, -1):
-                        if not isinstance(ins.get_operands()[i][0], Operand):
+                        if (
+                            not isinstance(ins.get_operands()[i][0], Operand)
+                            or ins.get_operands()[i][0].name != "REGISTER"
+                        ):
                             index_of_parameter_starts = i
                             break
 
                     if index_of_parameter_starts is not None:
-                        parameter = ins.get_operands()[index_of_parameter_starts]
+                        parameter = ins.get_operands()[
+                            index_of_parameter_starts
+                        ]
                         parameter = (
-                            parameter[2] if len(parameter) == 3 else parameter[1]
+                            parameter[2]
+                            if len(parameter) == 3
+                            else parameter[1]
                         )
 
                         for i in range(index_of_parameter_starts):
-                            reg_list.append(
+                            register_list.append(
                                 "v" + str(ins.get_operands()[i][1]),
                             )
                     else:
                         parameter = None
                         for i in range(length_operands):
-                            reg_list.append(
+                            register_list.append(
                                 "v" + str(ins.get_operands()[i][1]),
                             )
 
-                    bytecode_obj = BytecodeObject(ins.get_name(), reg_list, parameter)
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), register_list, parameter
+                    )
 
                 yield bytecode_obj
         except AttributeError:
