@@ -395,7 +395,7 @@ class TestQuark:
                 " Ljava/lang/String;)Landroid/database/Cursor;"
             ),
         )
-        keyword_item_list = [("content://call_log/calls")]
+        keyword_item_list = [("content://call_log/calls",)]
 
         result = simple_quark_obj.check_parameter_values(
             source_str, pattern_list, keyword_item_list
