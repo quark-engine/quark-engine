@@ -6,7 +6,11 @@ import os
 
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
-from quark.utils.tools import find_rizin
+from quark.utils.tools import (
+    find_rizin_in_PATH,
+    find_rizin_in_configuration_folder,
+)
+from quark.config import COMPATIBLE_RAZIN_VERSIONS
 
 
 class Report:
@@ -46,9 +50,11 @@ class Report:
             if rizin_path:
                 self.rizin_path = rizin_path
             elif not self.rizin_path:
-                self.rizin_path = find_rizin(
-                    disable_rizin_installation=self.disable_rizin_installation
-                )
+                self.rizin_path = find_rizin_in_PATH(COMPATIBLE_RAZIN_VERSIONS)
+                if not self.rizin_path:
+                    self.rizin_path = find_rizin_in_configuration_folder(
+                        COMPATIBLE_RAZIN_VERSIONS
+                    )
 
                 if not self.rizin_path:
                     raise ValueError("Cannot found a valid Rizin executable.")

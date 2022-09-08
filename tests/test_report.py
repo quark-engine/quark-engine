@@ -164,7 +164,7 @@ class TestReport:
                 "quark.core.quark.Quark.generate_json_report"
             ) as mock_generate_report:
                 with patch(
-                    "quark.utils.tools.find_rizin_instance"
+                    "quark.utils.tools.find_rizin_in_PATH"
                 ) as mock_find_rizin:
 
                     sample_report = Report()
