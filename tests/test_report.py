@@ -1,11 +1,11 @@
 import os
 import os.path
+import shutil
 import zipfile
 from unittest.mock import patch
 
 import pytest
 import requests
-
 from quark.report import Report
 
 
@@ -19,7 +19,8 @@ def invalid_file(tempfile):
 @pytest.fixture(scope="module")
 def sample_apk_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/" "apk-malware-samples/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/"
+        "apk-malware-samples/raw/master/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
 
@@ -129,6 +130,70 @@ class TestReport:
 
                 assert mock_run.call_count == num_of_rules
                 assert mock_generate_report.call_count == num_of_rules
+
+    @staticmethod
+    def test_analysis_without_specified_rizin_path(
+        sample_apk_file, sample_rule_directory
+    ):
+        expected_path = shutil.which("rizin")
+
+        with patch("quark.core.quark.Quark.run") as mock_run:
+            with patch(
+                "quark.core.quark.Quark.generate_json_report"
+            ) as mock_generate_report:
+                sample_report = Report()
+                sample_report.analysis(
+                    sample_apk_file,
+                    sample_rule_directory,
+                    core_library="rizin",
+                )
+
+                assert sample_report.rizin_path == expected_path
+
+                mock_run.assert_called_once()
+                mock_generate_report.assert_called_once()
+
+    @staticmethod
+    def test_analysis_with_specified_rizin_path(
+        sample_apk_file, sample_rule_directory
+    ):
+        rizin_path = shutil.which("rizin")
+
+        with patch("quark.core.quark.Quark.run") as mock_run:
+            with patch(
+                "quark.core.quark.Quark.generate_json_report"
+            ) as mock_generate_report:
+                with patch(
+                    "quark.utils.tools.find_rizin_in_PATH"
+                ) as mock_find_rizin:
+
+                    sample_report = Report()
+                    sample_report.analysis(
+                        sample_apk_file,
+                        sample_rule_directory,
+                        core_library="rizin",
+                        rizin_path=rizin_path,
+                    )
+
+                    assert sample_report.rizin_path == rizin_path
+
+                    mock_find_rizin.assert_not_called()
+                    mock_run.assert_called_once()
+                    mock_generate_report.assert_called_once()
+
+    @staticmethod
+    def test_analysis_with_invalid_rizin_path(
+        sample_report, sample_apk_file, sample_rule_directory
+    ):
+        invalid_path = "INVALID_PATH"
+
+        with pytest.raises(ValueError):
+            sample_report.analysis(
+                sample_apk_file,
+                sample_rule_directory,
+                core_library="rizin",
+                rizin_path=invalid_path,
+            )
 
     def test_get_report_with_invalid_type(self, sample_report):
         with pytest.raises(ValueError):

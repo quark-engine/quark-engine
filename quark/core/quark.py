@@ -41,14 +41,20 @@ MAX_SEARCH_LAYER = 3
 class Quark:
     """Quark module is used to check quark's five-stage theory"""
 
-    def __init__(self, apk, core_library="androguard"):
+    def __init__(self, apk, core_library="androguard", rizin_path=None):
         """
+        Create a Quark object.
 
-        :param apk: the filename of the apk.
+        :param apk: an APK for Quark to analyze
+        :param core_library: a string indicating which analysis library Quark
+        should use. Defaults to "androguard"
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library. Defaults to None
+        :raises ValueError: if an unknown core library is specified
         """
         core_library = core_library.lower()
         if core_library == "rizin":
-            self.apkinfo = RizinImp(apk)
+            self.apkinfo = RizinImp(apk, rizin_path=rizin_path)
         elif core_library == "androguard":
             self.apkinfo = AndroguardImp(apk)
         else:

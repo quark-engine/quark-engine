@@ -2,8 +2,8 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-from multiprocessing.pool import Pool
 from multiprocessing import cpu_count
+from multiprocessing.pool import Pool
 
 from quark.core.analysis import QuarkAnalysis
 from quark.core.quark import Quark
@@ -13,12 +13,33 @@ _quark = None
 
 class ParallelQuark(Quark):
     @staticmethod
-    def _worker_initializer(apk, core_library):
+    def _worker_initializer(apk, core_library, rizin_path):
+        """
+        An initializer that creates multiple Quark object for a subprocess
+        pool.
+
+        :param apk: an APK for Quark to analyze
+        :param core_library: a string indicating which analysis library Quark
+        should use
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library
+        """
+
         global _quark
-        _quark = Quark(apk, core_library)
+        _quark = Quark(apk, core_library, rizin_path)
 
     @staticmethod
     def _worker_analysis(rule_obj):
+        """
+        A function for the subprocesses in the pool to analyze the target APK
+        with the specified rule.
+
+        :param rule_obj: a Quark rule that the subprocess will analyze
+        :return: a tuple of the analysis result, including the reached stage,
+        the parent functions, the detected behavior (rule), and the
+        corresponding bytecodes.
+        """
+
         _quark.quark_analysis = QuarkAnalysis()
         _quark.run(rule_obj)
 
@@ -32,7 +53,8 @@ class ParallelQuark(Quark):
 
         reached_stage = rule_obj.check_item.count(True)
         level_4_result = tuple(
-            to_raw_method(method) for method in _quark.quark_analysis.level_4_result
+            to_raw_method(method)
+            for method in _quark.quark_analysis.level_4_result
         )
         behavior_list = [
             (
@@ -51,6 +73,13 @@ class ParallelQuark(Quark):
         )
 
     def _apply_analysis_result(self, rule_obj):
+        """
+        Append the result returned by the subprocesses into the QuarkAnalysis
+        object.
+
+        :param rule_obj: a Quark rule specifying which result this method
+        should append
+        """
         async_result = self._result_map[id(rule_obj)]
         result = async_result.get()
 
@@ -112,21 +141,43 @@ class ParallelQuark(Quark):
                 ]
             )
 
-    def __init__(self, apk, core_library, num_of_process=1):
+    def __init__(self, apk, core_library, num_of_process=1, rizin_path=None):
+        """
+        Create a ParallelQuark object to run the Quark analysis parallelly.
+
+        :param apk: an APK for Quark to analyze
+        :param core_library: a string indicating which analysis library Quark
+        should use
+        :param num_of_process: a value indicating the maximal number of
+        available processes for the analysis. Defaults to 1
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library. Default to None
+        """
         self._result_map = {}
         self._pool = Pool(
-            min(num_of_process, cpu_count() - 1), self._worker_initializer,
-            (apk, core_library)
+            min(num_of_process, cpu_count() - 1),
+            self._worker_initializer,
+            (apk, core_library, rizin_path),
         )
 
-        super().__init__(apk, core_library)
+        super().__init__(apk, core_library, rizin_path=rizin_path)
 
     def apply_rules(self, rule_obj_list):
+        """
+        Add Quark rules to this pool.
+
+        :param rule_obj_list: a list of Quark rules
+        """
         for rule_obj in rule_obj_list:
             result = self._pool.apply_async(self._worker_analysis, (rule_obj,))
             self._result_map[id(rule_obj)] = result
 
     def run(self, rule_obj):
+        """
+        Wait for all rules to be analyzed.
+
+        :param rule_obj: _description_
+        """
         self._apply_analysis_result(rule_obj)
 
     def close(self):

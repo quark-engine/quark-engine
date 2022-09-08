@@ -6,6 +6,11 @@ import os
 
 from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
+from quark.utils.tools import (
+    find_rizin_in_PATH,
+    find_rizin_in_configuration_folder,
+)
+from quark.config import COMPATIBLE_RAZIN_VERSIONS
 
 
 class Report:
@@ -13,20 +18,48 @@ class Report:
     This module is for users who want to use quark as a Python module.
     """
 
-    def __init__(self):
-        self.quark = None
-
-    def analysis(self, apk, rule, core_library="androguard"):
+    def __init__(self, rizin_path=None, disable_rizin_installation=False):
         """
-        The main function of Quark-Engine analysis, the analysis is based on the provided APK file.
+        Create a Report object.
 
-        :param core_library: the library to analysis binary
-        :param apk: the APK file
-        :param rule: the rule to be checked, it could be a directory or a single json rule
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library. Defaults to None
+        :param disable_rizin_installation: a flag to disable the automatic
+        installation of Rizin. Defaults to False. Defaults to False
+        """
+        self.quark = None
+        self.rizin_path = rizin_path
+        self.disable_rizin_installation = disable_rizin_installation
+
+    def analysis(self, apk, rule, core_library="androguard", rizin_path=None):
+        """
+        The main function of Quark-Engine analysis, the analysis is based on
+        the provided APK file.
+
+        :param apk: an APK for Quark to analyze
+        :param rule: a Quark rule that will be used in the analysis. It could
+        be a directory or a Quark rule
+        :param core_library: a string indicating which analysis library Quark
+        should use. Defaults to "androguard"
+        :param rizin_path: a PathLike object to specify a Rizin executable for
+        the Rizin-based analysis library. Defaults to None
         :return: None
         """
 
-        self.quark = Quark(apk, core_library)
+        if core_library.lower() == "rizin":
+            if rizin_path:
+                self.rizin_path = rizin_path
+            elif not self.rizin_path:
+                self.rizin_path = find_rizin_in_PATH(COMPATIBLE_RAZIN_VERSIONS)
+                if not self.rizin_path:
+                    self.rizin_path = find_rizin_in_configuration_folder(
+                        COMPATIBLE_RAZIN_VERSIONS
+                    )
+
+                if not self.rizin_path:
+                    raise ValueError("Cannot found a valid Rizin executable.")
+
+        self.quark = Quark(apk, core_library, self.rizin_path)
 
         if os.path.isdir(rule):
 

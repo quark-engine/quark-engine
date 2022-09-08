@@ -1,8 +1,8 @@
 import enum
 import functools
 import os.path
-import pkg_resources
 
+import pkg_resources
 import rzpipe
 
 # Resource Types Definition
@@ -71,7 +71,19 @@ class AxmlReader(object):
     A Class that parses the Android XML file
     """
 
-    def __init__(self, file_path, structure_path=None):
+    def __init__(self, file_path, structure_path=None, rizin_path=None):
+        """
+        Create an AxmlReader object to parse the given Android XML file like
+        AndroidManifest.xml.
+
+        :param file_path: a file in the Android XML format
+        :param structure_path: a plain text file defining the structures of
+        the Android XML format. Defaults to None
+        :param rizin_path: a PathLike object to specify a Rizin executable to
+        use. Defaults to None
+        :raises AxmlException: if the given file is an invalid Android XML
+        file
+        """
         if structure_path is None:
             structure_path = pkg_resources.resource_filename(
                 "quark.core.axmlreader", "axml_definition"
@@ -83,7 +95,7 @@ class AxmlReader(object):
                 f" of Rizin in {structure_path}"
             )
 
-        self._rz = rzpipe.open(file_path)
+        self._rz = rzpipe.open(file_path, rizin_home=rizin_path)
         self._rz.cmd(f"pfo {structure_path}")
 
         self._file_size = int(self._rz.cmd("i~size[1]"), 16)

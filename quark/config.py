@@ -9,5 +9,8 @@ SOURCE = "https://github.com/quark-engine/quark-rules"
 DIR_PATH = f"{HOME_DIR}quark-rules"
 
 DEBUG = False
+COMPATIBLE_RAZIN_VERSIONS = ["v0.3.4"]
+
+RIZIN_DIR = f"{HOME_DIR}rizin/"
 
 Path(HOME_DIR).mkdir(parents=True, exist_ok=True)

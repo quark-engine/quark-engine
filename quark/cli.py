@@ -18,6 +18,7 @@ from quark.rulegeneration import RuleGeneration
 from quark.utils.colors import yellow
 from quark.utils.graph import select_label_menu, show_comparison_graph
 from quark.utils.pprint import print_info, print_success, print_warning
+from quark.utils.tools import find_rizin
 from quark.utils.weight import Weight
 from quark.webreport.generate import ReportGenerator
 
@@ -141,8 +142,8 @@ logo()
     "--multi-process",
     "num_of_process",
     type=click.IntRange(min=1),
-    help="Allow analyzing APK with N processes, where N doesn't exceeds" +
-    " the number of usable CPUs - 1 to avoid memory exhaustion.",
+    help="Allow analyzing APK with N processes, where N doesn't exceeds"
+    + " the number of usable CPUs - 1 to avoid memory exhaustion.",
     required=False,
     default=1,
 )
@@ -168,6 +169,11 @@ def entry_point(
     # Load rules
     rule_buffer_list = []
     rule_filter = summary or detail
+
+    if core_library.lower() == "rizin":
+        rizin_path = find_rizin()
+    else:
+        rizin_path = ""
 
     # Determine the location of rules
     if rule_filter and rule_filter.endswith("json"):
@@ -224,9 +230,14 @@ def entry_point(
         malware_confidences = {}
         for apk_ in apk:
             data = (
-                ParallelQuark(apk_, core_library, num_of_process)
+                ParallelQuark(
+                    apk_,
+                    core_library,
+                    num_of_process,
+                    rizin_path,
+                )
                 if num_of_process > 1
-                else Quark(apk_, core_library)
+                else Quark(apk_, core_library, rizin_path)
             )
             all_labels = {}
             # dictionary containing
@@ -281,9 +292,9 @@ def entry_point(
 
     # Load APK
     data = (
-        ParallelQuark(apk[0], core_library, num_of_process)
+        ParallelQuark(apk[0], core_library, num_of_process, rizin_path)
         if num_of_process > 1
-        else Quark(apk[0], core_library)
+        else Quark(apk[0], core_library, rizin_path)
     )
 
     if label:
@@ -410,7 +421,8 @@ def entry_point(
 
             json_report = data.get_json_report()
             report_html = ReportGenerator(
-                json_report).get_analysis_report_html()
+                json_report
+            ).get_analysis_report_html()
 
             if ".html" not in webreport:
                 webreport = f"{webreport}.html"
