@@ -65,7 +65,7 @@ class TestAxmlReader:
         attributes = axmlReader.get_attributes(manifestTag)
 
         for expectedAttrib, attrib in zip(expectedAttributes, attributes):
-            expectedAttrib == attrib
+            assert expectedAttrib == attrib
 
     @staticmethod
     def testGetXmlTree(MANIFEST_PATH_14d9f):
