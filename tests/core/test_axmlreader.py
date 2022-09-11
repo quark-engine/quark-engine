@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 
 import pytest
-from quark.core.axmlreader import AxmlReader
+from quark.core.axmlreader import AxmlReader, ResValue
 
 
 def extractManifest(samplePath: PathLike) -> str:
@@ -57,16 +57,15 @@ class TestAxmlReader:
         manifestTag = list(axmlReader)[1]
 
         expectedAttributes = [
-            {"Namespace": 10, "Name": 0, "Value": -1, "Type": 16, "Data": 1},
-            {"Namespace": 10, "Name": 1, "Value": 15, "Type": 3, "Data": 15},
-            {"Namespace": -1, "Name": 12, "Value": 14, "Type": 3, "Data": 14},
+            ResValue(namespace=10, name=0, value=-1, type=16, data=1),
+            ResValue(namespace=10, name=1, value=15, type=3, data=15),
+            ResValue(namespace=-1, name=12, value=14, type=3, data=14),
         ]
 
         attributes = axmlReader.get_attributes(manifestTag)
 
-        helper = unittest.TestCase()
         for expectedAttrib, attrib in zip(expectedAttributes, attributes):
-            helper.assertDictEqual(expectedAttrib, attrib)
+            expectedAttrib == attrib
 
     @staticmethod
     def testGetXmlTree(MANIFEST_PATH_14d9f):

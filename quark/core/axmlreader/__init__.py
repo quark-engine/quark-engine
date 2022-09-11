@@ -1,7 +1,8 @@
 import enum
 import functools
 import os.path
-from typing import Any, Dict, Iterator
+from collections import namedtuple
+from typing import Any, Dict, Iterator, List
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
@@ -35,6 +36,11 @@ RES_TABLE_TYPE_SPEC_TYPE = 0x0202
 RES_TABLE_LIBRARY_TYPE = 0x0203
 RES_TABLE_OVERLAYABLE_TYPE = 0x0204
 RES_TABLE_OVERLAYABLE_POLICY_TYPE = 0x0205
+
+ResChunkHeader = Dict[str, Any]
+ResValue = namedtuple(
+    "ResValue", ["namespace", "name", "type", "value", "data"]
+)
 
 
 class Res_value_type(enum.Enum):
@@ -186,7 +192,14 @@ class AxmlReader(object):
             if self._ptr >= self._axml_size:
                 return
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[ResChunkHeader]:
+        """Get an iterator that walks through the content of the Android XML
+         binary.
+
+        :raises AxmlException: if the given file is not a valid Android XML
+         binary
+        :yield: header of a resource chunk defined in the binary
+        """
         while self._axml_size - self._ptr >= 16:
             header = self._rz.cmdj(f"pfj axml_ResXMLTree_node @ {self._ptr}")
 
@@ -208,36 +221,44 @@ class AxmlReader(object):
 
             ext_ptr = self._ptr + 16
 
-            node = {"Address": self._ptr, "Type": node_type}
+            chunk = {"Address": self._ptr, "Type": node_type}
 
             if node_type == RES_XML_START_ELEMENT_TYPE:
-                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_attrExt @ { ext_ptr }")
+                ext = self._rz.cmdj(
+                    f"pfj axml_ResXMLTree_attrExt @ { ext_ptr }"
+                )
 
-                node["Namespace"] = ext[0]["value"][0]["value"]
-                node["Name"] = ext[1]["value"][0]["value"]
+                chunk["Namespace"] = ext[0]["value"][0]["value"]
+                chunk["Name"] = ext[1]["value"][0]["value"]
 
                 # Attributes
                 # node['AttrCount'] = ext[4]['value']
 
             elif node_type == RES_XML_END_ELEMENT_TYPE:
-                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_endElementExt @ { ext_ptr }")
+                ext = self._rz.cmdj(
+                    f"pfj axml_ResXMLTree_endElementExt @ { ext_ptr }"
+                )
 
-                node["Namespace"] = ext[0]["value"][0]["value"]
-                node["Name"] = ext[1]["value"][0]["value"]
+                chunk["Namespace"] = ext[0]["value"][0]["value"]
+                chunk["Name"] = ext[1]["value"][0]["value"]
 
             elif node_type in [
                 RES_XML_START_NAMESPACE_TYPE,
                 RES_XML_END_NAMESPACE_TYPE,
             ]:
-                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_namespaceExt @ { ext_ptr }")
+                ext = self._rz.cmdj(
+                    f"pfj axml_ResXMLTree_namespaceExt @ { ext_ptr }"
+                )
 
-                node["Prefix"] = ext[0]["value"][0]["value"]
-                node["Uri"] = ext[1]["value"][0]["value"]
+                chunk["Prefix"] = ext[0]["value"][0]["value"]
+                chunk["Uri"] = ext[1]["value"][0]["value"]
 
             elif node_type == RES_XML_CDATA_TYPE:
-                ext = self._rz.cmdj(f"pfj axml_ResXMLTree_cdataExt @ { ext_ptr }")
+                ext = self._rz.cmdj(
+                    f"pfj axml_ResXMLTree_cdataExt @ { ext_ptr }"
+                )
 
-                node["Data"] = ext[0]["value"][0]["value"]
+                chunk["Data"] = ext[0]["value"][0]["value"]
                 # typedData
 
             else:
@@ -245,7 +266,7 @@ class AxmlReader(object):
                 continue
 
             self._ptr = self._ptr + node_size
-            yield node
+            yield chunk
 
     @property
     def file_size(self):
@@ -265,85 +286,93 @@ class AxmlReader(object):
             f"@ string_pool_index+ {index}*4` + 2"
         )[0]["string"]
 
-    def get_attributes(self, node):
-        if node["Type"] != RES_XML_START_ELEMENT_TYPE:
+    def get_attributes(self, chunk: ResChunkHeader) -> List[ResValue]:
+        """Get the attributes of a resource chunk
+
+        :param chunk: header of a resource chunk
+        :return: python list that holds attributes
+        """
+        if chunk["Type"] != RES_XML_START_ELEMENT_TYPE:
             return None
-        extAddress = int(node["Address"]) + 16
+        extAddress = int(chunk["Address"]) + 16
 
         attrExt = self._rz.cmdj(f"pfj axml_ResXMLTree_attrExt @ {extAddress}")
 
         attrAddress = extAddress + attrExt[2]["value"]
         attributeSize = attrExt[3]["value"]
         attributeCount = attrExt[4]["value"]
-        result = []
+        attributes = []
         for _ in range(attributeCount):
-            attr = self._rz.cmdj(f"pfj axml_ResXMLTree_attribute @ {attrAddress}")
-
-            result.append(
-                {
-                    "Namespace": attr[0]["value"][0]["value"],
-                    "Name": attr[1]["value"][0]["value"],
-                    "Value": attr[2]["value"][0]["value"],
-                    "Type": attr[3]["value"][2]["value"],
-                    "Data": attr[3]["value"][3]["value"],
-                }
+            attr = self._rz.cmdj(
+                f"pfj axml_ResXMLTree_attribute @ {attrAddress}"
             )
+
+            value = ResValue(
+                namespace=attr[0]["value"][0]["value"],
+                name=attr[1]["value"][0]["value"],
+                value=attr[2]["value"][0]["value"],
+                type=attr[3]["value"][2]["value"],
+                data=attr[3]["value"][3]["value"],
+            )
+            attributes.append(value)
 
             attrAddress = attrAddress + attributeSize
 
-        return result
+        return attributes
 
-    def __convert_tag_to_xml_element(self, tag: Dict[str, Any]) -> XMLElement:
+    def __convert_tag_to_xml_element(
+        self, chunk: ResChunkHeader
+    ) -> XMLElement:
         """Convert a resource chunk in the Android XML binary into an
          XMLElement instance.
 
-        :param tag: resource chunk in the Android XML binary
+        :param chunk: header of a resource chunk in the Android XML binary
         :return: XMLElement instance
         """
-        tag_name = self.get_string(tag["Name"])
+        name = self.get_string(chunk["Name"])
 
-        tag_attributes = {}
-        for raw_attribute in self.get_attributes(tag):
-            namespace = self.get_string(raw_attribute["Namespace"])
-            name = self.get_string(raw_attribute["Name"])
+        attributes = {}
+        for raw_attribute in self.get_attributes(chunk):
+            attr_namespace = self.get_string(raw_attribute.namespace)
+            attr_name = self.get_string(raw_attribute.name)
 
-            data_type = raw_attribute["Type"]
-            raw_data = raw_attribute["Data"]
+            data_type = raw_attribute.type
+            raw_data = raw_attribute.data
             if data_type == Res_value_type.TYPE_STRING.value:
                 value = self.get_string(raw_data)
             elif data_type == Res_value_type.TYPE_INT_BOOLEAN.value:
                 value = bool(abs(raw_data))
             else:
-                value = raw_attribute["Data"]
+                value = raw_attribute.data
 
-            if namespace:
-                name = "{" + namespace + "}" + name
+            if attr_namespace:
+                attr_name = "{" + attr_namespace + "}" + attr_name
 
-            tag_attributes[name] = value
+            attributes[attr_name] = value
 
-        return XMLElement(tag_name, tag_attributes)
+        return XMLElement(name, attributes)
 
     def __find_manifest(
-        self, file_iterator: Iterator[Dict[str, str]]
+        self, chunk_iterator: Iterator[ResChunkHeader]
     ) -> XMLElement:
         """Find the resource chunk of the first XML label named manifest and
          convert it into an XMLElement instance.
 
-        :param file_iterator: iterator of the resource chunks
+        :param chunk_iterator: iterator of the resource chunk headers
         :return: XMLElement instance
         """
-        manifest_tag = next(
+        manifest_chunk = next(
             (
-                tag
-                for tag in file_iterator
-                if tag["Type"] == RES_XML_START_ELEMENT_TYPE
-                and self.get_string(tag["Name"]) == "manifest"
+                chunk
+                for chunk in chunk_iterator
+                if chunk["Type"] == RES_XML_START_ELEMENT_TYPE
+                and self.get_string(chunk["Name"]) == "manifest"
             ),
             None,
         )
 
-        if manifest_tag:
-            return self.__convert_tag_to_xml_element(manifest_tag)
+        if manifest_chunk:
+            return self.__convert_tag_to_xml_element(manifest_chunk)
 
     def get_xml_tree(self) -> XMLElementTree:
         """

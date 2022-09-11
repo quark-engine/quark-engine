@@ -236,7 +236,7 @@ class RizinImp(BaseApkinfo):
                 attrs = axml.get_attributes(tag)
 
                 if attrs:
-                    permission = axml.get_string(attrs[0]["Value"])
+                    permission = axml.get_string(attrs[0].value)
                     permission_list.add(permission)
 
         return permission_list
