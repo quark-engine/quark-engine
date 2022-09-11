@@ -2,8 +2,6 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import os
-
 import pytest
 from quark.core.struct.methodobject import MethodObject
 from quark.script import (
@@ -26,9 +24,9 @@ def QUARK_ANALYSIS_RESULT_FOR_RULE_68(SAMPLE_PATH_14d9f):
 
 
 @pytest.fixture(scope="class")
-def QUARK_ANALYSIS_RESULT_FOR_RULE_193(SAMPLE_PATH):
+def QUARK_ANALYSIS_RESULT_FOR_RULE_193(SAMPLE_PATH_14d9f):
     ruleset = Ruleset(RULE_FOLDER_PATH)
-    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_193_FILENAME])
+    return runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleset[RULE_193_FILENAME])
 
 
 class TestRuleset:
@@ -264,11 +262,11 @@ class TestQuarkReuslt:
         assert expectedMethod in caller_list
 
     @staticmethod
-    def testgetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testGetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
 
     @staticmethod
-    def testfindMethodInCaller(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testFindMethodInCaller(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         callerMethod = [
             "Lcom/google/progress/WifiCheckTask;",
             "checkWifiCanOrNotConnectServer",
