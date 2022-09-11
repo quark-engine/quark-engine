@@ -38,6 +38,10 @@ RES_TABLE_OVERLAYABLE_POLICY_TYPE = 0x0205
 
 
 class Res_value_type(enum.Enum):
+    """
+    List all possible types of a value in the Android XML binary.
+    """
+
     TYPE_NULL = 0x00
     TYPE_REFERENCE = 0x01
     TYPE_ATTRIBUTE = 0x02
@@ -290,6 +294,12 @@ class AxmlReader(object):
         return result
 
     def __convert_tag_to_xml_element(self, tag: Dict[str, Any]) -> XMLElement:
+        """Convert a resource chunk in the Android XML binary into an
+         XMLElement instance.
+
+        :param tag: resource chunk in the Android XML binary
+        :return: XMLElement instance
+        """
         tag_name = self.get_string(tag["Name"])
 
         tag_attributes = {}
@@ -316,6 +326,12 @@ class AxmlReader(object):
     def __find_manifest(
         self, file_iterator: Iterator[Dict[str, str]]
     ) -> XMLElement:
+        """Find the resource chunk of the first XML label named manifest and
+         convert it into an XMLElement instance.
+
+        :param file_iterator: iterator of the resource chunks
+        :return: XMLElement instance
+        """
         manifest_tag = next(
             (
                 tag

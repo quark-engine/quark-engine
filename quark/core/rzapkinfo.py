@@ -243,6 +243,11 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def activities(self) -> List[XMLElement]:
+        """
+        Return all activity from given APK.
+
+        :return: a list of all activities
+        """
         axml = AxmlReader(self._manifest)
         root = axml.get_xml_tree()
 
