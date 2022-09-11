@@ -41,8 +41,8 @@ runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
 - **Description**: Given detection rule and target sample, this instance runs the basic Quark analysis.
 - **params**: 
-    1. Target file 
-    2. Quark rule object
+    1. SAMPLE_PATH: Target file 
+    2. ruleInstance: Quark rule object
 - **return**: quarkResult instance
 
 quarkResultInstance.behaviorOccurList
@@ -53,7 +53,7 @@ quarkResultInstance.behaviorOccurList
 - **return**: detected behavior instance
 
 quarkResultInstance.getAllStrings(none)
-=====================================
+=======================================
 
 - **Description**: Get all strings inside the target APK file.
 - **params**: none
@@ -63,8 +63,8 @@ quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
 ==================================================================
 - **Description**: Check if target method is in caller method.
 - **params**: 
-    1. python list contains class name, method name and descriptor of caller method.
-    2. python list contains class name, method name and descriptor of target method.
+    1. callerMethod: python list contains class name, method name and descriptor of caller method.
+    2. targetMethod: python list contains class name, method name and descriptor of target method.
 - **return**: True/False
 
 behaviorInstance.firstAPI.fullName
@@ -102,6 +102,13 @@ behaviorInstance.getParamValues(none)
 - **params**: none
 - **return**: python list containing parameter values.
 
+behaviorInstance.isArgFromMethod(targetMethod)
+==============================================
+
+- **Description**: Check if there are any arguments from the target method.
+- **params**: 
+    1. targetMethod: python list contains class name, method name, and descriptor of target method
+- **return**: True/False
 
 methodInstance.getXrefFrom(none)
 ================================
@@ -126,13 +133,33 @@ Objection(host)
 
 objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet)
 =====================================================================
+
 - **Description**: Hook the target method with Objection.
 - **params**: 
     1. method: the tagrget API. (type: str or method instance) 
     2. watchArgs: Return Args information if True. (type: boolean) 
     3. watchBacktrace: Return backtrace information if True. (type: boolean) 
-    4. watchRet: Return the return information of the target API if True (type: boolean).
+    4. watchRet: Return the return information of the target API if True. (type: boolean)
 - **return**: none
+
+runFridaHook(apkPackageName, targetMethod, methodParamTypes, secondToWait)
+============================================================================
+
+- **Description**: Track calls to the specified method for given seconds.
+- **params**:
+    1. apkPackageName: the package name of the target APP
+    2. targetMethod: the target API
+    3. methodParamTypes: string that holds the parameters used by the target API
+    4. secondToWait: seconds to wait for method calls, defaults to 10
+- **return**: FridaResult instance
+
+checkClearText(inputString)
+============================
+
+- **Description**: Check the decrypted value of the input string.
+- **params**:
+    1. inputString: string to be checked
+- **return**: the decrypted value
 
 Analyzing real case (InstaStealer) using Quark Script
 ------------------------------------------------------
@@ -403,7 +430,7 @@ Quark Script CWE-921.py
             print(f"CWE-921 is detected in {SAMPLE_PATH}.")
 
 Quark Rule: checkFileExistence.json
-====================================
+===================================
 
 .. code-block:: json
 
@@ -435,3 +462,184 @@ Quark Script Result
     This file is stored inside the SDcard
 
     CWE-921 is detected in ovaa.apk.
+
+
+Detect CWE-312 in Android Application (ovaa.apk)
+------------------------------------------------
+
+This scenario seeks to find cleartext storage of sensitive data in the APK file. See `CWE-312 <https://cwe.mitre.org/data/definitions/312.html>`_ for more details.
+
+Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+
+First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ciphey <https://github.com/Ciphey/Ciphey>`_ to check if the arguments are encrypted.
+
+Quark Script CWE-312.py
+========================
+
+.. code-block:: python
+
+    from quark.script.frida import runFridaHook
+    from quark.script.ciphey import checkClearText
+
+    APP_PACKAGE_NAME = "oversecured.ovaa"
+
+    TARGET_METHOD = "android.app." \
+                    "SharedPreferencesImpl$EditorImpl." \
+                    "putString"
+
+    METHOD_PARAM_TYPE = "java.lang.String," \
+                        "java.lang.String"
+
+    fridaResult = runFridaHook(APP_PACKAGE_NAME,
+                                TARGET_METHOD,
+                                METHOD_PARAM_TYPE,
+                            secondToWait = 10)
+
+    for putString in fridaResult.behaviorOccurList:
+
+        firstParam, secondParam = putString.getParamValues()
+
+        if firstParam in ["email", "password"] and \
+            secondParam == checkClearText(secondParam):
+            
+            print(f'The CWE-312 vulnerability is found. The cleartext is "{secondParam}"')
+
+Frida Script: agent.js
+=======================
+
+.. code-block:: javascript
+
+    // -*- coding: utf-8 -*-
+    // This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+    // See the file 'LICENSE' for copying permission.
+
+    /*global Java, send, rpc*/
+    function replaceMethodImplementation(targetMethod, classAndMethodName, methodParamTypes, returnType) {
+        targetMethod.implementation = function () {
+            let callEvent = {
+                "type": "CallCaptured",
+                "identifier": [classAndMethodName, methodParamTypes, returnType],
+                "paramValues": []
+            };
+
+            for (const arg of arguments) {
+                callEvent["paramValues"].push((arg || "(none)").toString());
+            }
+
+            send(JSON.stringify(callEvent));
+            return targetMethod.apply(this, arguments);
+        };
+    }
+
+    function watchMethodCall(classAndMethodName, methodParamTypes) {
+        if (classAndMethodName == null || methodParamTypes == null) {
+            return;
+        }
+
+        const indexOfLastSeparator = classAndMethodName.lastIndexOf(".");
+        const classNamePattern = classAndMethodName.substring(0, indexOfLastSeparator);
+        const methodNamePattern = classAndMethodName.substring(indexOfLastSeparator + 1);
+
+        Java.perform(() => {
+            const classOfTargetMethod = Java.use(classNamePattern);
+            const possibleMethods = classOfTargetMethod[`${methodNamePattern}`];
+
+            if (typeof possibleMethods === "undefined") {
+                const failedToWatchEvent = {
+                    "type": "FailedToWatch",
+                    "identifier": [classAndMethodName, methodParamTypes]
+                };
+
+                send(JSON.stringify(failedToWatchEvent));
+                return;
+            }
+
+            possibleMethods.overloads.filter((possibleMethod) => {
+                const paramTypesOfPossibleMethod = possibleMethod.argumentTypes.map((argument) => argument.className);
+                return paramTypesOfPossibleMethod.join(",") === methodParamTypes;
+            }).forEach((matchedMethod) => {
+                const retType = matchedMethod.returnType.name;
+                replaceMethodImplementation(matchedMethod, classAndMethodName, methodParamTypes, retType);
+            }
+            );
+
+        });
+    }
+
+    rpc.exports["watchMethodCall"] = (classAndMethodName, methodParamTypes) => watchMethodCall(classAndMethodName, methodParamTypes);
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-312.py
+    The CWE-312 vulnerability is found. The cleartext is "test@email.com"
+    The CWE-312 vulnerability is found. The cleartext is "password"
+
+Detect CWE-89 in Android Application (AndroGoat.apk)
+----------------------------------------------------
+
+This scenario seeks to find SQL injection in the APK file. See `CWE-89 <https://cwe.mitre.org/data/definitions/89.html>`_ for more details.
+
+Let's use this `APK <https://github.com/satishpatnayak/AndroGoat>`_ and the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``isArgFromMethod`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
+
+Quark Script CWE-89.py
+======================
+
+.. code-block:: python
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "AndroGoat.apk"
+    RULE_PATH = "executeSQLCommand.json"
+
+    targetMethod = [
+        "Landroid/widget/EditText;", # class name 
+        "getText",                   # method name
+        "()Landroid/text/Editable;", # descriptor
+    ]
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for sqlCommandExecution in quarkResult.behaviorOccurList:
+        if sqlCommandExecution.isArgFromMethod(
+            targetMethod
+        ):
+            print(f"CWE-89 is detected in {SAMPLE_PATH}")
+
+Quark Rule: executeSQLCommand.json
+==================================
+
+.. code-block:: json
+
+    {
+        "crime": "Execute SQL Command",
+        "permission": [],
+        "api": [
+            {
+                "class": "Ljava/lang/StringBuilder;",
+                "method": "append",
+                "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
+            },
+            {
+                "class": "Landroid/database/sqlite/SQLiteDatabase;",
+                "method": "rawQuery",
+                "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-89.py
+
+    CWE-89 is detected in AndroGoat.apk
