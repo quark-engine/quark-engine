@@ -15,7 +15,7 @@ from typing import Dict, Generator, List, Optional, Set, Union
 import rzpipe
 
 from quark.core.axmlreader import AxmlReader
-from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
@@ -236,10 +236,22 @@ class RizinImp(BaseApkinfo):
                 attrs = axml.get_attributes(tag)
 
                 if attrs:
-                    permission = axml.get_string(attrs[0]["Value"])
+                    permission = axml.get_string(attrs[0].value)
                     permission_list.add(permission)
 
         return permission_list
+
+    @functools.cached_property
+    def activities(self) -> List[XMLElement]:
+        """
+        Return all activity from given APK.
+
+        :return: a list of all activities
+        """
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.findall("application/activity")
 
     @property
     def android_apis(self) -> Set[MethodObject]:

@@ -7,6 +7,7 @@ import os.path
 from abc import abstractmethod
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
+from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
@@ -66,6 +67,16 @@ class BaseApkinfo:
         Return all permissions from given APK.
 
         :return: a list of all permissions
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def activities(self) -> List[XMLElement]:
+        """
+        Return all activity from given APK.
+
+        :return: a list of all activities
         """
         pass
 

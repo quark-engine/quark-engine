@@ -9,6 +9,7 @@ from typing import Any, List, Tuple, Union
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
 from quark.core.analysis import QuarkAnalysis
+from quark.core.interface.baseapkinfo import XMLElement
 from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
 from quark.core.struct.ruleobject import RuleObject as Rule
@@ -45,6 +46,37 @@ class DefaultRuleset(Ruleset):
 
 
 DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
+
+
+class Activity:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return self._getAttribute("name")
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def hasIntentFilter(self) -> bool:
+        """Check if the activity has an intent filter.
+
+        :return: True/False
+        """
+        return self.xml.find("intent-filter") is not None
+
+    def isExported(self) -> bool:
+        """Check if the activity is exported.
+
+        :return: True/False
+        """
+        exported = self._getAttribute("exported", self.hasIntentFilter())
+        return exported
 
 
 class Method:
@@ -303,3 +335,15 @@ def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
     analysis = QuarkResult(quark, ruleInstance)
 
     return analysis
+
+
+def getActivities(samplePath: PathLike) -> List[Activity]:
+    """Get activities from a target sample.
+
+    :param samplePath: target file
+    :return: python list containing activities
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return [Activity(xml) for xml in apkinfo.activities]
