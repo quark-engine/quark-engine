@@ -60,6 +60,9 @@ __See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_sc
 * [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)
 * [CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)
 
+### Other CWE Showcases
+* [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
+
 ## Quark Web Report
 
 With the following command, you can easily analyze the Android sample and output the web report.
