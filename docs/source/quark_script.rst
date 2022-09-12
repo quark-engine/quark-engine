@@ -171,13 +171,13 @@ getActivities(samplePath)
 activityInstance.hasIntentFilter(none)
 ======================================
 - **Description**: Check if the activity has an intent-filter.
-- **params**: None
+- **params**: none
 - **return**: True/False
 
 activityInstance.isExported(none)
 ==================================
 - **Description**: Check if the activity set ``android:exported=true``.
-- **params**: None
+- **params**: none
 - **return**: True/False
 
 
