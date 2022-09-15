@@ -307,11 +307,11 @@ class TestQuarkReuslt:
         assert expectedMethod in caller_list
 
     @staticmethod
-    def testgetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testGetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
 
     @staticmethod
-    def testfindMethodInCaller(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testFindMethodInCallerWithListOfStr(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         callerMethod = [
             "Lcom/google/progress/WifiCheckTask;",
             "checkWifiCanOrNotConnectServer",
@@ -325,6 +325,32 @@ class TestQuarkReuslt:
 
         assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.findMethodInCaller(
             callerMethod, targetMethod
+        )
+
+    @staticmethod
+    def testFindMethodInCallerWithMethodInstance(
+        QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+    ):
+        callerObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "([Ljava/lang/String;)Z",
+            )
+        )
+        caller = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, callerObj)
+
+        targetObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Landroid/util/Log;",
+                "e",
+                "(Ljava/lang/String; Ljava/lang/String;)I",
+            )
+        )
+        target = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, targetObj)
+
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.findMethodInCaller(
+            caller, target
         )
 
 

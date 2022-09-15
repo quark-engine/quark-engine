@@ -276,25 +276,34 @@ class QuarkResult:
 
     def findMethodInCaller(
         self,
-        callerMethod: List[str],
-        targetMethod: List[str]
+        callerMethod: Union[List[str], Method],
+        targetMethod: Union[List[str], Method],
     ) -> bool:
         """
         Check if target method is in caller method.
 
-        :params callerMethod: python list contains class name,
-        method name and descriptor of caller method.
-        :params targetMethod: python list contains class name,
-        method name and descriptor of target method.
+        :params callerMethod: python list or Method instance containing class
+         name, method name and descriptor of caller method.
+        :params targetMethod: python list or Method instance containing class
+         name, method name and descriptor of target method.
         :return: True/False
         """
+
+        def __convertMethodToListOfStr(method: Method) -> List[str]:
+            return [method.className, method.methodName, method.descriptor]
+
+        if isinstance(callerMethod, Method):
+            callerMethod = __convertMethodToListOfStr(callerMethod)
+        if isinstance(targetMethod, Method):
+            targetMethod = __convertMethodToListOfStr(targetMethod)
 
         apkinfo = self.quark.apkinfo
 
         callerMethodObj = apkinfo.find_method(
             class_name=callerMethod[0],
             method_name=callerMethod[1],
-            descriptor=callerMethod[2])
+            descriptor=callerMethod[2],
+        )
 
         if not callerMethodObj:
             print("Caller method not Found!")
@@ -303,9 +312,11 @@ class QuarkResult:
         callerMethodInstance = Method(self, callerMethodObj)
 
         for calleeMethod, _ in callerMethodInstance.getXrefTo():
-            if calleeMethod.innerObj.class_name == targetMethod[0] and \
-                    calleeMethod.innerObj.name == targetMethod[1] and \
-                    calleeMethod.innerObj.descriptor == targetMethod[2]:
+            if (
+                calleeMethod.innerObj.class_name == targetMethod[0]
+                and calleeMethod.innerObj.name == targetMethod[1]
+                and calleeMethod.innerObj.descriptor == targetMethod[2]
+            ):
                 return True
         return False
 
