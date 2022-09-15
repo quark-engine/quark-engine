@@ -2,11 +2,7 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import os
-
 import pytest
-import requests
-
 from quark.core.struct.methodobject import MethodObject
 from quark.script import (
     Behavior,
@@ -14,45 +10,25 @@ from quark.script import (
     Method,
     QuarkResult,
     Ruleset,
+    getActivities,
     runQuarkAnalysis,
 )
-
-SAMPLE_SOURCE_URL = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
-)
-SAMPLE_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 RULE_FOLDER_PATH = "tests/script/rules"
 RULE_68_FILENAME = "00068.json"
 RULE_193_FILENAME = "00193.json"
 
 
-@pytest.fixture(scope="session")
-def SAMPLE_PATH(tmp_path_factory: pytest.TempPathFactory) -> str:
-    folder = os.path.splitext(os.path.basename(__file__))[0]
-    folder = tmp_path_factory.mktemp(folder)
-
-    sample_path = folder / SAMPLE_FILENAME
-
-    response = requests.get(SAMPLE_SOURCE_URL, allow_redirects=True)
-    file = open(sample_path, "wb")
-    file.write(response.content)
-    file.close()
-
-    return str(sample_path)
+@pytest.fixture(scope="class")
+def QUARK_ANALYSIS_RESULT_FOR_RULE_68(SAMPLE_PATH_14d9f):
+    ruleset = Ruleset(RULE_FOLDER_PATH)
+    return runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleset[RULE_68_FILENAME])
 
 
 @pytest.fixture(scope="class")
-def QUARK_ANALYSIS_RESULT_FOR_RULE_68(SAMPLE_PATH):
+def QUARK_ANALYSIS_RESULT_FOR_RULE_193(SAMPLE_PATH_14d9f):
     ruleset = Ruleset(RULE_FOLDER_PATH)
-    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_68_FILENAME])
-
-
-@pytest.fixture(scope="class")
-def QUARK_ANALYSIS_RESULT_FOR_RULE_193(SAMPLE_PATH):
-    ruleset = Ruleset(RULE_FOLDER_PATH)
-    return runQuarkAnalysis(SAMPLE_PATH, ruleset[RULE_193_FILENAME])
+    return runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleset[RULE_193_FILENAME])
 
 
 class TestRuleset:
@@ -92,6 +68,28 @@ class TestDefaultRuleset:
 
         with pytest.raises(KeyError):
             _ = ruleset[1]
+
+
+class TestActivity:
+    @staticmethod
+    def testHasNoIntentFilter(SAMPLE_PATH_14d9f):
+        activity = getActivities(SAMPLE_PATH_14d9f)[0]
+        assert activity.hasIntentFilter() is False
+
+    @staticmethod
+    def testHasIntentFilter(SAMPLE_PATH_13667):
+        activity = getActivities(SAMPLE_PATH_13667)[0]
+        assert activity.hasIntentFilter() is True
+
+    @staticmethod
+    def testIsNotExported(SAMPLE_PATH_14d9f):
+        activity = getActivities(SAMPLE_PATH_14d9f)[0]
+        assert activity.isExported() is False
+
+    @staticmethod
+    def testIsExported(SAMPLE_PATH_13667):
+        activity = getActivities(SAMPLE_PATH_13667)[0]
+        assert activity.isExported() is True
 
 
 class TestMethod:
@@ -353,10 +351,17 @@ class TestQuarkReuslt:
         )
 
 
-def testRunQuarkAnalysis(SAMPLE_PATH):
+def testRunQuarkAnalysis(SAMPLE_PATH_14d9f):
     ruleset = Ruleset(RULE_FOLDER_PATH)
     ruleObj = ruleset[RULE_68_FILENAME]
 
-    analysisResult = runQuarkAnalysis(SAMPLE_PATH, ruleObj)
+    analysisResult = runQuarkAnalysis(SAMPLE_PATH_14d9f, ruleObj)
 
     assert len(analysisResult.behaviorOccurList) == 1
+
+
+def testGetActivities(SAMPLE_PATH_14d9f) -> None:
+    activities = getActivities(SAMPLE_PATH_14d9f)
+
+    assert len(activities) == 1
+    assert str(activities[0]) == "com.google.progress.BackGroundActivity"

@@ -12,7 +12,7 @@ from androguard.core.analysis.analysis import MethodAnalysis
 from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
@@ -41,6 +41,16 @@ class AndroguardImp(BaseApkinfo):
 
         if self.ret_type == "DEX":
             return []
+
+    @property
+    def activities(self) -> List[XMLElement]:
+        if self.ret_type == "DEX":
+            return []
+
+        manifest_root = self.apk.get_android_manifest_xml()
+        application = manifest_root.find("application")
+
+        return application.findall("activity")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
