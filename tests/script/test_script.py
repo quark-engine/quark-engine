@@ -106,8 +106,7 @@ class TestMethod:
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
         assert (
-            method.fullName
-            == "Lcom/google/progress/WifiCheckTask;"
+            method.fullName == "Lcom/google/progress/WifiCheckTask;"
             " checkWifiCanOrNotConnectServer ()Z"
         )
 

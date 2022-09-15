@@ -186,8 +186,8 @@ class Behavior:
                 parentheses_counter += 1
             elif char == ")":
                 parentheses_counter -= 1
-            elif char == ',' and parentheses_counter == 0:
-                arguments.append(argumentStr[indexOfLastSeparator: index])
+            elif char == "," and parentheses_counter == 0:
+                arguments.append(argumentStr[indexOfLastSeparator:index])
                 indexOfLastSeparator = index + 1
 
         arguments.append(argumentStr[indexOfLastSeparator:])
