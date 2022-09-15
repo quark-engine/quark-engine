@@ -6,10 +6,13 @@ import os
 
 import pytest
 import requests
+
 from quark.core.struct.methodobject import MethodObject
 from quark.script import (
+    Behavior,
     DefaultRuleset,
     Method,
+    QuarkResult,
     Ruleset,
     runQuarkAnalysis,
 )
@@ -152,6 +155,46 @@ class TestMethod:
         caller_list = method.getXrefFrom()
 
         assert expectedMethod in caller_list
+
+    @staticmethod
+    def testIsArgumentTrue(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        def __getMethod(
+            quarkResult: QuarkResult,
+            className: str,
+            methodName: str,
+            descriptor: str,
+        ) -> Method:
+            methodObj = quarkResult.quark.apkinfo.find_method(
+                className, methodName, descriptor
+            )
+            return Method(quarkResult, methodObj)
+
+        methodCaller = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Lcom/google/progress/AndroidClientService;",
+            "onCreate",
+            "()V",
+        )
+        firstAPI = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Ljava/lang/Class;",
+            "getDeclaredMethod",
+            "(Ljava/lang/String; [Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+        )
+        secondAPI = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Ljava/lang/reflect/Method;",
+            "setAccessible",
+            "(Z)V",
+        )
+        behavior = Behavior(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            methodCaller,
+            firstAPI,
+            secondAPI,
+        )
+
+        assert behavior.firstAPI.isArgumentTrue()
 
 
 class TestBehavior:

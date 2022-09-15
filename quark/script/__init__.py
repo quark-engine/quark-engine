@@ -49,10 +49,14 @@ DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
 
 class Method:
     def __init__(
-        self, quarkResultInstance: "QuarkResult", methodObj: MethodObject
+        self,
+        quarkResultInstance: "QuarkResult",
+        methodObj: MethodObject,
+        behavior: "Behavior" = None,
     ) -> None:
         self.quarkResult = quarkResultInstance
         self.innerObj = methodObj
+        self.behavior = behavior
 
     def __getattr__(self, name) -> Any:
         return getattr(self.innerObj, name)
@@ -76,6 +80,14 @@ class Method:
         :return: python list containing caller methods
         """
         return self.quarkResult.getMethodXrefFrom(self)
+
+    def isArgumentTrue(self) -> bool:
+        """Check if the argument holds the Boolean value, True.
+
+        :param argument: string that holds the value of a register
+        :return: True/False
+        """
+        return self.behavior.getParamValues()[-1] == "1"
 
     @property
     def fullName(self) -> str:
@@ -122,6 +134,10 @@ class Behavior:
         self.methodCaller = methodCaller
         self.firstAPI = firstAPI
         self.secondAPI = secondAPI
+
+        self.methodCaller.behavior = self
+        self.firstAPI.behavior = self
+        self.secondAPI.behavior = self
 
     def hasString(self, pattern: str, regex=False) -> List[str]:
         usageTable = self.quarkResult.quark._evaluate_method(
@@ -202,11 +218,6 @@ class QuarkResult:
         self.innerObj = self.quark.quark_analysis
         self.quark.quark_analysis = QuarkAnalysis()
 
-        # Apply cache
-        self._wrapMethodObject = functools.lru_cache()(
-            self._wrapMethodObjectWithoutCache
-        )
-
     @functools.cached_property
     def behaviorOccurList(self):
         """List that stores instances of detected behavior in different part of
@@ -248,7 +259,7 @@ class QuarkResult:
         caller_set = apkinfo.upperfunc(methodObj)
         return [self._wrapMethodObject(caller) for caller in list(caller_set)]
 
-    def _wrapMethodObjectWithoutCache(self, methodObj: MethodObject) -> Method:
+    def _wrapMethodObject(self, methodObj: MethodObject) -> Method:
         if methodObj:
             return Method(self, methodObj)
         else:
