@@ -15,6 +15,7 @@ from androguard.misc import AnalyzeAPK, AnalyzeDex
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
+from quark.evaluator.pyeval import PyEval
 
 
 class AndroguardImp(BaseApkinfo):
@@ -235,13 +236,13 @@ class AndroguardImp(BaseApkinfo):
             "second_hex": None,
         }
 
-        first_method_pattern = (
-            f"{first_method.class_name}"
-            f"->{first_method.name}{first_method.descriptor}"
+        first_method_pattern = PyEval.get_method_pattern(
+            first_method.class_name, first_method.name, first_method.descriptor
         )
-        second_method_pattern = (
-            f"{second_method.class_name}"
-            f"->{second_method.name}{second_method.descriptor}"
+        second_method_pattern = PyEval.get_method_pattern(
+            second_method.class_name,
+            second_method.name,
+            second_method.descriptor,
         )
 
         for _, ins in method_analysis.get_method().get_instructions_idx():

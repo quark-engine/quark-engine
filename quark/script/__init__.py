@@ -13,7 +13,12 @@ from quark.core.interface.baseapkinfo import XMLElement
 from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
 from quark.core.struct.ruleobject import RuleObject as Rule
+from quark.evaluator.pyeval import PyEval
 from quark.utils.regex import URL_REGEX
+from quark.utils.tools import (
+    get_arguments_from_argument_str,
+    get_parenthetic_contents,
+)
 
 
 @functools.lru_cache
@@ -235,7 +240,7 @@ class Behavior:
         """
         className, methodName, descriptor = targetMethod
 
-        pattern = f"{className}->{methodName}{descriptor}"
+        pattern = PyEval.get_method_pattern(className, methodName, descriptor)
 
         return bool(self.hasString(pattern))
 

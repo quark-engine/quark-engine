@@ -236,24 +236,14 @@ class Quark:
          False
         :yield: _description_
         """
-        first_method_pattern = (
-            "{class_name}->{method_name}{descriptor}".format_map(
-                {
-                    "class_name": first_method.class_name,
-                    "method_name": first_method.name,
-                    "descriptor": first_method.descriptor,
-                }
-            )
+        first_method_pattern = PyEval.get_method_pattern(
+            first_method.class_name, first_method.name, first_method.descriptor
         )
 
-        second_method_pattern = (
-            "{class_name}->{method_name}{descriptor}".format_map(
-                {
-                    "class_name": second_method.class_name,
-                    "method_name": second_method.name,
-                    "descriptor": second_method.descriptor,
-                }
-            )
+        second_method_pattern = PyEval.get_method_pattern(
+            second_method.class_name,
+            second_method.name,
+            second_method.descriptor,
         )
 
         register_usage_records = (
