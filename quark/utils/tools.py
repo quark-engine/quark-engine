@@ -4,6 +4,7 @@
 
 import copy
 import re
+from typing import Any, List, Union
 
 
 def remove_dup_list(element):
@@ -121,3 +122,53 @@ def get_parenthetic_contents(string: str, start_index: int) -> str:
             return string[start_index:end_index]
 
     return string[start_index:]
+
+
+def get_arguments_from_argument_str(
+    argument_str: str, descriptor: str
+) -> List[Any]:
+    """Get arguments from an argument string.
+
+    :param argument_str: string that holds multiple arguments and uses commas
+     as separators
+    :param descriptor: string that holds a descriptor for type inference
+    :return: python list that holds the arguments
+    """
+
+    def __valueOf(argument: str, type_hint: str) -> Union[int, float, bool]:
+        try:
+            if type_hint in ["I", "B", "S", "J"]:
+                return int(argument)
+            elif type_hint == "Z":
+                return bool(int(argument))
+            elif type_hint in ["F", "D"]:
+                return float(argument)
+        except ValueError:
+            pass
+
+        return argument
+
+    arguments = []
+
+    parentheses_counter = 0
+    index_of_last_separator = 0
+    for index, char in enumerate(argument_str):
+        if char == "(":
+            parentheses_counter += 1
+        elif char == ")":
+            parentheses_counter -= 1
+        elif char == "," and parentheses_counter == 0:
+            arguments.append(argument_str[index_of_last_separator:index])
+            index_of_last_separator = index + 1
+
+    arguments.append(argument_str[index_of_last_separator:])
+
+    type_hints = descriptor[1 : descriptor.find(")")].split()
+    type_hints = reversed(type_hints)
+    arguments = [
+        __valueOf(argument, next(type_hints, ""))
+        for argument in reversed(arguments)
+    ]
+    arguments.reverse()
+
+    return arguments

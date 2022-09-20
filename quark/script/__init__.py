@@ -206,7 +206,7 @@ class Behavior:
         """
         return self.hasString(URL_REGEX, True)
 
-    def getParamValues(self) -> List[str]:
+    def getParamValues(self) -> List[Any]:
         """Get parameter values from behavior.
 
         :return: python list containing parameter values
@@ -214,22 +214,7 @@ class Behavior:
         allResult = self.hasString(".*", True)
 
         argumentStr = max(allResult, key=len)[1:-1]
-        arguments = []
-
-        parentheses_counter = 0
-        indexOfLastSeparator = 0
-        for index, char in enumerate(argumentStr):
-            if char == "(":
-                parentheses_counter += 1
-            elif char == ")":
-                parentheses_counter -= 1
-            elif char == "," and parentheses_counter == 0:
-                arguments.append(argumentStr[indexOfLastSeparator:index])
-                indexOfLastSeparator = index + 1
-
-        arguments.append(argumentStr[indexOfLastSeparator:])
-
-        return arguments
+        return get_arguments_from_argument_str(argumentStr)
 
     def isArgFromMethod(self, targetMethod: List[str]) -> bool:
         """Check if there are any argument from the target method.
