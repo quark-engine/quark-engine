@@ -712,7 +712,7 @@ This scenario seeks to find **exposed methods or functions** in the APK file. Se
 
 Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using method ``setJavascriptEnabled``. Then, we use API ``methodInstance.isArgumentTrue`` to check if it enables JavaScript execution on websites. Finally, we look for calls to method ``addJavaScriptInterface`` in the caller method. If **yes**, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
+First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using method ``setJavascriptEnabled``. Then, we use API ``methodInstance.getArguments`` to check if it enables JavaScript execution on websites. Finally, we look for calls to method ``addJavaScriptInterface`` in the caller method. If **yes**, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
 
 Quark Script CWE-749.py
 =======================
