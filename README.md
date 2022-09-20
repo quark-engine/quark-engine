@@ -39,20 +39,25 @@ Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-list
 ## Quark Script - Ecosystem for Mobile Security Tools
 
 ### Innovative & Interactive
-The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or __pentest__ the targets.
 
-Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to __interact__ with staged results and perform __creative__ analysis with Quark Script.
+The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets.
+
+Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
 
 ### Dynamic & Static Analysis
-In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).  
+
+In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).
 
 ### Re-Usable & Sharable
-Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges. 
+
+Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges.
 
 ### More APIs to come
-Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.  
 
-__See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).__
+Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.
+
+**See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
+
 # 2022 CWE Top 25 Showcases
 
 *   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)
@@ -107,18 +112,18 @@ Quark provides **7 flexible report formats** and **2 powerful features** to boos
 
 7 Types of Report Formats:
 
--   [Summary Report](https://github.com/quark-engine/quark-engine#summary-report)
--   [Detail Report](https://github.com/quark-engine/quark-engine#detail-report)
--   [Web Report](https://github.com/quark-engine/quark-engine#quark-web-report)
--   [Label-based Report](https://github.com/quark-engine/quark-engine#label-based-report)
--   [Behaviors Comparison Radar Chart](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
--   [Call Graph](https://github.com/quark-engine/quark-engine#call-graph-for-every-potential-malicious-activity)
--   [Rule Classification](https://github.com/quark-engine/quark-engine#rules-classification)
+*   [Summary Report](https://github.com/quark-engine/quark-engine#summary-report)
+*   [Detail Report](https://github.com/quark-engine/quark-engine#detail-report)
+*   [Web Report](https://github.com/quark-engine/quark-engine#quark-web-report)
+*   [Label-based Report](https://github.com/quark-engine/quark-engine#label-based-report)
+*   [Behaviors Comparison Radar Chart](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
+*   [Call Graph](https://github.com/quark-engine/quark-engine#call-graph-for-every-potential-malicious-activity)
+*   [Rule Classification](https://github.com/quark-engine/quark-engine#rules-classification)
 
 2 Features to Boost Your Analysis:
 
--   [Radiocontrast](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
--   [Parallelizing Quark](https://github.com/quark-engine/quark-engine#parallelizing-quark)
+*   [Radiocontrast](https://github.com/quark-engine/quark-engine#behaviors-comparison-radar-chart)
+*   [Parallelizing Quark](https://github.com/quark-engine/quark-engine#parallelizing-quark)
 
 Please see below for more details.
 
@@ -126,10 +131,10 @@ Please see below for more details.
 
 ### Requirements
 
--   Python 3.8+
--   git
--   graphviz
--   click >= 8.0.1 (For CLI supports)
+*   Python 3.8+
+*   git
+*   graphviz
+*   click >= 8.0.1 (For CLI supports)
 
 ### Installation
 
@@ -311,9 +316,9 @@ radiocontrast.generate_rule(percentile_rank=0.2, web_editor="ahmyth.html")
 
 ### Parallelizing Quark
 
-Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes. 
+Now Quark supports multiprocessing for analyzing APKs parallelly. By adding the option `--multi-process`, you can set the number of processes.
 
-Note that Quark-Engine automatically limits this value to be less than or equal to the number of CPUs - 1. This restriction is done to avoid the CPU from running out of memory. 
+Note that Quark-Engine automatically limits this value to be less than or equal to the number of CPUs - 1. This restriction is done to avoid the CPU from running out of memory.
 
 ```bash
 quark -a Ahmyth.apk -s --multi-process 4
@@ -337,13 +342,13 @@ quark -a Ahmyth.apk -s --core-library rizin
 
 Quark-Engine has been participating in the GSoC under the Honeynet Project!
 
--   2021:
-    -   [YuShiang Dang](https://twitter.com/YushianhD): [New Rule Generation Technique & Make Quark Everywhere Among Security Open Source Projects](https://quark-engine.github.io/2021/08/17/GSoC-2021-YuShiangDang/)
-    -   [Sheng-Feng Lu](https://twitter.com/haeter525): [Replace the core library of Quark-Engine](https://quark-engine.github.io/2021/08/17/GSoC-2021-ShengFengLu/)
+*   2021:
+    *   [YuShiang Dang](https://twitter.com/YushianhD): [New Rule Generation Technique & Make Quark Everywhere Among Security Open Source Projects](https://quark-engine.github.io/2021/08/17/GSoC-2021-YuShiangDang/)
+    *   [Sheng-Feng Lu](https://twitter.com/haeter525): [Replace the core library of Quark-Engine](https://quark-engine.github.io/2021/08/17/GSoC-2021-ShengFengLu/)
 
 Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
 
 ## Core Values of Quark Engine Team
 
--   We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think. 
+*   We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think.
     And the most important of all, we benefit ourselves by benefit others **first**.
