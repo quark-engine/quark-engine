@@ -154,7 +154,7 @@ class TestMethod:
         assert expectedMethod in caller_list
 
     @staticmethod
-    def testIsArgumentTrue(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testGetArguments(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         def __getMethod(
             quarkResult: QuarkResult,
             className: str,
@@ -191,7 +191,9 @@ class TestMethod:
             secondAPI,
         )
 
-        assert behavior.firstAPI.isArgumentTrue()
+        arguments = behavior.secondAPI.getArguments()
+
+        assert arguments[1:] == [True]
 
 
 class TestBehavior:

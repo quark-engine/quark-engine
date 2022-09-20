@@ -118,13 +118,31 @@ class Method:
         """
         return self.quarkResult.getMethodXrefFrom(self)
 
-    def isArgumentTrue(self) -> bool:
-        """Check if the argument holds the Boolean value, True.
+    def getArguments(self) -> List[Any]:
+        """Get arguments from method.
 
-        :param argument: string that holds the value of a register
-        :return: True/False
+        :return: python list containing arguments
         """
-        return self.behavior.getParamValues()[-1] == "1"
+        argumentsOfSecondAPI = self.behavior.getParamValues()
+
+        if self == self.behavior.secondAPI:
+            return self.behavior.getParamValues()
+        else:
+            methodPattern = PyEval.get_method_pattern(
+                self.className, self.methodName, self.descriptor
+            )
+
+            argumentsOfFirstAPI = (
+                get_parenthetic_contents(
+                    argument, argument.find(methodPattern)
+                )
+                for argument in argumentsOfSecondAPI
+                if methodPattern in argument
+            )
+
+            return get_arguments_from_argument_str(
+                next(argumentsOfFirstAPI, ""), self.descriptor
+            )
 
     @property
     def fullName(self) -> str:
@@ -214,7 +232,9 @@ class Behavior:
         allResult = self.hasString(".*", True)
 
         argumentStr = max(allResult, key=len)[1:-1]
-        return get_arguments_from_argument_str(argumentStr)
+        return get_arguments_from_argument_str(
+            argumentStr, self.secondAPI.descriptor
+        )
 
     def isArgFromMethod(self, targetMethod: List[str]) -> bool:
         """Check if there are any argument from the target method.
