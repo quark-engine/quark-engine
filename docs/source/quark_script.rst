@@ -748,6 +748,7 @@ configureJsExecution.json
 =========================
 
 .. code-block:: json
+
     {
         "crime": "Configure JavaScript execution on websites",
         "permission": [],
