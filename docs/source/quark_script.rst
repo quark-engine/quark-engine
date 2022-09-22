@@ -744,10 +744,11 @@ Quark Script CWE-749.py
         if enableJS and exposeAPI:
             print(f"CWE-749 is detected in method, {caller.fullName}"
 
-configureJsExecution.json
+Quark Rule: configureJsExecution.json
 =========================
 
 .. code-block:: json
+
     {
         "crime": "Configure JavaScript execution on websites",
         "permission": [],
