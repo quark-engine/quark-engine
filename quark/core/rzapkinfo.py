@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
-from typing import Dict, Generator, List, Optional, Set, Union
+from typing import Any, Dict, Generator, List, Optional, Set, Union
 
 import rzpipe
 
@@ -18,7 +18,10 @@ from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-from quark.utils.tools import descriptor_to_androguard_format, remove_dup_list
+from quark.utils.tools import (
+    descriptor_to_androguard_format,
+    remove_dup_list,
+)
 
 RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
 
@@ -502,6 +505,25 @@ class RizinImp(BaseApkinfo):
                 return method
 
     @staticmethod
+    def _parse_parameter(mnemonic: str, parameter: str) -> Any:
+        """Parse the value of the parameter based on the mnemonic.
+
+        :param mnemonic: the mnemonic of a bytecode
+        :param parameter: the parameter of a bytecode
+        :return: the value of the parameter
+        """
+        if mnemonic.startswith("invoke"):
+            return re.sub(r"\.", "->", parameter, count=1)
+        elif mnemonic == "const-wide":
+            return float(parameter)
+        elif mnemonic.startswith("const") and "string" not in mnemonic:
+            return int(parameter, 16)
+        elif '/lit' in mnemonic:
+            return int(parameter, 16)
+
+        return parameter
+
+    @staticmethod
     def _parse_smali(smali: str) -> BytecodeObject:
         if smali == "":
             raise ValueError("Argument cannot be empty.")
@@ -520,11 +542,8 @@ class RizinImp(BaseApkinfo):
         parameter = None
         # Remove the parameter at the last
         if args and not args[-1].startswith("v"):
-            parameter = args[-1]
+            parameter = RizinImp._parse_parameter(mnemonic, args[-1])
             args = args[:-1]
-
-            if mnemonic.startswith("invoke"):
-                parameter = re.sub(r"\.", "->", parameter, count=1)
 
         register_list = []
         # Ranged registers
@@ -542,7 +561,9 @@ class RizinImp(BaseApkinfo):
             try:
                 register_list = [int(arg[1:]) for arg in args]
             except ValueError:
-                raise ValueError(f"Cannot parse bytecode. Unknown smali {smali}.")
+                raise ValueError(
+                    f"Cannot parse bytecode. Unknown smali {smali}."
+                )
 
         register_list = [f"v{index}" for index in register_list]
 

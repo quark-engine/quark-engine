@@ -676,7 +676,9 @@ class PyEval:
                 method = self.apkinfo.find_method(class_name, method_name, descriptor)
 
                 if method:
-                    return f"{method.class_name}->" f"{method.name}{method.descriptor}"
+                    return PyEval.get_method_pattern(
+                        method.class_name, method.name, method.descriptor
+                    )
 
                 next_class_pool.update(
                     (self.apkinfo.superclass_relationships[class_name])
@@ -744,6 +746,20 @@ class PyEval:
         )
 
         self.table_obj.insert(destination, new_register)
+
+    @staticmethod
+    def get_method_pattern(
+        class_name: str, method_name: str, descriptor: str
+    ) -> str:
+        """Convert a method into a string representation to record method calls
+         during the tainted analysis.
+
+        :param class_name: the class name of the method
+        :param method_name: the name of the method
+        :param descriptor: the descriptor of the method
+        :return: a string representation of the method
+        """
+        return f"{class_name}->{method_name}{descriptor}"
 
 
 if __name__ == "__main__":

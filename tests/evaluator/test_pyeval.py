@@ -149,7 +149,9 @@ def aput_wide_kind(request):
 
 NEG_NOT_KIND = [
     prefix + postfix
-    for prefix, postfix in itertools.product(["neg-", "not-"], ["int", "long", "float"])
+    for prefix, postfix in itertools.product(
+        ["neg-", "not-"], ["int", "long", "float"]
+    )
 ]
 
 NEG_NOT_WIDE_KIND = ("neg-double", "not-double")
@@ -184,12 +186,18 @@ ALL_CAST_KIND = list(
     )
 )
 
-CAST_KIND = [ins for ins in ALL_CAST_KIND if "double" not in ins and "long" not in ins]
+CAST_KIND = [
+    ins for ins in ALL_CAST_KIND if "double" not in ins and "long" not in ins
+]
 CAST_SIMPLE_TO_WIDE_KIND = [
-    ins for ins in ALL_CAST_KIND if ins.endswith("double") or ins.endswith("long")
+    ins
+    for ins in ALL_CAST_KIND
+    if ins.endswith("double") or ins.endswith("long")
 ]
 CAST_WIDE_TO_SIMPLE_KIND = [
-    ins for ins in ALL_CAST_KIND if ins.startswith("double") or ins.startswith("long")
+    ins
+    for ins in ALL_CAST_KIND
+    if ins.startswith("double") or ins.startswith("long")
 ]
 
 
@@ -224,7 +232,9 @@ _BINOP_PREFIX = (
 
 SIMPLE_BINOP_KIND = [
     prefix + "-" + type_str
-    for prefix, type_str in itertools.product(_BINOP_PREFIX, ("int", "float", "long"))
+    for prefix, type_str in itertools.product(
+        _BINOP_PREFIX, ("int", "float", "long")
+    )
 ]
 
 BINOP_WIDE_KIND = [prefix + "-" + "double" for prefix in _BINOP_PREFIX]
@@ -232,7 +242,9 @@ BINOP_WIDE_KIND = [prefix + "-" + "double" for prefix in _BINOP_PREFIX]
 BINOP_2ADDR_KIND = [ins + "/2addr" for ins in SIMPLE_BINOP_KIND]
 BINOP_LIT_KIND = [
     ins + postfix
-    for ins, postfix in itertools.product(SIMPLE_BINOP_KIND, ("/lit8", "/lit16"))
+    for ins, postfix in itertools.product(
+        SIMPLE_BINOP_KIND, ("/lit8", "/lit16")
+    )
 ]
 
 
@@ -326,7 +338,9 @@ class TestPyEval:
 
         pyeval._invoke(instruction)
 
-        assert pyeval.table_obj.pop(9).called_by_func == ["java.io.file.close()"]
+        assert pyeval.table_obj.pop(9).called_by_func == [
+            "java.io.file.close()"
+        ]
         assert pyeval.ret_stack == ["some-func()Lclass;()"]
 
     # Tests for invoke_virtual
@@ -355,7 +369,10 @@ class TestPyEval:
         pyeval.eval[instruction[0]](instruction)
 
         assert pyeval.ret_stack == [
-            ("Landroid/support/v4/util/SimpleArrayMap;" "->isEmpty()Z(ArrayMap object)")
+            (
+                "Landroid/support/v4/util/SimpleArrayMap;"
+                "->isEmpty()Z(ArrayMap object)"
+            )
         ]
         assert pyeval.ret_type == "Z"
 
@@ -430,7 +447,9 @@ class TestPyEval:
 
         with patch("quark.evaluator.pyeval.PyEval._invoke") as mock:
             pyeval.INVOKE_SUPER(instruction)
-            mock.assert_called_once_with(instruction, look_up=True, skip_self=True)
+            mock.assert_called_once_with(
+                instruction, look_up=True, skip_self=True
+            )
 
     def test_invoke_super_with_class_inheritance(self, pyeval):
         instruction = [
@@ -491,7 +510,9 @@ class TestPyEval:
 
     def test_move_with_valid_instrcution(self, pyeval):
         instruction = ["move-result-object", "v1"]
-        expected_return_value = "some_function()V(used_register_1, used_register_2)"
+        expected_return_value = (
+            "some_function()V(used_register_1, used_register_2)"
+        )
         expected_return_type = "Lclass;"
         pyeval.ret_stack.append(expected_return_value)
         pyeval.ret_type = expected_return_type
@@ -677,7 +698,9 @@ class TestPyEval:
             value_type="[java/lang/String;",
         )
 
-    def test_filled_array_kind_with_class_type(self, pyeval, filled_array_kind):
+    def test_filled_array_kind_with_class_type(
+        self, pyeval, filled_array_kind
+    ):
         instruction = [filled_array_kind, "v1", "[type_idx"]
 
         pyeval.eval[instruction[0]](instruction)
@@ -685,7 +708,9 @@ class TestPyEval:
         assert pyeval.ret_stack == ["new-array()[type_idx()"]
         assert pyeval.ret_type == "[type_idx"
 
-    def test_filled_array_kind_with_primitive_type(self, pyeval, filled_array_kind):
+    def test_filled_array_kind_with_primitive_type(
+        self, pyeval, filled_array_kind
+    ):
         instruction = [filled_array_kind, "v1", "[I"]
 
         pyeval.eval[instruction[0]](instruction)
@@ -751,7 +776,10 @@ class TestPyEval:
 
         assert pyeval.table_obj.pop(6) == RegisterObject(
             "v6",
-            ("an_array[some_number]:" "(Lcom/google/progress/SMSHelper;, some_number)"),
+            (
+                "an_array[some_number]:"
+                "(Lcom/google/progress/SMSHelper;, some_number)"
+            ),
             value_type="[I",
         )
 
@@ -950,4 +978,18 @@ class TestPyEval:
                 "->getContactList()Ljava/lang/String;(some_string)"
             ),
             value_type="Ljava/lang/String;",
+        )
+
+    @staticmethod
+    def test_get_method_pattern():
+        class_name = "Lcom/google/progress/ContactsCollector;"
+        method_name = "getContactList"
+        descriptor = "()Ljava/lang/String;(some_string)"
+
+        pattern = PyEval.get_method_pattern(
+            class_name, method_name, descriptor
+        )
+        assert pattern == (
+            "Lcom/google/progress/ContactsCollector;"
+            "->getContactList()Ljava/lang/String;(some_string)"
         )

@@ -13,7 +13,12 @@ from quark.core.interface.baseapkinfo import XMLElement
 from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
 from quark.core.struct.ruleobject import RuleObject as Rule
+from quark.evaluator.pyeval import PyEval
 from quark.utils.regex import URL_REGEX
+from quark.utils.tools import (
+    get_arguments_from_argument_str,
+    get_parenthetic_contents,
+)
 
 
 @functools.lru_cache
@@ -81,10 +86,14 @@ class Activity:
 
 class Method:
     def __init__(
-        self, quarkResultInstance: "QuarkResult", methodObj: MethodObject
+        self,
+        quarkResultInstance: "QuarkResult",
+        methodObj: MethodObject,
+        behavior: "Behavior" = None,
     ) -> None:
         self.quarkResult = quarkResultInstance
         self.innerObj = methodObj
+        self.behavior = behavior
 
     def __getattr__(self, name) -> Any:
         return getattr(self.innerObj, name)
@@ -108,6 +117,32 @@ class Method:
         :return: python list containing caller methods
         """
         return self.quarkResult.getMethodXrefFrom(self)
+
+    def getArguments(self) -> List[Any]:
+        """Get arguments from method.
+
+        :return: python list containing arguments
+        """
+        argumentsOfSecondAPI = self.behavior.getParamValues()
+
+        if self == self.behavior.secondAPI:
+            return self.behavior.getParamValues()
+        else:
+            methodPattern = PyEval.get_method_pattern(
+                self.className, self.methodName, self.descriptor
+            )
+
+            argumentsOfFirstAPI = (
+                get_parenthetic_contents(
+                    argument, argument.find(methodPattern)
+                )
+                for argument in argumentsOfSecondAPI
+                if methodPattern in argument
+            )
+
+            return get_arguments_from_argument_str(
+                next(argumentsOfFirstAPI, ""), self.descriptor
+            )
 
     @property
     def fullName(self) -> str:
@@ -155,6 +190,10 @@ class Behavior:
         self.firstAPI = firstAPI
         self.secondAPI = secondAPI
 
+        self.methodCaller.behavior = self
+        self.firstAPI.behavior = self
+        self.secondAPI.behavior = self
+
     def hasString(self, pattern: str, regex=False) -> List[str]:
         usageTable = self.quarkResult.quark._evaluate_method(
             self.methodCaller.innerObj
@@ -185,22 +224,17 @@ class Behavior:
         """
         return self.hasString(URL_REGEX, True)
 
-    def getParamValues(self) -> List[str]:
+    def getParamValues(self) -> List[Any]:
         """Get parameter values from behavior.
 
         :return: python list containing parameter values
         """
         allResult = self.hasString(".*", True)
 
-        paramValues = []
-        for result in allResult:
-            if result[0] == "(" and result[-1] == ")" and \
-                    self.firstAPI.innerObj.class_name in result and \
-                    self.secondAPI.innerObj.class_name in result:
-
-                paramValues = result[1:-1].split(",")[1:]
-
-        return paramValues
+        argumentStr = max(allResult, key=len)[1:-1]
+        return get_arguments_from_argument_str(
+            argumentStr, self.secondAPI.descriptor
+        )
 
     def isArgFromMethod(self, targetMethod: List[str]) -> bool:
         """Check if there are any argument from the target method.
@@ -211,7 +245,7 @@ class Behavior:
         """
         className, methodName, descriptor = targetMethod
 
-        pattern = f"{className}->{methodName}{descriptor}"
+        pattern = PyEval.get_method_pattern(className, methodName, descriptor)
 
         return bool(self.hasString(pattern))
 
@@ -225,11 +259,6 @@ class QuarkResult:
         # Reset the Quark object
         self.innerObj = self.quark.quark_analysis
         self.quark.quark_analysis = QuarkAnalysis()
-
-        # Apply cache
-        self._wrapMethodObject = functools.lru_cache()(
-            self._wrapMethodObjectWithoutCache
-        )
 
     @functools.cached_property
     def behaviorOccurList(self):
@@ -272,7 +301,7 @@ class QuarkResult:
         caller_set = apkinfo.upperfunc(methodObj)
         return [self._wrapMethodObject(caller) for caller in list(caller_set)]
 
-    def _wrapMethodObjectWithoutCache(self, methodObj: MethodObject) -> Method:
+    def _wrapMethodObject(self, methodObj: MethodObject) -> Method:
         if methodObj:
             return Method(self, methodObj)
         else:
@@ -289,25 +318,34 @@ class QuarkResult:
 
     def findMethodInCaller(
         self,
-        callerMethod: List[str],
-        targetMethod: List[str]
+        callerMethod: Union[List[str], Method],
+        targetMethod: Union[List[str], Method],
     ) -> bool:
         """
         Check if target method is in caller method.
 
-        :params callerMethod: python list contains class name,
-        method name and descriptor of caller method.
-        :params targetMethod: python list contains class name,
-        method name and descriptor of target method.
+        :params callerMethod: python list or Method instance containing class
+         name, method name and descriptor of caller method.
+        :params targetMethod: python list or Method instance containing class
+         name, method name and descriptor of target method.
         :return: True/False
         """
+
+        def __convertMethodToListOfStr(method: Method) -> List[str]:
+            return [method.className, method.methodName, method.descriptor]
+
+        if isinstance(callerMethod, Method):
+            callerMethod = __convertMethodToListOfStr(callerMethod)
+        if isinstance(targetMethod, Method):
+            targetMethod = __convertMethodToListOfStr(targetMethod)
 
         apkinfo = self.quark.apkinfo
 
         callerMethodObj = apkinfo.find_method(
             class_name=callerMethod[0],
             method_name=callerMethod[1],
-            descriptor=callerMethod[2])
+            descriptor=callerMethod[2],
+        )
 
         if not callerMethodObj:
             print("Caller method not Found!")
@@ -316,9 +354,11 @@ class QuarkResult:
         callerMethodInstance = Method(self, callerMethodObj)
 
         for calleeMethod, _ in callerMethodInstance.getXrefTo():
-            if calleeMethod.innerObj.class_name == targetMethod[0] and \
-                    calleeMethod.innerObj.name == targetMethod[1] and \
-                    calleeMethod.innerObj.descriptor == targetMethod[2]:
+            if (
+                calleeMethod.innerObj.class_name == targetMethod[0]
+                and calleeMethod.innerObj.name == targetMethod[1]
+                and calleeMethod.innerObj.descriptor == targetMethod[2]
+            ):
                 return True
         return False
 

@@ -15,6 +15,7 @@ from androguard.misc import AnalyzeAPK, AnalyzeDex
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
+from quark.evaluator.pyeval import PyEval
 
 
 class AndroguardImp(BaseApkinfo):
@@ -113,7 +114,9 @@ class AndroguardImp(BaseApkinfo):
             for _, call, offset in method_analysis.get_xref_to()
         }
 
-    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
+    def get_method_bytecode(
+        self, method_object: MethodObject
+    ) -> Set[MethodObject]:
         method_analysis = method_object.cache
         try:
             for (
@@ -121,7 +124,7 @@ class AndroguardImp(BaseApkinfo):
                 ins,
             ) in method_analysis.get_method().get_instructions_idx():
                 bytecode_obj = None
-                reg_list = []
+                register_list = []
 
                 # count the number of the registers.
                 length_operands = len(ins.get_operands())
@@ -135,28 +138,37 @@ class AndroguardImp(BaseApkinfo):
                 else:
                     index_of_parameter_starts = None
                     for i in range(length_operands - 1, -1, -1):
-                        if not isinstance(ins.get_operands()[i][0], Operand):
+                        if (
+                            not isinstance(ins.get_operands()[i][0], Operand)
+                            or ins.get_operands()[i][0].name != "REGISTER"
+                        ):
                             index_of_parameter_starts = i
                             break
 
                     if index_of_parameter_starts is not None:
-                        parameter = ins.get_operands()[index_of_parameter_starts]
+                        parameter = ins.get_operands()[
+                            index_of_parameter_starts
+                        ]
                         parameter = (
-                            parameter[2] if len(parameter) == 3 else parameter[1]
+                            parameter[2]
+                            if len(parameter) == 3
+                            else parameter[1]
                         )
 
                         for i in range(index_of_parameter_starts):
-                            reg_list.append(
+                            register_list.append(
                                 "v" + str(ins.get_operands()[i][1]),
                             )
                     else:
                         parameter = None
                         for i in range(length_operands):
-                            reg_list.append(
+                            register_list.append(
                                 "v" + str(ins.get_operands()[i][1]),
                             )
 
-                    bytecode_obj = BytecodeObject(ins.get_name(), reg_list, parameter)
+                    bytecode_obj = BytecodeObject(
+                        ins.get_name(), register_list, parameter
+                    )
 
                 yield bytecode_obj
         except AttributeError:
@@ -224,13 +236,13 @@ class AndroguardImp(BaseApkinfo):
             "second_hex": None,
         }
 
-        first_method_pattern = (
-            f"{first_method.class_name}"
-            f"->{first_method.name}{first_method.descriptor}"
+        first_method_pattern = PyEval.get_method_pattern(
+            first_method.class_name, first_method.name, first_method.descriptor
         )
-        second_method_pattern = (
-            f"{second_method.class_name}"
-            f"->{second_method.name}{second_method.descriptor}"
+        second_method_pattern = PyEval.get_method_pattern(
+            second_method.class_name,
+            second_method.name,
+            second_method.descriptor,
         )
 
         for _, ins in method_analysis.get_method().get_instructions_idx():

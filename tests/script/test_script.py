@@ -5,8 +5,10 @@
 import pytest
 from quark.core.struct.methodobject import MethodObject
 from quark.script import (
+    Behavior,
     DefaultRuleset,
     Method,
+    QuarkResult,
     Ruleset,
     getActivities,
     runQuarkAnalysis,
@@ -151,6 +153,48 @@ class TestMethod:
 
         assert expectedMethod in caller_list
 
+    @staticmethod
+    def testGetArguments(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        def __getMethod(
+            quarkResult: QuarkResult,
+            className: str,
+            methodName: str,
+            descriptor: str,
+        ) -> Method:
+            methodObj = quarkResult.quark.apkinfo.find_method(
+                className, methodName, descriptor
+            )
+            return Method(quarkResult, methodObj)
+
+        methodCaller = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Lcom/google/progress/AndroidClientService;",
+            "onCreate",
+            "()V",
+        )
+        firstAPI = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Ljava/lang/Class;",
+            "getDeclaredMethod",
+            "(Ljava/lang/String; [Ljava/lang/Class;)Ljava/lang/reflect/Method;",
+        )
+        secondAPI = __getMethod(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            "Ljava/lang/reflect/Method;",
+            "setAccessible",
+            "(Z)V",
+        )
+        behavior = Behavior(
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+            methodCaller,
+            firstAPI,
+            secondAPI,
+        )
+
+        arguments = behavior.secondAPI.getArguments()
+
+        assert arguments[1:] == [True]
+
 
 class TestBehavior:
     @staticmethod
@@ -194,7 +238,7 @@ class TestBehavior:
             )
         )
 
-        assert behavior.getParamValues()[0] == "ping www.baidu.com"
+        assert behavior.getParamValues()[1] == "ping www.baidu.com"
 
     @staticmethod
     def testIsArgFromMethod(QUARK_ANALYSIS_RESULT_FOR_RULE_193):
@@ -266,7 +310,7 @@ class TestQuarkReuslt:
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
 
     @staticmethod
-    def testFindMethodInCaller(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+    def testFindMethodInCallerWithListOfStr(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         callerMethod = [
             "Lcom/google/progress/WifiCheckTask;",
             "checkWifiCanOrNotConnectServer",
@@ -280,6 +324,32 @@ class TestQuarkReuslt:
 
         assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.findMethodInCaller(
             callerMethod, targetMethod
+        )
+
+    @staticmethod
+    def testFindMethodInCallerWithMethodInstance(
+        QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+    ):
+        callerObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Lcom/google/progress/WifiCheckTask;",
+                "checkWifiCanOrNotConnectServer",
+                "([Ljava/lang/String;)Z",
+            )
+        )
+        caller = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, callerObj)
+
+        targetObj = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                "Landroid/util/Log;",
+                "e",
+                "(Ljava/lang/String; Ljava/lang/String;)I",
+            )
+        )
+        target = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, targetObj)
+
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.findMethodInCaller(
+            caller, target
         )
 
 
