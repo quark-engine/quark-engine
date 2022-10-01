@@ -28,7 +28,7 @@ def download():
                     "git",
                     "clone",
                     "https://github.com/quark-engine/quark-rules",
-                    config.DIR_PATH,
+                    f"{config.HOME_DIR}quark-rules",
                 ],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -58,7 +58,7 @@ def download():
                 [
                     "git",
                     "-C",
-                    config.DIR_PATH,
+                    f"{config.HOME_DIR}quark-rules",
                     "pull",
                 ],
                 stdout=subprocess.PIPE,
