@@ -20,6 +20,7 @@ This guide will explain how to set up Quark, use it, and customize it.
 
    install_index
    quark_script
+   quark_mit_program
    addRules
    rule_generation
    integration
