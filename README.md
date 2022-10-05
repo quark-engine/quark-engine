@@ -348,6 +348,18 @@ Quark-Engine has been participating in the GSoC under the Honeynet Project!
 
 Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
 
+## Quark MIT Program
+
+Quark MIT aims to create a **WIN-WIN** for both new comers and the community. 
+
+For new comers, the community helps you to build a stronger resume by creating specific works that fit the job description of your **DREAM JOB**.
+
+For the community, Quark-Engine gets new energy by the work the new comers contribute. And the most important of all, the Quark community gets to **GROW**.
+
+*   **Find more details [here](https://quark-engine.readthedocs.io/en/latest/quark_mit_program.html)**
+
+![](https://i.imgur.com/xXilFs8.png)
+
 ## Core Values of Quark Engine Team
 
 *   We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think.
