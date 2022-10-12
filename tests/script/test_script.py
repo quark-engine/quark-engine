@@ -167,7 +167,7 @@ class TestMethod:
                 className, methodName, descriptor
             )
             return Method(quarkResult, methodObj)
- 
+
         def __getMethodWithTarget(
             quark: Quark,
             methodObj: MethodObject,
@@ -204,7 +204,7 @@ class TestMethod:
             secondAPI,
         )
 
-        quark = Quark(QUARK_ANALYSIS_RESULT_FOR_RULE_68)
+
 
         callerMethodObj = MethodObject(
             class_name="Lcom/google/progress/AndroidClientService;",
@@ -213,7 +213,7 @@ class TestMethod:
         )
 
         callerMethodInstance = __getMethodWithTarget(
-            quark,
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark,
             callerMethodObj,
             secondAPI
         )
