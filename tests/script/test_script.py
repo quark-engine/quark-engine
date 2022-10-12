@@ -204,25 +204,32 @@ class TestMethod:
             secondAPI,
         )
 
+        targetMethod = \
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                class_name="Landroid/util/Log;",
+                method_name="e",
+                descriptor="(Ljava/lang/String; Ljava/lang/String;)I",
+            )
 
+        callerMethodObj = \
+            QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
+                class_name="Lcom/google/progress/WifiCheckTask;",
+                method_name="CloseWifi",
+                descriptor="()V",
+            )
 
-        callerMethodObj = MethodObject(
-            class_name="Lcom/google/progress/AndroidClientService;",
-            name="onCreate",
-            descriptor="()V",
-        )
-
+        targetMethod = Method(methodObj=targetMethod)
         callerMethodInstance = __getMethodWithTarget(
             QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark,
             callerMethodObj,
-            secondAPI
+            targetMethod
         )
 
         arguments = behavior.secondAPI.getArguments()
         argumentsOfTargetMethod = callerMethodInstance.getArguments()
 
         assert arguments[1:] == [True]
-        assert argumentsOfTargetMethod[1:] == [True]
+        assert argumentsOfTargetMethod[0] == "wifi"
 
 
 class TestBehavior:
