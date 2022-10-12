@@ -29,6 +29,15 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 Introduce of Quark Script APIs
 ------------------------------
 
+findMethodInAPK(samplePath, targetMethod)
+=========================================
+
+- **Description**: Find the target method in APK
+- **params**: 
+    1. samplePath: Target file
+    2. targetMethod: A python list contains class name, method name, and descriptor of target method
+- **return**: Python list contains caller method instance of target method
+
 Rule(rule.json)
 ===============
 
@@ -777,3 +786,51 @@ Quark Script Result
 
     CWE-749 is detected in method, Lsg/vp/owasp_mobile/OMTG_Android/OMTG_ENV_005_WebView_Remote; onCreate (Landroid/os/Bundle;)V
     CWE-749 is detected in method, Lsg/vp/owasp_mobile/OMTG_Android/OMTG_ENV_005_WebView_Local; onCreate (Landroid/os/Bundle;)V
+
+
+Detect CWE-532 in Android Application (dvba.apk)
+-------------------------------------------------------------
+
+This scenario seeks to find **insertion of sensitive information into Log file**. See `CWE-532 <https://cwe.mitre.org/data/definitions/532.html>`_ for more details.
+
+Let’s use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ and the above APIs to show how the Quark script finds this vulnerability.
+
+First, we use API ``findMethodInAPK`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is YES, that may cause sensitive data leakage into log file.
+
+We will keep updating the detect keywords list for better accuracy in detecting sensitive data.
+
+Quark Script CWE-532.py
+=======================
+
+.. code-block:: python
+
+    from quark.script import findMethodInAPK
+
+    SAMPLE_PATH = "dvba.apk"
+    TARGET_METHOD = [
+        "Landroid/util/Log;",                       # class name
+        "d",                                        # method name
+        "(Ljava/lang/String; Ljava/lang/String;)I"  # descriptor
+    ]
+    CREDENTIAL_KEYWORDS = [
+        "token",
+        "decrypt",
+        "password"
+    ]
+
+    debugLogger = findMethodInAPK(SAMPLE_PATH, TARGET_METHOD)
+
+    for occurMethod in debugLogger:
+        arguments = occurMethod.getArguments(TARGET_METHOD)
+
+        if any(keyword in arguments[1] for keyword in CREDENTIAL_KEYWORDS):
+            print(f"CWE-532 is detected in method, {occurMethod.fullName}")
+
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python CWE-532.py 
+    CWE-532 is detected in method, Lcom/google/firebase/auth/FirebaseAuth; d (Lc/c/b/h/o;)V
