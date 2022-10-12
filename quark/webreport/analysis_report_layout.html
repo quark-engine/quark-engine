@@ -3,6 +3,7 @@
 
 <head>
     <title>Quark Report</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -341,6 +342,34 @@
             background-color: #939393;
             color: white;
         }
+        
+        .tooltiptext {
+          visibility: hidden;
+          width: 140px;
+          background-color: #555;
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px;
+          position: absolute;
+          z-index: 1;
+          bottom: 150%;
+          left: 50%;
+          margin-left: -75px;
+          opacity: 1;
+          transition: opacity 0.3s;
+        }
+        
+        .tooltiptext::after {
+          content: "";
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          margin-left: -5px;
+          border-width: 5px;
+          border-style: solid;
+          border-color: #555 transparent transparent transparent;
+        }
     </style>
 </head>
 
@@ -405,9 +434,20 @@
                             <div class="row" style="margin-left: auto;margin-top: 20px;">
                                 <dt class="col-sm-3 sample-info-lable">File name</dt>
                                 <dd class="col-sm-9 sample-info-lable">$filename$</dd>
-                                <dt class="col-sm-3 sample-info-lable">MD5</dt>
-                                <dd class="col-sm-9 sample-info-lable">
-                                    <a href="https://www.virustotal.com/gui/file/$md5$" title="Go to Virus Total Report" target="_blank">$md5$</a>
+                                <dt class="col-sm-3 sample-info-lable">
+                                    MD5
+                                </dt>
+                                <dd class="col-sm-1 sample-info-lable">
+                                        <span class="material-symbols-outlined" onclick="copyToClipboard('md5Hash')" style="cursor:pointer" onmouseout="resetToolTip('tooltipCopy')" onmouseover="showTooltip('tooltipCopy', 'Copy to clipboard')">
+                                            content_copy
+                                        </span>
+                                        <span class="tooltiptext" id="tooltipCopy">Copy to clipboard</span>
+                                </dd>
+                                <dd class="col-sm-8 sample-info-lable">
+                                    <a id="md5Hash" href="https://www.virustotal.com/gui/file/$md5$" title="Go to Virus Total Report" target="_blank" onmouseout="resetToolTip('tooltipVT')" onmouseover="showTooltip('tooltipVT', 'Go to VirusTotal')">
+                                        $md5$
+                                    </a>
+                                    <span class="tooltiptext" id="tooltipVT">Go to VirusTotal report</span>
                                 </dd>
                                 <dt class="col-sm-3 sample-info-lable">File size</dt>
                                 <dd class="col-sm-9 sample-info-lable">$filesize$ Mb</dd>
@@ -478,7 +518,7 @@
 $report_data$
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous">
-    </script>
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 <script>
     labels = document.getElementsByClassName('label-container')
@@ -635,6 +675,24 @@ $report_data$
                 }
             }
         }
+    }
+    function copyToClipboard(id) {
+    // Get the text field
+    var copyText = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(copyText);
+    var tooltip = document.getElementById("tooltipCopy");
+    tooltip.innerHTML = "Copied";
+    }
+
+    function resetToolTip(id) {
+    var tooltip = document.getElementById(id);
+    tooltip.style.visibility='hidden';    
+    }
+
+    function showTooltip(id, message){
+        var tooltip = document.getElementById(id);
+        tooltip.innerHTML = message;
+        tooltip.style.visibility='visible';
     }
 </script>
 
