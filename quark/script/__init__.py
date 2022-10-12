@@ -87,13 +87,17 @@ class Activity:
 class Method:
     def __init__(
         self,
-        quarkResultInstance: "QuarkResult",
-        methodObj: MethodObject,
+        quarkResultInstance: "QuarkResult" = None,
+        methodObj: MethodObject = None,
+        quark: "Quark" = None,
         behavior: "Behavior" = None,
+        targetMethod: "Method" = None
     ) -> None:
+        self.quark = quark
         self.quarkResult = quarkResultInstance
         self.innerObj = methodObj
         self.behavior = behavior
+        self.targetMethod = targetMethod
 
     def __getattr__(self, name) -> Any:
         return getattr(self.innerObj, name)
@@ -123,6 +127,41 @@ class Method:
 
         :return: python list containing arguments
         """
+
+        if self.behavior is None or self.quarkResult is None:
+
+            usageTable = self.quark._evaluate_method(
+                self.innerObj
+            )
+
+            register_usage_records = (
+                c_func
+                for table in usageTable
+                for val_obj in table
+                for c_func in val_obj.called_by_func
+            )
+
+            methodPattern = PyEval.get_method_pattern(
+                self.targetMethod.innerObj.class_name,
+                self.targetMethod.innerObj.name,
+                self.targetMethod.innerObj.descriptor
+            )
+
+            matchedRecords = list(filter(
+                lambda record: methodPattern in record,
+                register_usage_records))
+
+            argumentStr = max(matchedRecords, key=len)[:-1]
+            filterStr = f"{self.targetMethod.innerObj.class_name}->" + \
+                self.targetMethod.innerObj.name + \
+                self.targetMethod.descriptor
+
+            argumentStr = argumentStr.replace(filterStr, "")[1:]
+
+            return get_arguments_from_argument_str(
+                argumentStr, self.targetMethod.innerObj.descriptor
+            )
+
         argumentsOfSecondAPI = self.behavior.getParamValues()
 
         if self == self.behavior.secondAPI:
@@ -387,3 +426,44 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     apkinfo = quark.apkinfo
 
     return [Activity(xml) for xml in apkinfo.activities]
+
+
+def findMethodInAPK(
+    samplePath: PathLike,
+    targetMethod: Union[List[str], Method]
+) -> Method:
+    """Find the target method in APK.
+
+    :param samplePath: target file
+    :param targetMethod: python list contains class name,
+                         method name, and descriptor of target method
+    :return: python list contains caller methods
+    """
+
+    def _wrapMethodObject(
+        quark: Quark,
+        methodObj: MethodObject,
+        targetMethod: Method
+    ) -> Method:
+        if methodObj:
+            return Method(
+                quark=quark,
+                methodObj=methodObj,
+                targetMethod=targetMethod)
+        else:
+            return None
+
+    quark = _getQuark(samplePath)
+    method = quark.apkinfo.find_method(
+        class_name=targetMethod[0],
+        method_name=targetMethod[1],
+        descriptor=targetMethod[2]
+    )
+
+    methodInstance = Method(methodObj=method)
+
+    caller_set = quark.apkinfo.upperfunc(method)
+
+    return [_wrapMethodObject(
+            quark, caller, methodInstance
+            ) for caller in list(caller_set)]

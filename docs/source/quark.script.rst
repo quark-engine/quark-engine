@@ -28,6 +28,14 @@ quark.script.objection module
    :undoc-members:
    :show-inheritance:
 
+quark.script.utils module
+-------------------------
+
+.. automodule:: quark.script.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
