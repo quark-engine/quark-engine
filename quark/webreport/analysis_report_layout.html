@@ -370,6 +370,44 @@
           border-style: solid;
           border-color: #555 transparent transparent transparent;
         }
+        /* The Modal (background) */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        padding-top: 100px; /* Location of the box */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        }
+
+        /* The Close Button */
+        .close {
+        color: #aaaaaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        }
     </style>
 </head>
 
@@ -511,6 +549,16 @@
                         </tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+        <!-- The Modal -->
+        <button id="myBtn" onclick='showModal("{\"a\" : \"s\"}")'>Open Modal</button>
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="titleModal"></div>
+                <pre></pre>
             </div>
         </div>
     </section>
@@ -693,6 +741,51 @@ $report_data$
         var tooltip = document.getElementById(id);
         tooltip.innerHTML = message;
         tooltip.style.visibility='visible';
+    }
+
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    function showModal(text) {
+        var divTag = document.getElementById("titleModal");
+        var jsonCrime = JSON.parse(text);
+        var confidence = jsonCrime["confidence"]
+        var classCrime = ""
+        if(confidence === "20%"){
+            classCrime = "alert alert-success"
+        } else if (confidence === "40%") {
+            classCrime = "alert alert-info"
+        } else if (confidence === "60%") {
+            classCrime = "alert alert-primary"
+        } else if (confidence === "80%") {
+            classCrime = "alert alert-alert"
+        } else if (confidence === "100%") {
+            classCrime = "alert alert-danger"
+        } else {
+            classCrime = "alert alert-dark"
+        }
+        var titleRule = jsonCrime["crime"]
+        divTag.className = classCrime
+        divTag.innerText = titleRule
+        var ruleFormatted = JSON.stringify(jsonCrime, null, '\t');
+        modal.style.display = "block";
+        modal.getElementsByTagName('pre')[0].innerText = ruleFormatted
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
     }
 </script>
 
