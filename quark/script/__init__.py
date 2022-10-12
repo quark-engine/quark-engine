@@ -87,10 +87,12 @@ class Activity:
 class Method:
     def __init__(
         self,
-        quarkResultInstance: "QuarkResult",
-        methodObj: MethodObject,
+        quark: "Quark" = None,
+        quarkResultInstance: "QuarkResult" = None,
+        methodObj: MethodObject = None,
         behavior: "Behavior" = None,
     ) -> None:
+        self.quark = quark
         self.quarkResult = quarkResultInstance
         self.innerObj = methodObj
         self.behavior = behavior
@@ -118,11 +120,50 @@ class Method:
         """
         return self.quarkResult.getMethodXrefFrom(self)
 
-    def getArguments(self) -> List[Any]:
+    def getArguments(self, targetMethod=None) -> List[Any]:
         """Get arguments from method.
 
         :return: python list containing arguments
         """
+
+        if self.behavior is None or self.quarkResult is None:
+
+            usageTable = self.quark._evaluate_method(
+                self.innerObj
+            )
+
+            register_usage_records = (
+                c_func
+                for table in usageTable
+                for val_obj in table
+                for c_func in val_obj.called_by_func
+            )
+
+            if type(targetMethod) is not Method:
+                targetMethod = Method(methodObj=MethodObject(
+                    targetMethod[0], targetMethod[1], targetMethod[2]))
+
+            methodPattern = PyEval.get_method_pattern(
+                targetMethod.innerObj.class_name,
+                targetMethod.innerObj.name,
+                targetMethod.innerObj.descriptor
+            )
+
+            matchedRecords = list(filter(
+                lambda record: methodPattern in record,
+                register_usage_records))
+
+            argumentStr = max(matchedRecords, key=len)[:-1]
+            filterStr = f"{targetMethod.innerObj.class_name}->" + \
+                targetMethod.innerObj.name + \
+                targetMethod.descriptor
+
+            argumentStr = argumentStr.replace(filterStr, "")[1:]
+
+            return get_arguments_from_argument_str(
+                argumentStr, targetMethod.innerObj.descriptor
+            )
+
         argumentsOfSecondAPI = self.behavior.getParamValues()
 
         if self == self.behavior.secondAPI:
@@ -387,3 +428,33 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     apkinfo = quark.apkinfo
 
     return [Activity(xml) for xml in apkinfo.activities]
+
+
+def findMethodInAPK(
+    samplePath: PathLike,
+    targetMethod: Union[List[str], Method]
+) -> Method:
+    """Find the target method in APK.
+
+    :param samplePath: target file
+    :param targetMethod: python list contains class name,
+                         method name, and descriptor of target method
+    :return: python list contains caller methods
+    """
+
+    def _wrapMethodObject(methodObj: MethodObject, quark: Quark) -> Method:
+        if methodObj:
+            return Method(quark=quark, methodObj=methodObj)
+        else:
+            return None
+
+    quark = _getQuark(samplePath)
+    method = quark.apkinfo.find_method(
+        class_name=targetMethod[0],
+        method_name=targetMethod[1],
+        descriptor=targetMethod[2]
+    )
+
+    caller_set = quark.apkinfo.upperfunc(method)
+
+    return [_wrapMethodObject(caller, quark) for caller in list(caller_set)]
