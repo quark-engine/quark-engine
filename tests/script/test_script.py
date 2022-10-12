@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import pytest
+from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
 from quark.script import (
     Behavior,
@@ -12,6 +13,7 @@ from quark.script import (
     Ruleset,
     getActivities,
     runQuarkAnalysis,
+    findMethodInAPK,
 )
 
 RULE_FOLDER_PATH = "tests/script/rules"
@@ -165,6 +167,17 @@ class TestMethod:
                 className, methodName, descriptor
             )
             return Method(quarkResult, methodObj)
+ 
+        def __getMethodWithTarget(
+            quark: Quark,
+            methodObj: MethodObject,
+            targetMethod: Method
+        ) -> Method:
+            return Method(
+                quark=quark,
+                methodObj=methodObj,
+                targetMethod=targetMethod
+            )
 
         methodCaller = __getMethod(
             QUARK_ANALYSIS_RESULT_FOR_RULE_68,
@@ -191,9 +204,25 @@ class TestMethod:
             secondAPI,
         )
 
+        quark = Quark(QUARK_ANALYSIS_RESULT_FOR_RULE_68)
+
+        callerMethodObj = MethodObject(
+            class_name="Lcom/google/progress/AndroidClientService;",
+            name="onCreate",
+            descriptor="()V",
+        )
+
+        callerMethodInstance = __getMethodWithTarget(
+            quark,
+            callerMethodObj,
+            secondAPI
+        )
+
         arguments = behavior.secondAPI.getArguments()
+        argumentsOfTargetMethod = callerMethodInstance.getArguments()
 
         assert arguments[1:] == [True]
+        assert argumentsOfTargetMethod[1:] == [True]
 
 
 class TestBehavior:
@@ -367,3 +396,14 @@ def testGetActivities(SAMPLE_PATH_14d9f) -> None:
 
     assert len(activities) == 1
     assert str(activities[0]) == "com.google.progress.BackGroundActivity"
+
+
+def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
+
+    method = findMethodInAPK(SAMPLE_PATH_14d9f, [
+        "Lcom/google/progress/WifiCheckTask;",
+        "checkWifiCanOrNotConnectServer",
+        "([Ljava/lang/String;)Z"]
+    )
+
+    assert len(method) == 2
