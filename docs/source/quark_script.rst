@@ -797,7 +797,7 @@ Let’s use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_
 
 First, we use API ``findMethodInAPK`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is YES, that may cause sensitive data leakage into log file.
 
-We will keep updating the detect keywords list for better accuracy in detecting sensitive data.
+You can use your own keywords in the keywords list to detect sensitive data.
 
 Quark Script CWE-532.py
 =======================
@@ -818,13 +818,14 @@ Quark Script CWE-532.py
         "password"
     ]
 
-    debugLogger = findMethodInAPK(SAMPLE_PATH, TARGET_METHOD)
+    methodsFound = findMethodInAPK(SAMPLE_PATH, TARGET_METHOD)
 
-    for occurMethod in debugLogger:
-        arguments = occurMethod.getArguments(TARGET_METHOD)
+    for debugLogger in methodsFound:
+        arguments = debugLogger.getArguments()
 
-        if any(keyword in arguments[1] for keyword in CREDENTIAL_KEYWORDS):
-            print(f"CWE-532 is detected in method, {occurMethod.fullName}")
+        for keyword in CREDENTIAL_KEYWORDS:
+            if keyword in arguments[1]:
+                print(f"CWE-532 is detected in method, {debugLogger.fullName}") 
 
 
 Quark Script Result

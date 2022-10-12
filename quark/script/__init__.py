@@ -87,9 +87,9 @@ class Activity:
 class Method:
     def __init__(
         self,
-        quark: "Quark" = None,
         quarkResultInstance: "QuarkResult" = None,
         methodObj: MethodObject = None,
+        quark: "Quark" = None,
         behavior: "Behavior" = None,
         targetMethod: "Method" = None
     ) -> None:

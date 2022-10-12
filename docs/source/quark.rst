@@ -33,14 +33,6 @@ quark.config module
    :undoc-members:
    :show-inheritance:
 
-quark.cwe532 module
--------------------
-
-.. automodule:: quark.cwe532
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 quark.freshquark module
 -----------------------
 
