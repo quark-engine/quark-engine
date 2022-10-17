@@ -90,6 +90,15 @@ behaviorInstance.secondAPI.fullName
 - **params**: none
 - **return**: API name
 
+behaviorInstance.hasString(pattern, isRegex)
+============================================
+
+- **Description**: Check if the arguments of the two APIs contain the string.
+- **params**: 
+    1. pattern: string that may appear in the arguments
+    2. isRegex: consider the string as a regular expression if True, defaults to False
+- **return**: the matched string
+
 behaviorInstance.hasUrl(none)
 =============================
 
