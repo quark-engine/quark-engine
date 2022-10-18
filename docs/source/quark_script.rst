@@ -853,7 +853,7 @@ This scenario seeks to find **the use of the RSA algorithm without Optimal Asymm
 
 Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how the Quark script find this vulnerability.
 
-We first design a detection rule ``useOfCryptographicAlgorithm.json`` to spot on behavior using the cryptographic algorithm. Then, we use API `behaviorInstance.hasString(pattern, isRegex)` to filter behaviors using the RSA algorithm. Finally, we use the same API to check if the algorithm runs without the OAEP scheme. If the answer is YES, the plaintext is predictable.
+We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using the cryptographic algorithm. Then, we use API `behaviorInstance.hasString(pattern, isRegex)` to filter behaviors using the RSA algorithm. Finally, we use the same API to check if the algorithm runs without the OAEP scheme. If the answer is YES, the plaintext is predictable.
 
 Quark Script CWE-780.py
 =======================
@@ -863,21 +863,21 @@ Quark Script CWE-780.py
     from quark.script import Rule, runQuarkAnalysis
 
     SAMPLE_PATH = "MSTG-Android-Java.apk"
-    RULE_PATH = "useOfCryptographicAlgorithm.json"
+    RULE_PATH = "useOfCryptographicAlgo.json"
 
     ruleInstance = Rule(RULE_PATH)
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
-    for useCryptographicAlgorithm in quarkResult.behaviorOccurList:
+    for useCryptographicAlgo in quarkResult.behaviorOccurList:
 
-        methodCaller = useCryptographicAlgorithm.methodCaller
+        methodCaller = useCryptographicAlgo.methodCaller
 
-        if useCryptographicAlgorithm.hasString("RSA") and \
-            not useCryptographicAlgorithm.hasString("OAEP"):
+        if useCryptographicAlgor.hasString("RSA") and \
+            not useCryptographicAlgo.hasString("OAEP"):
             print(f"CWE-780 is detected in method, {methodCaller.fullName}")
 
-Quark Rule: useOfCryptographicAlgorithm.json
-============================================
+Quark Rule: useOfCryptographicAlgo.json
+=======================================
 
 .. code-block:: json
 
