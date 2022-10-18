@@ -233,7 +233,14 @@ class Behavior:
         self.firstAPI.behavior = self
         self.secondAPI.behavior = self
 
-    def hasString(self, pattern: str, regex=False) -> List[str]:
+    def hasString(self, pattern: str, isRegex=False) -> List[str]:
+        """Check if the arguments of the two APIs contain the string.
+
+        :param pattern: string that may appear in the arguments
+        :param isRegex: consider the string as a regular expression if True,
+         defaults to False
+        :return: the matched string
+        """
         usageTable = self.quarkResult.quark._evaluate_method(
             self.methodCaller.innerObj
         )
@@ -244,7 +251,7 @@ class Behavior:
                 first_method=self.firstAPI.innerObj,
                 second_method=self.secondAPI.innerObj,
                 keyword_item_list=[(pattern,), (pattern,)],
-                regex=regex,
+                regex=isRegex,
             )
         )
 
