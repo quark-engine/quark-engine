@@ -19,6 +19,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    :caption: Contents:
 
    install_index
+   report
    quark_script
    quark_mit_program
    addRules
