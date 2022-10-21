@@ -5,20 +5,20 @@ Report
 
 Web Report
 ------------------------
-You can analyze an APK sample and produce a beautiful summary report in HTML format with the following command.
+You can analyze an APK sample and produce a beautiful summary report in HTML format through the following command.
 
 ::
 
     quark -a Ahmyth.apk -s -w test.html 
 
-the meanings of the options:
+The meanings of the options:
 
 * -a for sample file input
 * -s for producing the summary report
 * -w for Web Report file output
 
 Here is a `demo <https://pulorsok.github.io/ruleviewer/web-report-demo>`_ of the Web Report. 
-And the page can be divided into four parts:
+And the page can divide into four parts:
 
 * Analysis Result
 * Sample Information
@@ -31,40 +31,43 @@ And the page can be divided into four parts:
 
 Analysis Result
 ==========================
-First, Analysis Result gives you the statics of the crimes detected by Quark.
+First, this part gives you the statistic of the crimes detected by Quark.
 
-You can see the following:
+There are two sections in this part:
 
-1. There is a doughnut chart on the left, showing the ratio of the crimes with 100% confidence in all crimes detected. 
+1. A doughnut chart shows the ratio of the crimes with 100% confidence in all crimes detected. 
 
-2. On the right of the doughnut chart, you can see the number of crimes in different confidence levels. The confidence levels are 0%, 20%, 40%, 60%, 80% and 100%. The higher the level is, the more we are sure the behavior is malicious. 
+2. The statistic of the number of crimes in different confidence levels from 0% to 100%. And the higher the level is, the more we are sure the behavior is malicious. 
 
- .. figure:: https://i.imgur.com/XkkaCvJ.png
+ .. figure:: https://i.imgur.com/UWCQncA.png
     :width: 90%
     
 Sample Information
 ==========================
-This part shows the basic information of the sample, including file name, MD5 hash value, file size, and labels of detected rules with 100% confidence. 
+Sample Information shows the basic information of the sample, including the file name, MD5 hash value, file size, and the labels of detected rules with 100% confidence. 
 
-
- .. figure:: https://i.imgur.com/7hSXJDZ.png
+ .. figure:: https://i.imgur.com/9zpgPYd.png
     :width: 90%
 
 
 Radar Chart
 ==========================
-In the part of the Radar Chart, 
+In this part, 
 
-1. You can easily choose the labels you want on the right. And they will be the dimensions to analyze in the radar chart.
+1. You can choose the labels you want as the dimensions to analyze in the radar chart. Or you can uncheck them all with the "Deselect all" button below.
 
-2. Then, the page will draw the chart on the left. And the values on the axes are the confidences of crimes corresponding to the labels. 
-
-3. If you decide to draw the chart all over again, you can use the deselect button to uncheck all the labels.
-
-4. Also, the labels of the crimes detected with 100% confidence are displayed.
-
- .. figure:: https://i.imgur.com/TDiadQZ.png
+ .. figure:: https://i.imgur.com/ejHeHGM.png
     :width: 90%
+
+2. Then, the page will plot the chart. And the values on the axes are the confidences of crimes corresponding to the labels.
+
+.. figure:: https://i.imgur.com/H5gaz42.png 
+    :width: 80%
+   
+3. It also lists the labels of the detected crimes that have 100% confidence.
+
+.. figure:: https://i.imgur.com/obUmNHT.png
+   :width: 90%
 
 
 Detected Crimes
@@ -72,16 +75,12 @@ Detected Crimes
 
 In this part,
 
-1. It shows the rule numbers, crime descriptions, and the confidence of the crimes. 
+1. It shows the rule numbers, crime descriptions, and the confidence of the crimes detected. 
 
+ .. figure:: https://i.imgur.com/u4R3WGg.png
 
- .. figure:: https://i.imgur.com/h1Ai1VZ.png
-    :width: 90%
+2. You can find crimes by searching specific strings in the Crime Description with  the searching field. 
 
-2. You can find crimes by searching specific strings in the Crime Description with the searching field. 
+3. Also, you can show crimes with specific confidence with the drop-down list.
 
-3. And you can show crimes with particular confidence using the drop-down list.
-
-
- .. figure:: https://i.imgur.com/n9Y3uKx.png
-    :width: 90%
+ .. figure:: https://i.imgur.com/1WhqcX2.png
