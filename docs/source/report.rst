@@ -31,22 +31,25 @@ And the page can divide into four parts:
 
 Analysis Result
 ==========================
-First, this part gives you the statistic of the crimes detected by Quark.
+First, this part gives you the statistics of the crimes detected by Quark.
 
 There are two sections in this part:
 
 1. A doughnut chart shows the ratio of the crimes with 100% confidence in all crimes detected. 
 
-2. The statistic of the number of crimes in different confidence levels from 0% to 100%. And the higher the level is, the more we are sure the behavior is malicious. 
+ .. figure:: https://i.imgur.com/Hb9pJLY.png 
+    :width: 40%
 
- .. figure:: https://i.imgur.com/UWCQncA.png
-    :width: 90%
+2. Statistics of the number of crimes in different confidence levels from 0% to 100%. And the higher the level is, the more we are sure the behavior is malicious. 
+
+ .. figure:: https://i.imgur.com/BDWL0Kd.png
+    :width: 40%
     
 Sample Information
 ==========================
 Sample Information shows the basic information of the sample, including the file name, MD5 hash value, file size, and the labels of detected rules with 100% confidence. 
 
- .. figure:: https://i.imgur.com/9zpgPYd.png
+ .. figure:: https://i.imgur.com/GlU2j9O.png
     :width: 90%
 
 
@@ -56,17 +59,17 @@ In this part,
 
 1. You can choose the labels you want as the dimensions to analyze in the radar chart. Or you can uncheck them all with the "Deselect all" button below.
 
- .. figure:: https://i.imgur.com/ejHeHGM.png
+ .. figure:: https://i.imgur.com/6eugv1r.png
     :width: 90%
 
 2. Then, the page will plot the chart. And the values on the axes are the confidences of crimes corresponding to the labels.
 
-.. figure:: https://i.imgur.com/H5gaz42.png 
+.. figure:: https://i.imgur.com/Fvzl1X8.png 
     :width: 80%
    
 3. It also lists the labels of the detected crimes that have 100% confidence.
 
-.. figure:: https://i.imgur.com/obUmNHT.png
+.. figure:: https://i.imgur.com/IhHhRTv.png 
    :width: 90%
 
 
@@ -77,10 +80,13 @@ In this part,
 
 1. It shows the rule numbers, crime descriptions, and the confidence of the crimes detected. 
 
- .. figure:: https://i.imgur.com/u4R3WGg.png
+ .. figure:: https://i.imgur.com/I7ywVAG.png
 
 2. You can find crimes by searching specific strings in the Crime Description with  the searching field. 
 
-3. Also, you can show crimes with specific confidence with the drop-down list.
+ .. figure:: https://i.imgur.com/LSw70L1.png
 
- .. figure:: https://i.imgur.com/1WhqcX2.png
+3. Also, you can view crimes with specific confidence with the confidence filter.
+
+ .. figure:: https://i.imgur.com/6Ob1axm.png
+    :width: 30%
