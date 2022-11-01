@@ -15,20 +15,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python 3.8
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: 3.8
+        cache: pip
+        cache-dependency-path: setup.py
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         python -m pip install pytest rzpipe meson==0.62.0 ninja coverage ciphey frida objection
-        sudo apt-get install -y ninja-build
-        
-        # Install graphviz
-        sudo apt-get -y install graphviz
-        
+
+        # Install graphviz & ninja
+        sudo apt-get -y install graphviz ninja-build
+ 
         # Install Rizin
         sudo git clone --branch v0.3.4 https://github.com/rizinorg/rizin /opt/rizin/
         cd /opt/rizin/
@@ -37,7 +39,7 @@ jobs:
         sudo ninja -C build install
         sudo ldconfig -v
         cd -
-        
+ 
         # Install click >= 8.0.0 for CLI supports
         python -m pip install click==8.0.3
 
@@ -53,8 +55,8 @@ jobs:
         pytest --cov=./
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
+      uses: codecov/codecov-action@v3
       with:
         flags: unittests
         fail_ci_if_error: true
-          
+
