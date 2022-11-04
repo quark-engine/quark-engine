@@ -272,7 +272,7 @@ def entry_point(
 
         show_comparison_graph(
             title=f"Malicious Actions Comparison Between {len(apk)} Malwares",
-            lables=selected_label,
+            labels=selected_label,
             malware_confidences=malware_confidences,
             font_size=22,
         )
