@@ -217,7 +217,7 @@ def call_graph(call_graph_analysis, output_format="png"):
     )
 
 
-def show_comparison_graph(title, lables, malware_confidences, font_size=22):
+def show_comparison_graph(title, labels, malware_confidences, font_size=22):
     """
     show radar chart based on max label confidence of several malwares
     :param title: title of the graph to be displayed
@@ -246,7 +246,7 @@ def show_comparison_graph(title, lables, malware_confidences, font_size=22):
         fig.add_trace(
             go.Scatterpolar(
                 r=malware_confidences[malware_name],
-                theta=lables,
+                theta=labels,
                 fill="toself",
                 name=malware_name,
                 line=dict(
