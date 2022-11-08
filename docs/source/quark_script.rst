@@ -26,6 +26,58 @@ More APIs to come
 ==================
 Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.  
 
+
+Quickstart 
+-----------
+
+| In this tutorial, we will learn how to install and run Quark Script with a very easy example.
+| We show how to detect CWE-798 in ovaa.apk.
+
+Step 1: Environments Requirements
+==================================
+- Quark Script requires Python 3.8 or above.
+
+Step 2: Install Quark Engine
+=============================
+
+You can install Quark Engine by running:
+
+::
+
+    $ pip3 install quark-engine
+
+
+Step 3: Prepare Quark Script, Detection Rule and the Sample File
+================================================================
+
+1. Get the CWE-798 Quark Script and the detection rule `here <https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk>`_.
+2. Get the sampe file (ovaa.apk) `here <https://github.com/dark-warlord14/ovaa/releases/tag/1.0>`_.
+3. Put the script, detection rule, and sample file in the same directory.
+4. Edit accordingly to the file names:
+
+.. code-block:: python
+
+    SAMPLE_PATH = "ovaa.apk"
+    RULE_PATH = "findSecretKeySpec.json"
+
+
+Now you are ready to run the script!
+
+Step 4: Run the script
+======================
+
+::
+
+    $ python3 CWE-798.py
+
+
+You should now see the detection result in the terminal.
+
+::
+
+    Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+
+
 Introduce of Quark Script APIs
 ------------------------------
 
@@ -310,8 +362,8 @@ Quark Scipt: CWE-798.py
         
         allStrings = quarkResult.getAllStrings()
         
-        firstParam = secretKeySpec.getParamValues()[0]
-        secondParam = secretKeySpec.getParamValues()[1]
+        firstParam = secretKeySpec.getParamValues()[1]
+        secondParam = secretKeySpec.getParamValues()[2]
         
         if secondParam == "AES":
             AESKey = re.findall(r'\((.*?)\)', firstParam)[1]
