@@ -52,4 +52,4 @@ Release process
 
 The Quark release process is as below:
 
-.. image:: https://i.imgur.com/WFifONc.png
+.. image:: https://i.imgur.com/8W5DzR5.jpg
