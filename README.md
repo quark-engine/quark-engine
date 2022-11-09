@@ -84,7 +84,7 @@ See our demo [here](https://pulorsok.github.io/ruleviewer/web-report-demo).
 quark -a sample.apk -s -w quark_report.html
 ```
 
-![](https://i.imgur.com/uizHQan.jpg)
+![](https://i.imgur.com/fNc3mC0.jpg)
 
 ## Navigate the Rules
 
