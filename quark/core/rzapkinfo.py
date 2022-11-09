@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
-from typing import Dict, Generator, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rzpipe
 
