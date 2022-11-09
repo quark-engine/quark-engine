@@ -500,7 +500,7 @@ $report_data$
     const ctx = document.getElementById('myChart').getContext('2d');
     Chart.defaults.font.size = 24;
 
-    const radareChart = new Chart(ctx, {
+    const radarChart = new Chart(ctx, {
         type: 'radar',
         backgroundColor: "rgba(0, 0, 0, 0.2)",
         data: {
@@ -576,8 +576,8 @@ $report_data$
                 borderWidth: 2
             }]
         }
-        radareChart.data = data
-        radareChart.update('active');
+        radarChart.data = data
+        radarChart.update('active');
 
     })
 </script>
@@ -598,8 +598,8 @@ $report_data$
                 borderWidth: 1
             }]
         }
-        radareChart.data = data
-        radareChart.update('active');
+        radarChart.data = data
+        radarChart.update('active');
 
     }
     function search() {
