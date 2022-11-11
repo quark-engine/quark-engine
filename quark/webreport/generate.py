@@ -80,7 +80,7 @@ class ReportGenerator:
 
         self.insert_sample_information_html(
             rule_number_set, filename, md5, filesize, five_stages_labels)
-        self.insert_radarechart_html(five_stages_labels, all_labels)
+        self.insert_radarchart_html(five_stages_labels, all_labels)
         self.insert_report_html(analysis_result)
 
         self.analysis_result_layout = get_json_report_html(
@@ -88,9 +88,9 @@ class ReportGenerator:
 
         return self.analysis_result_layout
 
-    def insert_radarechart_html(self, five_stages_labels, all_labels):
+    def insert_radarchart_html(self, five_stages_labels, all_labels):
         """
-        Generate the HTML of radare chart secton in Quark web report.
+        Generate the HTML of radar chart secton in Quark web report.
 
         :param five_stages_labels: the set of lebels
         with 100% confidence crimes

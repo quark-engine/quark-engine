@@ -423,7 +423,7 @@
             <div class="row radar-chart">
                 <div class="col-md-6"><canvas id="myChart" width="400" height="400"></canvas></div>
                 <div class="col-md-6">
-                    <h3>Select labels to see max confidence in radare chart</h3>
+                    <h3>Select labels to see max confidence in radar chart</h3>
                     <div class="label-group">
                         $all_labels_html$
                     </div>
@@ -500,7 +500,7 @@ $report_data$
     const ctx = document.getElementById('myChart').getContext('2d');
     Chart.defaults.font.size = 24;
 
-    const radareChart = new Chart(ctx, {
+    const radarChart = new Chart(ctx, {
         type: 'radar',
         backgroundColor: "rgba(0, 0, 0, 0.2)",
         data: {
@@ -511,7 +511,7 @@ $report_data$
                 data: [],
                 backgroundColor: 'rgba(0, 99, 132, 0.2)',
                 borderColor: 'rgba(0, 0, 0, 1)',
-                borderWidth: 1
+                borderWidth: 2,
             }]
         },
         options: {
@@ -528,6 +528,12 @@ $report_data$
                     ticks: {
                         stepSize: 20
                     },
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.4)'
+                    },
+                    grid: {
+                        color: "rgba(0, 0, 0, 0.4)"
+                    }
                 }
             }
         },
@@ -567,11 +573,11 @@ $report_data$
                 data: maxConfidence,
                 backgroundColor: 'rgba(0, 99, 132, 0.2)',
                 borderColor: 'rgba(0, 0, 0, 1)',
-                borderWidth: 1
+                borderWidth: 2
             }]
         }
-        radareChart.data = data
-        radareChart.update('active');
+        radarChart.data = data
+        radarChart.update('active');
 
     })
 </script>
@@ -592,8 +598,8 @@ $report_data$
                 borderWidth: 1
             }]
         }
-        radareChart.data = data
-        radareChart.update('active');
+        radarChart.data = data
+        radarChart.update('active');
 
     }
     function search() {
