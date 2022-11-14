@@ -29,7 +29,7 @@
     <a href="https://twitter.com/quarkengine">
         <img alt="Twitter" src="https://img.shields.io/twitter/follow/quarkengine?style=social">
     </a><br>
-    <b> An Obfuscation-Neglect Android Malware Scoring System</b>
+    <b> Dig Vulnerabilities in the BlackBox</b>
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
@@ -76,36 +76,45 @@ Quark Script is now in a beta version. We'll keep releasing practical APIs and a
 
 ## Quick Start
 
-### Requirements
+In this section, we will show how to detect CWE-798 with Quark Script.
 
-*   Python 3.8+
-*   git
-*   graphviz
-*   click >= 8.0.1 (For CLI supports)
+### Step 1: Environments Requirements
 
-### Installation
+*   Quark requires Python 3.8 or above.
+
+### Step 2: Install Quark Engine
+
+Install Quark Engine by running:
 
 ```bash
 $ pip3 install -U quark-engine
 ```
 
-### Get the Latest Rules
+### Step 3: Prepare Quark Script, Detection Rule and the Sample File
 
-Now you can download [the Quark official ruleset](https://github.com/quark-engine/quark-rules) to your home directory with a simple command.
-
-```bash
-$ freshquark
-```
-
-Check `--help` to see the detailed usage description.
+1.  Get the CWE-798 Quark Script and the detection rule [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk).
+2.  Get the sampe file (ovaa.apk) [here](https://github.com/dark-warlord14/ovaa/releases/tag/1.0).
+3.  Put the script, detection rule, and sample file in the same directory.
+4.  Edit accordingly to the file names:
 
 ```bash
-$ quark --help
+SAMPLE_PATH = "ovaa.apk"
+RULE_PATH = "findSecretKeySpec.json"
 ```
 
-### Test It Out
+Now you are ready to run the script!
 
-You may refer to the [Quark Engine Document](https://quark-engine.readthedocs.io/en/latest/) for more details of testing and development information.
+### Step 4: Run the script
+
+```bash
+$ python3 CWE-798.py
+```
+
+You should now see the detection result in the terminal.
+
+    Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+
+**Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
 
 ## Acknowledgments
 
@@ -122,18 +131,6 @@ Quark-Engine has been participating in the GSoC under the Honeynet Project!
     *   [Sheng-Feng Lu](https://twitter.com/haeter525): [Replace the core library of Quark-Engine](https://quark-engine.github.io/2021/08/17/GSoC-2021-ShengFengLu/)
 
 Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
-
-## Quark MIT Program
-
-Quark MIT aims to create a **WIN-WIN** for both new comers and the community. 
-
-For new comers, the community helps you to build a stronger resume by creating specific works that fit the job description of your **DREAM JOB**.
-
-For the community, Quark-Engine gets new energy by the work the new comers contribute. And the most important of all, the Quark community gets to **GROW**.
-
-*   **Find more details [here](https://quark-engine.readthedocs.io/en/latest/quark_mit_program.html)**
-
-![](https://i.imgur.com/xXilFs8.png)
 
 ## Core Values of Quark Engine Team
 
