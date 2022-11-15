@@ -112,7 +112,9 @@ $ python3 CWE-798.py
 
 You should now see the detection result in the terminal.
 
-    Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+```
+Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+```
 
 **Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
 
