@@ -29,20 +29,14 @@
     <a href="https://twitter.com/quarkengine">
         <img alt="Twitter" src="https://img.shields.io/twitter/follow/quarkengine?style=social">
     </a><br>
-    <b> Dig Vulnerabilities in the BlackBox</b>
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
-Quark-Engine is also bundled with [Kali Linux](https://tools.kali.org/tools-listing), [BlackArch](https://blackarch.org/mobile.html).
-:shipit:  A trust-worthy, practical tool that's ready to boost up your malware reverse engineering. <https://twitter.com/quarkengine>
-
-## Quark Script - Ecosystem for Mobile Security Tools
+# Quark Script - Dig Vulnerabilities in the BlackBox
 
 ### Innovative & Interactive
 
-The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets.
-
-Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
+The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets. Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
 
 ### Dynamic & Static Analysis
 
@@ -54,27 +48,13 @@ Once the user creates a Quark script for specific analysis scenario. The script 
 
 ### More APIs to come
 
-Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.
+Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios. **See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
 
-**See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
+# CWE Showcases
 
-# 2022 CWE Top 25 Showcases
+[CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk) [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk) [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk) [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk) [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk) [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk) [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk) [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk) [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk) [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
 
-*   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)
-*   [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)
-*   [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk)
-*   [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)
-*   [CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)
-
-# Other CWE Showcases
-
-*   [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
-*   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)
-*   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)
-*   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)
-*   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)
-
-## Quick Start
+# Quick Start
 
 In this section, we will show how to detect CWE-798 with Quark Script.
 
@@ -84,7 +64,7 @@ In this section, we will show how to detect CWE-798 with Quark Script.
 
 ### Step 2: Install Quark Engine
 
-Install Quark Engine by running:
++ Install Quark Engine by running:
 
 ```bash
 $ pip3 install -U quark-engine
@@ -100,31 +80,27 @@ $ pip3 install -U quark-engine
 ```bash
 SAMPLE_PATH = "ovaa.apk"
 RULE_PATH = "findSecretKeySpec.json"
+# Now you are ready to run the script!
 ```
-
-Now you are ready to run the script!
 
 ### Step 4: Run the script
 
 ```bash
 $ python3 CWE-798.py
-```
 
-You should now see the detection result in the terminal.
-
-```
+# You should now see the detection result in the terminal.
 Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
 ```
 
-**Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
++ **Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
 
-## Acknowledgments
+# Acknowledgments
 
-#### The Honeynet Project
+### The Honeynet Project
 
 <a href="https://www.honeynet.org"> <img style="border: 0.2px solid black" width=115 height=150 src="https://i.imgur.com/znu7cMJ.png" alt="Honeynet.org logo"> </a>
 
-#### Google Summer Of Code
+### Google Summer Of Code
 
 Quark-Engine has been participating in the GSoC under the Honeynet Project!
 
@@ -134,7 +110,6 @@ Quark-Engine has been participating in the GSoC under the Honeynet Project!
 
 Stay tuned for the upcoming GSoC! Join the [Honeynet Slack chat](https://gsoc-slack.honeynet.org/) for more info.
 
-## Core Values of Quark Engine Team
+# Core Values of Quark Engine Team
 
-*   We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think.
-    And the most important of all, we benefit ourselves by benefit others **first**.
+*   We love **battle fields**. We embrace **uncertainties**. We challenge **impossibles**. We **rethink** everything. We change the way people think. And the most important of all, we benefit ourselves by benefit others **first**.
