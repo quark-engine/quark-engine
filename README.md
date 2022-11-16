@@ -64,7 +64,7 @@ In this section, we will show how to detect CWE-798 with Quark Script.
 
 ### Step 2: Install Quark Engine
 
-+ Install Quark Engine by running:
+*   Install Quark Engine by running:
 
 ```bash
 $ pip3 install -U quark-engine
@@ -92,7 +92,7 @@ $ python3 CWE-798.py
 Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
 ```
 
-+ **Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
+*   **Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
 
 # Acknowledgments
 
