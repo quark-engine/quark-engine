@@ -2,7 +2,7 @@
 Quark Report
 ++++++++++++++++++++++++++++++++++++++++
 
-Easy to Use and Reading Friendly Report
+Easy to Use and Intuitive Report
 ---------------------------------------
 
 Quark provides **7 flexible report formats** to boost your analysis.
