@@ -36,23 +36,25 @@
 
 ### Innovative & Interactive
 
-The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets. Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
+*   The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets.
+*   Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
 
 ### Dynamic & Static Analysis
 
-In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).
+*   In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).
 
 ### Re-Usable & Sharable
 
-Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges.
+*   Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges.
 
 ### More APIs to come
 
-Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios. **See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
+*   Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.
+*   **See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
 
 # CWE Showcases
 
-[CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk) [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk) [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk) [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk) [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk) [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk) [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk) [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk) [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk) [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
+[CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk) | [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk) | [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk) | [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk) | [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk) | [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk) | [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk) | [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk) | [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk) | [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
 
 # Quick Start
 
