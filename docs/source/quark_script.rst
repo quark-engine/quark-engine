@@ -1038,56 +1038,61 @@ Quark Script Result
     http://example.com./api/v1/
 
 
-Detect CWE-327 in Android Application (InjuredAndroid.apk)
--------------------------------------------------------------
 
-This scenario seeks to find **the use of a Broken or Risky Cryptographic Algorithm**. See `CWE-327 <https://cwe.mitre.org/data/definitions/327.html>`_ for more details.
+Detect CWE-20 in Android Application (diva.apk)
+-----------------------------------------------
 
-Let's use this `APK <https://github.com/B3nac/InjuredAndroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
+This scenario seeks to find **Improper Input Validation**. See `CWE-20 <https://cwe.mitre.org/data/definitions/20.html>`_ for more details.
 
-We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using cryptographic algorithms. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` with a list to check if the algorithm is risky. If YES, that may cause the exposure of sensitive data.
+Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-Quark Script CWE-327.py
-=======================
+First, we design a detection rule ``inputWebUrl.json``\ to spot on behavior uses method ``getText`` and input to ``loadUrl``.
 
-.. code-block:: python 
+Then we use API ``behaviorInstance.getParamValues`` to get the parameter that input to ``loadUrl``. If the parameter is from other methods, the method name will occur in the ``getParamValues`` output. Finally, we check if there is no method called between ``getText`` and ``loadUrl``\ , except ``toString``\ , ``getText``\ , and ``findViewById``. If **yes**\ , the APK does not validate user input. That causes CWE-20 vulnerability.
 
-    from quark.script import runQuarkAnalysis, Rule
+Quark Script CWE-20.py
+======================
 
-    SAMPLE_PATH = "InjuredAndroid.apk"
-    RULE_PATH = "useOfCryptographicAlgo.json"
+.. code-block:: python
 
-    WEAK_ALGORITHMS = ["DES", "ARC4", "BLOWFISH"]
+   import re
+   from quark.script import runQuarkAnalysis, Rule
 
-    ruleInstance = Rule(RULE_PATH)
-    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+   SAMPLE_PATH = "diva.apk"
+   RULE_PATH = "inputWebUrl.json"
 
-    for useCryptoAlgo in quarkResult.behaviorOccurList:
+   rule = Rule(RULE_PATH)
+   result = runQuarkAnalysis(SAMPLE_PATH, rule)
 
-        caller = useCryptoAlgo.methodCaller
+   exceptMethods = ["toString", "getText", "findViewById"]
 
-        for algo in WEAK_ALGORITHMS:
-            if useCryptoAlgo.hasString(algo):
-                print(f"CWE-327 is detected in method, {caller.fullName}")
- 
-Quark Rule: useOfCryptographicAlgo.json
-=======================================
+   for inputWebUrl in result.behaviorOccurList:
+       paramValue = inputWebUrl.getParamValues()[1]
+
+       calledMethods = re.findall("->(.*?)\(", paramValue)
+       calledMethods = set(calledMethods) - set(exceptMethods)
+
+       if len(calledMethods) == 0:
+           print(f"CWE-20 is detected in method, {inputWebUrl.methodCaller.fullName}")
+
+Quark Rule: inputWebUrl.json
+====================================
 
 .. code-block:: json
     
     {
-        "crime": "Use of cryptographic algorithm",
+        "crime": "Detect user input url to open Webview",
         "permission": [],
         "api": [
             {
-                "class": "Ljavax/crypto/Cipher;",
-                "method": "getInstance",
-                "descriptor": "(Ljava/lang/String;)Ljavax/crypto/Cipher"
+                "class": "Landroid/widget/EditText;",
+                "method": "getText",
+                "descriptor": "()Landroid/text/Editable;"
             },
             {
-                "class": "Ljavax/crypto/Cipher;",
-                "method": "init",
-                "descriptor": "(I Ljava/security/Key;)V"
+                "class": "Landroid/webkit/WebView;",
+                "method": "loadUrl",
+                "descriptor": "(Ljava/lang/String;)V"
             }
         ],
         "score": 1,
@@ -1097,9 +1102,8 @@ Quark Rule: useOfCryptographicAlgo.json
 Quark Script Result
 ===================
 
-.. code-block:: TEXT
+.. code-block::
 
-    $ python3 CWE-327.py
-    CWE-327 is detected in method, Lb3nac/injuredandroid/k; b (Ljava/lang/String;)Ljava/lang/String;
-    CWE-327 is detected in method, Lb3nac/injuredandroid/k; a (Ljava/lang/String;)Ljava/lang/String;
+   $ python CWE-20.py 
+   CWE-20 is detected in method, Ljakhar/aseem/diva/InputValidation2URISchemeActivity; get (Landroid/view/View;)V
 
