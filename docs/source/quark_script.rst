@@ -1053,9 +1053,14 @@ This scenario seeks to find **Improper Input Validation**. See `CWE-20 <https://
 
 Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``inputWebUrl.json``\ to spot on behavior uses method ``getText`` and input to ``loadUrl``.
+First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. 
+Then we use API ``behaviorInstance.getMethodsInArgs`` to get a list of methods which the URL in ``loadUrl`` has passed through. 
+Finally, we check if any validation method is in the list. 
+If **No**, the APK does not validate user input. 
+That causes CWE-20 vulnerability.
 
-Then we use API ``behaviorInstance.getParamValues`` to get the parameter that input to ``loadUrl``. If the parameter is from other methods, the method name will occur in the ``getParamValues`` output. Finally, we check if there is no validate method called between ``getText`` and ``loadUrl``\ . If **yes**\ , the APK does not validate user input. That causes CWE-20 vulnerability.
+
+
 
 Quark Script CWE-20.py
 ======================
@@ -1065,20 +1070,20 @@ Quark Script CWE-20.py
     from quark.script import runQuarkAnalysis, Rule
 
     SAMPLE_PATH = "diva.apk"
-    RULE_PATH = "openUrlByUserInput.json"
+    RULE_PATH = "openUrlThatUserInput.json"
 
     rule = Rule(RULE_PATH)
     result = runQuarkAnalysis(SAMPLE_PATH, rule)
 
     VALIDATE_METHODS = ["contains", "indexOf", "matches", "replaceAll"]
 
-    for inputWebUrl in result.behaviorOccurList:
-        calledMethods = inputWebUrl.getMethodsInArgs()
+    for openUrl in result.behaviorOccurList:
+        calledMethods = openUrl.getMethodsInArgs()
 
         if not any(method.methodName in VALIDATE_METHODS
                 for method in calledMethods):
             print("CWE-20 is detected in method,"
-                f"{inputWebUrl.methodCaller.fullName}")
+                f"{openUrl.methodCaller.fullName}")
 
 
 
@@ -1088,7 +1093,7 @@ Quark Rule: inputWebUrl.json
 .. code-block:: json
     
     {
-        "crime": "Detect user input url to open Webview",
+        "crime": "Open the Url that user input",
         "permission": [],
         "api": [
             {
