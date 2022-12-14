@@ -1176,7 +1176,7 @@ Quark Rule: inputWebUrl.json
 Quark Script Result
 ===================
 
-.. code-block::
+.. code-block:: TEXT
 
    $ python CWE-20.py 
    CWE-20 is detected in method, Ljakhar/aseem/diva/InputValidation2URISchemeActivity; get (Landroid/view/View;)V
