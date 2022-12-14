@@ -183,7 +183,7 @@ behaviorInstance.isArgFromMethod(targetMethod)
 behaviorInstance.getMethodsInArgs(none)
 =======================================
 
-- **Description**: Get the method name in the arguments.
+- **Description**: Get the methods in the arguments.
 - **params**: none
 - **return**: python list containing the methods in arguments
 
@@ -435,7 +435,7 @@ This scenario seeks to find code injection in the APK file. See `CWE-94 <https:/
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method createPackageContext. Then, we find the caller method who calls the createPackageContext. Finally, we check if  method checkSignatures is called in the caller method for verification.
+First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method createPackageContext. Then we use API ``behaviorInstance.getMethodsInArgs`` to get the methods called in the parameter of ``loadUrl``. Finally, we check if there is no validate method called between ``getText`` and ``loadUrl``. If **yes**, the APK does not validate user input. That causes CWE-20 vulnerability.
 
 
 Quark Scipt: CWE-94.py
@@ -1065,7 +1065,7 @@ Quark Script CWE-20.py
     from quark.script import runQuarkAnalysis, Rule
 
     SAMPLE_PATH = "diva.apk"
-    RULE_PATH = "inputWebUrl.json"
+    RULE_PATH = "openUrlByUserInput.json"
 
     rule = Rule(RULE_PATH)
     result = runQuarkAnalysis(SAMPLE_PATH, rule)
@@ -1075,8 +1075,11 @@ Quark Script CWE-20.py
     for inputWebUrl in result.behaviorOccurList:
         calledMethods = inputWebUrl.getMethodsInArgs()
 
-        if not any(method in calledMethods for method in VALIDATE_METHODS):
-            print(f"CWE-20 is detected in: {inputWebUrl.methodCaller.fullName}")
+        if not any(method.methodName in VALIDATE_METHODS
+                for method in calledMethods):
+            print("CWE-20 is detected in method,"
+                f"{inputWebUrl.methodCaller.fullName}")
+
 
 
 Quark Rule: inputWebUrl.json
