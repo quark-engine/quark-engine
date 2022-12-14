@@ -181,11 +181,11 @@ behaviorInstance.isArgFromMethod(targetMethod)
 - **return**: True/False
 
 behaviorInstance.getMethodsInArgs(none)
-=======================================
+==============================================
 
-- **Description**: Get the method instances in the arguments of API2.
+- **Description**: Get the methods which the arguments in API2 has passed through.
 - **params**: none
-- **return**: python list containing the method instances in arguments of API2
+- **return**: python list containing method instances
 
 methodInstance.getXrefFrom(none)
 ================================
@@ -435,7 +435,7 @@ This scenario seeks to find code injection in the APK file. See `CWE-94 <https:/
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method createPackageContext. Then we use API ``behaviorInstance.getMethodsInArgs`` to get the methods called in the parameter of ``loadUrl``. Finally, we check if there is no validate method called between ``getText`` and ``loadUrl``. If **yes**, the APK does not validate user input. That causes CWE-20 vulnerability.
+First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method createPackageContext. Then, we find the caller method who calls the createPackageContext. Finally, we check if  method checkSignatures is called in the caller method for verification.
 
 
 Quark Scipt: CWE-94.py
@@ -1045,6 +1045,71 @@ Quark Script Result
     http://example.com./api/v1/
 
 
+Detect CWE-327 in Android Application (InjuredAndroid.apk)
+-------------------------------------------------------------
+
+This scenario seeks to find **the use of a Broken or Risky Cryptographic Algorithm**. See `CWE-327 <https://cwe.mitre.org/data/definitions/327.html>`_ for more details.
+
+Let's use this `APK <https://github.com/B3nac/InjuredAndroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
+
+We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using cryptographic algorithms. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` with a list to check if the algorithm is risky. If YES, that may cause the exposure of sensitive data.
+
+Quark Script CWE-327.py
+=======================
+
+.. code-block:: python 
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "InjuredAndroid.apk"
+    RULE_PATH = "useOfCryptographicAlgo.json"
+
+    WEAK_ALGORITHMS = ["DES", "ARC4", "BLOWFISH"]
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for useCryptoAlgo in quarkResult.behaviorOccurList:
+
+        caller = useCryptoAlgo.methodCaller
+
+        for algo in WEAK_ALGORITHMS:
+            if useCryptoAlgo.hasString(algo):
+                print(f"CWE-327 is detected in method, {caller.fullName}")
+ 
+Quark Rule: useOfCryptographicAlgo.json
+=======================================
+
+.. code-block:: json
+    
+    {
+        "crime": "Use of cryptographic algorithm",
+        "permission": [],
+        "api": [
+            {
+                "class": "Ljavax/crypto/Cipher;",
+                "method": "getInstance",
+                "descriptor": "(Ljava/lang/String;)Ljavax/crypto/Cipher"
+            },
+            {
+                "class": "Ljavax/crypto/Cipher;",
+                "method": "init",
+                "descriptor": "(I Ljava/security/Key;)V"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+Quark Script Result
+===================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-327.py
+    CWE-327 is detected in method, Lb3nac/injuredandroid/k; b (Ljava/lang/String;)Ljava/lang/String;
+    CWE-327 is detected in method, Lb3nac/injuredandroid/k; a (Ljava/lang/String;)Ljava/lang/String;
+
 
 Detect CWE-20 in Android Application (diva.apk)
 -----------------------------------------------
@@ -1053,10 +1118,7 @@ This scenario seeks to find **Improper Input Validation**. See `CWE-20 <https://
 
 Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. 
-Then we use API ``behaviorInstance.getMethodsInArgs`` to get a list of methods which the URL in ``loadUrl`` has passed through. 
-Finally, we check if any validation method is in the list. 
-If **No**, the APK does not validate user input. 
+First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. Then we use API ``behaviorInstance.getMethodsInArgs`` to get a list of methods which the URL in ``loadUrl`` has passed through. Finally, we check if any validation method is in the list. If **No**, the APK does not validate user input. 
 That causes CWE-20 vulnerability.
 
 
