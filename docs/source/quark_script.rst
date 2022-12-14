@@ -180,6 +180,13 @@ behaviorInstance.isArgFromMethod(targetMethod)
     1. targetMethod: python list contains class name, method name, and descriptor of target method
 - **return**: True/False
 
+behaviorInstance.getMethodsInArgs(none)
+=======================================
+
+- **Description**: Get the method name in the arguments.
+- **params**: none
+- **return**: python list containing the methods in arguments
+
 methodInstance.getXrefFrom(none)
 ================================
 
@@ -1048,32 +1055,29 @@ Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above A
 
 First, we design a detection rule ``inputWebUrl.json``\ to spot on behavior uses method ``getText`` and input to ``loadUrl``.
 
-Then we use API ``behaviorInstance.getParamValues`` to get the parameter that input to ``loadUrl``. If the parameter is from other methods, the method name will occur in the ``getParamValues`` output. Finally, we check if there is no method called between ``getText`` and ``loadUrl``\ , except ``toString``\ , ``getText``\ , and ``findViewById``. If **yes**\ , the APK does not validate user input. That causes CWE-20 vulnerability.
+Then we use API ``behaviorInstance.getParamValues`` to get the parameter that input to ``loadUrl``. If the parameter is from other methods, the method name will occur in the ``getParamValues`` output. Finally, we check if there is no validate method called between ``getText`` and ``loadUrl``\ . If **yes**\ , the APK does not validate user input. That causes CWE-20 vulnerability.
 
 Quark Script CWE-20.py
 ======================
 
 .. code-block:: python
 
-   import re
-   from quark.script import runQuarkAnalysis, Rule
+    from quark.script import runQuarkAnalysis, Rule
 
-   SAMPLE_PATH = "diva.apk"
-   RULE_PATH = "inputWebUrl.json"
+    SAMPLE_PATH = "diva.apk"
+    RULE_PATH = "inputWebUrl.json"
 
-   rule = Rule(RULE_PATH)
-   result = runQuarkAnalysis(SAMPLE_PATH, rule)
+    rule = Rule(RULE_PATH)
+    result = runQuarkAnalysis(SAMPLE_PATH, rule)
 
-   exceptMethods = ["toString", "getText", "findViewById"]
+    VALIDATE_METHODS = ["contains", "indexOf", "matches", "replaceAll"]
 
-   for inputWebUrl in result.behaviorOccurList:
-       paramValue = inputWebUrl.getParamValues()[1]
+    for inputWebUrl in result.behaviorOccurList:
+        calledMethods = inputWebUrl.getMethodsInArgs()
 
-       calledMethods = re.findall("->(.*?)\(", paramValue)
-       calledMethods = set(calledMethods) - set(exceptMethods)
+        if not any(method in calledMethods for method in VALIDATE_METHODS):
+            print(f"CWE-20 is detected in: {inputWebUrl.methodCaller.fullName}")
 
-       if len(calledMethods) == 0:
-           print(f"CWE-20 is detected in method, {inputWebUrl.methodCaller.fullName}")
 
 Quark Rule: inputWebUrl.json
 ====================================

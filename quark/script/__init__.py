@@ -2,6 +2,7 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import re
 import functools
 from os import PathLike
 from os.path import abspath, isfile, join
@@ -294,6 +295,18 @@ class Behavior:
         pattern = PyEval.get_method_pattern(className, methodName, descriptor)
 
         return bool(self.hasString(pattern))
+
+    def getMethodsInArgs(self) -> List[str]:
+        """Get the method name in the arguments.
+
+        :return: python list containing the methods in arguments
+        """
+        METHOD_REGEX = r"->(.*?)\("
+        methodCalled = []
+        for param in self.getParamValues():
+            methodCalled += re.findall(METHOD_REGEX, param)
+
+        return methodCalled
 
 
 class QuarkResult:
