@@ -183,9 +183,9 @@ behaviorInstance.isArgFromMethod(targetMethod)
 behaviorInstance.getMethodsInArgs(none)
 =======================================
 
-- **Description**: Get the methods in the arguments.
+- **Description**: Get the method instances in the arguments of API2.
 - **params**: none
-- **return**: python list containing the methods in arguments
+- **return**: python list containing the method instances in arguments of API2
 
 methodInstance.getXrefFrom(none)
 ================================

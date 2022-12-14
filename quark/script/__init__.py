@@ -297,9 +297,9 @@ class Behavior:
         return bool(self.hasString(pattern))
 
     def getMethodsInArgs(self) -> List[str]:
-        """Get the methods in the arguments.
+        """Get the method instances in the arguments of API2.
 
-        :return: python list containing the methods in arguments
+        :return: python list containing the method instances in arguments of API2
         """
         METHOD_REGEX = r"L(.*?)\;\("
         methodCalled = []
