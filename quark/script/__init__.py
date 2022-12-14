@@ -301,10 +301,22 @@ class Behavior:
 
         :return: python list containing the methods in arguments
         """
-        METHOD_REGEX = r"->(.*?)\("
+        METHOD_REGEX = r"L(.*?)\;\("
         methodCalled = []
+
         for param in self.getParamValues():
-            methodCalled += re.findall(METHOD_REGEX, param)
+            for result in re.findall(METHOD_REGEX, param):
+                className = "L" + result.split("->")[0]
+                methodName = re.findall(r"->(.*?)\(", result)[0]
+                descriptor = result.split(methodName)[-1] + ";"
+
+                methodObj = self.quarkResult.quark.apkinfo.find_method(
+                    class_name=className,
+                    method_name=methodName,
+                    descriptor=descriptor
+                )
+
+                methodCalled.append(Method(methodObj=methodObj))
 
         return methodCalled
 
