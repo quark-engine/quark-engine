@@ -292,6 +292,17 @@ class TestBehavior:
 
         assert behavior.isArgFromMethod(expectedMethod)
 
+    @staticmethod
+    def testGetMethodsInArgs(QUARK_ANALYSIS_RESULT_FOR_RULE_193):
+        behaviorOccurList = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_193.behaviorOccurList
+        )
+        behavior = behaviorOccurList[0]
+        method = behavior.getMethodsInArgs()[0].fullName
+
+        assert method == "Landroid/telephony/SmsManager;" + \
+            " getDefault ()Landroid/telephony/SmsManager;"
+
 
 class TestQuarkReuslt:
     @staticmethod
