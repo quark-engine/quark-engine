@@ -122,11 +122,11 @@ quarkResultInstance.getAllStrings(none)
 
 quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
 ==================================================================
-- **Description**: Check if target method is in caller method.
+- **Description**: Find target method in caller method.
 - **params**: 
     1. callerMethod: python list contains class name, method name and descriptor of caller method.
     2. targetMethod: python list contains class name, method name and descriptor of target method.
-- **return**: True/False
+- **return**: python list contains target method instances.
 
 behaviorInstance.firstAPI.fullName
 ==================================
