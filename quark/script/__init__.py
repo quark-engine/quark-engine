@@ -372,9 +372,12 @@ class QuarkResult:
         caller_set = apkinfo.upperfunc(methodObj)
         return [self._wrapMethodObject(caller) for caller in list(caller_set)]
 
-    def _wrapMethodObject(self, methodObj: MethodObject) -> Method:
+    def _wrapMethodObject(self, methodObj: MethodObject, quark: Quark = None,  targetMethod: Method = None) -> Method:
         if methodObj:
-            return Method(self, methodObj)
+            if targetMethod:
+                return Method(self, methodObj=methodObj, quark=quark, targetMethod=targetMethod)
+            else:
+                return Method(self, methodObj)
         else:
             return None
 
@@ -391,15 +394,15 @@ class QuarkResult:
         self,
         callerMethod: Union[List[str], Method],
         targetMethod: Union[List[str], Method],
-    ) -> bool:
+    ) -> List[Method]:
         """
-        Check if target method is in caller method.
+        Find target method in caller method.
 
         :params callerMethod: python list or Method instance containing class
          name, method name and descriptor of caller method.
         :params targetMethod: python list or Method instance containing class
          name, method name and descriptor of target method.
-        :return: True/False
+        :return: python list contains target method instances.
         """
 
         def __convertMethodToListOfStr(method: Method) -> List[str]:
@@ -424,14 +427,18 @@ class QuarkResult:
 
         callerMethodInstance = Method(self, callerMethodObj)
 
+        matchedMethods = []
         for calleeMethod, _ in callerMethodInstance.getXrefTo():
             if (
                 calleeMethod.innerObj.class_name == targetMethod[0]
                 and calleeMethod.innerObj.name == targetMethod[1]
                 and calleeMethod.innerObj.descriptor == targetMethod[2]
             ):
-                return True
-        return False
+                matchedMethods.append(calleeMethod)
+
+        return [self._wrapMethodObject(
+               callerMethodObj, self.quark,  matchedMethod
+               ) for matchedMethod in matchedMethods]
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
