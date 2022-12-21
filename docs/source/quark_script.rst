@@ -1192,7 +1192,7 @@ Let’s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the ab
 
 First, we design a detection rule ``loadUrlFromIntent.json`` to spot on behavior loading URL from intent data to the WebView instance.
 
-Next, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` and ``methodInstance.getArguments()``  to check if the Javascript execution is enabled in the WebView. Finally, we check if there are any commonly used XSS filters. If **NO**, that may cause CWE-79 vulnerability.
+Next, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` and ``methodInstance.getArguments()``  to check if the Javascript execution is enabled in the WebView. Finally, we check if there are any famous XSS filters. If **NO**, that may cause CWE-79 vulnerability.
 
 
 Quark Script CWE-79.py
