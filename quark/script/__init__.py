@@ -437,7 +437,7 @@ class QuarkResult:
                 matchedMethods.append(calleeMethod)
 
         return [self._wrapMethodObject(
-               callerMethodObj, self.quark,  matchedMethod
+               callerMethodObj, self.quark, matchedMethod
                ) for matchedMethod in matchedMethods]
 
 
