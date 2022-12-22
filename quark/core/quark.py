@@ -9,7 +9,7 @@ import re
 from typing import Generator, List, Tuple
 
 import numpy as np
-import pandas as pd
+#import pandas as pd
 
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
@@ -724,10 +724,13 @@ class Quark:
             col_list = ["label", "description"]
             # csv file on form <label,description>
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
-            df = pd.read_csv(
-                os.path.join(rule_path, "label_desc.csv"), usecols=col_list
-            )
-            label_desc = dict(zip(df["label"], df["description"]))
+            
+            # remove temporarily
+            #df = pd.read_csv(
+            #    os.path.join(rule_path, "label_desc.csv"), usecols=col_list
+            #)
+            #
+            #label_desc = dict(zip(df["label"], df["description"]))
 
         for label_name in all_labels:
             confidences = np.array(all_labels[label_name])
