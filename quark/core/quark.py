@@ -724,7 +724,6 @@ class Quark:
             col_list = ["label", "description"]
             # csv file on form <label,description>
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
-            
             # remove temporarily
             #df = pd.read_csv(
             #    os.path.join(rule_path, "label_desc.csv"), usecols=col_list
