@@ -16,7 +16,7 @@ required_requirements = [
     "plotly",
     "rzpipe",
     "click",
-    "kaleido",
+#    "kaleido",
 ]
 
 setuptools.setup(
