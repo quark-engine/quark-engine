@@ -498,7 +498,7 @@ def findMethodInAPK(
         method_name=targetMethod[1],
         descriptor=targetMethod[2]
     )
-    
+
     if not method:
         return []
 
