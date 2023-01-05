@@ -10,7 +10,7 @@ from quark.core.quark import Quark
 from quark.core.struct.ruleobject import RuleObject
 
 APK_SOURCE = (
-    "https://github.com/quark-engine/apk-malware-samples"
+    "https://github.com/quark-engine/apk-samples"
     "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
 )
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
