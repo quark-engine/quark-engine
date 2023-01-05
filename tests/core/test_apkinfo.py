@@ -11,7 +11,7 @@ from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
-    "https://github.com/quark-engine/apk-malware-samples"
+    "https://github.com/quark-engine/apk-samples"
     "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 )
 APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
@@ -40,7 +40,7 @@ def apkinfo(request, apk_path):
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/apk-malware-samples" "/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/apk-samples" "/raw/master/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
