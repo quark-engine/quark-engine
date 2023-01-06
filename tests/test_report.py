@@ -19,7 +19,7 @@ def invalid_file(tempfile):
 @pytest.fixture(scope="module")
 def sample_apk_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/" "apk-samples/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/" "apk-samples/raw/master/malware-samples/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
 

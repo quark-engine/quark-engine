@@ -9,7 +9,7 @@ Firstly let's fetch some apk examples.
     $ git clone https://github.com/quark-engine/apk-samples.git
 
 
-Then we could test one of the apk in `apk-samples` by the rules `quark-rules`. For example:
+Then we could test one of the apk in `apk-samples/malware-samples` by the rules `quark-rules`. For example:
 
 .. code-block:: bash
 

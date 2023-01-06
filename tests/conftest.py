@@ -12,14 +12,14 @@ SAMPLES = [
     {
         "sourceUrl": (
             "https://github.com/quark-engine/apk-samples"
-            "/raw/master/14d9f1a92dd984d6040cc41ed06e273e.apk"
+            "/raw/master/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk"
         ),
         "fileName": "14d9f1a92dd984d6040cc41ed06e273e.apk",
     },
     {
         "sourceUrl": (
             "https://github.com/quark-engine/apk-samples"
-            "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+            "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
         ),
         "fileName": "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk",
     },

@@ -65,18 +65,18 @@ jobs:
       run: |
         quark --help
         git clone https://github.com/quark-engine/apk-samples
-        quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s
-        quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d
-        quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -g
-        quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d -g
-        quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -c
+        quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s
+        quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d
+        quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -g
+        quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -d -g
+        quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -c
 
     - name: Check Accuracy
       shell: bash
       run: |
-        echo "Ahmyth_RESULT=$(quark -a apk-samples/Ahmyth.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
-        echo "a4db_RESULT=$(quark -a apk-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
-        echo "e273e_RESULT=$(quark -a apk-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+        echo "Ahmyth_RESULT=$(quark -a apk-samples/malware-samples/Ahmyth.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+        echo "a4db_RESULT=$(quark -a apk-samples/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
+        echo "e273e_RESULT=$(quark -a apk-samples/malware-samples/14d9f1a92dd984d6040cc41ed06e273e.apk -s -t 100 | grep 100% | wc -l | awk '{print $1}')" >> $GITHUB_ENV
 
     - name: Check Ahmyt Result
       shell: bash
