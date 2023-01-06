@@ -152,7 +152,7 @@ class Method:
                 lambda record: methodPattern in record,
                 register_usage_records))
 
-            argumentStr = max(matchedRecords, key=len)[:-1]
+            argumentStr = max(matchedRecords, key=len, default="")[:-1]
             filterStr = f"{self.targetMethod.innerObj.class_name}->" + \
                 self.targetMethod.innerObj.name + \
                 self.targetMethod.descriptor
@@ -498,6 +498,9 @@ def findMethodInAPK(
         method_name=targetMethod[1],
         descriptor=targetMethod[2]
     )
+
+    if not method:
+        return []
 
     methodInstance = Method(methodObj=method)
 
