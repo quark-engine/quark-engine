@@ -59,6 +59,7 @@
 *   [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)  Cleartext Storage of Sensitive Information 
 *   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)  Cleartext Transmission of Sensitive Information 
 *   [CWE-327](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk)  Use of a Broken or Risky Cryptographic Algorithm 
+*   [CWE-328](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-328-in-android-application-allsafe-apk)  Use of Weak Hash 
 *   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)  Insertion of Sensitive Information into Log File 
 *   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)  Exposed Dangerous Method or Function 
 *   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)  Use of RSA Algorithm without OAEP 
