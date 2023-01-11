@@ -184,6 +184,23 @@ class Method:
                 next(argumentsOfFirstAPI, ""), self.descriptor
             )
 
+    def findSuperclassHierarchy(self) -> List[str]:
+        """Find all superclasses of this method object.
+
+        :return: Python list contains all superclass names of this method.
+        """
+
+        parentsHierarchy = list()
+        targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+            self.class_name)
+
+        while targetClassAnalysis and "Ljava/lang/Object;" != targetClassAnalysis.extends:
+            parentsHierarchy.append(targetClassAnalysis.extends)
+            targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+                targetClassAnalysis.extends)
+
+        return parentsHierarchy
+
     @property
     def fullName(self) -> str:
         """Show the name of the method.

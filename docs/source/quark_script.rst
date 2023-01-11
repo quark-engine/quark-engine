@@ -207,6 +207,13 @@ methodInstance.getArguments(none)
 - **Description**: Get arguments from method.
 - **params**: none
 - **return**: python list containing arguments.
+  
+methodInstance.findSuperclassHierarchy(none)
+=============================================
+
+- **Description**: Find all superclasses of this method object.
+- **params**: none
+- **return**: Python list contains all superclass names of this method. 
 
 Objection(host)
 ===============
@@ -1353,3 +1360,64 @@ Quark Script Result
             and it occurs in method, Lowasp/sat/agoat/AccessControlIssue1Activity; hashPIN (Ljava/lang/String;)Ljava/lang/String;
     CWE-328 is detected in ./MSTG-Android-Java.apk,
         and it occurs in method, Lcom/tozny/crypto/android/AesCbcWithIntegrity; generateKeyFromPassword (Ljava/lang/String; [B)Lcom/tozny/crypto/android/AesCbcWithIntegrity$SecretKeys;
+
+Detect CWE-295 in Android Application (InsecureShop.apk)
+----------------------------------------------------------
+
+This scenario seeks to find **Improper Certificate Validation**. See
+`CWE-295 <https://cwe.mitre.org/data/definitions/295.html>`__ for more
+details.
+
+Let’s use this `APK <https://github.com/hax0rgb/InsecureShop>`__ and the
+above APIs to show how the Quark script finds this vulnerability.
+
+We use the API ``findMethodInAPK`` to locate all
+``SslErrorHandler.proceed`` methods. Then we need to identify whether if
+the method ``WebViewClient.onReceivedSslError`` is overrode by its
+subclass.
+
+First, we check and make sure that the ``MethodInstance.name`` is
+``onReceivedSslError``, and the ``MethodInstance.descriptor`` is
+``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
+
+Then we use the API 
+``MethodInstance.findSuperclassHierarchy`` to get the superclass list of
+the method’s caller class.
+
+Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the
+superclass list. If **YES**, that may cause CWE-295 vulnerability.
+
+Quark Script CWE-295.py
+========================
+
+.. code-block:: python
+     
+    from quark.script import findMethodInAPK
+
+    SAMPLE_PATH = "insecureShop.apk"
+    TARGET_METHOD = [
+        "Landroid/webkit/SslErrorHandler;",  # class name
+        "proceed",                           # method name
+        "()V"                                # descriptor
+    ]
+    OVERRIDE_METHOD = [
+        "Landroid/webkit/WebViewClient;",    # class name
+        "onReceivedSslError",                # method name
+        "(Landroid/webkit/WebView;"+" Landroid/webkit/SslErrorHandler;" + \
+        " Landroid/net/http/SslError;)V"     # descriptor
+    ]
+
+    for sslProceedCaller in findMethodInAPK(SAMPLE_PATH, TARGET_METHOD):
+        if (sslProceedCaller.name == OVERRIDE_METHOD[1] and
+        sslProceedCaller.descriptor == OVERRIDE_METHOD[2] and
+        OVERRIDE_METHOD[0] in sslProceedCaller.findSuperclassHierarchy()):
+            print(f"CWE-295 is detected in method, {sslProceedCaller.fullName}")
+
+Quark Script Result
+===================
+
+.. code-block:: TEXT
+
+   $　python3 CWE-295.py
+   Requested API level 29 is larger than maximum we have, returning API level 28 instead.
+   CWE-295 is detected in method, Lcom/insecureshop/util/CustomWebViewClient; onReceivedSslError (Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V

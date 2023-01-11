@@ -231,6 +231,21 @@ class TestMethod:
         assert arguments[1:] == [True]
         assert argumentsOfTargetMethod[0] == "wifi"
 
+    @staticmethod
+    def testFindSuperclassHierarchy(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = MethodObject(
+            class_name="Lcom/google/progress/WifiCheckTask;",
+            name="checkWifiCanOrNotConnectServer",
+            descriptor="()Z",
+        )
+
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+                        methodObj, QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark)
+
+        assert (
+            ["Ljava/util/TimerTask;"] == method.findSuperclassHierarchy()
+        )
+
 
 class TestBehavior:
     @staticmethod
