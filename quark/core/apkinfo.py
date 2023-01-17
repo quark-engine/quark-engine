@@ -44,6 +44,15 @@ class AndroguardImp(BaseApkinfo):
             return []
 
     @property
+    def application(self) -> XMLElement:
+        if self.ret_type == "DEX":
+            return []
+
+        manifest_root = self.apk.get_android_manifest_xml()
+
+        return manifest_root.find("application")
+
+    @property
     def activities(self) -> List[XMLElement]:
         if self.ret_type == "DEX":
             return []

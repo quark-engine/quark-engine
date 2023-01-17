@@ -72,6 +72,16 @@ class BaseApkinfo:
 
     @property
     @abstractmethod
+    def application(self) -> XMLElement:
+        """
+        Return the application from given APK.
+
+        :return: the application of APK
+        """
+        pass
+
+    @property
+    @abstractmethod
     def activities(self) -> List[XMLElement]:
         """
         Return all activity from given APK.
