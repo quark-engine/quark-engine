@@ -709,27 +709,45 @@ class RizinImp(BaseApkinfo):
         else:
             return None
 
+    def _get_string_by_address(self, address: str) -> str:
+        """
+        Find the content of string via the specified string address.
+
+        :param address: an address used to find the corresponding method
+        :return: the content in the given address
+        """
+        dexindex = 0
+
+        rz = self._get_rz(dexindex)
+        content = rz.cmd(f"pr @ {int(address, 16)}")
+        return content
+
     @staticmethod
-    def _parse_parameter(mnemonic: str, parameter: str) -> Any:
+    def _parse_parameter(parameter: str, p_type: str = "int") -> Any:
         """Parse the value of the parameter based on the mnemonic.
 
         :param mnemonic: the mnemonic of a bytecode
         :param parameter: the parameter of a bytecode
         :return: the value of the parameter
         """
-        if mnemonic.startswith("invoke"):
-            return re.sub(r"\.", "->", parameter, count=1)
-        elif mnemonic == "const-wide":
-            return float(parameter)
-        elif mnemonic.startswith("const") and "string" not in mnemonic:
-            return int(parameter, 16)
-        elif '/lit' in mnemonic:
-            return int(parameter, 16)
+        if p_type == "int":
+            try:
+                parameter = int(parameter, 16)
+            except (TypeError, ValueError):
+                return RizinImp._parse_parameter(parameter, "float")
+
+        elif p_type == "float":
+            try:
+                parameter = float(parameter)
+            except (TypeError, ValueError):
+                return RizinImp._parse_parameter(parameter, "str")
+
+        elif p_type == "str":
+            parameter = re.sub(r"\.", "->", parameter, count=1)
 
         return parameter
 
-    @staticmethod
-    def _parse_smali(smali: str) -> BytecodeObject:
+    def _parse_smali(self, smali: str) -> BytecodeObject:
         """
         Convert a Smali code provided by the Rizin command `pdfj` into a
         BytecodeObject.
@@ -752,10 +770,13 @@ class RizinImp(BaseApkinfo):
 
         args = [arg.strip() for arg in re.split("[{},]+", args) if arg]
 
+        if mnemonic == "const-string" and args[-1][:2] == "0x":
+            args[-1] = self._get_string_by_address(args[-1])
+
         parameter = None
         # Remove the parameter at the last
         if args and not args[-1].startswith("v"):
-            parameter = RizinImp._parse_parameter(mnemonic, args[-1])
+            parameter = RizinImp._parse_parameter(args[-1])
             args = args[:-1]
 
         register_list = []
