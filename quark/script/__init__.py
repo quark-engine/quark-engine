@@ -59,7 +59,7 @@ class Application:
         self.xml: XMLElement = xml
 
     def __str__(self) -> str:
-        return self._getAttribute("label")
+        return str(self._getAttribute("label"))
 
     def _getAttribute(
         self, attributeName: str, defaultValue: Any = None
@@ -70,14 +70,16 @@ class Application:
         return self.xml.get(realAttributeName, defaultValue)
 
     def isDebuggable(self) -> bool:
-        """Check if the application sets `android:debuggable=true`.
+        """Check if the application is debuggable.
 
         :return: True/False
         """
         debuggable = self._getAttribute("debuggable")
+        print(debuggable)
         if debuggable is None:
             return False
-        return debuggable.lower() == "true"
+
+        return str(debuggable).lower() == "true"
 
 
 class Activity:
@@ -511,10 +513,10 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
 
 
 def getApplication(samplePath: PathLike) -> Application:
-    """Get the application from the manifest of the target sample.
+    """Get activities from a target sample.
 
-    :param samplePath: the file path of the target sample
-    :return: the Application instance of the sample
+    :param samplePath: target file
+    :return: python list containing activities
     """
     quark = _getQuark(samplePath)
     apkinfo = quark.apkinfo

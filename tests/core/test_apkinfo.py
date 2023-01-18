@@ -106,13 +106,10 @@ class TestApkinfo:
     @staticmethod
     def test_application(apkinfo):
         application = apkinfo.application
-
-        assert (
-            application.get(
-                "{http://schemas.android.com/apk/res/android}label"
-            )
-            == "@7F050001"
-        )
+        label = str(application.get(
+            "{http://schemas.android.com/apk/res/android}label"
+        ))
+        assert label == "@7F050001" or label == "2131034113"
 
     @staticmethod
     def test_activities(apkinfo):
