@@ -1442,7 +1442,7 @@ This scenario seeks to find **active debug code** in the APK file. See `CWE-489 
 
 Let's use `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_, `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_, `pivaa.apk <https://github.com/HTBridge/pivaa>`_, and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we use Quark API ``getApplication`` to get the application data in the manifest. Then we use ``applicationInstance.isDebuggable`` to check if the application sets the attribute ``android:debuggable=true``. If **Yes**, that causes CWE-489 vulnerabilities.
+First, we use Quark API ``getApplication`` to get the application data in the manifest. Then we use ``applicationInstance.isDebuggable`` to check if the application sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
 
 Quark Script CWE-489.py
 ===========================
