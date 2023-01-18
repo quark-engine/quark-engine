@@ -1447,6 +1447,8 @@ First, we use Quark API ``getApplication`` to get the application element in the
 Quark Script CWE-489.py
 ===========================
 
+The Quark Script below uses allsafe.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = AndroGoat.apk`` or ``SAMPLE_PATH = pivaa.apk``.
+
 .. code-block:: python
 
     from quark.script import getApplication
