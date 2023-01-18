@@ -12,6 +12,7 @@ from quark.script import (
     QuarkResult,
     Ruleset,
     getActivities,
+    getApplication,
     runQuarkAnalysis,
     findMethodInAPK,
 )
@@ -70,6 +71,18 @@ class TestDefaultRuleset:
 
         with pytest.raises(KeyError):
             _ = ruleset[1]
+
+
+class TestApplication:
+    @staticmethod
+    def testIsNotDebuggable(SAMPLE_PATH_Ahmyth):
+        application = getApplication(SAMPLE_PATH_Ahmyth)
+        assert application.isDebuggable() is False
+
+    @staticmethod
+    def testIsDebuggable(SAMPLE_PATH_13667):
+        application = getApplication(SAMPLE_PATH_13667)
+        assert application.isDebuggable() is True
 
 
 class TestActivity:

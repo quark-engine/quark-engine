@@ -54,6 +54,34 @@ class DefaultRuleset(Ruleset):
 DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
 
 
+class Application:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return str(self._getAttribute("label"))
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def isDebuggable(self) -> bool:
+        """Check if the application element sets `android:debuggable=true`.
+
+        :return: True/False
+        """
+        debuggable = self._getAttribute("debuggable")
+        print(debuggable)
+        if debuggable is None:
+            return False
+
+        return str(debuggable).lower() == "true"
+
+
 class Activity:
     def __init__(self, xml: XMLElement) -> None:
         self.xml: XMLElement = xml
@@ -454,8 +482,8 @@ class QuarkResult:
                 matchedMethods.append(calleeMethod)
 
         return [self._wrapMethodObject(
-               callerMethodObj, self.quark, matchedMethod
-               ) for matchedMethod in matchedMethods]
+            callerMethodObj, self.quark, matchedMethod
+        ) for matchedMethod in matchedMethods]
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
@@ -482,6 +510,18 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     apkinfo = quark.apkinfo
 
     return [Activity(xml) for xml in apkinfo.activities]
+
+
+def getApplication(samplePath: PathLike) -> Application:
+    """Get the application element from the manifest file of the target sample.
+
+    :param samplePath: the file path of the target sample
+    :return: the application element of the target sample
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return Application(apkinfo.application)
 
 
 def findMethodInAPK(

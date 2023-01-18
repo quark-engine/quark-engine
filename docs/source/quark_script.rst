@@ -271,6 +271,18 @@ activityInstance.isExported(none)
 - **params**: none
 - **return**: True/False
 
+getApplication(samplePath)
+==========================
+- **Description**: Get the application element from the manifest file of the target sample.
+- **params**: 
+    1. samplePath: the file path of the target sample
+- **return**: the application element of the target sample
+
+applicationInstance.isDebuggable(none)
+======================================
+- **Description**: Check if the application element sets ``android:debuggable=true``.
+- **params**: none
+- **return**:  True/False
 
 Analyzing real case (InstaStealer) using Quark Script
 ------------------------------------------------------
@@ -1421,3 +1433,50 @@ Quark Script Result
    $　python3 CWE-295.py
    Requested API level 29 is larger than maximum we have, returning API level 28 instead.
    CWE-295 is detected in method, Lcom/insecureshop/util/CustomWebViewClient; onReceivedSslError (Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V
+
+
+Detect CWE-489 in Android Application (allsafe.apk, AndroGoat.apk, pivaa.apk)
+-------------------------------------------------------------------------------
+
+This scenario seeks to find **active debug code** in the APK file. See `CWE-489 <https://cwe.mitre.org/data/definitions/489.html>`_ for more details.
+
+Let's use `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_, `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_, `pivaa.apk <https://github.com/HTBridge/pivaa>`_, and the above APIs to show how the Quark script finds this vulnerability.
+
+First, we use Quark API ``getApplication`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
+
+Quark Script CWE-489.py
+===========================
+
+The Quark Script below uses allsafe.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = AndroGoat.apk`` or ``SAMPLE_PATH = pivaa.apk``.
+
+.. code-block:: python
+
+    from quark.script import getApplication
+
+    SAMPLE_PATH = "allsafe.apk"
+
+    if getApplication(SAMPLE_PATH).isDebuggable():
+        print(f"CWE-489 is detected in {SAMPLE_PATH}.")    
+
+Quark Script Result
+======================
+- **allsafe.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-489.py
+    CWE-489 is detected in allsafe.apk
+
+- **AndroGoat.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-489.py
+    CWE-489 is detected in AndroGoat.apk
+
+- **pivaa.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-489.py
+    CWE-489 is detected in pivaa.apk

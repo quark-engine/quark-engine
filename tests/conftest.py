@@ -23,6 +23,13 @@ SAMPLES = [
         ),
         "fileName": "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk",
     },
+    {
+        "sourceUrl": (
+            "https://github.com/quark-engine/apk-samples"
+            "/raw/master/malware-samples/Ahmyth.apk"
+        ),
+        "fileName": "Ahmyth.apk"
+    }
 ]
 
 
@@ -50,3 +57,8 @@ def SAMPLE_PATH_14d9f(tmp_path_factory: pytest.TempPathFactory) -> str:
 @pytest.fixture(scope="session")
 def SAMPLE_PATH_13667(tmp_path_factory: pytest.TempPathFactory) -> str:
     return downloadSample(tmp_path_factory, SAMPLES[1])
+
+
+@pytest.fixture(scope="session")
+def SAMPLE_PATH_Ahmyth(tmp_path_factory: pytest.TempPathFactory) -> str:
+    return downloadSample(tmp_path_factory, SAMPLES[2])
