@@ -45,6 +45,10 @@ class AndroguardImp(BaseApkinfo):
 
     @property
     def application(self) -> XMLElement:
+        """Get the application data from the manifest file.
+
+        :return: an element instance of the application attribute
+        """
         if self.ret_type == "DEX":
             return []
 
