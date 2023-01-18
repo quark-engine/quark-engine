@@ -1463,18 +1463,18 @@ Quark Script Result
 .. code-block:: TEXT
     
     $ python3 CWE-489.py
-    CWE-489 is detected in the allsafe.apk
+    CWE-489 is detected in allsafe.apk
 
 - **AndroGoat.apk**
 
 .. code-block:: TEXT
     
     $ python3 CWE-489.py
-    CWE-489 is detected in the AndroGoat.apk
+    CWE-489 is detected in AndroGoat.apk
 
 - **pivaa.apk**
 
 .. code-block:: TEXT
     
     $ python3 CWE-489.py
-    CWE-489 is detected in the pivaa.apk
+    CWE-489 is detected in pivaa.apk
