@@ -276,7 +276,7 @@ getApplication(samplePath)
 - **Description**: Get the application element from the manifest file of the target sample.
 - **params**: 
     1. samplePath: the file path of the target sample
-- **return**: the application elememt of the target sample
+- **return**: the application element of the target sample
 
 applicationInstance.isDebuggable(none)
 ======================================

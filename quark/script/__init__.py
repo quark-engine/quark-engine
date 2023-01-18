@@ -516,7 +516,7 @@ def getApplication(samplePath: PathLike) -> Application:
     """Get the application element from the manifest file of the target sample.
 
     :param samplePath: the file path of the target sample
-    :return: the application elememt of the target sample
+    :return: the application element of the target sample
     """
     quark = _getQuark(samplePath)
     apkinfo = quark.apkinfo
