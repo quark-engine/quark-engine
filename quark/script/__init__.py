@@ -75,7 +75,9 @@ class Application:
         :return: True/False
         """
         debuggable = self._getAttribute("debuggable")
-        return debuggable
+        if debuggable is None:
+            return False
+        return debuggable.lower() == "true"
 
 
 class Activity:

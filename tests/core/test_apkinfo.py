@@ -104,6 +104,17 @@ class TestApkinfo:
         assert set(apkinfo.permissions) == set(ans)
 
     @staticmethod
+    def test_application(apkinfo):
+        application = apkinfo.application
+
+        assert (
+            application.get(
+                "{http://schemas.android.com/apk/res/android}label"
+            )
+            == "@7F050001"
+        )
+
+    @staticmethod
     def test_activities(apkinfo):
         activities = apkinfo.activities
 
