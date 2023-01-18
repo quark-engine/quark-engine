@@ -73,10 +73,9 @@ class BaseApkinfo:
     @property
     @abstractmethod
     def application(self) -> XMLElement:
-        """
-        Return the application element from the manifest file of given APK.
+        """Get the application element from the manifest file.
 
-        :return: a application element
+        :return: an application element
         """
         pass
 

@@ -246,11 +246,11 @@ class RizinImp(BaseApkinfo):
 
     @functools.cached_property
     def application(self) -> XMLElement:
-        """
-        Return the application from given APK.
+        """Get the application element from the manifest file.
 
-        :return: the application of APK
+        :return: an application element
         """
+
         axml = AxmlReader(self._manifest)
         root = axml.get_xml_tree()
 

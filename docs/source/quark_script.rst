@@ -273,14 +273,14 @@ activityInstance.isExported(none)
 
 getApplication(samplePath)
 ==========================
-- **Description**: Get the application from the manifest of the target sample.
+- **Description**: Get the application element from the manifest file of the target sample.
 - **params**: 
-    1. ``samplePath`` : the file path of the target sample
-- **return**: the Application instance of the sample
+    1. samplePath: the file path of the target sample
+- **return**: the application elememt of the target sample
 
 applicationInstance.isDebuggable(none)
 ======================================
-- **Description**: Check if the application sets ``android:debuggable=true``.
+- **Description**: Check if the application element sets ``android:debuggable=true``.
 - **params**: none
 - **return**:  True/False
 
@@ -1442,7 +1442,7 @@ This scenario seeks to find **active debug code** in the APK file. See `CWE-489 
 
 Let's use `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_, `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_, `pivaa.apk <https://github.com/HTBridge/pivaa>`_, and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we use Quark API ``getApplication`` to get the application data in the manifest. Then we use ``applicationInstance.isDebuggable`` to check if the application sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
+First, we use Quark API ``getApplication`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
 
 Quark Script CWE-489.py
 ===========================

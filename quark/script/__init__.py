@@ -70,7 +70,7 @@ class Application:
         return self.xml.get(realAttributeName, defaultValue)
 
     def isDebuggable(self) -> bool:
-        """Check if the application is debuggable.
+        """Check if the application element sets `android:debuggable=true`.
 
         :return: True/False
         """
@@ -513,10 +513,10 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
 
 
 def getApplication(samplePath: PathLike) -> Application:
-    """Get activities from a target sample.
+    """Get the application element from the manifest file of the target sample.
 
-    :param samplePath: target file
-    :return: python list containing activities
+    :param samplePath: the file path of the target sample
+    :return: the application elememt of the target sample
     """
     quark = _getQuark(samplePath)
     apkinfo = quark.apkinfo
