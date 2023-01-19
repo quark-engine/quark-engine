@@ -539,6 +539,9 @@ class RizinImp(BaseApkinfo):
 
             if instruct_flow:
                 for ins in instruct_flow:
+                    if "disasm" not in ins:
+                        continue
+
                     yield self._parse_smali(ins["disasm"])
 
     def get_strings(self) -> Set[str]:
@@ -611,6 +614,10 @@ class RizinImp(BaseApkinfo):
 
         if instruction_flow:
             for ins in instruction_flow:
+                # Skip the instruction without disam  field.
+                if "disam" not in ins:
+                    continue
+
                 if ins["disasm"].startswith("invoke"):
                     if ";" in ins["disasm"]:
                         index = ins["disasm"].rindex(";")
