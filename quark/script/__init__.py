@@ -435,6 +435,19 @@ class QuarkResult:
         apkinfo = self.quark.apkinfo
         return apkinfo.get_strings()
 
+    def isHardcoded(self, argument: str) -> bool:
+        """
+        """
+        keyword = "Ljava/lang/StringBuilder;->append"
+        appendedByStringBuilder = keyword in argument
+
+        if appendedByStringBuilder:
+            return False
+
+        allStrings = self.getAllStrings()
+
+        return argument in allStrings
+
     def findMethodInCaller(
         self,
         callerMethod: Union[List[str], Method],
