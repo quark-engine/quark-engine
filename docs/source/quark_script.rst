@@ -123,9 +123,9 @@ quarkResultInstance.getAllStrings(none)
 quarkResultInstance.isHardcoded(argument)
 ==========================================
 
-- **Description**: Check if an argument of a method is a hardcoded string in the APK.
+- **Description**: Check if the method argument is hardcoded into APK.
 - **params**: 
-    1. argument: an argument of a method
+    1. argument: a string of method argument
 - **return**: True/False
 
 quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
@@ -1497,9 +1497,9 @@ Let’s use `ovaa.apk <https://github.com/oversecured/ovaa>`_, `InsecureBankv2.a
 
 First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
 
-Next, we use API ``methodInstance.getArguments()`` and ``quarkResultInstance.isHardcoded(argument)`` to check if the path argument is hardcoded into the APK. If No, then attackers might be able to manipulate the path argument.
+Next, we use API ``methodInstance.getArguments()`` to get the argument for the file path and use `quarkResultInstance.isHardcoded(argument)` to check if the argument is hardcoded into the APK. If No, the argument is from external input.
 
-Finally, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if any APIs for neutralizing the path argument. If **NO**, that may cause CWE-22 vulnerability.
+Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for string matching. If **NO**, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability.
 
 Quark Script CWE-22.py
 =======================
@@ -1514,7 +1514,7 @@ The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE
     RULE_PATH = "accessFileInExternalDir.json"
 
 
-    NEUTRALIZING_APIS = [
+    STRING_MATCHING_API = [
         ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
         ["Ljava/lang/String;", "indexOf", "(I)I"],
         ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
@@ -1527,20 +1527,19 @@ The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE
 
     for accessExternalDir in quarkResult.behaviorOccurList:
 
-        args = accessExternalDir.secondAPI.getArguments()
+        filePath = accessExternalDir.secondAPI.getArguments()[2]
 
-        if quarkResult.isHardcoded(args[2]):
+        if quarkResult.isHardcoded(filePath):
             continue
 
         caller = accessExternalDir.methodCaller
-        neutralizingAPIsInCaller = [
-                api for api in NEUTRALIZING_APIS if quarkResult.findMethodInCaller(
+        strMatchingAPIs = [
+                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
                     caller, api)
         ]
 
-        if not neutralizingAPIsInCaller:
+        if not strMatchingAPIs:
             print(f"CWE-22 is detected in method, {caller.fullName}")
-
 
 Quark Rule: accessFileInExternalDir.json
 =========================================
