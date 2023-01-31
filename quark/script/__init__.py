@@ -437,9 +437,9 @@ class QuarkResult:
 
     def isHardcoded(self, argument: str) -> bool:
         """
-        Check if an argument of a method is a hardcoded string in the APK.
+        Check if the method argument is hardcoded into APK.
 
-        :params argument: an argument of a method
+        :params argument: a string of method argument
         :return: True/False
         """
         keyword = "Ljava/lang/StringBuilder;->append"
