@@ -120,6 +120,14 @@ quarkResultInstance.getAllStrings(none)
 - **params**: none
 - **return**: python list containing all strings inside the target APK file.
 
+quarkResultInstance.isHardcoded(argument)
+==========================================
+
+- **Description**: Check if an argument of a method is a hardcoded string in the APK.
+- **params**: 
+    1. argument: an argument of a method
+- **return**: True/False
+
 quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
 ==================================================================
 - **Description**: Find target method in caller method.
@@ -1480,3 +1488,97 @@ Quark Script Result
     
     $ python3 CWE-489.py
     CWE-489 is detected in pivaa.apk
+
+Detect CWE-22 in Android Application (ovaa.apk and InsecureBankv2.apk )
+-----------------------------------------------------------------------
+This scenario seeks to find **the improper limitation of a pathname to a restricted directory ('Path Traversal')**. See `CWE-22 <https://cwe.mitre.org/data/definitions/22.html>`_ for more details.
+
+Let’s use `ovaa.apk <https://github.com/oversecured/ovaa>`_, `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2/releases>`_, and the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
+
+Next, we use API ``methodInstance.getArguments()`` and ``quarkResultInstance.isHardcoded(argument)`` to check if the path argument is hardcoded into the APK. If No, then attackers might be able to manipulate the path argument.
+
+Finally, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if any APIs for neutralizing the path argument. If **NO**, that may cause CWE-22 vulnerability.
+
+Quark Script CWE-22.py
+=======================
+
+The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = InsecureBankv2.apk``.
+
+.. code-block:: python
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "ovaa.apk"
+    RULE_PATH = "accessFileInExternalDir.json"
+
+
+    NEUTRALIZING_APIS = [
+        ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
+        ["Ljava/lang/String;", "indexOf", "(I)I"],
+        ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
+        ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
+    ]
+
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for accessExternalDir in quarkResult.behaviorOccurList:
+
+        args = accessExternalDir.secondAPI.getArguments()
+
+        if quarkResult.isHardcoded(args[2]):
+            continue
+
+        caller = accessExternalDir.methodCaller
+        neutralizingAPIsInCaller = [
+                api for api in NEUTRALIZING_APIS if quarkResult.findMethodInCaller(
+                    caller, api)
+        ]
+
+        if not neutralizingAPIsInCaller:
+            print(f"CWE-22 is detected in method, {caller.fullName}")
+
+
+Quark Rule: accessFileInExternalDir.json
+=========================================
+
+.. code-block:: json
+
+    {
+        "crime": "Access a file in an external directory",
+        "permission": [],
+        "api": [
+            {
+                "class": "Landroid/os/Environment;",
+                "method": "getExternalStorageDirectory",
+                "descriptor": "()Ljava/io/File;"
+            },
+            {
+                "class": "Ljava/io/File;",
+                "method": "<init>",
+                "descriptor": "(Ljava/io/File;Ljava/lang/String;)V"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+
+Quark Script Result
+======================
+- **ovaa.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-22.py
+    CWE-22 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
+
+- **InsecureBankv2.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-22.py
+    CWE-22 is detected in method, Lcom/android/insecurebankv2/ViewStatement; onCreate (Landroid/os/Bundle;)V
