@@ -439,7 +439,8 @@ class QuarkResult:
         """
         Check if the argument is hardcoded into the APK.
 
-        :params argument: an argument string
+        :params argument: string value that is passed in when a method is
+         invoked
         :return: True/False
         """
         return argument in self.getAllStrings()

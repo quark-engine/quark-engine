@@ -125,7 +125,7 @@ quarkResultInstance.isHardcoded(argument)
 
 - **Description**: Check if the argument is hardcoded into the APK.
 - **params**: 
-    1. argument: an argument string
+    1. argument: string value that is passed in when a method is invoked
 - **return**: True/False
 
 quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
