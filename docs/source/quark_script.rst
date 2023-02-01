@@ -123,9 +123,9 @@ quarkResultInstance.getAllStrings(none)
 quarkResultInstance.isHardcoded(argument)
 ==========================================
 
-- **Description**: Check if the method argument is hardcoded into APK.
+- **Description**: Check if the argument is hardcoded into the APK.
 - **params**: 
-    1. argument: a string of method argument
+    1. argument: an argument string
 - **return**: True/False
 
 quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)
