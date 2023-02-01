@@ -11,6 +11,7 @@ required_requirements = [
     "tqdm",
     "colorama",
     "graphviz",
+    "prompt-toolkit",
     "plotly",
     "rzpipe",
     "click",
