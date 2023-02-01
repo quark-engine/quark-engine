@@ -435,6 +435,16 @@ class QuarkResult:
         apkinfo = self.quark.apkinfo
         return apkinfo.get_strings()
 
+    def isHardcoded(self, argument: str) -> bool:
+        """
+        Check if the argument is hardcoded into the APK.
+
+        :params argument: string value that is passed in when a method is
+         invoked
+        :return: True/False
+        """
+        return argument in self.getAllStrings()
+
     def findMethodInCaller(
         self,
         callerMethod: Union[List[str], Method],

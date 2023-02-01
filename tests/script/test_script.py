@@ -385,6 +385,15 @@ class TestQuarkReuslt:
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
 
     @staticmethod
+    def testIsHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded("gps") is True
+
+    @staticmethod
+    def testIsNotHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded(
+            "Quark") is False
+
+    @staticmethod
     def testFindMethodInCallerWithListOfStr(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         callerMethod = [
             "Lcom/google/progress/WifiCheckTask;",
