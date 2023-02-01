@@ -390,10 +390,6 @@ class TestQuarkReuslt:
 
     @staticmethod
     def testIsNotHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
-        stringBuilderKeyword = "Ljava/lang/StringBuilder;->append"
-        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded(
-            stringBuilderKeyword) is False
-
         assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded(
             "Quark") is False
 

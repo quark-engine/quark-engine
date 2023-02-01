@@ -442,15 +442,7 @@ class QuarkResult:
         :params argument: an argument string
         :return: True/False
         """
-        keyword = "Ljava/lang/StringBuilder;->append"
-        appendedByStringBuilder = keyword in argument
-
-        if appendedByStringBuilder:
-            return False
-
-        allStrings = self.getAllStrings()
-
-        return argument in allStrings
+        return argument in self.getAllStrings()
 
     def findMethodInCaller(
         self,
