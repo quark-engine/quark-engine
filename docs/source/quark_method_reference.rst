@@ -10,7 +10,7 @@ find_previous_method
 -  **Description** The find_previous_method method uses a DFS algorithm
    to collect all MethodObjects called by the **parent_method** and add
    them to the specified **wrapper**. The search starts from the
-   **base_method** and and goes on recursively until there are no more
+   **base_method** and goes on recursively until there are no more
    levels or all candidates have been processed.
 
 -  **Param**
