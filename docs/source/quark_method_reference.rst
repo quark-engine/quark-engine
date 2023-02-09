@@ -18,7 +18,8 @@ find_previous_method
    -  **base_method**: the base function which needs to be searched.
    -  **parent_function**: the top-level function which calls the basic
       function.
-   -  **wrapper**: list is used to track each function.
+   -  **wrapper**: python list, which contains the targeted
+      parent_method.
    -  **visited_methods**: set with tested method.
 
 -  **Return** None
