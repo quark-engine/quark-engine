@@ -36,7 +36,7 @@ The find_previous_method method uses a DFS algorithm to collect all MethodObject
 
         :param base_method: the base function which needs to be searched.
         :param parent_function: the top-level function which calls the basic function.
-        :param wrapper: python list, which contains the targeted parent_method.
+        :param wrapper: list is used to track each function.
         :param visited_methods: set with tested method.
         :return: None
         """
