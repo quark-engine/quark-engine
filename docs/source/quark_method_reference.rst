@@ -20,7 +20,7 @@ The find_previous_method method uses a DFS algorithm to collect all MethodObject
     4. If "method_set" is not None then check if "parent_function" is in "method_set".
        - If yes, append "base_method" to "wrapper".
        - If no, then iterate through each item in "method_set".
-            - If the item is in "visited_methods", continue to the next item.
+            - If the item is in "visited_methods", skip it and continue to the next item.
             - If not, call "find_previous_method" again with the current item, "parent_function", "wrapper", and "visited_methods".
 
 **The code of find_previous_method**

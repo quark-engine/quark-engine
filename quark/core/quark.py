@@ -62,10 +62,8 @@ class Quark:
         self, base_method, parent_function, wrapper, visited_methods=None
     ):
         """
-        The find_previous_method method uses a DFS algorithm to collect all MethodObjects
-        called by the parent_method and add them to the specified wrapper.
-        The search starts from the base_method and goes on recursively
-        until there are no more levels or all candidates have been processed.
+        Find the method under the parent function, based on base_method before to parent_function.
+        This will append the method into wrapper.
 
         :param base_method: the base function which needs to be searched.
         :param parent_function: the top-level function which calls the basic function.
