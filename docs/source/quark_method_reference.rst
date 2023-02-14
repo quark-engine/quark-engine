@@ -58,3 +58,53 @@ The find_previous_method method uses a DFS algorithm to collect all MethodObject
                     self.find_previous_method(
                         item, parent_function, wrapper, visited_methods
                     )
+                    
+find_intersection
+=====================
+
+**The algorithm of find_intersection**
+
+The find_intersection method takes in two sets, first_method_set and second_method_set, and finds their intersection using a recursive search algorithm.
+
+
+.. code-block:: TEXT
+
+    1.Check that the input sets are not empty. 
+      If one of the sets is empty, raise a ValueError.
+      
+    2.Use the & operator to find the intersection of the two sets. 
+      If the intersection is not empty, return the resulting set.
+      
+    3.If the intersection is empty, call the method_recursive_search 
+      function with the input sets and a specified maximum depth.
+      
+    4.The method_recursive_search function recursively searches for 
+      the intersection of the two input sets up to the specified depth 
+      by splitting the sets into subsets and comparing each subset's elements. 
+      -If the intersection is found, return the resulting set. 
+      -Otherwise, return None.
+      
+**The code of find_previous_method**
+
+.. code-block:: python
+
+    def find_intersection(self, first_method_set, second_method_set, depth=1):
+        """
+        Find the first_method_list ∩ second_method_list.
+        [MethodAnalysis, MethodAnalysis,...]
+        :param first_method_set: first list that contains each MethodAnalysis.
+        :param second_method_set: second list that contains each MethodAnalysis.
+        :param depth: maximum number of recursive search functions.
+        :return: a set of first_method_list ∩ second_method_list or None.
+        """
+        # Check both lists are not null
+        if not first_method_set or not second_method_set:
+            raise ValueError("Set is Null")
+        # find ∩
+        result = first_method_set & second_method_set
+        if result:
+            return result
+        else:
+            return self.method_recursive_search(
+                depth, first_method_set, second_method_set
+            )
