@@ -64,27 +64,28 @@ find_intersection
 
 **The algorithm of find_intersection**
 
-The find_intersection method takes in two sets, first_method_set and second_method_set, and finds their intersection using a recursive search algorithm.
+The ``find_intersection`` method takes in two sets, ``first_method_set`` and ``second_method_set``, and finds their intersection using a recursive search algorithm.
 
+Here is the process of ``find_intersection``。
 
 .. code-block:: TEXT
 
-    1.Check that the input sets are not empty. 
-      If one of the sets is empty, raise a ValueError.
+    1. Check that the input sets are not empty. 
+        If one of the sets is empty, raise a ValueError.
       
-    2.Use the & operator to find the intersection of the two sets. 
-      If the intersection is not empty, return the resulting set.
+    2. Use the & operator to find the intersection of the two sets. 
+        If the intersection is not empty, return the resulting set.
       
-    3.If the intersection is empty, call the method_recursive_search 
-      function with the input sets and a specified maximum depth.
+    3. If the intersection is empty, call the method_recursive_search 
+        function with the input sets and a specified maximum depth.
       
-    4.The method_recursive_search function recursively searches for 
-      the intersection of the two input sets up to the specified depth 
-      by splitting the sets into subsets and comparing each subset's elements. 
-      -If the intersection is found, return the resulting set. 
-      -Otherwise, return None.
+    4. The method_recursive_search function recursively searches for 
+        the intersection of the two input sets up to the specified depth 
+        by splitting the sets into subsets and comparing each subset's elements. 
+          - If the intersection is found, return the resulting set. 
+          - Otherwise, return None.
       
-**The code of find_previous_method**
+**The code of find_intersection**
 
 .. code-block:: python
 
