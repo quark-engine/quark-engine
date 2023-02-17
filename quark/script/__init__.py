@@ -2,6 +2,7 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import re
 import functools
 from os import PathLike
 from os.path import abspath, isfile, join
@@ -51,6 +52,34 @@ class DefaultRuleset(Ruleset):
 
 
 DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
+
+
+class Application:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return str(self._getAttribute("label"))
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def isDebuggable(self) -> bool:
+        """Check if the application element sets `android:debuggable=true`.
+
+        :return: True/False
+        """
+        debuggable = self._getAttribute("debuggable")
+        print(debuggable)
+        if debuggable is None:
+            return False
+
+        return str(debuggable).lower() == "true"
 
 
 class Activity:
@@ -151,7 +180,7 @@ class Method:
                 lambda record: methodPattern in record,
                 register_usage_records))
 
-            argumentStr = max(matchedRecords, key=len)[:-1]
+            argumentStr = max(matchedRecords, key=len, default="")[:-1]
             filterStr = f"{self.targetMethod.innerObj.class_name}->" + \
                 self.targetMethod.innerObj.name + \
                 self.targetMethod.descriptor
@@ -182,6 +211,23 @@ class Method:
             return get_arguments_from_argument_str(
                 next(argumentsOfFirstAPI, ""), self.descriptor
             )
+
+    def findSuperclassHierarchy(self) -> List[str]:
+        """Find all superclasses of this method object.
+
+        :return: Python list contains all superclass names of this method.
+        """
+
+        parentsHierarchy = list()
+        targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+            self.class_name)
+
+        while targetClassAnalysis and "Ljava/lang/Object;" != targetClassAnalysis.extends:
+            parentsHierarchy.append(targetClassAnalysis.extends)
+            targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+                targetClassAnalysis.extends)
+
+        return parentsHierarchy
 
     @property
     def fullName(self) -> str:
@@ -233,7 +279,14 @@ class Behavior:
         self.firstAPI.behavior = self
         self.secondAPI.behavior = self
 
-    def hasString(self, pattern: str, regex=False) -> List[str]:
+    def hasString(self, pattern: str, isRegex=False) -> List[str]:
+        """Check if the arguments of the two APIs contain the string.
+
+        :param pattern: string that may appear in the arguments
+        :param isRegex: consider the string as a regular expression if True,
+         defaults to False
+        :return: the matched string
+        """
         usageTable = self.quarkResult.quark._evaluate_method(
             self.methodCaller.innerObj
         )
@@ -244,7 +297,7 @@ class Behavior:
                 first_method=self.firstAPI.innerObj,
                 second_method=self.secondAPI.innerObj,
                 keyword_item_list=[(pattern,), (pattern,)],
-                regex=regex,
+                regex=isRegex,
             )
         )
 
@@ -287,6 +340,30 @@ class Behavior:
         pattern = PyEval.get_method_pattern(className, methodName, descriptor)
 
         return bool(self.hasString(pattern))
+
+    def getMethodsInArgs(self) -> List[str]:
+        """Get the methods which the arguments in API2 has passed through.
+
+        :return: python list containing method instances
+        """
+        METHOD_REGEX = r"L(.*?)\;\("
+        methodCalled = []
+
+        for param in self.getParamValues():
+            for result in re.findall(METHOD_REGEX, param):
+                className = "L" + result.split("->")[0]
+                methodName = re.findall(r"->(.*?)\(", result)[0]
+                descriptor = result.split(methodName)[-1] + ";"
+
+                methodObj = self.quarkResult.quark.apkinfo.find_method(
+                    class_name=className,
+                    method_name=methodName,
+                    descriptor=descriptor
+                )
+
+                methodCalled.append(Method(methodObj=methodObj))
+
+        return methodCalled
 
 
 class QuarkResult:
@@ -340,9 +417,12 @@ class QuarkResult:
         caller_set = apkinfo.upperfunc(methodObj)
         return [self._wrapMethodObject(caller) for caller in list(caller_set)]
 
-    def _wrapMethodObject(self, methodObj: MethodObject) -> Method:
+    def _wrapMethodObject(self, methodObj: MethodObject, quark: Quark = None,  targetMethod: Method = None) -> Method:
         if methodObj:
-            return Method(self, methodObj)
+            if targetMethod:
+                return Method(self, methodObj=methodObj, quark=quark, targetMethod=targetMethod)
+            else:
+                return Method(self, methodObj)
         else:
             return None
 
@@ -355,19 +435,29 @@ class QuarkResult:
         apkinfo = self.quark.apkinfo
         return apkinfo.get_strings()
 
+    def isHardcoded(self, argument: str) -> bool:
+        """
+        Check if the argument is hardcoded into the APK.
+
+        :params argument: string value that is passed in when a method is
+         invoked
+        :return: True/False
+        """
+        return argument in self.getAllStrings()
+
     def findMethodInCaller(
         self,
         callerMethod: Union[List[str], Method],
         targetMethod: Union[List[str], Method],
-    ) -> bool:
+    ) -> List[Method]:
         """
-        Check if target method is in caller method.
+        Find target method in caller method.
 
         :params callerMethod: python list or Method instance containing class
          name, method name and descriptor of caller method.
         :params targetMethod: python list or Method instance containing class
          name, method name and descriptor of target method.
-        :return: True/False
+        :return: python list contains target method instances.
         """
 
         def __convertMethodToListOfStr(method: Method) -> List[str]:
@@ -392,14 +482,18 @@ class QuarkResult:
 
         callerMethodInstance = Method(self, callerMethodObj)
 
+        matchedMethods = []
         for calleeMethod, _ in callerMethodInstance.getXrefTo():
             if (
                 calleeMethod.innerObj.class_name == targetMethod[0]
                 and calleeMethod.innerObj.name == targetMethod[1]
                 and calleeMethod.innerObj.descriptor == targetMethod[2]
             ):
-                return True
-        return False
+                matchedMethods.append(calleeMethod)
+
+        return [self._wrapMethodObject(
+            callerMethodObj, self.quark, matchedMethod
+        ) for matchedMethod in matchedMethods]
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
@@ -426,6 +520,18 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     apkinfo = quark.apkinfo
 
     return [Activity(xml) for xml in apkinfo.activities]
+
+
+def getApplication(samplePath: PathLike) -> Application:
+    """Get the application element from the manifest file of the target sample.
+
+    :param samplePath: the file path of the target sample
+    :return: the application element of the target sample
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return Application(apkinfo.application)
 
 
 def findMethodInAPK(
@@ -459,6 +565,9 @@ def findMethodInAPK(
         method_name=targetMethod[1],
         descriptor=targetMethod[2]
     )
+
+    if not method:
+        return []
 
     methodInstance = Method(methodObj=method)
 

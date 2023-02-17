@@ -72,6 +72,15 @@ class BaseApkinfo:
 
     @property
     @abstractmethod
+    def application(self) -> XMLElement:
+        """Get the application element from the manifest file.
+
+        :return: an application element
+        """
+        pass
+
+    @property
+    @abstractmethod
     def activities(self) -> List[XMLElement]:
         """
         Return all activity from given APK.

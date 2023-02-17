@@ -245,6 +245,18 @@ class RizinImp(BaseApkinfo):
         return permission_list
 
     @functools.cached_property
+    def application(self) -> XMLElement:
+        """Get the application element from the manifest file.
+
+        :return: an application element
+        """
+
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.find("application")
+
+    @functools.cached_property
     def activities(self) -> List[XMLElement]:
         """
         Return all activity from given APK.

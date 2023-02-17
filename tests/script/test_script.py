@@ -12,6 +12,7 @@ from quark.script import (
     QuarkResult,
     Ruleset,
     getActivities,
+    getApplication,
     runQuarkAnalysis,
     findMethodInAPK,
 )
@@ -70,6 +71,18 @@ class TestDefaultRuleset:
 
         with pytest.raises(KeyError):
             _ = ruleset[1]
+
+
+class TestApplication:
+    @staticmethod
+    def testIsNotDebuggable(SAMPLE_PATH_Ahmyth):
+        application = getApplication(SAMPLE_PATH_Ahmyth)
+        assert application.isDebuggable() is False
+
+    @staticmethod
+    def testIsDebuggable(SAMPLE_PATH_13667):
+        application = getApplication(SAMPLE_PATH_13667)
+        assert application.isDebuggable() is True
 
 
 class TestActivity:
@@ -231,6 +244,21 @@ class TestMethod:
         assert arguments[1:] == [True]
         assert argumentsOfTargetMethod[0] == "wifi"
 
+    @staticmethod
+    def testFindSuperclassHierarchy(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = MethodObject(
+            class_name="Lcom/google/progress/WifiCheckTask;",
+            name="checkWifiCanOrNotConnectServer",
+            descriptor="()Z",
+        )
+
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+                        methodObj, QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark)
+
+        assert (
+            ["Ljava/util/TimerTask;"] == method.findSuperclassHierarchy()
+        )
+
 
 class TestBehavior:
     @staticmethod
@@ -292,6 +320,17 @@ class TestBehavior:
 
         assert behavior.isArgFromMethod(expectedMethod)
 
+    @staticmethod
+    def testGetMethodsInArgs(QUARK_ANALYSIS_RESULT_FOR_RULE_193):
+        behaviorOccurList = (
+            QUARK_ANALYSIS_RESULT_FOR_RULE_193.behaviorOccurList
+        )
+        behavior = behaviorOccurList[0]
+        method = behavior.getMethodsInArgs()[0].fullName
+
+        assert method == "Landroid/telephony/SmsManager;" + \
+            " getDefault ()Landroid/telephony/SmsManager;"
+
 
 class TestQuarkReuslt:
     @staticmethod
@@ -344,6 +383,15 @@ class TestQuarkReuslt:
     @staticmethod
     def testGetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
+
+    @staticmethod
+    def testIsHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded("gps") is True
+
+    @staticmethod
+    def testIsNotHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded(
+            "Quark") is False
 
     @staticmethod
     def testFindMethodInCallerWithListOfStr(QUARK_ANALYSIS_RESULT_FOR_RULE_68):

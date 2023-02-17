@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quark-Engine Book &mdash; quark-engine v22.10.3 documentation</title>
@@ -16,6 +16,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -43,6 +44,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install_index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quark_script.html">Quark Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quark_mit_program.html">Quark MIT Program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quark_reports.html">Quark Report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rule_generation.html">Rule Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
@@ -96,6 +98,7 @@ level within seconds.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="quark_script.html">Quark Script</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#ecosystem-for-mobile-security-tools">Ecosystem for Mobile Security Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#quickstart">Quickstart</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#introduce-of-quark-script-apis">Introduce of Quark Script APIs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#analyzing-real-case-instastealer-using-quark-script">Analyzing real case (InstaStealer) using Quark Script</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-798-in-android-application-ovaa-apk">Detect CWE-798 in Android Application (ovaa.apk)</a></li>
@@ -106,6 +109,11 @@ level within seconds.</p>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-926-in-android-application-dvba-apk">Detect CWE-926 in Android Application (dvba.apk)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk">Detect CWE-749 in Android Application (MSTG-Android-Java.apk)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-532-in-android-application-dvba-apk">Detect CWE-532 in Android Application (dvba.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk">Detect CWE-780 in Android Application (MSTG-Android-Java.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-319-in-android-application-ovaa-apk">Detect CWE-319 in Android Application (ovaa.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk">Detect CWE-327 in Android Application (InjuredAndroid.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-20-in-android-application-diva-apk">Detect CWE-20 in Android Application (diva.apk)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_script.html#detect-cwe-79-in-android-application-vuldroid-apk">Detect CWE-79 in Android Application (Vuldroid.apk)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="quark_mit_program.html">Quark MIT Program</a><ul>
@@ -114,6 +122,17 @@ level within seconds.</p>
 <li class="toctree-l2"><a class="reference internal" href="quark_mit_program.html#better-community">Better Community</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_mit_program.html#minumum-requirements">Minumum Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="quark_mit_program.html#contact-us">Contact us</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quark_reports.html">Quark Report</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#easy-to-use-and-intuitive-report">Easy to Use and Intuitive Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#summary-report">Summary Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#detail-report">Detail Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#web-report">Web Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#label-based-report">Label-based Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#behaviors-comparison-radar-chart">Behaviors Comparison Radar Chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#call-graph">Call Graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quark_reports.html#rule-classification">Rule Classification</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>

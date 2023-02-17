@@ -11,13 +11,15 @@ required_requirements = [
     "tqdm",
     "colorama",
     "graphviz",
-    "pandas",
-    "prompt-toolkit==3.0.19",
+    "prompt-toolkit",
     "plotly",
     "rzpipe",
     "click",
-    "kaleido",
 ]
+#
+#    "kaleido",
+#    "pandas",
+#]
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username

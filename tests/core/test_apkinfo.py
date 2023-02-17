@@ -11,8 +11,8 @@ from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+    "https://github.com/quark-engine/apk-samples"
+    "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 )
 APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
@@ -40,7 +40,7 @@ def apkinfo(request, apk_path):
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/apk-malware-samples" "/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/apk-samples" "/raw/master/malware-samples/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
@@ -102,6 +102,14 @@ class TestApkinfo:
             "android.permission.READ_CONTACTS",
         ]
         assert set(apkinfo.permissions) == set(ans)
+
+    @staticmethod
+    def test_application(apkinfo):
+        application = apkinfo.application
+        label = str(application.get(
+            "{http://schemas.android.com/apk/res/android}label"
+        ))
+        assert label == "@7F050001" or label == "2131034113"
 
     @staticmethod
     def test_activities(apkinfo):

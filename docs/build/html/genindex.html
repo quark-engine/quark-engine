@@ -15,6 +15,7 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -41,6 +42,7 @@
 <li class="toctree-l1"><a class="reference internal" href="install_index.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quark_script.html">Quark Script</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quark_mit_program.html">Quark MIT Program</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quark_reports.html">Quark Report</a></li>
 <li class="toctree-l1"><a class="reference internal" href="addRules.html">Add Rules</a></li>
 <li class="toctree-l1"><a class="reference internal" href="rule_generation.html">Rule Generation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integration.html">Integration</a></li>
@@ -251,6 +253,8 @@
       <li><a href="quark.core.html#quark.core.quark.Quark.check_parameter_values">check_parameter_values() (quark.core.quark.Quark static method)</a>
 </li>
       <li><a href="quark.core.html#quark.core.quark.Quark.check_sequence">check_sequence() (quark.core.quark.Quark method)</a>
+</li>
+      <li><a href="quark.script.html#quark.script.ciphey.checkClearText">checkClearText() (in module quark.script.ciphey)</a>
 </li>
       <li><a href="quark.core.struct.html#quark.core.struct.methodobject.MethodObject.class_name">class_name (quark.core.struct.methodobject.MethodObject attribute)</a>
 </li>
@@ -504,6 +508,8 @@
 </li>
       <li><a href="quark.script.html#quark.script.Method.getArguments">getArguments() (quark.script.Method method)</a>
 </li>
+      <li><a href="quark.script.html#quark.script.Behavior.getMethodsInArgs">getMethodsInArgs() (quark.script.Behavior method)</a>
+</li>
       <li><a href="quark.script.html#quark.script.QuarkResult.getMethodXrefFrom">getMethodXrefFrom() (quark.script.QuarkResult method)</a>
 </li>
       <li><a href="quark.script.html#quark.script.QuarkResult.getMethodXrefTo">getMethodXrefTo() (quark.script.QuarkResult method)</a>
@@ -566,7 +572,7 @@
 </li>
       <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_genrule_report_html">insert_genrule_report_html() (quark.webreport.generate.ReportGenerator method)</a>
 </li>
-      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_radarechart_html">insert_radarechart_html() (quark.webreport.generate.ReportGenerator method)</a>
+      <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_radarchart_html">insert_radarchart_html() (quark.webreport.generate.ReportGenerator method)</a>
 </li>
       <li><a href="quark.webreport.html#quark.webreport.generate.ReportGenerator.insert_report_html">insert_report_html() (quark.webreport.generate.ReportGenerator method)</a>
 </li>
@@ -737,6 +743,8 @@
         <li><a href="quark.html#module-quark.rulegeneration">quark.rulegeneration</a>
 </li>
         <li><a href="quark.script.html#module-quark.script">quark.script</a>
+</li>
+        <li><a href="quark.script.html#module-quark.script.ciphey">quark.script.ciphey</a>
 </li>
         <li><a href="quark.script.frida.html#module-quark.script.frida">quark.script.frida</a>
 </li>
@@ -1004,8 +1012,6 @@
         <li><a href="quark.forensic.html#module-quark.forensic">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.forensic.forensic
 
@@ -1013,6 +1019,8 @@
         <li><a href="quark.forensic.html#module-quark.forensic.forensic">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     quark.forensic.vt_analysis
 
@@ -1060,6 +1068,13 @@
 
       <ul>
         <li><a href="quark.script.html#module-quark.script">module</a>
+</li>
+      </ul></li>
+      <li>
+    quark.script.ciphey
+
+      <ul>
+        <li><a href="quark.script.html#module-quark.script.ciphey">module</a>
 </li>
       </ul></li>
       <li>

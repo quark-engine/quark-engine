@@ -10,7 +10,7 @@ from quark.utils.graph import call_graph, wrapper_lookup
 @pytest.fixture(scope="module")
 def analysis_object(tmp_path_factory):
     APK_SOURCE = (
-        "https://github.com/quark-engine/" "apk-malware-samples/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/" "apk-samples/raw/master/malware-samples/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
 
