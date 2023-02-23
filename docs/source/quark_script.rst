@@ -1581,3 +1581,119 @@ Quark Script Result
     
     $ python3 CWE-22.py
     CWE-22 is detected in method, Lcom/android/insecurebankv2/ViewStatement; onCreate (Landroid/os/Bundle;)V
+    
+Detect CWE-23 in Android Application (ovaa.apk and InsecureBankv2.apk )
+-----------------------------------------------------------------------
+This scenario aims to demonstrate the detection of the **Relative Path Traversal** vulnerability using the `ovaa.apk <https://github.com/oversecured/ovaa>`_ , `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2/releases>`_, See `CWE-23 <https://cwe.mitre.org/data/definitions/23.html>`_ for more details.
+
+To begin with, we will create a detection rule named ``accessFileInExternalDir.json`` to identify behavior that accesses a file in an external directory.
+
+Next, we will check whether the exported attribute is set to true or false. If exported is true, we will use ``methodInstance.getArguments()`` to retrieve the file path argument and check whether it belongs to the APK or not. If it does not belong to the APK, the argument is likely from external input.
+
+Finally, we will use the Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to search for any APIs in the caller method that match the string. If no matching API is found, the APK does not neutralize special elements within the argument, which may result in the CWE-23 vulnerability. If a matching API is found, we will verify whether it neutralizes the Relative Path string or not. If it does not neutralize it, the APK may still be vulnerable to CWE-23.
+
+Quark Script CWE-23.py
+=======================
+
+The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = InsecureBankv2.apk``.
+
+.. code-block:: python
+
+    import quark.script as qs
+
+    SAMPLE_PATH = "ovaa.apk"
+    RULE_PATH = "accessFileInExternalDir.json"
+
+
+    STRING_MATCHING_API = [
+        ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
+        ["Ljava/lang/String;", "indexOf", "(I)I"],
+        ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
+        ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
+        ["Ljava/lang/String;", "replaceAll","(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
+    ]
+
+    quark = qs._getQuark(SAMPLE_PATH)
+    apkinfo = quark.apkinfo
+    if apkinfo.ret_type == "DEX":
+        provider = ""
+    else:
+        manifest_root = apkinfo.apk.get_android_manifest_xml()
+        application = manifest_root.find("application")
+        provider =[
+           qs.Activity(i)
+           for i in application.findall("provider")
+        ]
+        count = 0
+        for i in provider:
+            if i.isExported() == "true":
+                count += 1
+
+    ruleInstance = qs.Rule(RULE_PATH)
+    quarkResult = qs.runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for accessExternalDir in quarkResult.behaviorOccurList:
+    
+        if count == 0:
+            break
+    
+        filePath = accessExternalDir.secondAPI.getArguments()[2]
+    
+        if quarkResult.isHardcoded(filePath):
+            continue
+
+        caller = accessExternalDir.methodCaller
+        strMatchingAPIs = [
+                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
+                    caller, api)
+        ]
+
+        if not strMatchingAPIs:
+            print(f"CWE-23 is detected in method, {caller.fullName}")
+        else:
+            f = strMatchingAPIs.find("..")
+            if f == -1:
+                print(f"CWE-23 is detected in method, {caller.fullName}")
+                
+                
+Quark Rule: accessFileInExternalDir.json
+=========================================
+
+.. code-block:: json
+
+    {
+        "crime": "Access a file in an external directory",
+        "permission": [],
+        "api": [
+            {
+                "class": "Landroid/os/Environment;",
+                "method": "getExternalStorageDirectory",
+                "descriptor": "()Ljava/io/File;"
+            },
+            {
+                "class": "Ljava/io/File;",
+                "method": "<init>",
+                "descriptor": "(Ljava/io/File;Ljava/lang/String;)V"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+
+Quark Script Result
+======================
+- **ovaa.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-23.py
+    CWE-23 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
+
+- **InsecureBankv2.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-23.py
+    CWE-23 is detected in method, Lcom/android/insecurebankv2/ViewStatement; onCreate (Landroid/os/Bundle;)V
+
