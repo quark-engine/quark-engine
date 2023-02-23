@@ -1581,3 +1581,80 @@ Quark Script Result
     
     $ python3 CWE-22.py
     CWE-22 is detected in method, Lcom/android/insecurebankv2/ViewStatement; onCreate (Landroid/os/Bundle;)V
+
+Detect CWE-338 in Android Application (pivva.apk)
+------------------------------------------------------
+
+This scenario aims to detect the **Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).** See `CWE-338 <https://cwe.mitre.org/data/definitions/338.html>`_ for more details.
+
+To demonstrate how the Quark script finds this vulnerability, we will use the `"pivaa" <https://github.com/HTBridge/pivaa>`_ APK file and the above APIs.
+
+We begin by defining three elements: "TARGET_METHODS", "CREDENTIAL_KEYWORDS", and "contains_credentials(str)". ``TARGET_METHODS``  is a list of methods being searched for in the APK file, while ``CREDENTIAL_KEYWORDS`` is a list of strings containing keywords that that may suggest the presence of sensitive information in the APK file. ``contains_credentials`` is a function that checks whether any strings in the "CREDENTIAL_KEYWORDS" list are present in the method name. 
+
+The script then identifies all methods in the APK file that match any of the methods in the "TARGET_METHODS" list, and filters out any methods that do not contain any of the keywords in the "CREDENTIAL_KEYWORDS" list. Finally, the script prints the class name for each vulnerable method found.
+
+Quark Script CWE-338.py
+========================
+.. code-block:: python
+     
+    from quark.script import findMethodInAPK
+
+    SAMPLE_PATH = "pivaa.apk"
+    TARGET_METHODS = [
+        [
+            "Ljava/util/Random;",
+            "nextInt",
+            "(I)I"
+        ],
+        [
+            "Ljava/util/Random;",
+            "nextFloat",
+            "()F"
+        ],
+        [
+            "Ljava/util/Random;",
+            "nextDouble",
+            "()D"
+        ],
+        [
+            "Ljava/util/Random;",
+            "nextLong",
+            "()L"
+        ],
+        [
+            "Ljava/util/Random;",
+            "nextBoolean",
+            "()B"
+        ],
+        [
+            "Ljava/util/Random;",
+            "nextBytes",
+            "(byte[])V"
+        ]
+    ]
+    CREDENTIAL_KEYWORDS = [
+        "token",
+        "password",
+        "account",
+        "crypt",
+        "authentication",
+        "authorization",
+        "id",
+        "key"
+    ]
+
+    def contains_credentials(method_name: str) -> bool:
+        return any(keyword in method_name for keyword in CREDENTIAL_KEYWORDS)
+
+    methods_found = (method for target in TARGET_METHODS for method in findMethodInAPK(SAMPLE_PATH, target))
+    credential_methods = (method for method in methods_found if contains_credentials(method.name))
+    for method in credential_methods:
+        print("CWE-338 is detected in %s" % method.class_name)
+
+Quark Script Result
+===================
+
+.. code-block:: TEXT
+
+    $ python CWE-338.py  
+    CWE-338 is detected in Lorg/apache/commons/codec/digest/UnixCrypt;
