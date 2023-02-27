@@ -560,11 +560,14 @@ def findMethodInAPK(
             return None
 
     quark = _getQuark(samplePath)
-    method = quark.apkinfo.find_method(
-        class_name=targetMethod[0],
-        method_name=targetMethod[1],
-        descriptor=targetMethod[2]
-    )
+    try:
+        method = quark.apkinfo.find_method(
+            class_name=targetMethod[0],
+            method_name=targetMethod[1],
+            descriptor=targetMethod[2]
+        )
+    except:
+         method = quark.apkinfo.find_method()
 
     if not method:
         return []
