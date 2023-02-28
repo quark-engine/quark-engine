@@ -1588,7 +1588,7 @@ This scenario aims to demonstrate the detection of the **Relative Path Traversal
 
 To begin with, we will create a detection rule named ``accessFileInExternalDir.json`` to identify behavior that accesses a file in an external directory.
 
-Next, we will check whether the exported attribute is set to true or false. If exported is true, we will use ``methodInstance.getArguments()`` to retrieve the file path argument and check whether it belongs to the APK or not. If it does not belong to the APK, the argument is likely from external input.
+Next, we will use ``methodInstance.getArguments()`` to retrieve the file path argument and check whether it belongs to the APK or not. If it does not belong to the APK, the argument is likely from external input.
 
 Finally, we will use the Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to search for any APIs in the caller method that match the string. If no matching API is found, the APK does not neutralize special elements within the argument, which may result in the CWE-23 vulnerability. If a matching API is found, we will verify whether it neutralizes the Relative Path string or not. If it does not neutralize it, the APK may still be vulnerable to CWE-23.
 
@@ -1599,7 +1599,7 @@ The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE
 
 .. code-block:: python
 
-    import quark.script as qs
+    from quark.script import runQuarkAnalysis, Rule
 
     SAMPLE_PATH = "ovaa.apk"
     RULE_PATH = "accessFileInExternalDir.json"
@@ -1610,51 +1610,31 @@ The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE
         ["Ljava/lang/String;", "indexOf", "(I)I"],
         ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
         ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
-        ["Ljava/lang/String;", "replaceAll","(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
+        ["Ljava/lang/String;", "replaceAll",
+            "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
     ]
 
-    quark = qs._getQuark(SAMPLE_PATH)
-    apkinfo = quark.apkinfo
-    if apkinfo.ret_type == "DEX":
-        provider = ""
-    else:
-        manifest_root = apkinfo.apk.get_android_manifest_xml()
-        application = manifest_root.find("application")
-        provider =[
-           qs.Activity(i)
-           for i in application.findall("provider")
-        ]
-        count = 0
-        for i in provider:
-            if i.isExported() == "true":
-                count += 1
-
-    ruleInstance = qs.Rule(RULE_PATH)
-    quarkResult = qs.runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
     for accessExternalDir in quarkResult.behaviorOccurList:
-    
-        if count == 0:
-            break
-    
+
         filePath = accessExternalDir.secondAPI.getArguments()[2]
-    
+
         if quarkResult.isHardcoded(filePath):
             continue
 
         caller = accessExternalDir.methodCaller
         strMatchingAPIs = [
-                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
-                    caller, api)
+            api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
+                caller, api)
         ]
 
         if not strMatchingAPIs:
             print(f"CWE-23 is detected in method, {caller.fullName}")
-        else:
-            f = strMatchingAPIs.find("..")
-            if f == -1:
-                print(f"CWE-23 is detected in method, {caller.fullName}")
-                
+        elif strMatchingAPIs.find("..") == -1:
+            print(f"CWE-23 is detected in method, {caller.fullName}")
+
                 
 Quark Rule: accessFileInExternalDir.json
 =========================================
