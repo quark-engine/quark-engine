@@ -1584,7 +1584,7 @@ Quark Script Result
 
 Detect CWE-23 in Android Application (ovaa.apk and InsecureBankv2.apk )
 -----------------------------------------------------------------------
-This scenario aims to demonstrate the detection of the **Relative Path Traversal** vulnerability using the `ovaa.apk <https://github.com/oversecured/ovaa>`_ , `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2/releases>`_, See `CWE-23 <https://cwe.mitre.org/data/definitions/23.html>`_ for more details.
+This scenario aims to demonstrate the detection of the **Relative Path Traversal** vulnerability using the `ovaa.apk <https://github.com/oversecured/ovaa>`_, `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2/releases>`_, See `CWE-23 <https://cwe.mitre.org/data/definitions/23.html>`_ for more details.
 
 To begin with, we will create a detection rule named ``accessFileInExternalDir.json`` to identify behavior that accesses a file in an external directory.
 
@@ -1595,7 +1595,7 @@ Finally, we will use the Quark API ``quarkResultInstance.findMethodInCaller(call
 Quark Script CWE-23.py
 =======================
 
-The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = InsecureBankv2.apk``.
+The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example,  ``SAMPLE_PATH = InsecureBankv2.apk``.
 
 .. code-block:: python
 
