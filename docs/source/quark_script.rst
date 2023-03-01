@@ -1595,7 +1595,7 @@ Finally, we will use the Quark API ``quarkResultInstance.findMethodInCaller(call
 Quark Script CWE-23.py
 =======================
 
-The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example,  ``SAMPLE_PATH = InsecureBankv2.apk``.
+The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example,  ``SAMPLE_PATH = "InsecureBankv2.apk"``.
 
 .. code-block:: python
 
