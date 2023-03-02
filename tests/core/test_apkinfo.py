@@ -186,7 +186,7 @@ class TestApkinfo:
     def test_find_method(self, apkinfo):
         result = apkinfo.find_method(
             "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
-        )
+        )[0]
 
         assert isinstance(result, MethodObject)
         assert str(result.class_name) == "Ljava/lang/reflect/Field;"
@@ -198,13 +198,13 @@ class TestApkinfo:
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
             "(Landroid/content/Context;)V",
-        )
+        )[0]
 
         expect_function = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
             "(Ljava/lang/String;)Ljava/lang/Boolean;",
-        )
+        )[0]
 
         upper_methods = list(apkinfo.upperfunc(api))
 
@@ -215,7 +215,7 @@ class TestApkinfo:
             "Lcom/example/google/service/WebServiceCalling;",
             "Send",
             "(Landroid/os/Handler; Ljava/lang/String;)V",
-        )
+        )[0]
 
         expect_method = MethodObject(
             "Ljava/lang/StringBuilder;",
@@ -261,7 +261,7 @@ class TestApkinfo:
             class_name="Landroid/support/v4/app/FragmentManagerImpl;",
             method_name="execPendingActions",
             descriptor="()Z",
-        )
+        )[0]
 
         bytecodes = list(apkinfo.get_method_bytecode(method))
 
@@ -273,13 +273,13 @@ class TestApkinfo:
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
             "(Ljava/lang/String;)Ljava/lang/Boolean;",
-        )
+        )[0]
 
         expect_method = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
             "(Landroid/content/Context;)V",
-        )
+        )[0]
         expect_offset = 10
 
         upper_methods = apkinfo.lowerfunc(method)
