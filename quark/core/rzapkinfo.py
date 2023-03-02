@@ -294,21 +294,20 @@ class RizinImp(BaseApkinfo):
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> MethodObject:
+    ) -> list:
         def method_filter(method):
             return (not method_name or method_name == method.name) and (
                 not descriptor or descriptor == method.descriptor
             )
 
         dex_list = range(self._number_of_dex)
+        filtered_methods = list()
 
         for dex_index in dex_list:
             method_dict = self._get_methods_classified(dex_index)
-            filtered_methods = filter(method_filter, method_dict[class_name])
-            try:
-                return next(filtered_methods)
-            except StopIteration:
-                continue
+            filtered_methods += list(filter(method_filter, method_dict[class_name]))
+
+        return filtered_methods
 
     @functools.lru_cache
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
