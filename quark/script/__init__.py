@@ -355,13 +355,14 @@ class Behavior:
                 methodName = re.findall(r"->(.*?)\(", result)[0]
                 descriptor = result.split(methodName)[-1] + ";"
 
-                methodObj = self.quarkResult.quark.apkinfo.find_method(
+                methodObj_list = self.quarkResult.quark.apkinfo.find_method(
                     class_name=className,
                     method_name=methodName,
                     descriptor=descriptor
                 )
 
-                methodCalled.append(Method(methodObj=methodObj))
+                for methodObj in methodObj_list:
+                    methodCalled.append(Method(methodObj=methodObj))
 
         return methodCalled
 
@@ -474,7 +475,7 @@ class QuarkResult:
             class_name=callerMethod[0],
             method_name=callerMethod[1],
             descriptor=callerMethod[2],
-        )
+        )[0]
 
         if not callerMethodObj:
             print("Caller method not Found!")
@@ -537,7 +538,7 @@ def getApplication(samplePath: PathLike) -> Application:
 def findMethodInAPK(
     samplePath: PathLike,
     targetMethod: Union[List[str], Method]
-) -> Method:
+) -> list:
     """Find the target method in APK.
 
     :param samplePath: target file
@@ -560,22 +561,21 @@ def findMethodInAPK(
             return None
 
     quark = _getQuark(samplePath)
-    try:
-        method = quark.apkinfo.find_method(
-            class_name=targetMethod[0],
-            method_name=targetMethod[1],
-            descriptor=targetMethod[2]
-        )
-    except:
-         method = quark.apkinfo.find_method()
+    match_methods = quark.apkinfo.find_method(
+        class_name=targetMethod[0],
+        method_name=targetMethod[1],
+        descriptor=targetMethod[2],
+    )
 
-    if not method:
+    if not match_methods:
         return []
 
-    methodInstance = Method(methodObj=method)
-
-    caller_set = quark.apkinfo.upperfunc(method)
-
-    return [_wrapMethodObject(
-            quark, caller, methodInstance
-            ) for caller in list(caller_set)]
+    caller_methods = list()
+    for method in match_methods:
+        methodInstance = Method(methodObj=method)
+        caller_set = quark.apkinfo.upperfunc(method)
+        caller_methods += [
+            _wrapMethodObject(quark, caller, methodInstance)
+            for caller in list(caller_set)
+        ]
+    return caller_methods

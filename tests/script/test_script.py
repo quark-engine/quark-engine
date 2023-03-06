@@ -130,7 +130,7 @@ class TestMethod:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "()Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -155,7 +155,7 @@ class TestMethod:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -178,7 +178,7 @@ class TestMethod:
         ) -> Method:
             methodObj = quarkResult.quark.apkinfo.find_method(
                 className, methodName, descriptor
-            )
+            )[0]
             return Method(quarkResult, methodObj)
 
         def __getMethodWithTarget(
@@ -222,14 +222,14 @@ class TestMethod:
                 class_name="Landroid/util/Log;",
                 method_name="e",
                 descriptor="(Ljava/lang/String; Ljava/lang/String;)I",
-            )
+            )[0]
 
         callerMethodObj = \
             QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
                 class_name="Lcom/google/progress/WifiCheckTask;",
                 method_name="CloseWifi",
                 descriptor="()V",
-            )
+            )[0]
 
         targetMethod = Method(methodObj=targetMethod)
         callerMethodInstance = __getMethodWithTarget(
@@ -340,7 +340,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "()Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -365,7 +365,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -419,7 +419,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         caller = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, callerObj)
 
@@ -428,7 +428,7 @@ class TestQuarkReuslt:
                 "Landroid/util/Log;",
                 "e",
                 "(Ljava/lang/String; Ljava/lang/String;)I",
-            )
+            )[0]
         )
         target = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, targetObj)
 

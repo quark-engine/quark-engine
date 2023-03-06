@@ -673,11 +673,11 @@ class PyEval:
         ):
             next_class_pool.clear()
             for class_name in class_pool:
-                method = self.apkinfo.find_method(class_name, method_name, descriptor)[0]
+                method_list = self.apkinfo.find_method(class_name, method_name, descriptor)
 
-                if method:
+                if method_list:
                     return PyEval.get_method_pattern(
-                        method.class_name, method.name, method.descriptor
+                        method_list[0].class_name, method_list[0].name, method_list[0].descriptor
                     )
 
                 next_class_pool.update(
