@@ -55,6 +55,7 @@
 # CWE Showcases
 *   [CWE-020](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-20-in-android-application-diva-apk)  Improper Input Validation 
 *   [CWE-022](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-22-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') 
+*   [CWE-023](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-23-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Relative Path Traversal
 *   [CWE-089](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)  Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
 *   [CWE-094](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)  Improper Control of Generation of Code ('Code Injection') 
 *   [CWE-295](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-295-in-android-application-insecureshop-apk)  Improper Certificate Validation 
