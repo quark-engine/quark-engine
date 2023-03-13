@@ -576,3 +576,40 @@ def findMethodInAPK(
     return [_wrapMethodObject(
             quark, caller, methodInstance
             ) for caller in list(caller_set)]
+
+
+def checkMethodCalls(
+        samplePath: PathLike,
+        targetMethod: Union[Tuple[str, str, str], Method],
+        checkMethods: List[Tuple[str, str, str]]) -> bool:
+    """Check if specific methods can be called or defined within a `targetMethod`
+
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
+                         or a Method Object 
+    :param checkMethods: python list contains the class name,
+                         method name, and descriptor of the target method
+
+    :return: bool that indicate specific methods can be called or defined within a `target method` or not.
+    """
+    
+    quark = _getQuark(samplePath)
+    if isinstance(targetMethod, tuple):
+        # Find the method in the APK with the given class name, method name, and descriptor
+        target_methods = quark.apkinfo.find_method(*targetMethod)
+    else:
+        # targetMethod is already a Method object
+        target_methods = [targetMethod]
+
+    if not len(target_methods) == 1 or not isinstance(target_methods[0], Method):
+        return False
+
+    xrefToList = {i for i, _ in quark.apkinfo.lowerfunc(target_methods[0])}
+    overlap = {
+        quark.apkinfo.find_method(*method)
+        for method in checkMethods
+        if quark.apkinfo.find_method(*method) is not None
+    }
+
+    return any(overlap.intersection(xrefToList))
