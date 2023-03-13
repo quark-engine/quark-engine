@@ -123,6 +123,36 @@ class TestApkinfo:
             == "com.example.google.service.MainActivity"
         )
 
+    @staticmethod
+    def test_receivers(apkinfo):
+        receivers = apkinfo.receivers
+
+        assert len(receivers) == 4
+        assert (
+            receivers[0].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.SMSServiceBootReceiver"
+        )
+        assert (
+            receivers[1].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.SMSReceiver"
+        )
+        assert (
+            receivers[2].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "TaskRequest"
+        )
+        assert (
+            receivers[3].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.MyDeviceAdminReceiver"
+        )
+
     def test_android_apis(self, apkinfo):
         api = {
             MethodObject(

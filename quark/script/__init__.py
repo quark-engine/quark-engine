@@ -113,6 +113,37 @@ class Activity:
         return exported
 
 
+class Receiver:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return self._getAttribute("name")
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def hasIntentFilter(self) -> bool:
+        """Check if the receiver has an intent filter.
+
+        :return: True/False
+        """
+        return self.xml.find("intent-filter") is not None
+
+    def isExported(self) -> bool:
+        """Check if the receiver is exported.
+
+        :return: True/False
+        """
+        exported = self._getAttribute("exported", self.hasIntentFilter())
+        return exported == 'true'
+
+
 class Method:
     def __init__(
         self,
@@ -520,6 +551,18 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     apkinfo = quark.apkinfo
 
     return [Activity(xml) for xml in apkinfo.activities]
+
+
+def getReceivers(samplePath: PathLike) -> List[Receiver]:
+    """Get receivers from a target sample.
+
+    :param samplePath: target file
+    :return: python list containing receivers
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return [Receiver(xml) for xml in apkinfo.receivers]
 
 
 def getApplication(samplePath: PathLike) -> Application:
