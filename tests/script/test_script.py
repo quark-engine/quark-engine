@@ -11,6 +11,7 @@ from quark.script import (
     Method,
     QuarkResult,
     Ruleset,
+    checkMethodCalls,
     getActivities,
     getApplication,
     runQuarkAnalysis,
@@ -462,3 +463,18 @@ def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
     )
 
     assert len(method) == 2
+
+
+def testCheckMethodCalls(SAMPLE_PATH_13667) -> None:
+    TARGET_METHOD = [
+        'Lcom/example/google/service/SMSReceiver;',
+        'onReceive',
+        '(Landroid/content/Context; Landroid/content/Intent;)V'
+    ]
+    CHECK_METHODS = [
+        ['Landroid/content/Intent;', 'getAction', '()Ljava/lang/String;']
+    ]
+
+    methodCalled = checkMethodCalls(SAMPLE_PATH_13667, TARGET_METHOD, CHECK_METHODS)
+
+    assert methodCalled is True
