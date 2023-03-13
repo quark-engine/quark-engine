@@ -587,13 +587,13 @@ def checkMethodCalls(
     :param samplePath: target file
     :param targetMethod: python list contains the class name,
                          method name, and descriptor of the target method
-                         or a Method Object 
+                         or a Method Object.
     :param checkMethods: python list contains the class name,
                          method name, and descriptor of the target method
 
     :return: bool that indicate specific methods can be called or defined within a `target method` or not.
     """
-    
+
     quark = _getQuark(samplePath)
     if isinstance(targetMethod, tuple):
         # Find the method in the APK with the given class name, method name, and descriptor
