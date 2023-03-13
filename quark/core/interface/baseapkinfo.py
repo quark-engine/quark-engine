@@ -91,6 +91,16 @@ class BaseApkinfo:
 
     @property
     @abstractmethod
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from given APK.
+
+        :return: a list of all receivers
+        """
+        pass
+
+    @property
+    @abstractmethod
     def android_apis(self) -> Set[MethodObject]:
         """
         Return all Android native APIs from given APK.
