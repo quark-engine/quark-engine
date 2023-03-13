@@ -580,7 +580,7 @@ def findMethodInAPK(
 
 def checkMethodCalls(
         samplePath: PathLike,
-        targetMethod: Union[Tuple[str, str, str], Method],
+        targetMethod: Union[Tuple[str, str, str], MethodObject],
         checkMethods: List[Tuple[str, str, str]]) -> bool:
     """Check if specific methods can be called or defined within a `targetMethod`
 
@@ -595,14 +595,16 @@ def checkMethodCalls(
     """
 
     quark = _getQuark(samplePath)
-    if isinstance(targetMethod, tuple):
+    if isinstance(targetMethod, List):
         # Find the method in the APK with the given class name, method name, and descriptor
-        target_methods = quark.apkinfo.find_method(*targetMethod)
+        temp_methods = quark.apkinfo.find_method(*targetMethod)
+        if isinstance(temp_methods, MethodObject):
+            target_methods = [temp_methods]
     else:
         # targetMethod is already a Method object
         target_methods = [targetMethod]
 
-    if not len(target_methods) == 1 or not isinstance(target_methods[0], Method):
+    if not len(target_methods) == 1 or not isinstance(target_methods[0], MethodObject):
         return False
 
     xrefToList = {i for i, _ in quark.apkinfo.lowerfunc(target_methods[0])}
