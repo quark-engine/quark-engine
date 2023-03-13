@@ -267,7 +267,7 @@ class RizinImp(BaseApkinfo):
         root = axml.get_xml_tree()
 
         return root.findall("application/activity")
-    
+
     @functools.cached_property
     def receivers(self) -> List[XMLElement]:
         """
