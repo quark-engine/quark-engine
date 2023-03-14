@@ -295,17 +295,38 @@ class RizinImp(BaseApkinfo):
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
     ) -> list:
+        if not class_name:
+            class_name = ".*"
+
+        if not method_name:
+            method_name = ".*"
+
+        if method_name != ".*":
+            method_name = re.escape(method_name)
+
+        if not descriptor:
+            descriptor = ".*"
+
+        if descriptor != ".*":
+            descriptor = re.escape(descriptor)
+
         def method_filter(method):
-            return (not method_name or method_name == method.name) and (
-                not descriptor or descriptor == method.descriptor
+            return re.match(method_name, method.name) and re.match(
+                descriptor, method.descriptor
             )
 
         dex_list = range(self._number_of_dex)
         filtered_methods = list()
 
-        for dex_index in dex_list:
-            method_dict = self._get_methods_classified(dex_index)
-            filtered_methods += list(filter(method_filter, method_dict[class_name]))
+        if class_name != ".*":
+            for dex_index in dex_list:
+                method_dict = self._get_methods_classified(dex_index)
+                filtered_methods += list(filter(method_filter, method_dict[class_name]))
+        else:
+            for dex_index in dex_list:
+                method_dict = self._get_methods_classified(dex_index)
+                for key_name in method_dict:
+                    filtered_methods += list(filter(method_filter, method_dict[key_name]))
 
         return filtered_methods
 
