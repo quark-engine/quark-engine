@@ -184,14 +184,50 @@ class TestApkinfo:
         assert test_custom_method.issubset(apkinfo.all_methods)
 
     def test_find_method(self, apkinfo):
-        result = apkinfo.find_method(
+        result1 = apkinfo.find_method(
             "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
-        )[0]
+        )
 
-        assert isinstance(result, MethodObject)
-        assert str(result.class_name) == "Ljava/lang/reflect/Field;"
-        assert str(result.name) == "setAccessible"
-        assert str(result.descriptor) == "(Z)V"
+        assert isinstance(result1[0], MethodObject)
+        assert str(result1[0].class_name) == "Ljava/lang/reflect/Field;"
+        assert str(result1[0].name) == "setAccessible"
+        assert str(result1[0].descriptor) == "(Z)V"
+
+        expect_method = MethodObject(
+            "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+            "onReceive",
+            "(Landroid/content/Context; Landroid/content/Intent;)V",
+            "public",
+        )
+        result2 = apkinfo.find_method(
+            method_name="onReceive",
+            descriptor="(Landroid/content/Context; Landroid/content/Intent;)V",
+        )
+        result3 = apkinfo.find_method(
+            class_name="",
+            method_name="onReceive",
+            descriptor="(Landroid/content/Context; Landroid/content/Intent;)V",
+        )
+        result4 = apkinfo.find_method(
+            class_name="",
+            method_name="onReceive",
+            descriptor="",
+        )
+
+        assert isinstance(result2, list)
+        assert len(result2) == 5
+        assert expect_method in result2
+
+        assert isinstance(result3, list)
+        assert len(result3) == 5
+        assert expect_method in result3
+
+        assert isinstance(result4, list)
+        assert len(result4) == 5
+        assert expect_method in result4
+
+        assert result2 == result3
+        assert result3 == result4
 
     def test_upperfunc(self, apkinfo):
         api = apkinfo.find_method(
