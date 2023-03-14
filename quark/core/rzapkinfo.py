@@ -294,7 +294,7 @@ class RizinImp(BaseApkinfo):
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> list:
+    ) -> List[MethodObject]:
         if not class_name:
             class_name = ".*"
 

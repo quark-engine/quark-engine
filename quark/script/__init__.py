@@ -538,7 +538,7 @@ def getApplication(samplePath: PathLike) -> Application:
 def findMethodInAPK(
     samplePath: PathLike,
     targetMethod: Union[List[str], Method]
-) -> list:
+) -> List[Method]:
     """Find the target method in APK.
 
     :param samplePath: target file

@@ -98,7 +98,7 @@ class AndroguardImp(BaseApkinfo):
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> list:
+    ) -> List[MethodObject]:
         if class_name != ".*":
             regex_class_name = re.escape(class_name)
         else:
@@ -120,8 +120,6 @@ class AndroguardImp(BaseApkinfo):
             descriptor=regex_descriptor,
         )
 
-        # result = next(method_result, None)
-        # return self._convert_to_method_object(result) if result else None
         return [self._convert_to_method_object(item) for item in method_result]
 
     @functools.lru_cache()
