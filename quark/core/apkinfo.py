@@ -99,15 +99,24 @@ class AndroguardImp(BaseApkinfo):
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
     ) -> List[MethodObject]:
+        if not class_name:
+            class_name = ".*"
+
         if class_name != ".*":
             regex_class_name = re.escape(class_name)
         else:
             regex_class_name = class_name
 
+        if not method_name:
+            method_name = ".*"
+
         if method_name != ".*":
             regex_method_name = f"^{re.escape(method_name)}$"
         else:
             regex_method_name = f"^{method_name}$"
+
+        if not descriptor:
+            descriptor = ".*"
 
         if descriptor != ".*":
             regex_descriptor = re.escape(descriptor)
