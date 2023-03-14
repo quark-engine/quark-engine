@@ -321,12 +321,16 @@ class RizinImp(BaseApkinfo):
         if class_name != ".*":
             for dex_index in dex_list:
                 method_dict = self._get_methods_classified(dex_index)
-                filtered_methods += list(filter(method_filter, method_dict[class_name]))
+                filtered_methods += list(
+                    filter(method_filter, method_dict[class_name])
+                )
         else:
             for dex_index in dex_list:
                 method_dict = self._get_methods_classified(dex_index)
                 for key_name in method_dict:
-                    filtered_methods += list(filter(method_filter, method_dict[key_name]))
+                    filtered_methods += list(
+                        filter(method_filter, method_dict[key_name])
+                    )
 
         return filtered_methods
 
