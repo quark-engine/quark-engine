@@ -183,6 +183,7 @@ class TestApkinfo:
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
+    @staticmethod
     @pytest.mark.parametrize(
         "test_input, expected",
         [
@@ -235,7 +236,11 @@ class TestApkinfo:
                 ],
             ),
             (
-                [None, None, None],
+                [
+                    None,
+                    None,
+                    None,
+                ],
                 [
                     "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
                     "onReceive",
@@ -244,7 +249,7 @@ class TestApkinfo:
             ),
         ],
     )
-    def test_find_method(self, apkinfo, test_input, expected):
+    def test_find_method(apkinfo, test_input, expected):
         result = apkinfo.find_method(test_input[0], test_input[1], test_input[2])
         expect_method = MethodObject(
             expected[0],
