@@ -56,4 +56,4 @@ html_theme = 'sphinx_rtd_theme'  # 'alabaster'
 master_doc = 'index'
 html_logo = "quark-logo.png"
 
-latex_engine = "xelatex"
+latex_engine = "lualatex"
