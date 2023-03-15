@@ -109,3 +109,58 @@ Here is the process of ``find_intersection``。
             return self.method_recursive_search(
                 depth, first_method_set, second_method_set
             )
+
+method_recursive_search
+=======================
+
+**The algorithm of method_recursive_search**
+
+The ``method_recursive_search`` algorithm finds the intersection between
+two sets of methods. Specifically, the algorithm expands each set by
+recursively adding their respective upper-level method objects until it
+finds an intersection or the depth reaches ``MAX_SEARCH_LAYER``.
+
+Here is the process of ``method_recursive_search``.
+
+.. code:: text
+
+   1. The method_recursive_search function takes three arguments: 
+       - depth, first_method_set, and second_method_set
+   2. If the depth+1 > MAX_SEARCH_LAYER, return None.
+   3. Create next_level_set_1 and next_level_set_2 that are the copies of first_method_set and second_method_set, respectively.
+   4. Expand next_level_set_1 and next_level_set_2 by adding their respective upper-level methods.
+   5. Calls find_intersection with the next_level_set_1, next_level_set_2 and depth+1 as arguments recursively.
+       - If an intersection is found, return the result.
+       - If no intersection is found, continue searching until depth > MAX_SEARCH_LAYER.
+
+**The code of method_recursive_search**
+
+.. code:: python
+
+   def method_recursive_search(
+       self, depth, first_method_set, second_method_set
+   ):
+       # Not found same method usage, try to find the next layer.
+       depth += 1
+       if depth > MAX_SEARCH_LAYER:
+           return None
+
+       # Append first layer into next layer.
+       next_level_set_1 = first_method_set.copy()
+       next_level_set_2 = second_method_set.copy()
+
+       # Extend the xref from function into next layer.
+       for method in first_method_set:
+           if self.apkinfo.upperfunc(method):
+               next_level_set_1 = (
+                   self.apkinfo.upperfunc(method) | next_level_set_1
+               )
+       for method in second_method_set:
+           if self.apkinfo.upperfunc(method):
+               next_level_set_2 = (
+                   self.apkinfo.upperfunc(method) | next_level_set_2
+               )
+
+       return self.find_intersection(
+           next_level_set_1, next_level_set_2, depth
+       )
