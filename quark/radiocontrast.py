@@ -27,7 +27,7 @@ class RadioContrast:
 
         self.method = self.apkinfo.find_method(
             class_name=classname, method_name=methodname, descriptor=descriptor,
-        )
+        )[0]
 
         if self.method is None:
             raise ValueError("Target method not found!")
