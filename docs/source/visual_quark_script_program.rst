@@ -18,17 +18,39 @@ Roadmap
 
 The following table is the roadmap for this product. We are still in the early development stage, and the first phase is mainly focused on completing the main functions to enable users to operate the system intuitively, view Quark script diagrams, and assemble new Quark scripts on their own.
 
-+----------------------------------+----------------------------------------------------------------------------------------------------------------------+------------------+-------------------------+
-|           Timeline           |                                                     Q1 & Q2                                                      |      Q3      |         Q4          |
-+==================================+======================================================================================================================+==================+=========================+
-|           Releases           |                                                     Baseline                                                     | Version 1.1  | Version 2 – Delight |
-|      Desired Experience      |                                                  - Intuitive <br/>                                                   |                  |                         |
-|    Must-Have Capabilities    | - Seeing visualized Quark scripts <br/> - Using a User Interface to modify the flow and parameters in a Quark script | To be determined |    To be determined     |
-| User Experience Improvements |                                                                                                                      |                  |                         |
-|   Performance Improvements   |                                                                                                                      |                  |                         |
-|      Growth Experiments      |                                                                                                                      |                  |                         |
-+----------------------------------+----------------------------------------------------------------------------------------------------------------------+------------------+-------------------------+
+.. list-table:: Roadmap
+   :widths: 25 25 25 25
+   :header-rows: 2
 
+   * - Timeline
+     - Q1 & Q2
+     - Q3
+     - Q4
+   * - Releases
+     - Baseline
+     - Version 1.1
+     - Version 2 – Delight
+   * - Desired Experience
+     - - Intuitive
+     - 
+     -
+   * - Must-Have Capabilities
+     - - Seeing visualized Quark scripts <br/> - Using a User Interface to modify the flow and parameters in a Quark script
+     - To be determined
+     - To be determined
+   * - User Experience Improvements
+     - 
+     -
+     -
+   * - Performance Improvements
+     -
+     - 
+     -
+   * - Growth Experiments
+     -
+     -
+     -
+     
 
 Join Our Team
 =============
