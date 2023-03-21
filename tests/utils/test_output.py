@@ -42,17 +42,17 @@ def analysis_element_1(analysis_object):
         "Lcom/google/progress/Locate;",
         "getLocation",
         "()Ljava/lang/String;",
-    )
+    )[0]
     first_api = analysis_object.find_method(
         "Lorg/apache/http/HttpResponse;",
         "getEntity",
         "()Lorg/apache/http/HttpEntity;",
-    )
+    )[0]
     second_api = analysis_object.find_method(
         "Lorg/json/JSONObject;",
         "put",
         "(Ljava/lang/String; I)Lorg/json/JSONObject;",
-    )
+    )[0]
 
     return {
         "crime": "The Crime",
@@ -71,17 +71,17 @@ def analysis_element_2(analysis_object):
         "Lcom/google/progress/AndroidClientService;",
         "sendMessage",
         "()V",
-    )
+    )[0]
     first_api = analysis_object.find_method(
         "Lcom/google/progress/FileList;",
         "getInfo",
         "()Ljava/lang/String;",
-    )
+    )[0]
     second_api = analysis_object.find_method(
         "Lcom/google/progress/SMSHelper;",
         "sendSms",
         "(Ljava/lang/String; Ljava/lang/String;)I",
-    )
+    )[0]
 
     return {
         "crime": "Another Crime",

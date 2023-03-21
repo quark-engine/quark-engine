@@ -29,7 +29,7 @@ def parent_method(analysis_object):
         "Lahmyth/mine/king/ahmyth/ConnectionManager;",
         "sendReq",
         "()V",
-    )
+    )[0]
 
 
 @pytest.fixture(scope="function")
@@ -38,7 +38,7 @@ def connect_method_1(analysis_object):
         "Lio/socket/client/Socket;",
         "connect",
         "()Lio/socket/client/Socket;",
-    )
+    )[0]
 
 
 @pytest.fixture(scope="function")
@@ -47,7 +47,7 @@ def connect_method_2(analysis_object):
         "Lahmyth/mine/king/ahmyth/ConnectionManager$1;",
         "<init>",
         "()V",
-    )
+    )[0]
 
 
 @pytest.fixture(scope="function")
@@ -56,7 +56,7 @@ def leaf_method_1(analysis_object):
         "Lio/socket/client/Socket;",
         "open",
         "()Lio/socket/client/Socket;",
-    )
+    )[0]
 
 
 @pytest.fixture(scope="function")
@@ -65,7 +65,7 @@ def leaf_method_2(analysis_object):
         "Ljava/lang/Object;",
         "<init>",
         "()V",
-    )
+    )[0]
 
 
 def test_wrapper_lookup_with_result(

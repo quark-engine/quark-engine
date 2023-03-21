@@ -58,71 +58,109 @@ The find_previous_method method uses a DFS algorithm to collect all MethodObject
                     self.find_previous_method(
                         item, parent_function, wrapper, visited_methods
                     )
+                    
+find_intersection
+=====================
 
+**The algorithm of find_intersection**
 
-find_api_usage
-==============
+The ``find_intersection`` method takes in two sets, ``first_method_set`` and ``second_method_set``, and finds their intersection using a recursive search algorithm.
 
-**The algorithm of find_api_usage**
-
-The method searches for methods with ``method_name`` and ``descriptor_name``, that belong to either the ``class_name`` or its subclass. It returns a list of matching methods.
+Here is the process of ``find_intersection``。
 
 .. code-block:: TEXT
 
-    1. Initialize an empty "method_list".
-    2. Search for an exact match of the method by its "class_name", "method_name", and "descriptor_name".
-        - If found, return a list with the matching methods.
-    3. Create a list of potential methods with matching "method_name" and "descriptor_name".
-    4. Filter the list of potential methods to include only those with bytecodes.
-    5. Check if the class of each potential method is a subclass of the given "class_name".
-        - If yes, add the method to "method_list".
-    6. Return "method_list".
-
-**The code of find_api_usage**
+    1. Check that the input sets are not empty. 
+        If one of the sets is empty, raise a ValueError.
+      
+    2. Use the & operator to find the intersection of the two sets. 
+        If the intersection is not empty, return the resulting set.
+      
+    3. If the intersection is empty, call the method_recursive_search 
+        function with the input sets and a specified maximum depth.
+      
+    4. The method_recursive_search function recursively searches for 
+        the intersection of the two input sets up to the specified depth 
+        by splitting the sets into subsets and comparing each subset's elements. 
+          - If the intersection is found, return the resulting set. 
+          - Otherwise, return None.
+      
+**The code of find_intersection**
 
 .. code-block:: python
 
-    def find_api_usage(self, class_name, method_name, descriptor_name):
-        method_list = []
+    def find_intersection(self, first_method_set, second_method_set, depth=1):
+        """
+        Find the first_method_list ∩ second_method_list.
+        [MethodAnalysis, MethodAnalysis,...]
+        :param first_method_set: first list that contains each MethodAnalysis.
+        :param second_method_set: second list that contains each MethodAnalysis.
+        :param depth: maximum number of recursive search functions.
+        :return: a set of first_method_list ∩ second_method_list or None.
+        """
+        # Check both lists are not null
+        if not first_method_set or not second_method_set:
+            raise ValueError("Set is Null")
+        # find ∩
+        result = first_method_set & second_method_set
+        if result:
+            return result
+        else:
+            return self.method_recursive_search(
+                depth, first_method_set, second_method_set
+            )
 
-        # Source method
-        source_method = self.apkinfo.find_method(
-            class_name, method_name, descriptor_name
-        )
-        if source_method:
-            return [source_method]
+method_recursive_search
+=======================
 
-        # Potential Method
-        potential_method_list = [
-            method
-            for method in self.apkinfo.all_methods
-            if method.name == method_name
-            and method.descriptor == descriptor_name
-        ]
+**The algorithm of method_recursive_search**
 
-        potential_method_list = [
-            method
-            for method in potential_method_list
-            if not next(self.apkinfo.get_method_bytecode(method), None)
-        ]
+The ``method_recursive_search`` algorithm finds the intersection between
+two sets of methods. Specifically, the algorithm expands each set by
+recursively adding their respective upper-level method objects until it
+finds an intersection or the depth reaches ``MAX_SEARCH_LAYER``.
 
-        # Check if each method's class is a subclass of the given class
-        for method in potential_method_list:
-            current_class_set = {method.class_name}
+Here is the process of ``method_recursive_search``.
 
-            while current_class_set and not current_class_set.intersection(
-                {class_name, "Ljava/lang/Object;"}
-            ):
-                next_class_set = set()
-                for clazz in current_class_set:
-                    next_class_set.update(
-                        self.apkinfo.superclass_relationships[clazz]
-                    )
+.. code:: text
 
-                current_class_set = next_class_set
+   1. The method_recursive_search function takes three arguments: 
+       - depth, first_method_set, and second_method_set
+   2. If the depth+1 > MAX_SEARCH_LAYER, return None.
+   3. Create next_level_set_1 and next_level_set_2 that are the copies of first_method_set and second_method_set, respectively.
+   4. Expand next_level_set_1 and next_level_set_2 by adding their respective upper-level methods.
+   5. Calls find_intersection with the next_level_set_1, next_level_set_2 and depth+1 as arguments recursively.
+       - If an intersection is found, return the result.
+       - If no intersection is found, continue searching until depth > MAX_SEARCH_LAYER.
 
-            current_class_set.discard("Ljava/lang/Object;")
-            if current_class_set:
-                method_list.append(method)
+**The code of method_recursive_search**
 
-        return method_list
+.. code:: python
+
+   def method_recursive_search(
+       self, depth, first_method_set, second_method_set
+   ):
+       # Not found same method usage, try to find the next layer.
+       depth += 1
+       if depth > MAX_SEARCH_LAYER:
+           return None
+
+       # Append first layer into next layer.
+       next_level_set_1 = first_method_set.copy()
+       next_level_set_2 = second_method_set.copy()
+
+       # Extend the xref from function into next layer.
+       for method in first_method_set:
+           if self.apkinfo.upperfunc(method):
+               next_level_set_1 = (
+                   self.apkinfo.upperfunc(method) | next_level_set_1
+               )
+       for method in second_method_set:
+           if self.apkinfo.upperfunc(method):
+               next_level_set_2 = (
+                   self.apkinfo.upperfunc(method) | next_level_set_2
+               )
+
+       return self.find_intersection(
+           next_level_set_1, next_level_set_2, depth
+       )

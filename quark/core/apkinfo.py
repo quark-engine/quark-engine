@@ -98,10 +98,30 @@ class AndroguardImp(BaseApkinfo):
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> MethodObject:
-        regex_class_name = re.escape(class_name)
-        regex_method_name = f"^{re.escape(method_name)}$"
-        regex_descriptor = re.escape(descriptor)
+    ) -> List[MethodObject]:
+        if not class_name:
+            class_name = ".*"
+
+        if class_name != ".*":
+            regex_class_name = re.escape(class_name)
+        else:
+            regex_class_name = class_name
+
+        if not method_name:
+            method_name = ".*"
+
+        if method_name != ".*":
+            regex_method_name = f"^{re.escape(method_name)}$"
+        else:
+            regex_method_name = f"^{method_name}$"
+
+        if not descriptor:
+            descriptor = ".*"
+
+        if descriptor != ".*":
+            regex_descriptor = re.escape(descriptor)
+        else:
+            regex_descriptor = descriptor
 
         method_result = self.analysis.find_methods(
             classname=regex_class_name,
@@ -109,8 +129,7 @@ class AndroguardImp(BaseApkinfo):
             descriptor=regex_descriptor,
         )
 
-        result = next(method_result, None)
-        return self._convert_to_method_object(result) if result else None
+        return [self._convert_to_method_object(item) for item in method_result]
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:

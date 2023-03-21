@@ -402,7 +402,7 @@ class Quark:
             class_name, method_name, descriptor_name
         )
         if source_method:
-            return [source_method]
+            return source_method
 
         # Potential Method
         potential_method_list = [

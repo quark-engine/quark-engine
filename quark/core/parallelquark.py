@@ -67,7 +67,7 @@ class ParallelQuark(Quark):
                 rule_obj.api[i]["class"],
                 rule_obj.api[i]["method"],
                 rule_obj.api[i]["descriptor"],
-            )
+            )[0]
             for i in range(2)
         ]
 
@@ -80,7 +80,7 @@ class ParallelQuark(Quark):
 
         if result[0] >= 4:
             analysis.level_4_result = [
-                self.apkinfo.find_method(method[0], method[1], method[2])
+                self.apkinfo.find_method(method[0], method[1], method[2])[0]
                 for method in result[1]
             ]
             analysis.parent_wrapper_mapping = result[3]
@@ -88,7 +88,7 @@ class ParallelQuark(Quark):
         if result[0] >= 5:
             behavior_list = [
                 tuple(
-                    self.apkinfo.find_method(method[0], method[1], method[2])
+                    self.apkinfo.find_method(method[0], method[1], method[2])[0]
                     for method in behavior
                 )
                 for behavior in result[2]

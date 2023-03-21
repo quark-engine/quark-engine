@@ -55,6 +55,7 @@
 # CWE Showcases
 *   [CWE-020](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-20-in-android-application-diva-apk)  Improper Input Validation 
 *   [CWE-022](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-22-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') 
+*   [CWE-023](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-23-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Relative Path Traversal
 *   [CWE-089](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)  Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
 *   [CWE-094](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)  Improper Control of Generation of Code ('Code Injection') 
 *   [CWE-295](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-295-in-android-application-insecureshop-apk)  Improper Certificate Validation 
@@ -62,6 +63,7 @@
 *   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)  Cleartext Transmission of Sensitive Information 
 *   [CWE-327](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk)  Use of a Broken or Risky Cryptographic Algorithm 
 *   [CWE-328](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-328-in-android-application-allsafe-apk)  Use of Weak Hash 
+*   [CWE-338](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-338-in-android-application-pivva-apk)  Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG) 
 *   [CWE-489](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-489-in-android-application-allsafe-apk-androgoat-apk-pivaa-apk)  Active Debug Code 
 *   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)  Insertion of Sensitive Information into Log File 
 *   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)  Exposed Dangerous Method or Function 
