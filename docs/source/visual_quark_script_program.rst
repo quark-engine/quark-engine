@@ -35,7 +35,8 @@ The following table is the roadmap for this product. We are still in the early d
      - 
      -
    * - Must-Have Capabilities
-     - - Seeing visualized Quark scripts <br/> - Using a User Interface to modify the flow and parameters in a Quark script
+     - - Seeing visualized Quark scripts
+       - Using a User Interface to modify the flow and parameters in a Quark script
      - To be determined
      - To be determined
    * - User Experience Improvements
