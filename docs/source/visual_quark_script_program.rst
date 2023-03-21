@@ -20,7 +20,7 @@ The following table is the roadmap for this product. We are still in the early d
 
 .. list-table:: Roadmap
    :widths: 25 25 25 25
-   :header-rows: 2
+   :header-rows: 1
 
    * - Timeline
      - Q1 & Q2
