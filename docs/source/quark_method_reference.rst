@@ -164,3 +164,76 @@ Here is the process of ``method_recursive_search``.
        return self.find_intersection(
            next_level_set_1, next_level_set_2, depth
        )
+
+find_api_usage
+==============
+
+**The algorithm of find_api_usage**
+
+``find_api_usage`` searches for methods with ``method_name`` and ``descriptor_name``, that belong to either the ``class_name`` or its subclass. It returns a list that contains matching methods.
+
+Here is the process of ``find_api_usage``.
+
+.. code-block:: TEXT
+
+    1. Initialize an empty "method_list".
+    2. Search for an exact match of the method by its "class_name", "method_name", and "descriptor_name".
+        - If found, return a list with the matching methods.
+    3. Create a list of potential methods with matching "method_name" and "descriptor_name".
+    4. Filter the list of potential methods to include only those with bytecodes.
+    5. Check if the class of each potential method is a subclass of the given "class_name".
+        - If yes, add the method to "method_list".
+    6. Return "method_list".
+
+Here is the flowchart of ``find_api_usage``.
+
+.. image:: https://i.imgur.com/FZKRMgX.png
+
+**The code of find_api_usage**
+
+.. code-block:: python
+
+    def find_api_usage(self, class_name, method_name, descriptor_name):
+        method_list = []
+
+        # Source method
+        source_method = self.apkinfo.find_method(
+            class_name, method_name, descriptor_name
+        )
+        if source_method:
+            return [source_method]
+
+        # Potential Method
+        potential_method_list = [
+            method
+            for method in self.apkinfo.all_methods
+            if method.name == method_name
+            and method.descriptor == descriptor_name
+        ]
+
+        potential_method_list = [
+            method
+            for method in potential_method_list
+            if not next(self.apkinfo.get_method_bytecode(method), None)
+        ]
+
+        # Check if each method's class is a subclass of the given class
+        for method in potential_method_list:
+            current_class_set = {method.class_name}
+
+            while current_class_set and not current_class_set.intersection(
+                {class_name, "Ljava/lang/Object;"}
+            ):
+                next_class_set = set()
+                for clazz in current_class_set:
+                    next_class_set.update(
+                        self.apkinfo.superclass_relationships[clazz]
+                    )
+
+                current_class_set = next_class_set
+
+            current_class_set.discard("Ljava/lang/Object;")
+            if current_class_set:
+                method_list.append(method)
+
+        return method_list
