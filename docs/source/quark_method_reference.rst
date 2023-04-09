@@ -245,28 +245,28 @@ _evaluate_method
 
 The ``_evaluate_method`` method evaluates the execution of opcodes in the target method and returns a matrix representing the usage of each involved register. The method takes one parameter, method, which is the method to be evaluated.
 
-Here is the process of ``_evaluate_method``。
+Here is the process of ``_evaluate_method``.
 
 .. code-block:: TEXT
 
     1. Create a PyEval object with the apkinfo attribute of the instance. PyEval is presumably
     a class that handles the evaluation of opcodes.
 
-    2.Loop through the bytecode objects in the target method by calling the get_method_bytecode 
+    2. Loop through the bytecode objects in the target method by calling the get_method_bytecode 
     method of the apkinfo attribute.
 
-    3.Extract the mnemonic (opcode), registers, and parameter from the bytecode_obj and create 
+    3. Extract the mnemonic (opcode), registers, and parameter from the bytecode_obj and create 
     an instruction list containing these elements.
 
-    4.Convert all elements of the instruction list to strings (in case there are MUTF8String objects).
+    4. Convert all elements of the instruction list to strings (in case there are MUTF8String objects).
 
-    5.Check if the opcode (the first element of instruction) is in the eval dictionary of the pyeval object. 
+    5. Check if the opcode (the first element of instruction) is in the eval dictionary of the pyeval object. 
         - If it is, call the corresponding function with the instruction as its argument.
 
-    6.Once the loop is finished, call the show_table method of the pyeval object to return the 
+    6. Once the loop is finished, call the show_table method of the pyeval object to return the 
     matrix representing the usage of each involved register.
 
-Here is the flowchart of ``_evaluate_method`` .
+Here is the flowchart of ``_evaluate_method``.
 
 .. image:: https://i.imgur.com/XCKrjjR.jpg
       
