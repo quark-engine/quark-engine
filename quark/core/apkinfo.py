@@ -68,6 +68,10 @@ class AndroguardImp(BaseApkinfo):
 
     @property
     def receivers(self) -> List[XMLElement]:
+        """Get all receiver elements from the manifest file.
+
+        :return: a list of all receivers
+        """
         if self.ret_type == "DEX":
             return []
 
