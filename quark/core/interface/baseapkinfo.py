@@ -93,7 +93,7 @@ class BaseApkinfo:
     @abstractmethod
     def receivers(self) -> List[XMLElement]:
         """
-        Return all receivers from given APK.
+        Return all receivers from the given APK.
 
         :return: a list of all receivers
         """
