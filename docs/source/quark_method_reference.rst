@@ -237,3 +237,67 @@ Here is the flowchart of ``find_api_usage``.
                 method_list.append(method)
 
         return method_list
+        
+_evaluate_method
+=====================
+
+**The algorithm of _evaluate_method**
+
+The ``_evaluate_method`` method evaluates the execution of opcodes in the target method and returns a matrix representing the usage of each involved register. The method takes one parameter, method, which is the method to be evaluated.
+
+Here is the process of ``_evaluate_method``.
+
+.. code-block:: TEXT
+
+    1. Create a PyEval object with the apkinfo attribute of the instance. PyEval is presumably
+    a class that handles the evaluation of opcodes.
+
+    2. Loop through the bytecode objects in the target method by calling the get_method_bytecode 
+    method of the apkinfo attribute.
+
+    3. Extract the mnemonic (opcode), registers, and parameter from the bytecode_obj and create 
+    an instruction list containing these elements.
+
+    4. Convert all elements of the instruction list to strings (in case there are MUTF8String objects).
+
+    5. Check if the opcode (the first element of instruction) is in the eval dictionary of the pyeval object. 
+        - If it is, call the corresponding function with the instruction as its argument.
+
+    6. Once the loop is finished, call the show_table method of the pyeval object to return the 
+    matrix representing the usage of each involved register.
+
+Here is the flowchart of ``_evaluate_method``.
+
+.. image:: https://i.imgur.com/XCKrjjR.jpg
+      
+**The code of _evaluate_method**
+
+.. code-block:: python
+
+    def _evaluate_method(self, method) -> List[List[str]]:
+        """
+        Evaluate the execution of the opcodes in the target method and return
+         the usage of each involved register.
+        :param method: Method to be evaluated
+        :return: Matrix that holds the usage of the registers
+        """
+        pyeval = PyEval(self.apkinfo)
+
+        for bytecode_obj in self.apkinfo.get_method_bytecode(method):
+            # ['new-instance', 'v4', Lcom/google/progress/SMSHelper;]
+            instruction = [bytecode_obj.mnemonic]
+            if bytecode_obj.registers is not None:
+                instruction.extend(bytecode_obj.registers)
+            if bytecode_obj.parameter is not None:
+                instruction.append(bytecode_obj.parameter)
+
+            # for the case of MUTF8String
+            instruction = [str(x) for x in instruction]
+
+            if instruction[0] in pyeval.eval.keys():
+                pyeval.eval[instruction[0]](instruction)
+
+        return pyeval.show_table()
+
+
+
