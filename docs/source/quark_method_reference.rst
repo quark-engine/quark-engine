@@ -328,7 +328,7 @@ Here is the process of ``check_parameter_on_single_method``.
     5. Use a for loop to process the matched records one by one.
 
     6. Call method check_parameter_values to check if the matched records contain keywords in keyword_item_list. 
-        - If True, add matched keywords to matched_keyword_list
+        - If True, add matched keywords to matched_keyword_list.
         - If False, leave matched_keyword_list empty.
 
     7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
