@@ -322,14 +322,14 @@ Here is the process of ``check_parameter_on_single_method``.
     3. Obtain the patterns of first_method and second_method based on the given input, and store them in 
     first_method_pattern and second_method_pattern, respectively.
 
-    4. Define a generator matched_records. Use the filter function to filter out records that have been 
-    called by both first_method and second_method, and return the matched records.
+    4. Define a generator matched_records. Use the filter function to filter register_usage_records to 
+    include only those matched records used by both first_method and second_method.
 
     5. Use a for loop to process the matched records one by one.
 
-    6. If keyword_item_list has a value, use the self.check_parameter_values method to determine if the 
-    parameters in the record meet specific conditions. If they do, add them to matched_keyword_list; otherwise, 
-    leave it empty.
+    6. Call method check_parameter_values to check if the matched records contain keywords in keyword_item_list. 
+    - If True, add matched keywords to matched_keyword_list
+    - If False, leave matched_keyword_list empty.
 
     7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
     data and returns results at the same time.
