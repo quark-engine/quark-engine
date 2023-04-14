@@ -69,7 +69,7 @@ class AndroguardImp(BaseApkinfo):
     @property
     def receivers(self) -> List[XMLElement]:
         """
-        Return all receivers from given APK.
+        Return all receivers from the given APK.
 
         :return: a list of all receivers
         """
