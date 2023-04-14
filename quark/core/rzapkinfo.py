@@ -268,6 +268,18 @@ class RizinImp(BaseApkinfo):
 
         return root.findall("application/activity")
 
+    @functools.cached_property
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from the given APK.
+
+        :return: a list of all receivers
+        """
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.findall("application/receiver")
+
     @property
     def android_apis(self) -> Set[MethodObject]:
         return {

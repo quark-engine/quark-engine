@@ -67,6 +67,21 @@ class AndroguardImp(BaseApkinfo):
         return application.findall("activity")
 
     @property
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from the given APK.
+
+        :return: a list of all receivers
+        """
+        if self.ret_type == "DEX":
+            return []
+
+        manifest_root = self.apk.get_android_manifest_xml()
+        application = manifest_root.find("application")
+
+        return application.findall("receiver")
+
+    @property
     def android_apis(self) -> Set[MethodObject]:
         apis = set()
 
