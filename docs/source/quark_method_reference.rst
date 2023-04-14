@@ -300,7 +300,7 @@ Here is the flowchart of ``_evaluate_method``.
         return pyeval.show_table()
 
 check_parameter_on_single_method
-==============
+=======================================
 
 **The algorithm of check_parameter_on_single_method**
 
@@ -334,7 +334,9 @@ Here is the process of ``check_parameter_on_single_method``.
     7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
     data and returns results at the same time.
 
-.. image:: https://imgur.com/a/xsxyOTv
+Here is the flowchart of ``check_parameter_on_single_method``
+
+.. image:: https://i.imgur.com/BJf7oSg.png
 
 **The code of check_parameter_on_single_method**
 
