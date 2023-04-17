@@ -299,5 +299,105 @@ Here is the flowchart of ``_evaluate_method``.
 
         return pyeval.show_table()
 
+check_parameter_on_single_method
+=======================================
+
+**The algorithm of check_parameter_on_single_method**
+
+The ``check_parameter_on_single_method`` function checks whether two methods use the same parameter.
+
+Here is the process of ``check_parameter_on_single_method``.
+
+.. code-block:: TEXT
+
+    1. Define a method named check_parameter_on_single_method, which takes 5 parameters:
+        * self: a reference to the current object, indicating that this method is defined in a class
+        * usage_table: a table for storing the usage of called functions
+        * first_method: the first API or the method calling the first API
+        * second_method: the second API or the method calling the second API
+        * keyword_item_list: a list of keywords used to determine if the parameter meets specific conditions
+
+    2. Define a Boolean variable regex, which is set to False by default.
+
+    3. Obtain the patterns of first_method and second_method based on the given input, and store them in 
+    first_method_pattern and second_method_pattern, respectively.
+
+    4. Define a generator matched_records. Use the filter function to filter register_usage_records to 
+    include only those matched records used by both first_method and second_method.
+
+    5. Use a for loop to process the matched records one by one.
+
+    6. Call method check_parameter_values to check if the matched records contain keywords in keyword_item_list. 
+        - If True, add matched keywords to matched_keyword_list.
+        - If False, leave matched_keyword_list empty.
+
+    7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
+    data and returns results at the same time.
+
+Here is the flowchart of ``check_parameter_on_single_method``
+
+.. image:: https://i.imgur.com/BJf7oSg.png
+
+**The code of check_parameter_on_single_method**
+
+.. code:: python
+
+    def check_parameter_on_single_method(
+        self,
+        usage_table,
+        first_method,
+        second_method,
+        keyword_item_list=None,
+        regex=False,
+    ) -> Generator[Tuple[str, List[str]], None, None]:
+        """Check the usage of the same parameter between two method.
+
+        :param usage_table: the usage of the involved registers
+        :param first_method: the first API or the method calling the first APIs
+        :param second_method: the second API or the method calling the second
+         APIs
+        :param keyword_item_list: keywords required to be present in the usage
+         , defaults to None
+        :param regex: treat the keywords as regular expressions, defaults to
+         False
+        :yield: _description_
+        """
+        first_method_pattern = PyEval.get_method_pattern(
+            first_method.class_name, first_method.name, first_method.descriptor
+        )
+
+        second_method_pattern = PyEval.get_method_pattern(
+            second_method.class_name,
+            second_method.name,
+            second_method.descriptor,
+        )
+
+        register_usage_records = (
+            c_func
+            for table in usage_table
+            for val_obj in table
+            for c_func in val_obj.called_by_func
+        )
+
+        matched_records = filter(
+            lambda r: first_method_pattern in r and second_method_pattern in r,
+            register_usage_records,
+        )
+
+        for record in matched_records:
+            if keyword_item_list and list(keyword_item_list):
+                matched_keyword_list = self.check_parameter_values(
+                    record,
+                    (first_method_pattern, second_method_pattern),
+                    keyword_item_list,
+                    regex,
+                )
+
+                if matched_keyword_list:
+                    yield (record, matched_keyword_list)
+
+            else:
+                yield (record, None)
+
 
 
