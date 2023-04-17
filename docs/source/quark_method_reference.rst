@@ -304,7 +304,7 @@ check_parameter_on_single_method
 
 **The algorithm of check_parameter_on_single_method**
 
-The ``check_parameter_on_single_method`` function evaluates checks whether two methods use the same parameter.
+The ``check_parameter_on_single_method`` function checks whether two methods use the same parameter.
 
 Here is the process of ``check_parameter_on_single_method``.
 
