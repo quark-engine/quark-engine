@@ -1739,3 +1739,85 @@ Quark Script Result
 
     $ python CWE-338.py  
     CWE-338 is detected in Lcom/htbridge/pivaa/EncryptionActivity$2; onClick (Landroid/view/View;)V
+    
+    
+Detect CWE-88 in Android Application (Vuldroid.apk)
+-----------------------------------------------------------------------
+This scenario aims to demonstrate the detection of the **Improper Neutralization of Argument Delimiters in a Command** vulnerability using `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_. See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
+
+First, we need to design a detection rule named ``ExternalStringsCommands.json`` with the aim of identifying behaviors that use external strings as commands.
+
+Next, we will list the APIs that can be used for searching or replacing strings, and at the same time, compile all possible delimiters.
+
+Finally, we will utilize the QUARK API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to detect behaviors that involve the use of external strings. When such behaviors are detected, we need to examine whether any APIs for string checking have been used. If these APIs have not been utilized, the issue is considered a CWE-88 vulnerability. If they have been used, we need to further inspect if the delimiters have been replaced. If not, it is still regarded as a CWE-88 vulnerability.
+
+Quark Script CWE-88.py
+=======================
+
+The Quark Script below uses Vuldroid.apk to demonstrate.
+
+.. code-block:: python
+
+    from quark.script import runQuarkAnalysis, Rule
+
+    SAMPLE_PATH = "vuldroid.apk"
+    RULE_PATH = "ExternalStringCommand.json"
+
+
+    STRING_MATCHING_API = {
+    "contains": ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
+    "indexOf1": ["Ljava/lang/String;", "indexOf", "(I)I"],
+    "indexOf2": ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
+    "matches": ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
+    "replaceAll": ["Ljava/lang/String;", "replaceAll", "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
+    }
+
+    delimiters = [' ',';','||','|',',','>','>>','`']
+
+    ruleInstance = Rule(RULE_PATH)
+    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+    for ExternalStringCommand in quarkResult.behaviorOccurList:
+
+        caller = ExternalStringCommand.methodCaller
+        strMatchingAPIs = [
+                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
+                    caller, api)
+        ]
+
+        if not strMatchingAPIs or any(dlm not in strMatchingAPIs for dlm in delimiters):
+        print(f"CWE-88 is detected in method, {caller.fullName}")
+
+                
+Quark Rule: ExternalStringCommand.json
+=========================================
+
+.. code-block:: json
+
+    {
+        "crime": "Using external strings as commands",
+        "permission": [],
+        "api": [
+            {
+                "class": "Landroid/content/Intent;",
+                "method": "getStringExtra",
+                "descriptor": "(Ljava/lang/String;)Ljava/lang/String"
+            },
+            {
+                "class": "Ljava/lang/Runtime;",
+                "method": "exec",
+                "descriptor": "(Ljava/lang/String;)Ljava/lang/Process"
+            }
+        ],
+        "score": 1,
+        "label": []
+    }
+
+Quark Script Result
+======================
+- **vuldroid.apk**
+
+.. code-block:: TEXT
+    
+    $ python3 CWE-88.py
+    CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
