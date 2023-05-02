@@ -1740,16 +1740,23 @@ Quark Script Result
     $ python CWE-338.py  
     CWE-338 is detected in Lcom/htbridge/pivaa/EncryptionActivity$2; onClick (Landroid/view/View;)V
     
-    
+
+
 Detect CWE-88 in Android Application (Vuldroid.apk)
------------------------------------------------------------------------
-This scenario aims to demonstrate the detection of the **Improper Neutralization of Argument Delimiters in a Command** vulnerability using `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_. See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
+------------------------------------------------------
 
-First, we need to design a detection rule named ``ExternalStringsCommands.json`` with the aim of identifying behaviors that use external strings as commands.
+This scenario seeks to find **Improper Neutralization of Argument Delimiters in a Command**. See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
 
-Next, we will list the APIs that can be used for searching or replacing strings, and at the same time, compile all possible delimiters.
+Let’s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script find this vulnerability.
 
-Finally, we will utilize the QUARK API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to detect behaviors that involve the use of external strings. When such behaviors are detected, we need to examine whether any APIs for string checking have been used. If these APIs have not been utilized, the issue is considered a CWE-88 vulnerability. If they have been used, we need to further inspect if the delimiters have been replaced. If not, it is still regarded as a CWE-88 vulnerability.
+First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior use external strings as commands.
+
+Next, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for string matching. 
+
+If NO, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability. 
+
+If YES, check if there are any delimiters use in string matching for filter. if NOT, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability. 
+
 
 Quark Script CWE-88.py
 =======================
@@ -1764,15 +1771,16 @@ The Quark Script below uses Vuldroid.apk to demonstrate.
     RULE_PATH = "ExternalStringCommand.json"
 
 
-    STRING_MATCHING_API = {
-    "contains": ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
-    "indexOf1": ["Ljava/lang/String;", "indexOf", "(I)I"],
-    "indexOf2": ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
-    "matches": ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
-    "replaceAll": ["Ljava/lang/String;", "replaceAll", "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
-    }
+    STRING_MATCHING_API = [
+        ["Ljava/lang/String;", "contains", "(Ljava/lang/CharSequence)Z"],
+        ["Ljava/lang/String;", "indexOf", "(I)I"],
+        ["Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"],
+        ["Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"],
+        ["Ljava/lang/String;", "replaceAll",
+            "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;"],
+    ]
 
-    delimiters = [' ',';','||','|',',','>','>>','`']
+    delimiters = [' ', ';', '||', '|', ',', '>', '>>', '`']
 
     ruleInstance = Rule(RULE_PATH)
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
@@ -1780,13 +1788,15 @@ The Quark Script below uses Vuldroid.apk to demonstrate.
     for ExternalStringCommand in quarkResult.behaviorOccurList:
 
         caller = ExternalStringCommand.methodCaller
+
         strMatchingAPIs = [
-                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
-                    caller, api)
+            api for api in STRING_MATCHING_API if
+            quarkResult.findMethodInCaller(caller, api)
         ]
 
-        if not strMatchingAPIs or any(dlm not in strMatchingAPIs for dlm in delimiters):
-        print(f"CWE-88 is detected in method, {caller.fullName}")
+        if not strMatchingAPIs or \
+                any(dlm not in strMatchingAPIs for dlm in delimiters):
+            print(f"CWE-88 is detected in method, {caller.fullName}")
 
                 
 Quark Rule: ExternalStringCommand.json
@@ -1813,11 +1823,13 @@ Quark Rule: ExternalStringCommand.json
         "label": []
     }
 
+
 Quark Script Result
 ======================
 - **vuldroid.apk**
 
 .. code-block:: TEXT
-    
-    $ python3 CWE-88.py
-    CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
+
+$ python3 CWE-88.py
+CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
+
