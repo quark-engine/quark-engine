@@ -1747,15 +1747,15 @@ Detect CWE-88 in Android Application (Vuldroid.apk)
 
 This scenario seeks to find **Improper Neutralization of Argument Delimiters in a Command**. See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
 
-Let’s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script find this vulnerability.
+Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior use external strings as commands.
+First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
 Next, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for string matching. 
 
-If NO, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability. 
+If NO, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
-If YES, check if there are any delimiters use in string matching for filter. if NOT, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability. 
+If YES, check if there are any delimiters used in string matching for a filter. IF NOT, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
 
 Quark Script CWE-88.py
@@ -1829,7 +1829,6 @@ Quark Script Result
 - **vuldroid.apk**
 
 .. code-block:: TEXT
-
 $ python3 CWE-88.py
 CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
 
