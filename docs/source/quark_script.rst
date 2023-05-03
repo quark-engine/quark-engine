@@ -1832,4 +1832,3 @@ Quark Script Result
 
     $ python3 CWE-88.py
     CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
-
