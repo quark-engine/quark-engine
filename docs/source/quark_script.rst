@@ -1755,7 +1755,7 @@ Next, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, ta
 
 If NOT, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
-If YES, check if there are any delimiters used in string matching for a filter. IF NOT, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
+If YES, check if there are any delimiters used in string matching for a filter. If NOT, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
 
 Quark Script CWE-88.py
