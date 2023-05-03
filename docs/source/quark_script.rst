@@ -1751,9 +1751,9 @@ Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the ab
 
 First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
-Next, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for string matching. 
+Next, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if any APIs in the caller method for string matching. 
 
-If NO, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
+If Not, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
 If YES, check if there are any delimiters used in string matching for a filter. IF NOT, the APK does not neutralize special elements within the argument, which may cause CWE-88 vulnerability. 
 
@@ -1767,7 +1767,7 @@ The Quark Script below uses Vuldroid.apk to demonstrate.
 
     from quark.script import runQuarkAnalysis, Rule
 
-    SAMPLE_PATH = "vuldroid.apk"
+    SAMPLE_PATH = "Vuldroid.apk"
     RULE_PATH = "ExternalStringCommand.json"
 
 
@@ -1829,6 +1829,7 @@ Quark Script Result
 - **vuldroid.apk**
 
 .. code-block:: TEXT
-$ python3 CWE-88.py
-CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
+
+    $ python3 CWE-88.py
+    CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
 
