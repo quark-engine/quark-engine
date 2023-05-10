@@ -11,7 +11,9 @@ from quark.script import (
     Method,
     QuarkResult,
     Ruleset,
+    checkMethodCalls,
     getActivities,
+    getReceivers,
     getApplication,
     runQuarkAnalysis,
     findMethodInAPK,
@@ -105,6 +107,28 @@ class TestActivity:
     def testIsExported(SAMPLE_PATH_13667):
         activity = getActivities(SAMPLE_PATH_13667)[0]
         assert activity.isExported() is True
+
+
+class TestReceiver:
+    @staticmethod
+    def testHasNoIntentFilter(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[2]
+        assert receiver.hasIntentFilter() is False
+
+    @staticmethod
+    def testHasIntentFilter(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[0]
+        assert receiver.hasIntentFilter() is True
+
+    @staticmethod
+    def testIsNotExported(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[2]
+        assert receiver.isExported() is False
+
+    @staticmethod
+    def testIsExported(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[0]
+        assert receiver.isExported() is True
 
 
 class TestMethod:
@@ -453,6 +477,13 @@ def testGetActivities(SAMPLE_PATH_14d9f) -> None:
     assert str(activities[0]) == "com.google.progress.BackGroundActivity"
 
 
+def testGetReceivers(SAMPLE_PATH_14d9f) -> None:
+    receivers = getReceivers(SAMPLE_PATH_14d9f)
+
+    assert len(receivers) == 1
+    assert str(receivers[0]) == "com.google.progress.BootReceiver"
+
+
 def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
 
     method = findMethodInAPK(SAMPLE_PATH_14d9f, [
@@ -462,3 +493,22 @@ def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
     )
 
     assert len(method) == 2
+
+
+def testCheckMethodCalls(SAMPLE_PATH_14d9f) -> None:
+    targetMethod = [
+        "Lcom/google/progress/WifiCheckTask;",
+        "checkWifiCanOrNotConnectServer",
+        "([Ljava/lang/String;)Z"
+    ]
+
+    checkMethods  = []
+    checkMethods.append(tuple([
+        "Landroid/util/Log;",
+        "e",
+        "(Ljava/lang/String; Ljava/lang/String;)I"
+    ]))
+
+    assert checkMethodCalls("14d9f1a92dd984d6040cc41ed06e273e.apk", targetMethod, checkMethods) is True
+
+
