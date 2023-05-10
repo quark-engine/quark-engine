@@ -645,30 +645,24 @@ def checkMethodCalls(
 
     :return: bool that indicate specific methods can be called or defined within a `target method` or not.
     """
-    _target_methods = []
-    _overlap_list = []
-    _xref_to_list = {}
+    targetMethodSet = set()
+    checkMethodSet = set()
+    targetLowerFuncSet = set()
 
     quark = _getQuark(samplePath)
     if isinstance(targetMethod, Iterable):
         # Find the method in the APK with the given class name, method name, and descriptor
-        _target_methods = quark.apkinfo.find_method(*targetMethod)
-        if isinstance(_target_methods, MethodObject):
-            _target_methods = [_target_methods]
+        targetMethodSet.update(quark.apkinfo.find_method(*targetMethod))
     else:
         # targetMethod is already a Method object
-        _target_methods = [targetMethod]
+        targetMethodSet.add(MethodObject)
 
-    if not len(_target_methods) == 1 or not isinstance(_target_methods[0], MethodObject):
+    if not targetMethodSet:
         return False
 
     for candidate in checkMethods:
-        tmp = quark.apkinfo.find_method(*candidate)
-        if isinstance(tmp, MethodObject):
-            _overlap_list.append(tmp)
-        else:
-            _overlap_list.extend(tmp)
+        checkMethodSet.update(quark.apkinfo.find_method(*candidate))
 
-    _xref_to_list = {i for i, _ in quark.apkinfo.lowerfunc(_target_methods[0])}
+    targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
 
-    return any(set(_overlap_list).intersection(_xref_to_list))
+    return any(checkMethodSet.intersection(targetLowerFuncSet))
