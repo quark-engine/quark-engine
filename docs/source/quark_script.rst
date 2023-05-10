@@ -279,6 +279,25 @@ activityInstance.isExported(none)
 - **params**: none
 - **return**: True/False
 
+getReceivers(samplePath)
+==========================
+- **Description**: Get receivers from a target sample.
+- **params**:
+    1. samplePath: target sample
+- **return**: python list containing receivers
+
+receiverInstance.hasIntentFilter(none)
+======================================
+- **Description**: Check if the receiver has an intent-filter.
+- **params**: none
+- **return**: True/False
+
+receiverInstance.isExported(none)
+==================================
+- **Description**: Check if the receiver is exported.
+- **params**: none
+- **return**: True/False
+
 getApplication(samplePath)
 ==========================
 - **Description**: Get the application element from the manifest file of the target sample.
@@ -1832,3 +1851,65 @@ Quark Script Result
 
     $ python3 CWE-88.py
     CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
+
+Detect CWE-925 in Android Application (InsecureBankv2, AndroGoat)
+------------------------------------------------------------------
+
+This scenario seeks to find **Improper Verification of Intent by
+Broadcast Receiver**. See
+`CWE-925 <https://cwe.mitre.org/data/definitions/925.html>`__ for more
+details.
+
+Let’s use both two of apks
+(`InsecureBankv2 <https://github.com/dineshshetty/Android-InsecureBankv2>`__
+and `AndroGoat <https://github.com/satishpatnayak/AndroGoat>`__) to show
+how the Quark script finds this vulnerability.
+
+In the first step, we use the ``getReceivers`` API to find all
+``Receiver`` components defined in the Android application. Then, we
+exclude any receivers that are not exported.
+
+In the second step, our goal is to verify the **intentAction** is
+properly validated in each receiver which is identified in the previous
+step. To do this, we use the ``checkMethodCalls`` function.
+
+Finally, if any receiver’s **onReceive** method exhibits improper
+verification on **intentAction**, it could indicate a potential CWE-925
+vulnerability.
+
+Quark Script CWE-925.py
+=======================
+
+.. code:: python
+
+   from quark.script import checkMethodCalls, getReceivers
+
+   SAMPLE_PATHS = ["AndroGoat.apk", "InsecureBankv2.apk"]
+
+   TARGET_METHOD = [
+       '',
+       'onReceive',
+       '(Landroid/content/Context; Landroid/content/Intent;)V'
+   ]
+
+   CHECK_METHODS = [
+       ['Landroid/content/Intent;', 'getAction', '()Ljava/lang/String;']
+   ]
+
+   for filepath in SAMPLE_PATHS:
+       receivers = getReceivers(filepath)
+       for receiver in receivers:
+           if receiver.isExported():
+               className = "L"+str(receiver).replace('.', '/')+';'
+               TARGET_METHOD[0] = className
+               if not checkMethodCalls(filepath, TARGET_METHOD, CHECK_METHODS):
+                   print(f"CWE-925 is detected in method, {className}")
+
+Quark Script Result
+===================
+
+.. code-block:: TEXT
+
+   $ python CWE-925.py
+   CWE-925 is detected in method, Lowasp/sat/agoat/ShowDataReceiver;
+   CWE-925 is detected in method, Lcom/android/insecurebankv2/MyBroadCastReceiver;
