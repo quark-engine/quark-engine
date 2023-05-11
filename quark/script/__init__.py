@@ -6,7 +6,7 @@ import re
 import functools
 from os import PathLike
 from os.path import abspath, isfile, join
-from typing import Any, List, Tuple, Union
+from typing import Any, Iterable, List, Tuple, Union
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
 from quark.core.analysis import QuarkAnalysis
@@ -111,6 +111,46 @@ class Activity:
         """
         exported = self._getAttribute("exported", self.hasIntentFilter())
         return exported
+
+
+class Receiver:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return self._getAttribute("name")
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def hasIntentFilter(self) -> bool:
+        """Check if the receiver has an intent filter.
+
+        :return: True/False
+        """
+        return self.xml.find("intent-filter") is not None
+
+    def isExported(self) -> bool:
+        """Check if the receiver is exported.
+
+        According to the documentation from Android Developer guide.
+        "
+        If the attribute exported is unspecified, the default value depends on whether
+        the broadcast receiver contains intent filters.
+        If the receiver contains at least one intent filter,
+        then the default value is "true".
+        Otherwise, the default value is "false".
+        "
+
+        :return: True/False
+        """
+        exported = self._getAttribute("exported", self.hasIntentFilter())
+        return str(exported).lower() == 'true'
 
 
 class Method:
@@ -523,6 +563,18 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     return [Activity(xml) for xml in apkinfo.activities]
 
 
+def getReceivers(samplePath: PathLike) -> List[Receiver]:
+    """Get receivers from a target sample.
+
+    :param samplePath: target file
+    :return: python list containing receivers
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return [Receiver(xml) for xml in apkinfo.receivers]
+
+
 def getApplication(samplePath: PathLike) -> Application:
     """Get the application element from the manifest file of the target sample.
 
@@ -579,3 +631,41 @@ def findMethodInAPK(
             for caller in list(caller_set)
         ]
     return caller_methods
+
+
+def checkMethodCalls(
+        samplePath: PathLike,
+        targetMethod: Union[Tuple[str, str, str], MethodObject],
+        checkMethods: List[Tuple[str, str, str]]) -> bool:
+    """Check if any of the specific methods shown in the `targetMethod`
+
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
+                         or a Method Object.
+    :param checkMethods: python list contains the class name,
+                         method name, and descriptor of the target method
+
+    :return: bool that indicate specific methods can be called or defined within a `target method` or not.
+    """
+    targetMethodSet = set()
+    checkMethodSet = set()
+    targetLowerFuncSet = set()
+
+    quark = _getQuark(samplePath)
+    if isinstance(targetMethod, Iterable):
+        # Find the method in the APK with the given class name, method name, and descriptor
+        targetMethodSet.update(quark.apkinfo.find_method(*targetMethod))
+    else:
+        # targetMethod is already a Method object
+        targetMethodSet.add(MethodObject)
+
+    if not targetMethodSet:
+        return False
+
+    for candidate in checkMethods:
+        checkMethodSet.update(quark.apkinfo.find_method(*candidate))
+
+    targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
+
+    return any(checkMethodSet.intersection(targetLowerFuncSet))
