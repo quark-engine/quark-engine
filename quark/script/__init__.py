@@ -139,10 +139,13 @@ class Receiver:
         """Check if the receiver is exported.
 
         According to the documentation from Android Developer guide.
-        Note:
-            If the attribute exported is unspecified, the default value depends on whether the broadcast receiver contains intent filters. 
-            If the receiver contains at least one intent filter, then the default value is "true". 
-            Otherwise, the default value is "false".
+        "
+        If the attribute exported is unspecified, the default value depends on whether
+        the broadcast receiver contains intent filters.
+        If the receiver contains at least one intent filter,
+        then the default value is "true".
+        Otherwise, the default value is "false".
+        "
 
         :return: True/False
         """
