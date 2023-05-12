@@ -71,6 +71,7 @@
 *   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)  Use of RSA Algorithm without OAEP 
 *   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)  Use of Hard-coded Credentials 
 *   [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk)  Storage of Sensitive Data in a Mechanism without Access Control 
+*   [CWE-925](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-925-in-android-application-insecurebankv2-androgoat)  Improper Verification of Intent by Broadcast Receiver
 *   [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)  Improper Export of Android Application Components 
  
 # Quick Start
