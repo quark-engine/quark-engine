@@ -430,7 +430,7 @@ The function ``check_parameter`` is designed to check for the usage of the same 
 
 Here is the flowchart of ``check_parameter``
 
-.. image:: https://imgur.com/a/6WleVxq.jpg
+.. image:: https://i.imgur.com/RYN66oj.png
 
 **The code of check_parameter**
 
