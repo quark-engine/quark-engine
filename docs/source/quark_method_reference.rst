@@ -404,7 +404,7 @@ check_parameter
 
 **The algorithm of check_parameter**
 
-The function check_parameter is designed to check for the usage of the same parameter between two methods.
+The function ``check_parameter`` is designed to check for the usage of the same parameter between two methods.
 
 .. code-block:: TEXT
 
