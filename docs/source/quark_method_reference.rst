@@ -406,6 +406,8 @@ check_parameter
 
 The function ``check_parameter`` is designed to check for the usage of the same parameter between two methods.
 
+Here is the process of ``check_parameter``
+
 .. code-block:: TEXT
 
     1. Check if parent_function, first_method_list or second_method_list is None. 
@@ -426,7 +428,7 @@ The function ``check_parameter`` is designed to check for the usage of the same 
             - Record the mapping between the parent function and the wrapper method. 
             - Set the state variable to True.
 
-7. Once the iteration finishes, return the state variable.
+    7. Once the iteration finishes, return the state variable.
 
 Here is the flowchart of ``check_parameter``
 
