@@ -334,7 +334,7 @@ Here is the process of ``check_parameter_on_single_method``.
     7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
     data and returns results at the same time.
 
-Here is the flowchart of ``check_parameter_on_single_method``
+Here is the flowchart of ``check_parameter_on_single_method``.
 
 .. image:: https://i.imgur.com/BJf7oSg.png
 
@@ -399,5 +399,120 @@ Here is the flowchart of ``check_parameter_on_single_method``
             else:
                 yield (record, None)
 
+check_parameter
+==================
 
+**The algorithm of check_parameter**
 
+The function ``check_parameter`` is designed to check for the usage of the same parameter between two methods.
+
+Here is the process of ``check_parameter``.
+
+.. code-block:: TEXT
+
+    1. Check if parent_function, first_method_list or second_method_list is None. 
+        - If True, raise a TypeError exception.
+
+    2. Check if the keyword_item_list parameter exists and has elements.
+        - If False, set keyword_item_list to None.
+
+    3. Initialize the state variable to False.
+
+    4. Evaluate the opcode of the parent_function by calling self._evaluate_method and store the result to usage_table. 
+
+    5. Iterate through the combinations of methods from the first_method_list and second_method_list. 
+
+    6. Call self.check_parameter_on_single_method with usage_table to check if the two methods use the same parameters. 
+        - If True, 
+            - Record the corresponding call graph analysis.
+            - Record the mapping between the parent function and the wrapper method. 
+            - Set the state variable to True.
+
+    7. Once the iteration finishes, return the state variable.
+
+Here is the flowchart of ``check_parameter``.
+
+.. image:: https://i.imgur.com/Og1mXss.png
+
+**The code of check_parameter**
+
+.. code:: python
+
+    def check_parameter(
+        self,
+        parent_function,
+        first_method_list,
+        second_method_list,
+        keyword_item_list=None,
+        regex=False,
+    ):
+        """
+        Check the usage of the same parameter between two method.
+
+        :param parent_function: function that call the first function and
+         second functions at the same time.
+        :param first_method_list: function which calls before the second
+         method.
+        :param second_method_list: function which calls after the first method.
+        :return: True or False
+        """
+        if parent_function is None:
+            raise TypeError("Parent function is None.")
+
+        if first_method_list is None or second_method_list is None:
+            raise TypeError("First or second method list is None.")
+
+        if keyword_item_list:
+            keyword_item_list = list(keyword_item_list)
+            if not any(keyword_item_list):
+                keyword_item_list = None
+
+        state = False
+
+        # Evaluate the opcode in the parent function
+        usage_table = self._evaluate_method(parent_function)
+
+        # Check if any of the target methods (the first and second methods)
+        #  used the same registers.
+        state = False
+        for first_call_method in first_method_list:
+            for second_call_method in second_method_list:
+
+                result_generator = self.check_parameter_on_single_method(
+                    usage_table,
+                    first_call_method,
+                    second_call_method,
+                    keyword_item_list,
+                    regex,
+                )
+
+                found = next(result_generator, None) is not None
+
+                # Build for the call graph
+                if found:
+                    call_graph_analysis = {
+                        "parent": parent_function,
+                        "first_call": first_call_method,
+                        "second_call": second_call_method,
+                        "apkinfo": self.apkinfo,
+                        "first_api": self.quark_analysis.first_api,
+                        "second_api": self.quark_analysis.second_api,
+                        "crime": self.quark_analysis.crime_description,
+                    }
+                    self.quark_analysis.call_graph_analysis_list.append(
+                        call_graph_analysis
+                    )
+
+                    # Record the mapping between the parent function and the
+                    #  wrapper method
+                    self.quark_analysis.parent_wrapper_mapping[
+                        parent_function.full_name
+                    ] = self.apkinfo.get_wrapper_smali(
+                        parent_function,
+                        first_call_method,
+                        second_call_method,
+                    )
+
+                    state = True
+
+        return state
