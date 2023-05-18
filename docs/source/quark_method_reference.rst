@@ -422,7 +422,7 @@ Here is the process of ``check_parameter``.
 
     5. Iterate through the combinations of methods from the first_method_list and second_method_list. 
 
-    6. Call self.check_parameter_on_single_method() with usage_table to check if the two methods use the same parameters. 
+    6. Call self.check_parameter_on_single_method with usage_table to check if the two methods use the same parameters. 
         - If True, 
             - Record the corresponding call graph analysis.
             - Record the mapping between the parent function and the wrapper method. 
