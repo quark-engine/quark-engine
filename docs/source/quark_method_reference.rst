@@ -408,29 +408,29 @@ The function ``check_parameter`` is designed to check for the usage of the same 
 
 .. code-block:: TEXT
 
-1. At the beginning of the program, it checks if parent_function, first_method_list, and second_method_list are None. If any of them is None, it raises a TypeError exception.
+1. Check if parent_function, first_method_list or second_method_list is None. 
+    - If True, raise a TypeError exception.
 
-2. If keyword_item_list has a value, it is converted to a list.
+2. Check if the keyword_item_list parameter exists and has elements.
+    - If False, set keyword_item_list to None.
 
-3. A variable state is initialized as False.
+3. Initialize the state variable to False.
 
-4. The program evaluates the opcode in parent_function using the method self._evaluate_method(parent_function). The result is stored in the usage_table variable.
+4. Evaluate the opcode of the parent_function by calling self._evaluate_method and store the result to usage_table. 
 
-5. It iterates over the methods in first_method_list and second_method_list and uses the method self.check_parameter_on_single_method to check if these two methods use the same parameters.
+5. Iterate through the combinations of methods from the first_method_list and second_method_list. 
 
-6. The self.check_parameter_on_single_method method returns a result generator. The program uses next(result_generator, None) to get the first generated result. If there is a result, the variable found is set to True; otherwise, it is set to False.
+6. Call self.check_parameter_on_single_method() with usage_table to check if the two methods use the same parameters. 
+    - If True, 
+        - Record the corresponding call graph analysis.
+        - Record the mapping between the parent function and the wrapper method. 
+        - Set the state variable to True.
 
-7. If a matching parameter usage is found, a dictionary call_graph_analysis is created to record related information. It is then appended to the quark_analysis.call_graph_analysis_list list.
-
-8. Additionally, the mapping between parent_function and the corresponding wrapper method is recorded in the quark_analysis.parent_wrapper_mapping dictionary.
-
-9. If a matching parameter usage is found, state is set to True.
-
-10. The program returns state, indicating whether a matching parameter usage was found.
+7. Once the iteration finishes, return the state variable.
 
 Here is the flowchart of ``check_parameter``
 
-.. image:: https://i.imgur.com/RYN66oj.png
+.. image:: https://i.imgur.com/o2mxIZP.png
 
 **The code of check_parameter**
 
