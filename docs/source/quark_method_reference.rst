@@ -334,7 +334,7 @@ Here is the process of ``check_parameter_on_single_method``.
     7. Use yield to return the matched record and matched_keyword_list. This method is a generator that processes 
     data and returns results at the same time.
 
-Here is the flowchart of ``check_parameter_on_single_method``
+Here is the flowchart of ``check_parameter_on_single_method``.
 
 .. image:: https://i.imgur.com/BJf7oSg.png
 
@@ -406,7 +406,7 @@ check_parameter
 
 The function ``check_parameter`` is designed to check for the usage of the same parameter between two methods.
 
-Here is the process of ``check_parameter``
+Here is the process of ``check_parameter``.
 
 .. code-block:: TEXT
 
@@ -430,7 +430,7 @@ Here is the process of ``check_parameter``
 
     7. Once the iteration finishes, return the state variable.
 
-Here is the flowchart of ``check_parameter``
+Here is the flowchart of ``check_parameter``.
 
 .. image:: https://i.imgur.com/o2mxIZP.png
 
