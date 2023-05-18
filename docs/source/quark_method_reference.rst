@@ -432,7 +432,7 @@ Here is the process of ``check_parameter``.
 
 Here is the flowchart of ``check_parameter``.
 
-.. image:: https://i.imgur.com/u1CzLYw.png
+.. image:: https://i.imgur.com/Og1mXss.png
 
 **The code of check_parameter**
 
