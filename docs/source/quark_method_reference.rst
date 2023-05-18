@@ -408,23 +408,23 @@ The function ``check_parameter`` is designed to check for the usage of the same 
 
 .. code-block:: TEXT
 
-1. Check if parent_function, first_method_list or second_method_list is None. 
-    - If True, raise a TypeError exception.
+    1. Check if parent_function, first_method_list or second_method_list is None. 
+        - If True, raise a TypeError exception.
 
-2. Check if the keyword_item_list parameter exists and has elements.
-    - If False, set keyword_item_list to None.
+    2. Check if the keyword_item_list parameter exists and has elements.
+        - If False, set keyword_item_list to None.
 
-3. Initialize the state variable to False.
+    3. Initialize the state variable to False.
 
-4. Evaluate the opcode of the parent_function by calling self._evaluate_method and store the result to usage_table. 
+    4. Evaluate the opcode of the parent_function by calling self._evaluate_method and store the result to usage_table. 
 
-5. Iterate through the combinations of methods from the first_method_list and second_method_list. 
+    5. Iterate through the combinations of methods from the first_method_list and second_method_list. 
 
-6. Call self.check_parameter_on_single_method() with usage_table to check if the two methods use the same parameters. 
-    - If True, 
-        - Record the corresponding call graph analysis.
-        - Record the mapping between the parent function and the wrapper method. 
-        - Set the state variable to True.
+    6. Call self.check_parameter_on_single_method() with usage_table to check if the two methods use the same parameters. 
+        - If True, 
+            - Record the corresponding call graph analysis.
+            - Record the mapping between the parent function and the wrapper method. 
+            - Set the state variable to True.
 
 7. Once the iteration finishes, return the state variable.
 
