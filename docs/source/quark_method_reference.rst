@@ -555,7 +555,7 @@ Here is the process of ``check_parameter_values``.
 
 Here is the flowchart of ``check_parameter_values``.
 
-.. image:: https://i.imgur.com/qqfJ7bp.png
+.. image:: https://i.imgur.com/olN3O6F.png
 
 **The code of check_parameter_values**
 
