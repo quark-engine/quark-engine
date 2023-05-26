@@ -522,7 +522,7 @@ check_parameter_values
 
 **The algorithm of check_parameter_values**
 
-The function ``check_parameter_values`` is designed to check whether the parameter values in a given string match the specified patterns and keywords
+The function ``check_parameter_values`` is designed to check whether the parameter values in a given string match the specified patterns and keywords.
 
 Here is the process of ``check_parameter_values``.
 
