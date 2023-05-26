@@ -557,7 +557,7 @@ Here is the flowchart of ``check_parameter_values``.
 
 .. image:: https://i.imgur.com/qqfJ7bp.png
 
-**The code of check_parameter**
+**The code of check_parameter_values**
 
 .. code:: python
 
