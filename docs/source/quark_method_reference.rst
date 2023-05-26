@@ -543,12 +543,11 @@ Here is the process of ``check_parameter_values``.
                         - Check if matched_strings has any matching strings.
                             - If True, 
                                 - Use filter to remove empty strings from matched_strings.
-                                - Store the first element of matched_strings in the variable element and check if element is a sequence and not a string.
+                                - Check if first element is a sequence type and not string type.
                                     - If True, Iterate over each string_list in matched_strings.
                                         - Add each string from the str_list to the matched_string_set. 
                                     - if False, add all the elements from matched_strings to matched_string_set. 
-                    - If False, check if the keyword is present in parameter_str.
-                        - If True, add the keyword to the matched_string_set.
+                    - If False, add all keyword in parameter_str to the matched_string_set.
         
     5.  Once the iteration finishes, return a list of strings from the matched_string_set, which represents all the matched results.
 
