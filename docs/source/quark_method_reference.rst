@@ -522,7 +522,7 @@ check_parameter_values
 
 **The algorithm of check_parameter_values**
 
-The function ``check_parameter_values`` is designed to check whether the parameter values in a given string match the specified patterns and keywords.
+The function ``check_parameter_values`` is designed to  check if the parameter values in the source string match the specified patterns and keywords, and collect the matched strings into a set and return it.
 
 Here is the process of ``check_parameter_values``.
 
@@ -541,15 +541,15 @@ Here is the process of ``check_parameter_values``.
                     - If True, 
                         - Use re.findall to search for matching strings and it stores in matched_strings.
                         - Check if matched_strings has any matching strings.
-                            - If True, Add all nonempty string from matched_strings to the matched_string_set. 
-                    - If False, add all keyword in parameter_str to the matched_string_set.
+                            - If True, Add all nonempty strings from matched_strings to the matched_string_set. 
+                    - If False, add all keywords in parameter_str to the matched_string_set.
         
     5.  Once the iteration finishes, return a list of strings from the matched_string_set, which represents all the matched results.
 
 
 Here is the flowchart of ``check_parameter_values``.
 
-.. image:: https://i.imgur.com/PJFOVrc.png
+.. image:: https://i.imgur.com/wF8TpAv.png
 
 **The code of check_parameter_values**
 
