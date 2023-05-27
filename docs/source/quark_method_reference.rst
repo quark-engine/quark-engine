@@ -539,7 +539,7 @@ Here is the process of ``check_parameter_values``.
             - For each keyword in keyword_item, perform the following operations:
                 - Check If regex is True, 
                     - If True, 
-                        - Use re.findall to search for matching strings and it store in matched_strings.
+                        - Use re.findall to search for matching strings and it stores in matched_strings.
                         - Check if matched_strings has any matching strings.
                             - If True, Add all nonempty string from matched_strings to the matched_string_set. 
                     - If False, add all keyword in parameter_str to the matched_string_set.
