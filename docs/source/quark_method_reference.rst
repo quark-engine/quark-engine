@@ -516,3 +516,83 @@ Here is the flowchart of ``check_parameter``.
                     state = True
 
         return state
+
+check_parameter_values
+==========================
+
+**The algorithm of check_parameter_values**
+
+The function ``check_parameter_values`` is designed to check if the parameter values in the source string match the specified patterns and keywords. Then it collects the matched strings into a set and return it.
+
+Here is the process of ``check_parameter_values``.
+
+.. code-block:: TEXT
+
+    1. Create an empty set matched_string_set.
+
+    2. Use tools.get_parenthetic_contents to extract the content that matches each pattern in the pattern_list from the source_str. Store the results in the parameter_strs list.
+
+    3. Use zip to pair up the parameter_strs and keyword_item_list and iterate over them.
+
+    4. For each pairing of parameter_str and keyword_item, perform the following operations:
+        - Check if keyword_item is not None.
+            - For each keyword in keyword_item, perform the following operations:
+                - Check If regex is True, 
+                    - If True, 
+                        - Use re.findall to search for matching strings and store them in matched_strings.
+                        - Check if matched_strings has any matching strings.
+                            - If True, Add all nonempty strings from matched_strings to the matched_string_set. 
+                    - If False, add all keywords in parameter_str to the matched_string_set.
+        
+    5.  Once the iteration finishes, return a list of strings from the matched_string_set, which represents all the matched results.
+
+
+Here is the flowchart of ``check_parameter_values``.
+
+.. image:: https://i.imgur.com/SiMGE2w.png
+
+**The code of check_parameter_values**
+
+.. code:: python
+
+    @staticmethod
+    def check_parameter_values(
+        source_str, pattern_list, keyword_item_list, regex=False
+    ) -> List[str]:
+        matched_string_set = set()
+
+        parameter_strs = [
+            tools.get_parenthetic_contents(
+                source_str, source_str.index(pattern) + len(pattern)
+            )
+            for pattern in pattern_list
+        ]
+
+        for parameter_str, keyword_item in zip(
+            parameter_strs, keyword_item_list
+        ):
+            if keyword_item is None:
+                continue
+
+            for keyword in keyword_item:
+                if regex:
+                    matched_strings = re.findall(keyword, parameter_str)
+                    if any(matched_strings):
+                        matched_strings = filter(bool, matched_strings)
+                        matched_strings = list(matched_strings)
+
+                        element = matched_strings[0]
+                        if isinstance(
+                            element, collections.abc.Sequence
+                        ) and not isinstance(element, str):
+                            for str_list in matched_strings:
+                                matched_string_set.update(str_list)
+
+                        else:
+                            matched_string_set.update(matched_strings)
+
+                else:
+                    if str(keyword) in parameter_str:
+                        matched_string_set.add(keyword)
+
+        return [e for e in list(matched_string_set) if bool(e)]
