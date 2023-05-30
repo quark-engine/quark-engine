@@ -1918,7 +1918,7 @@ Detect  CWE-73 in Android Application (ovaa.apk)
 ---------------------------------------------------
 
 This scenario seeks to find **External Control of File Name or Path**. See
-``CWE-73 <https://cwe.mitre.org/data/definitions/73.html>``__ for more
+`CWE-73 <https://cwe.mitre.org/data/definitions/73.html>`__ for more
 details.
 
 First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
