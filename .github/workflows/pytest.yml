@@ -46,7 +46,8 @@ jobs:
     - name: Install Quark-Engine
       run: |
         python setup.py build
-        python setup.py install
+        pip install .
+        #python setup.py install
 
     - name: Test with pytest
       run: |
