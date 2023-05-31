@@ -56,9 +56,7 @@ jobs:
 
     - name: Install Quark-Engine
       run: |
-        python setup.py build
         pip install .
-        #python setup.py install
 
     # Download the latest rule set
     - name: Download rule from https://github.com/quark-engine/quark-rules
