@@ -55,9 +55,7 @@ jobs:
       if: matrix.os == 'macOS-latest'
 
     - name: Install Quark-Engine
-      run: |
-        python setup.py build
-        python setup.py install
+      run: pip install .
 
     # Download the latest rule set
     - name: Download rule from https://github.com/quark-engine/quark-rules
