@@ -267,7 +267,7 @@ class RizinImp(BaseApkinfo):
         method_json_list = rz.cmdj("isj")
         method_dict = defaultdict(list)
         for json_obj in method_json_list:
-            method = self._parse_method_from_isj_obj(json_obj, dexindex)
+            method = self._parse_method_from_isj_obj(json_obj, dex_index)
             if method:
                 method_dict[method.class_name].append(method)
 
