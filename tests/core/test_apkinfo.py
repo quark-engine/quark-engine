@@ -291,51 +291,70 @@ class TestApkinfo:
         assert expect_method in result
 
     def test_find_method_in_regular_class(self, apkinfo):
-        result = apkinfo.find_method(
+        expected = [
             "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
         )
 
-        assert isinstance(result, MethodObject)
-        assert str(result.class_name) == "Ljava/lang/reflect/Field;"
-        assert str(result.name) == "setAccessible"
-        assert str(result.descriptor) == "(Z)V"
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert expect_method in result
 
     def test_find_method_in_inner_class(self, apkinfo):
-        result = apkinfo.find_method(
+        expected = [
             "Landroid/support/v4/accessibilityservice/Accessibility"
             + "ServiceInfoCompat$AccessibilityServiceInfoVersionImpl;",
             "getId",
             "(Landroid/accessibilityservice/AccessibilityServiceInfo;)"
             + "Ljava/lang/String;",
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
         )
 
-        assert isinstance(result, MethodObject)
-        assert (
-            str(result.class_name)
-            == "Landroid/support/v4/accessibilityservice/Accessibility"
-            + "ServiceInfoCompat$AccessibilityServiceInfoVersionImpl;"
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
         )
-        assert str(result.name) == "getId"
-        assert (
-            str(result.descriptor)
-            == "(Landroid/accessibilityservice/AccessibilityServiceInfo;)"
-            + "Ljava/lang/String;"
-        )
+
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert expect_method in result
 
     def test_find_method_in_anonymous_class(self, apkinfo):
-        result = apkinfo.find_method(
+        expected = [
             "Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;",
             "sendAccessibilityEvent",
             "(Landroid/view/View; I)V",
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
         )
 
-        assert isinstance(result, MethodObject)
-        assert (
-            str(result.class_name)
-            == "Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;"
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
         )
-        assert str(result.name) == "sendAccessibilityEvent"
-        assert str(result.descriptor) == "(Landroid/view/View; I)V"
+
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert expect_method in result
 
     def test_upperfunc(self, apkinfo):
         api = apkinfo.find_method(
