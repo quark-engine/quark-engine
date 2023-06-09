@@ -596,3 +596,97 @@ Here is the flowchart of ``check_parameter_values``.
                         matched_string_set.add(keyword)
 
         return [e for e in list(matched_string_set) if bool(e)]
+
+
+
+check_sequence
+===============
+
+**The algorithm of check_sequence**
+
+The function ``check_sequence`` checks if the first method is called before the second method. If Yes, ``check_sequence`` records the mapping among ``mutual_parent`` and two methods and returns True.
+
+
+Here is the process of ``check_sequence``.
+
+
+.. code-block:: TEXT
+
+    1. Initialize the state variable as False.
+
+    2. Iterate over first_method_list and second_method_list.
+
+    3. Store the pairs (method, number) in seq_table for first_call_method or second_call_method called by mutual_parent. 
+
+    4. Check if the length of seq_table is less than 2.
+        - If True, continue to the next iteration.
+        
+    5. Sort seq_table based on the numbers and store the methods in method_list_need_check.
+
+    6. Store first_call_method and second_call_method in sequence in sequence_pattern_method.
+
+    7. Check if method_list_need_check contains the sequence of sequence_pattern_method.
+        - If True, 
+            - Set the state variable to True.
+            - Records the mapping among mutual_parent and two methods to quark_analysis.
+            
+    8. Return the state variable.
+
+Here is the flowchart of ``check_sequence``.
+
+.. image:: https://i.imgur.com/0rCWih5.png 
+
+**The code of check_sequence**
+
+
+.. code:: python
+
+   def check_sequence(
+        self, mutual_parent, first_method_list, second_method_list
+    ):
+        """
+        Check if the first function appeared before the second function.
+
+        :param mutual_parent: function that call the first function and second functions at the same time.
+        :param first_method_list: the first show up function, which is a MethodAnalysis
+        :param second_method_list: the second show up function, which is a MethodAnalysis
+        :return: True or False
+        """
+        state = False
+
+        for first_call_method in first_method_list:
+            for second_call_method in second_method_list:
+
+                seq_table = [
+                    (call, number)
+                    for call, number in self.apkinfo.lowerfunc(mutual_parent)
+                    if call in (first_call_method, second_call_method)
+                ]
+
+                # sorting based on the value of the number
+                if len(seq_table) < 2:
+                    # Not Found sequence in same_method
+                    continue
+                seq_table.sort(key=operator.itemgetter(1))
+                # seq_table would look like: [(getLocation, 1256), (sendSms, 1566), (sendSms, 2398)]
+
+                method_list_need_check = [x[0] for x in seq_table]
+                sequence_pattern_method = [
+                    first_call_method,
+                    second_call_method,
+                ]
+
+                if tools.contains(
+                    sequence_pattern_method, method_list_need_check
+                ):
+                    state = True
+
+                    # Record the mapping between the parent function and the wrapper method
+                    self.quark_analysis.parent_wrapper_mapping[
+                        mutual_parent.full_name
+                    ] = self.apkinfo.get_wrapper_smali(
+                        mutual_parent, first_call_method, second_call_method
+                    )
+
+        return state
+
