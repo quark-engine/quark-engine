@@ -604,37 +604,34 @@ check_sequence
 
 **The algorithm of check_sequence**
 
-The function ``check_sequence`` checks if the first method is called before the second method. If Yes, ``check_sequence`` records the mapping among ``mutual_parent`` and two methods and returns True.
-
+The function ``check_sequence`` checks if ``mutual_parent`` calls any first method before any second method. If Yes, ``check_sequence`` records the mapping between ``mutual_parent`` and the matched methods and returns True.
 
 Here is the process of ``check_sequence``.
 
 
 .. code-block:: TEXT
 
-    1. Initialize the state variable as False.
+    1. Initialize the variable state as False.
 
-    2. Iterate over first_method_list and second_method_list.
+    2. Iterate the method pairs formed by first_method_list and second_method_list.
 
-    3. Store the pairs (method, number) in seq_table for first_call_method or second_call_method called by mutual_parent. 
+    3. From mutual_parent, find method calls that call any method in the pair. Then collect them into the list seq_table.
 
     4. Check if the length of seq_table is less than 2.
         - If True, continue to the next iteration.
         
-    5. Sort seq_table based on the numbers and store the methods in method_list_need_check.
+    5. Sort seq_table according to the offsets of the method calls. Then name the sorted list as method_list_need_check.
 
-    6. Store first_call_method and second_call_method in sequence in sequence_pattern_method.
-
-    7. Check if method_list_need_check contains the sequence of sequence_pattern_method.
+    6. Check if the method pair is a sublist of method_list_need_check.
         - If True, 
-            - Set the state variable to True.
-            - Records the mapping among mutual_parent and two methods to quark_analysis.
+            - Set state to True.
+            - Record the mapping between mutual_parent and the method pair in quark_analysis.
             
-    8. Return the state variable.
+    7. Return state.
 
 Here is the flowchart of ``check_sequence``.
 
-.. image:: https://i.imgur.com/0rCWih5.png 
+.. image:: https://i.imgur.com/8wmEre6.png 
 
 **The code of check_sequence**
 
