@@ -1772,7 +1772,7 @@ First, we design a detection rule ``ExternalStringsCommands.json`` to spot on be
 
 Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralizes the argument with a string-matching filter.
+Then we check if the method neutralizes any special elements found in the argument.
 
 If the neutralization is not complete, then it may cause CWE-88 vulnerability.
 
@@ -2002,7 +2002,7 @@ First, we design a detection rule ``ExternalStringsCommands.json`` to spot on be
 
 Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralizes the argument with a string-matching filter.
+Then we check if the method neutralizes any special elements found in the argument.
 
 If the neutralization is not complete, then it may cause CWE-78 vulnerability.
 
