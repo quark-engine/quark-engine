@@ -1770,12 +1770,11 @@ Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the ab
 
 First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
-Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods which passed the external command. 
+Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralize the argument with string matching filter. 
+Then we check if the method neutralizes the argument with a string-matching filter.
 
 If the neutralization is not complete, then it may cause CWE-88 vulnerability.
-
 
 Quark Script CWE-88.py
 =======================
@@ -2001,9 +2000,9 @@ Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the ab
 
 First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
-Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods which passed the external command. 
+Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralize the argument with string matching filter. 
+Then we check if the method neutralizes the argument with a string-matching filter.
 
 If the neutralization is not complete, then it may cause CWE-78 vulnerability.
 
