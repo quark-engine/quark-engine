@@ -687,3 +687,185 @@ Here is the flowchart of ``check_sequence``.
 
         return state
 
+
+
+run
+===============
+
+**The algorithm of run**
+
+The function ``run`` checks the APK file at five levels to analyze whether it meets the rules. 
+
+Here is the process of ``run``.
+
+.. code-block:: TEXT
+
+    1. Clean the results of the previous analysis.
+
+    2. Store the 'crime' description in the analysis result
+    
+    3. Level 1 Check: Permission requested
+        - Check if the input file is a DEX file. 
+            - If Yes, set the first item of check_item in rule_obj to True.
+            - If No, check if the permissions of the APK include the permissions in the rule. 
+                - If Yes, set the first item of check_item to True.
+                - If No, the function exits.
+
+    4. Level 2 Check: Native API call
+        - Check if the APK uses any of the two native APIs in the rule.
+            - If Yes, set the second item of check_item to True and store information about the calls of the two native APIs in the analysis result.
+            - If No, the function exits.
+
+    5. Level 3 Check: Certain combination of native API
+	    - Check if the APK uses both native APIs in the rule.
+	        - If Yes, set the third item of check_item to True and store the calls of the two native APIs in the analysis result.
+            - If No, the function exits.
+
+    6. Level 4 Check: Calling sequence of native API
+        - Check if there are any mutual parent functions between each combined API call of the two native APIs
+            - If Yes, check if any mutual parent function calls the first method before the second method.
+                    - If Yes, set the fourth item of check_item to True and store information about the parent functions in the analysis result.
+            - If No, the function exits.
+
+    7. Level 5 Check: APIs that handle the same register
+        - Check if the native APIs in the rule handle the same registers.
+            - If Yes, set the fifth item of check_item to True and store the parent functions in the analysis result.
+            - If No, the function exits.
+
+
+
+Here is the flowchart of ``run``.
+
+.. image:: https://i.imgur.com/v152g3L.png
+
+**The code of run**
+
+
+.. code:: python
+
+    def run(self, rule_obj):
+        """
+        Run the five levels check to get the y_score.
+
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
+        """
+        self.quark_analysis.clean_result()
+        self.quark_analysis.crime_description = rule_obj.crime
+
+        # Level 1: Permission Check
+        if self.apkinfo.ret_type == "DEX":
+            rule_obj.check_item[0] = True
+        elif set(rule_obj.permission).issubset(set(self.apkinfo.permissions)):
+            rule_obj.check_item[0] = True
+        else:
+            # Exit if the level 1 stage check fails.
+            return
+
+        # Level 2: Single Native API Check
+        api_1_method_name = rule_obj.api[0]["method"]
+        api_1_class_name = rule_obj.api[0]["class"]
+        api_1_descriptor = rule_obj.api[0]["descriptor"]
+
+        api_2_method_name = rule_obj.api[1]["method"]
+        api_2_class_name = rule_obj.api[1]["class"]
+        api_2_descriptor = rule_obj.api[1]["descriptor"]
+
+        first_api_list = self.find_api_usage(
+            api_1_class_name, api_1_method_name, api_1_descriptor
+        )
+        second_api_list = self.find_api_usage(
+            api_2_class_name, api_2_method_name, api_2_descriptor
+        )
+
+        if not first_api_list and not second_api_list:
+            # Exit if the level 2 stage check fails.
+            return
+
+        else:
+            rule_obj.check_item[1] = True
+
+        if first_api_list:
+            self.quark_analysis.level_2_result.append(first_api_list[0])
+        if second_api_list:
+            self.quark_analysis.level_2_result.append(second_api_list[0])
+
+        # Level 3: Both Native API Check
+        if not (first_api_list and second_api_list):
+            # Exit if the level 3 stage check fails.
+            return
+
+        self.quark_analysis.first_api = first_api_list[0]
+        self.quark_analysis.second_api = second_api_list[0]
+        rule_obj.check_item[2] = True
+
+        self.quark_analysis.level_3_result = [set(), set()]
+
+        # Level 4: Sequence Check
+        for first_api in first_api_list:
+            for second_api in second_api_list:
+                # Looking for the first layer of the upper function
+                first_api_xref_from = self.apkinfo.upperfunc(first_api)
+                second_api_xref_from = self.apkinfo.upperfunc(second_api)
+
+                self.quark_analysis.level_3_result[0].update(
+                    first_api_xref_from
+                )
+                self.quark_analysis.level_3_result[1].update(
+                    second_api_xref_from
+                )
+
+                if not first_api_xref_from:
+                    print_warning(
+                        f"Unable to find the upperfunc of {first_api}"
+                    )
+                    continue
+                if not second_api_xref_from:
+                    print_warning(
+                        f"Unable to find the upperfunc of{second_api}"
+                    )
+                    continue
+
+                mutual_parent_function_list = self.find_intersection(
+                    first_api_xref_from, second_api_xref_from
+                )
+
+                if mutual_parent_function_list is None:
+                    # Exit if the level 4 stage check fails.
+                    return
+                for parent_function in mutual_parent_function_list:
+                    first_wrapper = []
+                    second_wrapper = []
+
+                    self.find_previous_method(
+                        first_api, parent_function, first_wrapper
+                    )
+                    self.find_previous_method(
+                        second_api, parent_function, second_wrapper
+                    )
+
+                    if self.check_sequence(
+                        parent_function, first_wrapper, second_wrapper
+                    ):
+                        rule_obj.check_item[3] = True
+                        self.quark_analysis.level_4_result.append(
+                            parent_function
+                        )
+
+                        keyword_item_list = (
+                            rule_obj.api[i].get("keyword", None)
+                            for i in range(2)
+                        )
+
+                        # Level 5: Handling The Same Register Check
+                        if self.check_parameter(
+                            parent_function,
+                            first_wrapper,
+                            second_wrapper,
+                            keyword_item_list=keyword_item_list,
+                        ):
+                            rule_obj.check_item[4] = True
+                            self.quark_analysis.level_5_result.append(
+                                parent_function
+                            )
+
