@@ -1994,7 +1994,7 @@ Quark Script Result
 Detect CWE-78 in Android Application (Vuldroid.apk)
 ------------------------------------------------------
 
-This scenario seeks to find **Improper Neutralization of Special Elements used in an OS Command**. See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
+This scenario seeks to find **Improper Neutralization of Argument Delimiters in a Command**. See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
 
 Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
