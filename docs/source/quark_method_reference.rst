@@ -869,3 +869,67 @@ Here is the flowchart of ``run``.
                                 parent_function
                             )
 
+
+get_json_report
+===============
+
+**The algorithm of get_json_report**
+
+The function ``get_json_report`` generates a report of the analysis performed on the APK file, in JSON format.
+
+Here is the process of ``get_json_report``.
+
+
+.. code-block:: TEXT
+
+    1. Create a Weight object with the total score and weight from the analysis result.
+
+    2. Calculate the threat level with the Weight object and store the result in the variable warning.
+
+    3. Loop through a list of threat levels and check if the variable warning contains any of the threat levels.
+        - If Yes, sets the variable warning to the threat level.
+ 
+    4. Return a report with various pieces of information:
+        - The MD5 hash of the APK
+        - The filename of the APK
+        - The file size of the APK
+        - The threat level of the APK
+        - The total score of the analysis result
+        - The JSON report of the analysis result
+
+
+Here is the flowchart of ``get_json_report``.
+
+.. image:: https://i.imgur.com/i2JZJQ0.png
+
+
+**The code of get_json_report**
+
+
+.. code:: python
+
+   def get_json_report(self):
+        """
+        Get quark report including summary and detail with json format.
+
+        :return: json report
+        """
+
+        w = Weight(
+            self.quark_analysis.score_sum, self.quark_analysis.weight_sum
+        )
+        warning = w.calculate()
+
+        # Filter out color code in threat level
+        for level in ["Low Risk", "Moderate Risk", "High Risk"]:
+            if level in warning:
+                warning = level
+
+        return {
+            "md5": self.apkinfo.md5,
+            "apk_filename": self.apkinfo.filename,
+            "size_bytes": self.apkinfo.filesize,
+            "threat_level": warning,
+            "total_score": self.quark_analysis.score_sum,
+            "crimes": self.quark_analysis.json_report,
+        }
