@@ -933,3 +933,152 @@ Here is the flowchart of ``get_json_report``.
             "total_score": self.quark_analysis.score_sum,
             "crimes": self.quark_analysis.json_report,
         }
+
+
+generate_json_report
+===============
+
+**The algorithm of generate_json_report**
+
+The function ``‎generate_json_report`` generates a JSON report based on the information extracted from the ruleobject instance .
+
+Here is the process of ``generate_json_report``.
+
+
+.. code-block:: TEXT
+
+    1. Calculate confidence percentage by counting the number of True values in check_item and multiplying by 20. Store the confidence value.
+
+    2. Count the True values in check_item and store the count as conf. Use conf to calculate the weight of the rule using the get_score method.
+
+    3. Assign the score attribute's value to the score variable.
+
+    4. Check the first item in check_item.
+        -If True, assign the permission attribute to permissions.
+        -Otherwise, assign an empty list.
+
+    5. Check the second item in check_item.
+        -If True, populate the API list with dictionaries from quark_analysis.level_2_result.
+
+    6. Check the third item in check_item.
+        -If True, assign the API attribute's value to the combination variable.
+
+    7. Define two empty lists: 
+        -sequnce_show_up
+        -same_operation_show_up
+
+    8. Check if the fourth item in the check_item is True and the quark_analysis.level_4_result list is not empty. 
+        -If True, 
+            -populate the sequnce_show_up list with dictionaries containing full_name attributes and their corresponding values from quark_analysis.parent_wrapper_mapping.
+            -Check if the fifth item in the check_item is True and the quark_analysis.level_5_result list is not empty.
+                -If True, populate the same_operation_show_up list with dictionaries containing full_name attributes and their corresponding values from quark_analysis.parent_wrapper_mapping.
+
+    9. Create a dictionary called crime, containing the following attributes:	
+        -rule：filename of rule in rule_obj
+        -crime：description of quark_analysis's crime in rule_obj
+        -label：the label in rule_obj
+        -score：the score in rule_obj
+        -weight：the weight in rule_obj
+        -confidence：the number of True values in check_item and multiplying by 20
+        -permissions：the permission in rule_obj
+        -native_api：list with dictionaries from quark_analysis.level_2_result
+        -combination：the value of the api attribute of rule_obj
+        -sequence：sequnce_show_up, information about the items in quark_analysis.level_4_result
+        -register：same_operation_show_up, information about the items in the quark_analysis.level_5_result
+
+    10. Append the crime dictionary to the json_report attribute of quark_analysis.
+
+    11. Add the weight to the weight_sum attribute of quark_analysis.
+
+    12. Add the score to the score_sum attribute of quark_analysis.
+
+
+
+Here is the flowchart of ``generate_json_report``.
+
+.. image:: https://i.imgur.com/gROkCdB.png
+
+
+**The code of generate_json_report**
+
+
+.. code:: python
+
+   def generate_json_report(self, rule_obj):
+        """
+        Show the json report.
+
+        :param rule_obj: the instance of the RuleObject
+        :return: None
+        """
+        # Count the confidence
+        confidence = str(rule_obj.check_item.count(True) * 20) + "%"
+        conf = rule_obj.check_item.count(True)
+        weight = rule_obj.get_score(conf)
+        score = rule_obj.score
+
+        # Assign level 1 examine result
+        permissions = rule_obj.permission if rule_obj.check_item[0] else []
+
+        # Assign level 2 examine result
+        api = []
+        if rule_obj.check_item[1]:
+            for item2 in self.quark_analysis.level_2_result:
+                api.append(
+                    {
+                        "class": str(item2.class_name),
+                        "method": str(item2.name),
+                        "descriptor": str(item2.descriptor),
+                    }
+                )
+
+        # Assign level 3 examine result
+        combination = []
+        if rule_obj.check_item[2]:
+            combination = rule_obj.api
+
+        # Assign level 4 - 5 examine result if exist
+        sequnce_show_up = []
+        same_operation_show_up = []
+
+        # Check examination has passed level 4
+        if self.quark_analysis.level_4_result and rule_obj.check_item[3]:
+            for item4 in self.quark_analysis.level_4_result:
+                sequnce_show_up.append(
+                    {
+                        item4.full_name: self.quark_analysis.parent_wrapper_mapping[
+                            item4.full_name
+                        ]
+                    }
+                )
+
+            # Check examination has passed level 5
+            if self.quark_analysis.level_5_result and rule_obj.check_item[4]:
+                for item5 in self.quark_analysis.level_5_result:
+                    same_operation_show_up.append(
+                        {
+                            item5.full_name: self.quark_analysis.parent_wrapper_mapping[
+                                item5.full_name
+                            ]
+                        }
+                    )
+
+        crime = {
+            "rule": rule_obj.rule_filename,
+            "crime": rule_obj.crime,
+            "label": rule_obj.label,
+            "score": score,
+            "weight": weight,
+            "confidence": confidence,
+            "permissions": permissions,
+            "native_api": api,
+            "combination": combination,
+            "sequence": sequnce_show_up,
+            "register": same_operation_show_up,
+        }
+        self.quark_analysis.json_report.append(crime)
+
+        # add the weight
+        self.quark_analysis.weight_sum += weight
+        # add the score
+        self.quark_analysis.score_sum += score
