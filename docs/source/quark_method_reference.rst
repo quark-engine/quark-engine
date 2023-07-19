@@ -1082,3 +1082,47 @@ Here is the flowchart of ``generate_json_report``.
         self.quark_analysis.weight_sum += weight
         # add the score
         self.quark_analysis.score_sum += score
+
+
+add_table_row
+===============
+
+**The algorithm of add_table_row**
+
+The function ``add_table_row`` adds a list to the table.
+
+Here is the process of ``add_table_row``.
+
+
+.. code-block:: TEXT
+
+    1. The method add_row is then called with a list of parameters. This list includes:
+        name: filename of rule in rule_obj
+        rule_obj.crime: description of quark_analysis's crime in rule_obj
+        confidence: the number of True values in check_item and multiplying by 20
+        score: the score in rule_obj
+        weight: the weight in rule_obj
+
+    2. The add_row method takes these parameters and adds them as a new row in the summary_report_table.
+
+Here is the flowchart of ``add_table_row``.
+
+.. image:: https://i.imgur.com/5YEubbB.png
+
+
+**The code of add_table_row**
+
+
+.. code:: python
+
+    def add_table_row(self, name, rule_obj, confidence, score, weight):
+
+        self.quark_analysis.summary_report_table.add_row(
+            [
+                name,
+                green(rule_obj.crime),
+                yellow(confidence),
+                score,
+                red(weight),
+            ]
+        )
