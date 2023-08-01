@@ -1126,3 +1126,64 @@ Here is the flowchart of ``add_table_row``.
                 red(weight),
             ]
         )
+
+show_summary_report
+===============
+
+**The algorithm of show_summary_report**
+
+The function ``show_summary_report`` generates a summary report.
+
+Here is the process of ``show_summary_report``.
+
+
+.. code-block:: TEXT
+
+    1. Calculate confidence by counting occurrences of True in rule_obj.check_item and multiplying it by 20 to get a percentage.
+
+    2. Calculate the weight using the confidence value through rule_obj.get_score, and retrieves score and rule_filename from rule_obj.
+
+    3. Check if a threshold is provided.
+        -If true, check if the confidence percentage is greater than or equal to the threshold.
+            -If true, calls add_table_row with relevant arguments.
+        -If false, calls add_table_row with relevant arguments.
+
+    4. Update the quark_analysis instance by adding the calculated weight and score to weight_sum and score_sum.
+
+Here is the flowchart of ``show_summary_report``.
+
+.. image:: https://i.imgur.com/0B3nYsa.png
+
+
+**The code of show_summary_report**
+
+
+.. code:: python
+
+    def show_summary_report(self, rule_obj, threshold=None):
+        """
+        Show the summary report.
+
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
+        """
+        # Count the confidence
+        confidence = f"{rule_obj.check_item.count(True) * 20}%"
+        conf = rule_obj.check_item.count(True)
+        weight = rule_obj.get_score(conf)
+        score = rule_obj.score
+        name = rule_obj.rule_filename
+
+        if threshold:
+
+            if rule_obj.check_item.count(True) * 20 >= int(threshold):
+                self.add_table_row(name, rule_obj, confidence, score, weight)
+
+        else:
+            self.add_table_row(name, rule_obj, confidence, score, weight)
+
+        # add the weight
+        self.quark_analysis.weight_sum += weight
+        # add the score
+        self.quark_analysis.score_sum += score
+
