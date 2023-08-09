@@ -631,7 +631,7 @@ class R2Imp(BaseApkinfo):
         :return: the content in the given address
         """
         r2 = self._get_r2()
-        content = r2.cmd(f"pr @ {int(address, 16)}")
+        content = r2.cmd(f"pfq z @ {int(address, 16)}")
         return content
 
     @staticmethod
