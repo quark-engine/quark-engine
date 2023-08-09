@@ -367,7 +367,7 @@ class R2Imp(BaseApkinfo):
 
         r2 = self._get_r2()
 
-        xrefs = r2.cmdj(f"axlj @ {cache.address}")
+        xrefs = r2.cmdj(f"axtj @ {cache.address}")
         upperfunc_set = set()
         for xref in xrefs:
             if xref["type"] != "CALL":
