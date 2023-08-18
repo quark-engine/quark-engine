@@ -11,7 +11,7 @@ required_requirements = [
     "tqdm",
     "colorama",
     "graphviz",
-    "prompt-toolkit==3.0.19",
+    "prompt-toolkit",
     "plotly",
     "rzpipe",
     "click",
@@ -30,7 +30,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/quark-engine/quark-engine",
-    packages=setuptools.find_packages(),
+    packages=setuptools.find_packages(exclude=("tests",)),
     package_data={
         "quark.core.axmlreader": ["axml_definition"],
         "quark.webreport": [

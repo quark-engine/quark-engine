@@ -44,14 +44,12 @@ jobs:
         python -m pip install click==8.0.3
 
     - name: Install Quark-Engine
-      run: |
-        python setup.py build
-        python setup.py install
+      run: pip install .
 
     - name: Test with pytest
       run: |
         python -m pip install black pytest sphinx sphinx-rtd-theme
-        python -m pip install coveralls codecov pytest-cov
+        python -m pip install coveralls pytest-cov
         pytest --cov=./
 
     - name: Upload coverage to Codecov

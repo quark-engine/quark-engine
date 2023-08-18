@@ -72,11 +72,30 @@ class BaseApkinfo:
 
     @property
     @abstractmethod
+    def application(self) -> XMLElement:
+        """Get the application element from the manifest file.
+
+        :return: an application element
+        """
+        pass
+
+    @property
+    @abstractmethod
     def activities(self) -> List[XMLElement]:
         """
         Return all activity from given APK.
 
         :return: a list of all activities
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from the given APK.
+
+        :return: a list of all receivers
         """
         pass
 
@@ -115,7 +134,7 @@ class BaseApkinfo:
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> MethodObject:
+    ) -> List[MethodObject]:
         """
         Find method from given class_name, method_name and the descriptor.
         default is find all method.
@@ -123,7 +142,7 @@ class BaseApkinfo:
         :param class_name: the class name of the Android API
         :param method_name: the method name of the Android API
         :param descriptor: the descriptor of the Android API
-        :return: a generator of MethodObject
+        :return: a list with MethodObjects
         """
         pass
 

@@ -11,8 +11,8 @@ from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+    "https://github.com/quark-engine/apk-samples"
+    "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 )
 APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
@@ -40,7 +40,7 @@ def apkinfo(request, apk_path):
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/apk-malware-samples" "/raw/master/Ahmyth.apk"
+        "https://github.com/quark-engine/apk-samples" "/raw/master/malware-samples/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
@@ -104,6 +104,14 @@ class TestApkinfo:
         assert set(apkinfo.permissions) == set(ans)
 
     @staticmethod
+    def test_application(apkinfo):
+        application = apkinfo.application
+        label = str(application.get(
+            "{http://schemas.android.com/apk/res/android}label"
+        ))
+        assert label == "@7F050001" or label == "2131034113"
+
+    @staticmethod
     def test_activities(apkinfo):
         activities = apkinfo.activities
 
@@ -113,6 +121,36 @@ class TestApkinfo:
                 "{http://schemas.android.com/apk/res/android}name"
             )
             == "com.example.google.service.MainActivity"
+        )
+
+    @staticmethod
+    def test_receivers(apkinfo):
+        receivers = apkinfo.receivers
+
+        assert len(receivers) == 4
+        assert (
+            receivers[0].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.SMSServiceBootReceiver"
+        )
+        assert (
+            receivers[1].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.SMSReceiver"
+        )
+        assert (
+            receivers[2].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "TaskRequest"
+        )
+        assert (
+            receivers[3].get(
+                "{http://schemas.android.com/apk/res/android}name"
+            )
+            == "com.example.google.service.MyDeviceAdminReceiver"
         )
 
     def test_android_apis(self, apkinfo):
@@ -175,28 +213,95 @@ class TestApkinfo:
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
-    def test_find_method(self, apkinfo):
-        result = apkinfo.find_method(
-            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
+    @staticmethod
+    @pytest.mark.parametrize(
+        "test_input, expected",
+        [
+            (
+                [
+                    "Ljava/lang/reflect/Field;",
+                    "setAccessible",
+                    "(Z)V",
+                ],
+                [
+                    "Ljava/lang/reflect/Field;",
+                    "setAccessible",
+                    "(Z)V",
+                ],
+            ),
+            (
+                [
+                    "",
+                    "onReceive",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "onReceive",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+            ),
+            (
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "onReceive",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+            ),
+            (
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "onReceive",
+                    "",
+                ],
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "onReceive",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+            ),
+            (
+                [
+                    None,
+                    None,
+                    None,
+                ],
+                [
+                    "Landroid/support/v4/media/TransportMediatorJellybeanMR2$3;",
+                    "onReceive",
+                    "(Landroid/content/Context; Landroid/content/Intent;)V",
+                ],
+            ),
+        ],
+    )
+    def test_find_method(apkinfo, test_input, expected):
+        result = apkinfo.find_method(test_input[0], test_input[1], test_input[2])
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
         )
 
-        assert isinstance(result, MethodObject)
-        assert str(result.class_name) == "Ljava/lang/reflect/Field;"
-        assert str(result.name) == "setAccessible"
-        assert str(result.descriptor) == "(Z)V"
+        assert isinstance(result, list)
+        assert expect_method in result
 
     def test_upperfunc(self, apkinfo):
         api = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
             "(Landroid/content/Context;)V",
-        )
+        )[0]
 
         expect_function = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
             "(Ljava/lang/String;)Ljava/lang/Boolean;",
-        )
+        )[0]
 
         upper_methods = list(apkinfo.upperfunc(api))
 
@@ -207,7 +312,7 @@ class TestApkinfo:
             "Lcom/example/google/service/WebServiceCalling;",
             "Send",
             "(Landroid/os/Handler; Ljava/lang/String;)V",
-        )
+        )[0]
 
         expect_method = MethodObject(
             "Ljava/lang/StringBuilder;",
@@ -253,7 +358,7 @@ class TestApkinfo:
             class_name="Landroid/support/v4/app/FragmentManagerImpl;",
             method_name="execPendingActions",
             descriptor="()Z",
-        )
+        )[0]
 
         bytecodes = list(apkinfo.get_method_bytecode(method))
 
@@ -265,13 +370,13 @@ class TestApkinfo:
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
             "(Ljava/lang/String;)Ljava/lang/Boolean;",
-        )
+        )[0]
 
         expect_method = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
             "(Landroid/content/Context;)V",
-        )
+        )[0]
         expect_offset = 10
 
         upper_methods = apkinfo.lowerfunc(method)

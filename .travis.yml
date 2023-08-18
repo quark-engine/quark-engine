@@ -16,7 +16,7 @@ before-install:
 # Installation
 install:
   - pipenv install -e . --skip-lock
-  - pipenv install coveralls codecov pytest-cov --skip-lock
+  - pipenv install coveralls pytest-cov --skip-lock
 
 # Run the unit test
 script:
@@ -24,4 +24,3 @@ script:
 
 after_success:
   - coveralls
-  - codecov

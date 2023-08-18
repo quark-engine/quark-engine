@@ -53,9 +53,29 @@
 *   **See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
 
 # CWE Showcases
-
-[CWE-20](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-20-in-android-application-diva-apk) | [CWE-79](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-79-in-android-application-vuldroid-apk) | [CWE-89](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk) | [CWE-94](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk) | [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk) | [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk) | [CWE-327](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk) | [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk) | [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk) | [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk) | [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk) | [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk) | [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)
-
+*   [CWE-020](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-20-in-android-application-diva-apk)  Improper Input Validation 
+*   [CWE-022](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-22-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') 
+*   [CWE-023](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-23-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Relative Path Traversal
+*   [CWE-073](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-73-in-android-application-ovaa-apk)   External Control of File Name or Path
+*   [CWE-078](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-78-in-android-application-vuldroid-apk)   Improper Neutralization of Special Elements used in an OS Command
+*   [CWE-088](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-88-in-android-application-vuldroid-apk)  Improper Neutralization of Argument Delimiters in a Command
+*   [CWE-089](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)  Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
+*   [CWE-094](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)  Improper Control of Generation of Code ('Code Injection') 
+*   [CWE-295](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-295-in-android-application-insecureshop-apk)  Improper Certificate Validation 
+*   [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)  Cleartext Storage of Sensitive Information 
+*   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)  Cleartext Transmission of Sensitive Information 
+*   [CWE-327](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk)  Use of a Broken or Risky Cryptographic Algorithm 
+*   [CWE-328](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-328-in-android-application-allsafe-apk)  Use of Weak Hash 
+*   [CWE-338](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-338-in-android-application-pivva-apk)  Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG) 
+*   [CWE-489](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-489-in-android-application-allsafe-apk-androgoat-apk-pivaa-apk)  Active Debug Code 
+*   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)  Insertion of Sensitive Information into Log File 
+*   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)  Exposed Dangerous Method or Function 
+*   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)  Use of RSA Algorithm without OAEP 
+*   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)  Use of Hard-coded Credentials 
+*   [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk)  Storage of Sensitive Data in a Mechanism without Access Control 
+*   [CWE-925](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-925-in-android-application-insecurebankv2-androgoat)  Improper Verification of Intent by Broadcast Receiver
+*   [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)  Improper Export of Android Application Components 
+ 
 # Quick Start
 
 In this section, we will show how to detect CWE-798 with Quark Script.

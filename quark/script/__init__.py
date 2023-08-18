@@ -6,7 +6,7 @@ import re
 import functools
 from os import PathLike
 from os.path import abspath, isfile, join
-from typing import Any, List, Tuple, Union
+from typing import Any, Iterable, List, Tuple, Union
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
 from quark.core.analysis import QuarkAnalysis
@@ -54,6 +54,34 @@ class DefaultRuleset(Ruleset):
 DEFAULT_RULESET = DefaultRuleset(join(QUARK_RULE_PATH, "rules"))
 
 
+class Application:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return str(self._getAttribute("label"))
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def isDebuggable(self) -> bool:
+        """Check if the application element sets `android:debuggable=true`.
+
+        :return: True/False
+        """
+        debuggable = self._getAttribute("debuggable")
+        print(debuggable)
+        if debuggable is None:
+            return False
+
+        return str(debuggable).lower() == "true"
+
+
 class Activity:
     def __init__(self, xml: XMLElement) -> None:
         self.xml: XMLElement = xml
@@ -83,6 +111,46 @@ class Activity:
         """
         exported = self._getAttribute("exported", self.hasIntentFilter())
         return exported
+
+
+class Receiver:
+    def __init__(self, xml: XMLElement) -> None:
+        self.xml: XMLElement = xml
+
+    def __str__(self) -> str:
+        return self._getAttribute("name")
+
+    def _getAttribute(
+        self, attributeName: str, defaultValue: Any = None
+    ) -> Any:
+        realAttributeName = (
+            f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
+        )
+        return self.xml.get(realAttributeName, defaultValue)
+
+    def hasIntentFilter(self) -> bool:
+        """Check if the receiver has an intent filter.
+
+        :return: True/False
+        """
+        return self.xml.find("intent-filter") is not None
+
+    def isExported(self) -> bool:
+        """Check if the receiver is exported.
+
+        According to the documentation from Android Developer guide.
+        "
+        If the attribute exported is unspecified, the default value depends on whether
+        the broadcast receiver contains intent filters.
+        If the receiver contains at least one intent filter,
+        then the default value is "true".
+        Otherwise, the default value is "false".
+        "
+
+        :return: True/False
+        """
+        exported = self._getAttribute("exported", self.hasIntentFilter())
+        return str(exported).lower() == 'true'
 
 
 class Method:
@@ -152,7 +220,7 @@ class Method:
                 lambda record: methodPattern in record,
                 register_usage_records))
 
-            argumentStr = max(matchedRecords, key=len)[:-1]
+            argumentStr = max(matchedRecords, key=len, default="")[:-1]
             filterStr = f"{self.targetMethod.innerObj.class_name}->" + \
                 self.targetMethod.innerObj.name + \
                 self.targetMethod.descriptor
@@ -183,6 +251,23 @@ class Method:
             return get_arguments_from_argument_str(
                 next(argumentsOfFirstAPI, ""), self.descriptor
             )
+
+    def findSuperclassHierarchy(self) -> List[str]:
+        """Find all superclasses of this method object.
+
+        :return: Python list contains all superclass names of this method.
+        """
+
+        parentsHierarchy = list()
+        targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+            self.class_name)
+
+        while targetClassAnalysis and "Ljava/lang/Object;" != targetClassAnalysis.extends:
+            parentsHierarchy.append(targetClassAnalysis.extends)
+            targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
+                targetClassAnalysis.extends)
+
+        return parentsHierarchy
 
     @property
     def fullName(self) -> str:
@@ -310,13 +395,14 @@ class Behavior:
                 methodName = re.findall(r"->(.*?)\(", result)[0]
                 descriptor = result.split(methodName)[-1] + ";"
 
-                methodObj = self.quarkResult.quark.apkinfo.find_method(
+                methodObj_list = self.quarkResult.quark.apkinfo.find_method(
                     class_name=className,
                     method_name=methodName,
                     descriptor=descriptor
                 )
 
-                methodCalled.append(Method(methodObj=methodObj))
+                for methodObj in methodObj_list:
+                    methodCalled.append(Method(methodObj=methodObj))
 
         return methodCalled
 
@@ -390,6 +476,16 @@ class QuarkResult:
         apkinfo = self.quark.apkinfo
         return apkinfo.get_strings()
 
+    def isHardcoded(self, argument: str) -> bool:
+        """
+        Check if the argument is hardcoded into the APK.
+
+        :params argument: string value that is passed in when a method is
+         invoked
+        :return: True/False
+        """
+        return argument in self.getAllStrings()
+
     def findMethodInCaller(
         self,
         callerMethod: Union[List[str], Method],
@@ -419,7 +515,7 @@ class QuarkResult:
             class_name=callerMethod[0],
             method_name=callerMethod[1],
             descriptor=callerMethod[2],
-        )
+        )[0]
 
         if not callerMethodObj:
             print("Caller method not Found!")
@@ -437,8 +533,8 @@ class QuarkResult:
                 matchedMethods.append(calleeMethod)
 
         return [self._wrapMethodObject(
-               callerMethodObj, self.quark, matchedMethod
-               ) for matchedMethod in matchedMethods]
+            callerMethodObj, self.quark, matchedMethod
+        ) for matchedMethod in matchedMethods]
 
 
 def runQuarkAnalysis(samplePath: PathLike, ruleInstance: Rule) -> QuarkResult:
@@ -467,10 +563,34 @@ def getActivities(samplePath: PathLike) -> List[Activity]:
     return [Activity(xml) for xml in apkinfo.activities]
 
 
+def getReceivers(samplePath: PathLike) -> List[Receiver]:
+    """Get receivers from a target sample.
+
+    :param samplePath: target file
+    :return: python list containing receivers
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return [Receiver(xml) for xml in apkinfo.receivers]
+
+
+def getApplication(samplePath: PathLike) -> Application:
+    """Get the application element from the manifest file of the target sample.
+
+    :param samplePath: the file path of the target sample
+    :return: the application element of the target sample
+    """
+    quark = _getQuark(samplePath)
+    apkinfo = quark.apkinfo
+
+    return Application(apkinfo.application)
+
+
 def findMethodInAPK(
     samplePath: PathLike,
     targetMethod: Union[List[str], Method]
-) -> Method:
+) -> List[Method]:
     """Find the target method in APK.
 
     :param samplePath: target file
@@ -493,16 +613,59 @@ def findMethodInAPK(
             return None
 
     quark = _getQuark(samplePath)
-    method = quark.apkinfo.find_method(
+    match_methods = quark.apkinfo.find_method(
         class_name=targetMethod[0],
         method_name=targetMethod[1],
-        descriptor=targetMethod[2]
+        descriptor=targetMethod[2],
     )
 
-    methodInstance = Method(methodObj=method)
+    if not match_methods:
+        return []
 
-    caller_set = quark.apkinfo.upperfunc(method)
+    caller_methods = list()
+    for method in match_methods:
+        methodInstance = Method(methodObj=method)
+        caller_set = quark.apkinfo.upperfunc(method)
+        caller_methods += [
+            _wrapMethodObject(quark, caller, methodInstance)
+            for caller in list(caller_set)
+        ]
+    return caller_methods
 
-    return [_wrapMethodObject(
-            quark, caller, methodInstance
-            ) for caller in list(caller_set)]
+
+def checkMethodCalls(
+        samplePath: PathLike,
+        targetMethod: Union[Tuple[str, str, str], MethodObject],
+        checkMethods: List[Tuple[str, str, str]]) -> bool:
+    """Check if any of the specific methods shown in the `targetMethod`
+
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
+                         or a Method Object.
+    :param checkMethods: python list contains the class name,
+                         method name, and descriptor of the target method
+
+    :return: bool that indicate specific methods can be called or defined within a `target method` or not.
+    """
+    targetMethodSet = set()
+    checkMethodSet = set()
+    targetLowerFuncSet = set()
+
+    quark = _getQuark(samplePath)
+    if isinstance(targetMethod, Iterable):
+        # Find the method in the APK with the given class name, method name, and descriptor
+        targetMethodSet.update(quark.apkinfo.find_method(*targetMethod))
+    else:
+        # targetMethod is already a Method object
+        targetMethodSet.add(MethodObject)
+
+    if not targetMethodSet:
+        return False
+
+    for candidate in checkMethods:
+        checkMethodSet.update(quark.apkinfo.find_method(*candidate))
+
+    targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
+
+    return any(checkMethodSet.intersection(targetLowerFuncSet))

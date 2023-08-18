@@ -29,6 +29,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    contribution
    organization
    doc
+   quark_method_reference
    quark_inside_index
    modules
    faq

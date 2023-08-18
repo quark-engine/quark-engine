@@ -77,7 +77,7 @@ Here is the simplest way for Radiocontrast usage:
     from quark.radiocontrast import RadioContrast
 
     # The target APK.
-    APK_PATH = "~/apk-malware-sample/Ahmyth.apk"
+    APK_PATH = "Ahmyth.apk"
 
     # The method that you want to generate rules. 
     TARGET_METHOD = "Lahmyth/mine/king/ahmyth/CameraManager;->startUp(I)V"

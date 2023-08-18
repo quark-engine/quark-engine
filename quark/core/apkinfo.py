@@ -44,6 +44,19 @@ class AndroguardImp(BaseApkinfo):
             return []
 
     @property
+    def application(self) -> XMLElement:
+        """Get the application element from the manifest file.
+
+        :return: an application element
+        """
+        if self.ret_type == "DEX":
+            return []
+
+        manifest_root = self.apk.get_android_manifest_xml()
+
+        return manifest_root.find("application")
+
+    @property
     def activities(self) -> List[XMLElement]:
         if self.ret_type == "DEX":
             return []
@@ -52,6 +65,21 @@ class AndroguardImp(BaseApkinfo):
         application = manifest_root.find("application")
 
         return application.findall("activity")
+
+    @property
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from the given APK.
+
+        :return: a list of all receivers
+        """
+        if self.ret_type == "DEX":
+            return []
+
+        manifest_root = self.apk.get_android_manifest_xml()
+        application = manifest_root.find("application")
+
+        return application.findall("receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
@@ -85,10 +113,30 @@ class AndroguardImp(BaseApkinfo):
         class_name: Optional[str] = ".*",
         method_name: Optional[str] = ".*",
         descriptor: Optional[str] = ".*",
-    ) -> MethodObject:
-        regex_class_name = re.escape(class_name)
-        regex_method_name = f"^{re.escape(method_name)}$"
-        regex_descriptor = re.escape(descriptor)
+    ) -> List[MethodObject]:
+        if not class_name:
+            class_name = ".*"
+
+        if class_name != ".*":
+            regex_class_name = re.escape(class_name)
+        else:
+            regex_class_name = class_name
+
+        if not method_name:
+            method_name = ".*"
+
+        if method_name != ".*":
+            regex_method_name = f"^{re.escape(method_name)}$"
+        else:
+            regex_method_name = f"^{method_name}$"
+
+        if not descriptor:
+            descriptor = ".*"
+
+        if descriptor != ".*":
+            regex_descriptor = re.escape(descriptor)
+        else:
+            regex_descriptor = descriptor
 
         method_result = self.analysis.find_methods(
             classname=regex_class_name,
@@ -96,8 +144,7 @@ class AndroguardImp(BaseApkinfo):
             descriptor=regex_descriptor,
         )
 
-        result = next(method_result, None)
-        return self._convert_to_method_object(result) if result else None
+        return [self._convert_to_method_object(item) for item in method_result]
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:

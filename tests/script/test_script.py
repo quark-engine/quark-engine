@@ -11,7 +11,10 @@ from quark.script import (
     Method,
     QuarkResult,
     Ruleset,
+    checkMethodCalls,
     getActivities,
+    getReceivers,
+    getApplication,
     runQuarkAnalysis,
     findMethodInAPK,
 )
@@ -72,6 +75,18 @@ class TestDefaultRuleset:
             _ = ruleset[1]
 
 
+class TestApplication:
+    @staticmethod
+    def testIsNotDebuggable(SAMPLE_PATH_Ahmyth):
+        application = getApplication(SAMPLE_PATH_Ahmyth)
+        assert application.isDebuggable() is False
+
+    @staticmethod
+    def testIsDebuggable(SAMPLE_PATH_13667):
+        application = getApplication(SAMPLE_PATH_13667)
+        assert application.isDebuggable() is True
+
+
 class TestActivity:
     @staticmethod
     def testHasNoIntentFilter(SAMPLE_PATH_14d9f):
@@ -92,6 +107,28 @@ class TestActivity:
     def testIsExported(SAMPLE_PATH_13667):
         activity = getActivities(SAMPLE_PATH_13667)[0]
         assert activity.isExported() is True
+
+
+class TestReceiver:
+    @staticmethod
+    def testHasNoIntentFilter(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[2]
+        assert receiver.hasIntentFilter() is False
+
+    @staticmethod
+    def testHasIntentFilter(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[0]
+        assert receiver.hasIntentFilter() is True
+
+    @staticmethod
+    def testIsNotExported(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[2]
+        assert receiver.isExported() is False
+
+    @staticmethod
+    def testIsExported(SAMPLE_PATH_13667):
+        receiver = getReceivers(SAMPLE_PATH_13667)[0]
+        assert receiver.isExported() is True
 
 
 class TestMethod:
@@ -117,7 +154,7 @@ class TestMethod:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "()Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -142,7 +179,7 @@ class TestMethod:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -165,7 +202,7 @@ class TestMethod:
         ) -> Method:
             methodObj = quarkResult.quark.apkinfo.find_method(
                 className, methodName, descriptor
-            )
+            )[0]
             return Method(quarkResult, methodObj)
 
         def __getMethodWithTarget(
@@ -209,14 +246,14 @@ class TestMethod:
                 class_name="Landroid/util/Log;",
                 method_name="e",
                 descriptor="(Ljava/lang/String; Ljava/lang/String;)I",
-            )
+            )[0]
 
         callerMethodObj = \
             QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark.apkinfo.find_method(
                 class_name="Lcom/google/progress/WifiCheckTask;",
                 method_name="CloseWifi",
                 descriptor="()V",
-            )
+            )[0]
 
         targetMethod = Method(methodObj=targetMethod)
         callerMethodInstance = __getMethodWithTarget(
@@ -230,6 +267,21 @@ class TestMethod:
 
         assert arguments[1:] == [True]
         assert argumentsOfTargetMethod[0] == "wifi"
+
+    @staticmethod
+    def testFindSuperclassHierarchy(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        methodObj = MethodObject(
+            class_name="Lcom/google/progress/WifiCheckTask;",
+            name="checkWifiCanOrNotConnectServer",
+            descriptor="()Z",
+        )
+
+        method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68,
+                        methodObj, QUARK_ANALYSIS_RESULT_FOR_RULE_68.quark)
+
+        assert (
+            ["Ljava/util/TimerTask;"] == method.findSuperclassHierarchy()
+        )
 
 
 class TestBehavior:
@@ -312,7 +364,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "()Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -337,7 +389,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         method = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, methodObj)
 
@@ -355,6 +407,15 @@ class TestQuarkReuslt:
     @staticmethod
     def testGetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
         assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
+
+    @staticmethod
+    def testIsHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded("gps") is True
+
+    @staticmethod
+    def testIsNotHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
+        assert QUARK_ANALYSIS_RESULT_FOR_RULE_68.isHardcoded(
+            "Quark") is False
 
     @staticmethod
     def testFindMethodInCallerWithListOfStr(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
@@ -382,7 +443,7 @@ class TestQuarkReuslt:
                 "Lcom/google/progress/WifiCheckTask;",
                 "checkWifiCanOrNotConnectServer",
                 "([Ljava/lang/String;)Z",
-            )
+            )[0]
         )
         caller = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, callerObj)
 
@@ -391,7 +452,7 @@ class TestQuarkReuslt:
                 "Landroid/util/Log;",
                 "e",
                 "(Ljava/lang/String; Ljava/lang/String;)I",
-            )
+            )[0]
         )
         target = Method(QUARK_ANALYSIS_RESULT_FOR_RULE_68, targetObj)
 
@@ -416,6 +477,13 @@ def testGetActivities(SAMPLE_PATH_14d9f) -> None:
     assert str(activities[0]) == "com.google.progress.BackGroundActivity"
 
 
+def testGetReceivers(SAMPLE_PATH_14d9f) -> None:
+    receivers = getReceivers(SAMPLE_PATH_14d9f)
+
+    assert len(receivers) == 1
+    assert str(receivers[0]) == "com.google.progress.BootReceiver"
+
+
 def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
 
     method = findMethodInAPK(SAMPLE_PATH_14d9f, [
@@ -425,3 +493,22 @@ def testfindMethodInAPK(SAMPLE_PATH_14d9f) -> None:
     )
 
     assert len(method) == 2
+
+
+def testCheckMethodCalls(SAMPLE_PATH_14d9f) -> None:
+    targetMethod = [
+        "Lcom/google/progress/WifiCheckTask;",
+        "checkWifiCanOrNotConnectServer",
+        "([Ljava/lang/String;)Z"
+    ]
+
+    checkMethods  = []
+    checkMethods.append(tuple([
+        "Landroid/util/Log;",
+        "e",
+        "(Ljava/lang/String; Ljava/lang/String;)I"
+    ]))
+
+    assert checkMethodCalls("14d9f1a92dd984d6040cc41ed06e273e.apk", targetMethod, checkMethods) is True
+
+

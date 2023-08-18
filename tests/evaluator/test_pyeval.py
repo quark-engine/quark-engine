@@ -28,8 +28,8 @@ def instructions():
 
 
 APK_SOURCE = (
-    "https://github.com/quark-engine/apk-malware-samples"
-    "/raw/master/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+    "https://github.com/quark-engine/apk-samples"
+    "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 )
 APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
