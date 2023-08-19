@@ -17,6 +17,6 @@ Web Design Layout
 
 The initial draft of the web design is as below.
 
-Design by: @Commuter95
+Design by: `@Commuter95 <https://github.com/Commuter95>`_
 
-.. image:: https://hackmd.io/_uploads/H1uZ2Yh32.png
+.. image:: https://github.com/quark-engine/quark-engine/assets/16009212/053d62e2-181a-4fb1-96d7-95fe59809dc3
