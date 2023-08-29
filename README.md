@@ -61,6 +61,7 @@
 *   [CWE-088](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-88-in-android-application-vuldroid-apk)  Improper Neutralization of Argument Delimiters in a Command
 *   [CWE-089](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)  Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
 *   [CWE-094](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)  Improper Control of Generation of Code ('Code Injection') 
+*   [CWE-117](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-117-in-android-application-allsafe-apk)  Improper Output Neutralization for Logs 
 *   [CWE-295](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-295-in-android-application-insecureshop-apk)  Improper Certificate Validation 
 *   [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)  Cleartext Storage of Sensitive Information 
 *   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)  Cleartext Transmission of Sensitive Information 
