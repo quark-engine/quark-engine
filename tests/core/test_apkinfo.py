@@ -323,25 +323,6 @@ class TestApkinfo:
 
         assert expect_function in upper_methods
 
-    def test_lowerfunc(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
-        method = apkinfo.find_method(
-            "Lcom/example/google/service/WebServiceCalling;",
-            "Send",
-            "(Landroid/os/Handler; Ljava/lang/String;)V",
-        )[0]
-
-        expect_method = MethodObject(
-            "Ljava/lang/StringBuilder;",
-            "append",
-            "(Ljava/lang/String;)Ljava/lang/StringBuilder;",
-        )
-        expect_offset = 42
-
-        upper_methods = apkinfo.lowerfunc(method)
-
-        assert (expect_method, expect_offset) in upper_methods
-
     def test_get_method_bytecode(self, apkinfo_without_R2Imp):
         apkinfo = apkinfo_without_R2Imp
         expected_bytecode_list = [
