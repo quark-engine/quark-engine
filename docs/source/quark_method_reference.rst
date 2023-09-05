@@ -1187,3 +1187,97 @@ Here is the flowchart of ``show_summary_report``.
         # add the score
         self.quark_analysis.score_sum += score
 
+show_label_report
+===============
+
+**The algorithm of show_label_report**
+
+The function ``show_label_report`` generates a tabular report that summarizes statistical information.
+
+Here is the process of ``show_label_report``.
+
+.. code-block:: TEXT
+
+    1. Clear label_report_table and initializes label_desc.
+
+    2. Iterate through the all_labels dictionary.
+
+    3. Calculate the maximum, average, and standard deviation of the confidence values for each label.
+
+    4. Check if table_version is max.
+	- If true, set table header for table_version is max.
+	- If false, set table header for table_version is not max.
+
+Here is the flowchart of ``show_label_report``.
+
+.. image:: https://i.imgur.com/uT0RuB8.png
+
+
+**The code of show_label_report**
+
+
+.. code:: python
+
+    def show_label_report(self, rule_path, all_labels, table_version):
+        """
+        Show the report based on label, last column represents max confidence for that label
+        :param rule_path: the path where may be present the file label_desc.csv.
+        :param all_labels: dictionary containing label:<array of confidence values associated to that label>
+        :return: None
+        """
+        label_desc = {}
+        # clear table to manage max/detail version
+        self.quark_analysis.label_report_table.clear()
+        if os.path.isfile(os.path.join(rule_path, "label_desc.csv")):
+            # associate to each label a description
+            col_list = ["label", "description"]
+            # csv file on form <label,description>
+            # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
+            # remove temporarily
+            #df = pd.read_csv(
+            #    os.path.join(rule_path, "label_desc.csv"), usecols=col_list
+            #)
+            #
+            #label_desc = dict(zip(df["label"], df["description"]))
+
+        for label_name in all_labels:
+            confidences = np.array(all_labels[label_name])
+
+            if table_version == "max":
+                self.quark_analysis.label_report_table.field_names = [
+                    "Label",
+                    "Description",
+                    "Number of rules",
+                    "MAX Confidence %",
+                ]
+                self.quark_analysis.label_report_table.add_row(
+                    [
+                        green(label_name),
+                        yellow(label_desc.get(label_name, "-")),
+                        (len(confidences)),
+                        red(np.max(confidences)),
+                    ]
+                )
+            else:
+                self.quark_analysis.label_report_table.field_names = [
+                    "Label",
+                    "Description",
+                    "Number of rules",
+                    "MAX Confidence %",
+                    "AVG Confidence",
+                    "Std Deviation",
+                    "# of Rules with Confidence >= 80%",
+                ]
+                self.quark_analysis.label_report_table.add_row(
+                    [
+                        green(label_name),
+                        yellow(label_desc.get(label_name, "-")),
+                        (len(confidences)),
+                        red(np.max(confidences)),
+                        magenta(round(np.mean(confidences), 2)),
+                        lightblue(round(np.std(confidences), 2)),
+                        lightyellow(np.count_nonzero(confidences >= 80)),
+                    ]
+                )
+
+
