@@ -1286,32 +1286,32 @@ show_detail_report
 
 **The algorithm of show_detail_report**
 
-The function ``show_detail_report`` prints a report that calculates the final confidence of the APK and summarizes the result of the five-level check.
+The function ``show_detail_report`` prints a report summarizing the result of the five-level check and the confidence of the APK.
 
 Here is the process of ``show_detail_report``.
 
 .. code-block:: TEXT
 
-    1. Calculate the final confidence of the APK by multiplying 20 by the number of levels with results in the five-level check.
+    1. Calculate the confidence of the APK by multiplying the number of passed levels by 20.
 
-    2. Check if there is a result in the level 1.
-        - If YES, output the result, which shows the matched permissions requested by the APK.
+    2. Check if the APK passed level 1.
+        - If passed, show the match permissions.
 
-    3. Check if there is a result in the level 2.
-        - If YES, output the result, which shows the matched APIs called by the APK.
+    3. Check if the APK passed level 2.
+        - If passed, show the matched APIs.
 
-    4. Check if there is a result in the level 3.
-        - If YES, output the result, which shows the matched API combinations called by the APK.
+    4. Check if the APK passed level 3.
+        - If passed, show the matched API combinations.
         
-    5. Check if there is a result in the level 4.
-        - If YES, output the result, which shows the matched API combinations called by the APK with the order.
+    5. Check if the APK passed level 4.
+        - If passed, show the matched API sequences.
         
-    6. Check if there is a result in the level 5.
-        - If YES, output the result, which shows the matched API combinations called by the APK that use the same register.
+    6. Check if the APK passed level 5.
+        - If passed, show the matched API sequences that use the same register.
 
 Here is the flowchart of ``show_detail_report``.
 
-.. image:: https://i.imgur.com/xkhXnNX.png
+.. image:: https://i.imgur.com/s1DZVHs.png
 
 
 **The code of show_detail_report**
