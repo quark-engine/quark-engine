@@ -1188,7 +1188,7 @@ Here is the flowchart of ``show_summary_report``.
         self.quark_analysis.score_sum += score
 
 show_label_report
-===============
+==================
 
 **The algorithm of show_label_report**
 
@@ -1280,4 +1280,88 @@ Here is the flowchart of ``show_label_report``.
                     ]
                 )
 
+
+show_detail_report
+==================
+
+**The algorithm of show_detail_report**
+
+The function ``show_detail_report`` prints a report summarizing the result of the five-level check and the confidence of the APK.
+
+Here is the process of ``show_detail_report``.
+
+.. code-block:: TEXT
+
+    1. Calculate the confidence of the APK by multiplying the number of passed levels by 20.
+
+    2. Check if the APK passed level 1.
+        - If passed, show the match permissions.
+
+    3. Check if the APK passed level 2.
+        - If passed, show the matched APIs.
+
+    4. Check if the APK passed level 3.
+        - If passed, show the matched API combinations.
+        
+    5. Check if the APK passed level 4.
+        - If passed, show the matched API sequences.
+        
+    6. Check if the APK passed level 5.
+        - If passed, show the matched API sequences that use the same register.
+
+Here is the flowchart of ``show_detail_report``.
+
+.. image:: https://i.imgur.com/s1DZVHs.png
+
+
+**The code of show_detail_report**
+
+
+.. code:: python
+
+    def show_detail_report(self, rule_obj):
+        """
+        Show the detail report.
+
+        :param rule_obj: the instance of the RuleObject.
+        :return: None
+        """
+
+        # Count the confidence
+        print("")
+        print(f"Confidence: {rule_obj.check_item.count(True) * 20}%")
+        print("")
+
+        if rule_obj.check_item[0]:
+
+            colorful_report("1.Permission Request")
+            for permission in rule_obj.permission:
+                print(f"\t\t {permission}")
+        if rule_obj.check_item[1]:
+            colorful_report("2.Native API Usage")
+            for api in self.quark_analysis.level_2_result:
+                print(f"\t\t {api.full_name}")
+        if rule_obj.check_item[2]:
+            colorful_report("3.Native API Combination")
+            for numbered_api, method_list in zip(
+                ("First API", "Second API"), self.quark_analysis.level_3_result
+            ):
+                print(f"\t\t {numbered_api} show up in:")
+                if method_list:
+                    for comb_method in method_list:
+                        print(f"\t\t {comb_method.full_name}")
+                else:
+                    print("\t\t None")
+
+        if rule_obj.check_item[3]:
+
+            colorful_report("4.Native API Sequence")
+            print("\t\t Sequence show up in:")
+            for seq_method in self.quark_analysis.level_4_result:
+                print(f"\t\t {seq_method.full_name}")
+        if rule_obj.check_item[4]:
+
+            colorful_report("5.Native API Use Same Parameter")
+            for seq_operation in self.quark_analysis.level_5_result:
+                print(f"\t\t {seq_operation.full_name}")
 
