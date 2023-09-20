@@ -52,6 +52,19 @@ def apkinfo_without_R2Imp(request, apk_path):
     yield apkinfo
 
 
+@pytest.fixture(
+    scope="function",
+    params=((R2Imp),),
+)
+def apkinfo_with_R2Imp_only(request, apk_path):
+    """For testcases involved with R2 core lib.
+    """
+    Apkinfo, apk_path = request.param, apk_path
+    apkinfo = Apkinfo(apk_path)
+
+    yield apkinfo
+
+
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
@@ -390,3 +403,32 @@ class TestApkinfo:
         upper_set = apkinfo.superclass_relationships[class_name]
 
         assert expected_upper_class == upper_set
+
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "test_input, expected",
+        [
+            (
+                "Landroid/view/KeyEvent;",
+                str,
+            ),
+            (
+                0x3e8,
+                float,
+            ),
+            (
+                ("Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
+                 "Ljava/lang/StringBuilder;"),
+                str,
+            ),
+            (
+                "str.google.c.a.tc",
+                str,
+            ),
+        ],
+    )
+    def test_parse_parameter(test_input, expected, apkinfo_with_R2Imp_only):
+        apkinfo = apkinfo_with_R2Imp_only
+        parsed_param = apkinfo._parse_parameter(test_input)
+        assert isinstance(parsed_param, expected)
