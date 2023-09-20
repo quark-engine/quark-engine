@@ -20,3 +20,13 @@ The initial draft of the web design is as below.
 Design by: `@Commuter95 <https://github.com/Commuter95>`_
 
 .. image:: https://github.com/quark-engine/quark-engine/assets/16009212/053d62e2-181a-4fb1-96d7-95fe59809dc3
+
+We structure the website into five distinct sections, which are as follows:
+
+1. At the top area, the navigation bar displays links to documents and social media accounts.
+2. On the top right, you can fine-tune the parameters of the APIs.
+3. In the bottom right, you can copy the resulting program and run it on your computer.
+4. In the center, you can seamlessly drag and assemble Quark Script APIs from the left.
+5. On the left area, you can select a CWE example as a template and choose Quark Script APIs to add.
+
+
