@@ -24,8 +24,11 @@ Design by: `@Commuter95 <https://github.com/Commuter95>`_
 The website's initial design concept
 -------------------------------------
 
-The website is structured into five distinct sections. At the top of the site, you'll find the navigation bar, which showcases Quark documents and social media links. Just beneath the navigation bar lies the visual Quark Script workspace, allowing you to seamlessly drag Quark Script APIs from the left panel to the central workspace for API assembly. The resulting program can be previewed in the bottom right panel, enabling you to copy it and run it on your local computer. Additionally, in the top right panel, you can fine-tune the parameters of the APIs.
+We structure the website into five distinct sections, which are as follows:
 
-If you're unfamiliar with how Quark Script APIs work, you can easily switch to the CWE examples tab on the left panel. From there, you can select a CWE example and customize it by dragging more Quark Script APIs or adjusting parameters as needed.
-
+1. At the top area, the navigation bar displays links to documents and social media accounts.
+2. On the top right, you can fine-tune the parameters of the APIs.
+3. In the bottom right, you can copy the resulting program and run it on your computer.
+4. In the center, you can seamlessly drag and assemble Quark Script APIs from the left.
+5. On the left area, you can select a CWE example as a template and choose Quark Script APIs to add.
 
