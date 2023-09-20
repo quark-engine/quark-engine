@@ -7,6 +7,7 @@ import requests
 from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.rzapkinfo import RizinImp
+from quark.core.r2apkinfo import R2Imp
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
@@ -28,7 +29,7 @@ def apk_path():
 
 @pytest.fixture(
     scope="function",
-    params=((AndroguardImp), (RizinImp)),
+    params=((AndroguardImp), (RizinImp), (R2Imp)),
 )
 def apkinfo(request, apk_path):
     Apkinfo, apk_path = request.param, apk_path
