@@ -218,7 +218,7 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of permissions.
         """
-        axml = AxmlReader(self._manifest)
+        axml = AxmlReader(self._manifest, core_library="radare2")
         permission_list = set()
 
         for tag in axml:
@@ -239,7 +239,7 @@ class R2Imp(BaseApkinfo):
         :return: an application element
         """
 
-        axml = AxmlReader(self._manifest)
+        axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
 
         return root.find("application")
@@ -251,7 +251,7 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all activities
         """
-        axml = AxmlReader(self._manifest)
+        axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
 
         return root.findall("application/activity")
@@ -263,7 +263,7 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all receivers
         """
-        axml = AxmlReader(self._manifest)
+        axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
 
         return root.findall("application/receiver")

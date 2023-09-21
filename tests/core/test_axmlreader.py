@@ -11,6 +11,16 @@ import pytest
 from quark.core.axmlreader import AxmlReader, ResValue
 
 
+
+@pytest.fixture(
+    scope="function",
+    params=(("radare2"), ("rizin")),
+)
+def core_library(request):
+    core_lib = request.param
+    yield core_lib
+
+
 def extractManifest(samplePath: PathLike) -> str:
     folder = Path(samplePath).parent
 
@@ -27,8 +37,8 @@ def MANIFEST_PATH_14d9f(SAMPLE_PATH_14d9f):
 
 class TestAxmlReader:
     @staticmethod
-    def testIter(MANIFEST_PATH_14d9f) -> None:
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testIter(core_library, MANIFEST_PATH_14d9f) -> None:
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         expectedTag = {"Address": 3728, "Type": 256, "Prefix": 9, "Uri": 10}
 
         tag = next(iter(axmlReader))
@@ -37,23 +47,23 @@ class TestAxmlReader:
         helper.assertDictEqual(tag, expectedTag)
 
     @staticmethod
-    def testFileSize(MANIFEST_PATH_14d9f):
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testFileSize(core_library, MANIFEST_PATH_14d9f):
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         assert axmlReader.file_size == 7676
 
     @staticmethod
-    def testAxmlSize(MANIFEST_PATH_14d9f):
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testAxmlSize(core_library, MANIFEST_PATH_14d9f):
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         assert axmlReader.axml_size == 7676
 
     @staticmethod
-    def testGetString(MANIFEST_PATH_14d9f):
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testGetString(core_library, MANIFEST_PATH_14d9f):
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         assert axmlReader.get_string(13) == "manifest"
 
     @staticmethod
-    def testGetAttributes(MANIFEST_PATH_14d9f):
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testGetAttributes(core_library, MANIFEST_PATH_14d9f):
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         manifestTag = list(axmlReader)[1]
 
         expectedAttributes = [
@@ -68,8 +78,8 @@ class TestAxmlReader:
             assert expectedAttrib == attrib
 
     @staticmethod
-    def testGetXmlTree(MANIFEST_PATH_14d9f):
-        axmlReader = AxmlReader(MANIFEST_PATH_14d9f)
+    def testGetXmlTree(core_library, MANIFEST_PATH_14d9f):
+        axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         xml = axmlReader.get_xml_tree()
         manifestLabel = xml.getroot()
         assert len(manifestLabel.findall("uses-sdk")) == 1
