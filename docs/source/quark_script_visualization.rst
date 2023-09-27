@@ -1,5 +1,5 @@
 ++++++++++++++++++++++++++++
-Visual Quark Script Program
+Quark Script Visualization
 ++++++++++++++++++++++++++++
 
 Introduction of the Program
