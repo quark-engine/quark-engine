@@ -20,7 +20,7 @@ This guide will explain how to set up Quark, use it, and customize it.
 
    install_index
    quark_script
-   visual_quark_script_program
+   quark_script_visualization
    quark_mit_program
    quark_reports
    addRules
