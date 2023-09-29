@@ -63,8 +63,8 @@ class R2Imp(BaseApkinfo):
         else:
             raise ValueError("Unsupported File type.")
 
-    @functools.lru_cache
-    def _get_r2(self):
+    @functools.cached_property
+    def _r2(self):
         """
         Return a R2 object that opens the specified Dex file.
 
@@ -194,9 +194,7 @@ class R2Imp(BaseApkinfo):
         :return: a dictionary taking a class name as the key and a list of
         MethodObject as the corresponding value.
         """
-        r2 = self._get_r2()
-
-        method_json_list = r2.cmdj("isj")
+        method_json_list = self._r2.cmdj("isj")
         method_dict = defaultdict(list)
         for json_obj in method_json_list:
             method = self._parse_method_from_isj_obj(json_obj)
@@ -377,9 +375,7 @@ class R2Imp(BaseApkinfo):
         """
         cache = method_object.cache
 
-        r2 = self._get_r2()
-
-        xrefs = r2.cmdj(f"axtj @ {cache.address}")
+        xrefs = self._r2.cmdj(f"axtj @ {cache.address}")
         upperfunc_set = set()
         for xref in xrefs:
             if xref["type"] != "CALL":
@@ -417,8 +413,7 @@ class R2Imp(BaseApkinfo):
         """
         cache = method_object.cache
 
-        r2 = self._get_r2()
-        instruct_flow = r2.cmdj(f"pdfj @ {cache.address}")["ops"]
+        instruct_flow = self._r2.cmdj(f"pdfj @ {cache.address}")["ops"]
 
         lowerfunc_list = []
         for ins in instruct_flow:
@@ -457,9 +452,7 @@ class R2Imp(BaseApkinfo):
         cache = method_object.cache
         if not cache.is_imported:
 
-            r2 = self._get_r2()
-
-            instruct_flow = r2.cmdj(f"pdfj @ {cache.address}")["ops"]
+            instruct_flow = self._r2.cmdj(f"pdfj @ {cache.address}")["ops"]
             if instruct_flow:
                 for ins in instruct_flow:
                     if "disasm" not in ins:
@@ -475,9 +468,7 @@ class R2Imp(BaseApkinfo):
         :return: a set of strings
         """
         strings = set()
-        r2 = self._get_r2()
-
-        string_detail_list = r2.cmdj("izzj")
+        string_detail_list = self._r2.cmdj("izzj")
         strings.update(
             [string_detail["string"] for string_detail in string_detail_list]
         )
@@ -530,9 +521,7 @@ class R2Imp(BaseApkinfo):
         if cache.is_imported:
             return {}
 
-        r2 = self._get_r2()
-
-        instruction_flow = r2.cmdj(f"pdfj @ {cache.address}")["ops"]
+        instruction_flow = self._r2.cmdj(f"pdfj @ {cache.address}")["ops"]
 
         if instruction_flow:
             for ins in instruction_flow:
@@ -581,9 +570,7 @@ class R2Imp(BaseApkinfo):
         """
         hierarchy_dict = defaultdict(set)
 
-        r2 = self._get_r2()
-
-        class_info_list = r2.cmdj("icj")
+        class_info_list = self._r2.cmdj("icj")
         for class_info in class_info_list:
             class_name = class_info["classname"]
             class_name = self._convert_type_to_type_signature(class_name)
@@ -608,9 +595,7 @@ class R2Imp(BaseApkinfo):
         """
         hierarchy_dict = defaultdict(set)
 
-        r2 = self._get_r2()
-
-        class_info_list = r2.cmdj("icj")
+        class_info_list = self._r2.cmdj("icj")
         for class_info in class_info_list:
             class_name = class_info["classname"]
             super_class = class_info["super"]
@@ -626,8 +611,7 @@ class R2Imp(BaseApkinfo):
         :param address: an address used to find the corresponding method
         :return: the MethodObject of the method in the given address
         """
-        r2 = self._get_r2()
-        json_data = r2.cmdj(f"is.j @ {address}")
+        json_data = self._r2.cmdj(f"is.j @ {address}")
         json_data = json_data.get("symbols")
 
         if json_data:
@@ -642,8 +626,7 @@ class R2Imp(BaseApkinfo):
         :param address: an address used to find the corresponding method
         :return: the content in the given address
         """
-        r2 = self._get_r2()
-        content = r2.cmd(f"pfq z @ {int(address, 16)}")
+        content = self._r2.cmd(f"pfq z @ {int(address, 16)}")
         return content
 
     @staticmethod
