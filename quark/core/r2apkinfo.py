@@ -189,8 +189,6 @@ class R2Imp(BaseApkinfo):
         dictionary. The dictionary takes their belonging classes as the keys.
         Then, it categorizes them into lists.
 
-        :param dexindex: an index indicating which Dex file should this method
-        parse
         :return: a dictionary taking a class name as the key and a list of
         MethodObject as the corresponding value.
         """
