@@ -170,7 +170,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.android_apis) == 1270
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.android_apis) == 1269
+            assert len(apkinfo.android_apis) == 1438
         assert api.issubset(apkinfo.android_apis)
 
     def test_custom_methods(self, apkinfo):
@@ -189,7 +189,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.custom_methods) == 3999
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.custom_methods) == 3990
+            assert len(apkinfo.custom_methods) == 3999
         assert test_custom_method.issubset(apkinfo.custom_methods)
 
     def test_all_methods(self, apkinfo):
@@ -209,7 +209,7 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.all_methods) == 5452
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.all_methods) == 5260
+            assert len(apkinfo.all_methods) == 5451
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
@@ -288,6 +288,72 @@ class TestApkinfo:
         )
 
         assert isinstance(result, list)
+        assert expect_method in result
+
+    def test_find_method_in_regular_class(self, apkinfo):
+        expected = [
+            "Ljava/lang/reflect/Field;", "setAccessible", "(Z)V"
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert expect_method in result
+
+    def test_find_method_in_inner_class(self, apkinfo):
+        expected = [
+            "Landroid/support/v4/accessibilityservice/Accessibility"
+            + "ServiceInfoCompat$AccessibilityServiceInfoVersionImpl;",
+            "getId",
+            "(Landroid/accessibilityservice/AccessibilityServiceInfo;)"
+            + "Ljava/lang/String;",
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        assert isinstance(result, list)
+        assert len(result) > 0
+        assert expect_method in result
+
+    def test_find_method_in_anonymous_class(self, apkinfo):
+        expected = [
+            "Landroid/support/v4/view/AccessibilityDelegateCompatIcs$1;",
+            "sendAccessibilityEvent",
+            "(Landroid/view/View; I)V",
+        ]
+        expect_method = MethodObject(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        result = apkinfo.find_method(
+            expected[0],
+            expected[1],
+            expected[2],
+        )
+
+        assert isinstance(result, list)
+        assert len(result) > 0
         assert expect_method in result
 
     def test_upperfunc(self, apkinfo):
