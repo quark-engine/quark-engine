@@ -1370,29 +1370,30 @@ show_call_graph
 
 **The algorithm of show_call_graph**
 
-The function ``show_call_graph`` iterate through call_graph_analysis_list and create a Call Graph for each element, then display relevant information and success messages.
+The function ``show_call_graph`` creates a call graph for each element in call_graph_analysis_list and displays messages to indicate progress.
 
 Here is the process of ``show_call_graph``.
 
 .. code-block:: TEXT
 
-    1. Use the print_info function to display the message "Creating Call Graph...".
+    1. Display the message "Creating Call Graph..." in cyan color.
 
-    2. Iterate over each call_graph_analysis element in self.quark_analysis.call_graph_analysis_list.
+    2. Create a call graph for each element in call_graph_analysis_list.
 
-    3. For each call_graph_analysis element, call the call_graph function, passing in call_graph_analysis and output_format as arguments.
+    3. Display the message "Call Graph Completed" in green color.
 
-    4. Use the print_success function to display the message "Call Graph Completed".
+
 
 Here is the flowchart of ``show_call_graph``.
 
-.. image:: https://i.imgur.com/JtmLmtt.png
+.. image:: https://i.imgur.com/18pGB7w.png
+
 
 
 **The code of show_call_graph**
 
 
-.. code:: python
+.. code-block:: python
 
     def show_call_graph(self, output_format=None):
         print_info("Creating Call Graph...")
