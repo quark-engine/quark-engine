@@ -1365,3 +1365,41 @@ Here is the flowchart of ``show_detail_report``.
             for seq_operation in self.quark_analysis.level_5_result:
                 print(f"\t\t {seq_operation.full_name}")
 
+show_call_graph
+==================
+
+**The algorithm of show_call_graph**
+
+The function ``show_call_graph`` creates a call graph for each element in call_graph_analysis_list and displays messages to indicate progress.
+
+Here is the process of ``show_call_graph``.
+
+.. code-block:: TEXT
+
+    1. Display the message "Creating Call Graph..." in cyan color.
+
+    2. Create a call graph for each element in call_graph_analysis_list.
+
+    3. Display the message "Call Graph Completed" in green color.
+
+
+
+Here is the flowchart of ``show_call_graph``.
+
+.. image:: https://i.imgur.com/18pGB7w.png
+
+
+
+**The code of show_call_graph**
+
+
+.. code-block:: python
+
+    def show_call_graph(self, output_format=None):
+        print_info("Creating Call Graph...")
+        for (
+            call_graph_analysis
+        ) in self.quark_analysis.call_graph_analysis_list:
+            call_graph(call_graph_analysis, output_format)
+        print_success("Call Graph Completed")
+
