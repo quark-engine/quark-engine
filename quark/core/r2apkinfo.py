@@ -215,16 +215,11 @@ class R2Imp(BaseApkinfo):
         :return: a list of permissions.
         """
         axml = AxmlReader(self._manifest, core_library="radare2")
+        elm_key_name = "{http://schemas.android.com/apk/res/android}name"
         permission_list = set()
-
-        for tag in axml:
-            label = tag.get("Name")
-            if label and axml.get_string(label) == "uses-permission":
-                attrs = axml.get_attributes(tag)
-
-                if attrs:
-                    permission = axml.get_string(attrs[0].value)
-                    permission_list.add(permission)
+        for elm in axml.get_xml_tree().iter("uses-permission"):
+            permission = elm.attrib.get(elm_key_name)
+            permission_list.add(permission)
 
         return permission_list
 
