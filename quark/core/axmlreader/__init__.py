@@ -8,6 +8,7 @@ from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
 import pkg_resources
 import rzpipe
+import r2pipe
 
 # Resource Types Definition
 # Please reference to
@@ -84,7 +85,7 @@ class AxmlReader(object):
     A Class that parses the Android XML file
     """
 
-    def __init__(self, file_path, structure_path=None):
+    def __init__(self, file_path, core_library="rizin", structure_path=None):
         if structure_path is None:
             structure_path = pkg_resources.resource_filename(
                 "quark.core.axmlreader", "axml_definition"
@@ -96,10 +97,13 @@ class AxmlReader(object):
                 f" of Rizin in {structure_path}"
             )
 
-        self._rz = rzpipe.open(file_path)
-        self._rz.cmd(f"pfo {structure_path}")
+        if core_library == "rizin":
+            self._core = rzpipe.open(file_path)
+        else:
+            self._core = r2pipe.open(file_path)
+        self._core.cmd(f"pfo {structure_path}")
 
-        self._file_size = int(self._rz.cmd("i~size[1]"), 16)
+        self._file_size = int(self._core.cmd("i~size[1]"), 16)
         self._ptr = 0
 
         self._cache = {}
@@ -110,7 +114,7 @@ class AxmlReader(object):
             raise AxmlException("Filesize exceeds theoretical lower bound.")
 
         # File Header
-        header = self._rz.cmdj("pfj axml_ResChunk_header @ 0x0")
+        header = self._core.cmdj("pfj axml_ResChunk_header @ 0x0")
 
         self._data_type = header[0]["value"]
         self._axml_size = header[2]["value"]
@@ -133,7 +137,7 @@ class AxmlReader(object):
             return
 
         # String Pool
-        string_pool_header = self._rz.cmdj("pfj axml_ResStringPool_header @ 8")
+        string_pool_header = self._core.cmdj("pfj axml_ResStringPool_header @ 8")
 
         string_pool_size = string_pool_header[0]["value"][2]["value"]
 
@@ -163,18 +167,18 @@ class AxmlReader(object):
         self._stringCount = string_pool_header[1]["value"]
         stringStart = string_pool_header[4]["value"]
 
-        self._rz.cmd(f"f string_pool_header @ 0x8 ")
+        self._core.cmd(f"f string_pool_header @ 0x8 ")
         string_pool_index = header_size + self._ptr
-        self._rz.cmd(f"f string_pool_index @ { string_pool_index }")
+        self._core.cmd(f"f string_pool_index @ { string_pool_index }")
         string_pool_data = stringStart + self._ptr
-        self._rz.cmd(f"f string_pool_data @ { string_pool_data }")
+        self._core.cmd(f"f string_pool_data @ { string_pool_data }")
 
         self._ptr += string_pool_size
         if self._ptr >= self._axml_size:
             return
 
         # Resource Map (Optional)
-        header = self._rz.cmdj(f"pfj axml_ResChunk_header @ {self._ptr}")
+        header = self._core.cmdj(f"pfj axml_ResChunk_header @ {self._ptr}")
 
         header_type = header[0]["value"]
         if header_type == RES_XML_RESOURCE_MAP_TYPE:
@@ -201,7 +205,7 @@ class AxmlReader(object):
         :yield: header of a resource chunk defined in the binary
         """
         while self._axml_size - self._ptr >= 16:
-            header = self._rz.cmdj(f"pfj axml_ResXMLTree_node @ {self._ptr}")
+            header = self._core.cmdj(f"pfj axml_ResXMLTree_node @ {self._ptr}")
 
             node_type = header[0]["value"][0]["value"]
             header_size = header[0]["value"][1]["value"]
@@ -224,7 +228,7 @@ class AxmlReader(object):
             chunk = {"Address": self._ptr, "Type": node_type}
 
             if node_type == RES_XML_START_ELEMENT_TYPE:
-                ext = self._rz.cmdj(
+                ext = self._core.cmdj(
                     f"pfj axml_ResXMLTree_attrExt @ { ext_ptr }"
                 )
 
@@ -235,7 +239,7 @@ class AxmlReader(object):
                 # node['AttrCount'] = ext[4]['value']
 
             elif node_type == RES_XML_END_ELEMENT_TYPE:
-                ext = self._rz.cmdj(
+                ext = self._core.cmdj(
                     f"pfj axml_ResXMLTree_endElementExt @ { ext_ptr }"
                 )
 
@@ -246,7 +250,7 @@ class AxmlReader(object):
                 RES_XML_START_NAMESPACE_TYPE,
                 RES_XML_END_NAMESPACE_TYPE,
             ]:
-                ext = self._rz.cmdj(
+                ext = self._core.cmdj(
                     f"pfj axml_ResXMLTree_namespaceExt @ { ext_ptr }"
                 )
 
@@ -254,7 +258,7 @@ class AxmlReader(object):
                 chunk["Uri"] = ext[1]["value"][0]["value"]
 
             elif node_type == RES_XML_CDATA_TYPE:
-                ext = self._rz.cmdj(
+                ext = self._core.cmdj(
                     f"pfj axml_ResXMLTree_cdataExt @ { ext_ptr }"
                 )
 
@@ -281,7 +285,7 @@ class AxmlReader(object):
         if index < 0 or index >= self._stringCount:
             return None
 
-        return self._rz.cmdj(
+        return self._core.cmdj(
             f"pfj Z @ string_pool_data + `pfv n4 "
             f"@ string_pool_index+ {index}*4` + 2"
         )[0]["string"]
@@ -296,14 +300,14 @@ class AxmlReader(object):
             return None
         extAddress = int(chunk["Address"]) + 16
 
-        attrExt = self._rz.cmdj(f"pfj axml_ResXMLTree_attrExt @ {extAddress}")
+        attrExt = self._core.cmdj(f"pfj axml_ResXMLTree_attrExt @ {extAddress}")
 
         attrAddress = extAddress + attrExt[2]["value"]
         attributeSize = attrExt[3]["value"]
         attributeCount = attrExt[4]["value"]
         attributes = []
         for _ in range(attributeCount):
-            attr = self._rz.cmdj(
+            attr = self._core.cmdj(
                 f"pfj axml_ResXMLTree_attribute @ {attrAddress}"
             )
 
@@ -402,6 +406,6 @@ class AxmlReader(object):
 
     def __del__(self):
         try:
-            self._rz.quit()
+            self._core.quit()
         except BaseException:
             pass

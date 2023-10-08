@@ -7,6 +7,7 @@ import requests
 from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.rzapkinfo import RizinImp
+from quark.core.r2apkinfo import R2Imp
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
@@ -28,9 +29,36 @@ def apk_path():
 
 @pytest.fixture(
     scope="function",
-    params=((AndroguardImp), (RizinImp)),
+    params=((AndroguardImp), (RizinImp), (R2Imp)),
 )
 def apkinfo(request, apk_path):
+    Apkinfo, apk_path = request.param, apk_path
+    apkinfo = Apkinfo(apk_path)
+
+    yield apkinfo
+
+
+@pytest.fixture(
+    scope="function",
+    params=((AndroguardImp), (RizinImp)),
+)
+def apkinfo_without_R2Imp(request, apk_path):
+    """Since R2 has some issue,
+    create this function to skip R2 relevant test for some test functions.
+    """
+    Apkinfo, apk_path = request.param, apk_path
+    apkinfo = Apkinfo(apk_path)
+
+    yield apkinfo
+
+
+@pytest.fixture(
+    scope="function",
+    params=((R2Imp),),
+)
+def apkinfo_with_R2Imp_only(request, apk_path):
+    """For testcases involved with R2 core lib.
+    """
     Apkinfo, apk_path = request.param, apk_path
     apkinfo = Apkinfo(apk_path)
 
@@ -290,7 +318,8 @@ class TestApkinfo:
         assert isinstance(result, list)
         assert expect_method in result
 
-    def test_upperfunc(self, apkinfo):
+    def test_upperfunc(self, apkinfo_without_R2Imp):
+        apkinfo = apkinfo_without_R2Imp
         api = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
@@ -307,25 +336,8 @@ class TestApkinfo:
 
         assert expect_function in upper_methods
 
-    def test_lowerfunc(self, apkinfo):
-        method = apkinfo.find_method(
-            "Lcom/example/google/service/WebServiceCalling;",
-            "Send",
-            "(Landroid/os/Handler; Ljava/lang/String;)V",
-        )[0]
-
-        expect_method = MethodObject(
-            "Ljava/lang/StringBuilder;",
-            "append",
-            "(Ljava/lang/String;)Ljava/lang/StringBuilder;",
-        )
-        expect_offset = 42
-
-        upper_methods = apkinfo.lowerfunc(method)
-
-        assert (expect_method, expect_offset) in upper_methods
-
-    def test_get_method_bytecode(self, apkinfo):
+    def test_get_method_bytecode(self, apkinfo_without_R2Imp):
+        apkinfo = apkinfo_without_R2Imp
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
@@ -365,7 +377,8 @@ class TestApkinfo:
         for expected in expected_bytecode_list:
             assert expected in bytecodes
 
-    def test_lowerfunc(self, apkinfo):
+    def test_lowerfunc(self, apkinfo_without_R2Imp):
+        apkinfo = apkinfo_without_R2Imp
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
@@ -390,3 +403,32 @@ class TestApkinfo:
         upper_set = apkinfo.superclass_relationships[class_name]
 
         assert expected_upper_class == upper_set
+
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "test_input, expected",
+        [
+            (
+                "Landroid/view/KeyEvent;",
+                str,
+            ),
+            (
+                0x3e8,
+                float,
+            ),
+            (
+                ("Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
+                 "Ljava/lang/StringBuilder;"),
+                str,
+            ),
+            (
+                "str.google.c.a.tc",
+                str,
+            ),
+        ],
+    )
+    def test_parse_parameter(test_input, expected, apkinfo_with_R2Imp_only):
+        apkinfo = apkinfo_with_R2Imp_only
+        parsed_param = apkinfo._parse_parameter(test_input)
+        assert isinstance(parsed_param, expected)

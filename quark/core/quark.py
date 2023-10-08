@@ -14,6 +14,7 @@ import numpy as np
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
+from quark.core.r2apkinfo import R2Imp
 from quark.evaluator.pyeval import PyEval
 from quark.utils import tools
 from quark.utils.colors import (
@@ -49,6 +50,8 @@ class Quark:
         core_library = core_library.lower()
         if core_library == "rizin":
             self.apkinfo = RizinImp(apk)
+        elif core_library == "radare2":
+            self.apkinfo = R2Imp(apk)
         elif core_library == "androguard":
             self.apkinfo = AndroguardImp(apk)
         else:
