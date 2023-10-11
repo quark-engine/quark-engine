@@ -1403,3 +1403,46 @@ Here is the flowchart of ``show_call_graph``.
             call_graph(call_graph_analysis, output_format)
         print_success("Call Graph Completed")
 
+
+show_rule_classification
+===============================
+
+**The algorithm of show_rule_classification**
+
+The function ``show_rule_classification`` display rule classification information by fetching relevant data and then outputting it in table, JSON, and graphical formats.
+
+Here is the process of ``show_rule_classification``.
+
+.. code-block:: TEXT
+
+	1. Call the print_info function to display the "Rules Classification".
+
+	2. Invoke the get_rule_classification_data function
+		- Using self.quark_analysis.call_graph_analysis_list and MAX_SEARCH_LAYER as parameters.
+		- Store the returned rule classification data in the data_bundle variable.
+
+	3. Call the output_parent_function_table function to output the data from data_bundle in table format.
+
+	4. Call the output_parent_function_json function to output the data from data_bundle in JSON format.
+
+	5. Call the output_parent_function_graph function to display the data from data_bundle as a graph or chart.
+
+
+Here is the flowchart of ``show_rule_classification``.
+
+.. image:: https://i.imgur.com/dULiqhS.png
+
+**The code of show_rule_classification**
+
+.. code-block:: python
+
+    def show_rule_classification(self):
+        print_info("Rules Classification")
+
+        data_bundle = get_rule_classification_data(
+            self.quark_analysis.call_graph_analysis_list, MAX_SEARCH_LAYER
+        )
+
+        output_parent_function_table(data_bundle)
+        output_parent_function_json(data_bundle)
+        output_parent_function_graph(data_bundle)
