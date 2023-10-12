@@ -1409,7 +1409,7 @@ show_rule_classification
 
 **The algorithm of show_rule_classification**
 
-The function ``show_rule_classification`` display rule classification information by fetching relevant data and then outputting it in table, JSON, and graphical formats.
+The function ``show_rule_classification`` extracts rule classification data, highlighting the links between parent functions and associated crimes. It then displays this data in table, JSON, and graphical formats.
 
 Here is the process of ``show_rule_classification``.
 
@@ -1434,7 +1434,7 @@ Here is the process of ``show_rule_classification``.
 
 Here is the flowchart of ``show_rule_classification``.
 
-.. image:: https://i.imgur.com/hvOAs8M.png
+.. image:: https://i.imgur.com/im3ER02.png
 
 **The code of show_rule_classification**
 
