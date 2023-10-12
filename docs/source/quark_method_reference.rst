@@ -1434,7 +1434,7 @@ Here is the process of ``show_rule_classification``.
 
 Here is the flowchart of ``show_rule_classification``.
 
-.. image:: https://i.imgur.com/dULiqhS.png
+.. image:: https://i.imgur.com/hvOAs8M.png
 
 **The code of show_rule_classification**
 
