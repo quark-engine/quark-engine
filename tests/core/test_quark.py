@@ -68,16 +68,14 @@ def rule_with_one_keyword(tmp_path):
     rule_file = tmp_path / "rule_without_keyword.json"
 
     data = base64.b64decode(
-        """eyAiY3JpbWUiOiAiUmVhZCBzZW5zaXRpdmUgZGF0YShTTVMsIENBTExMT0csIGV0YykiLCAicGVy
-bWlzc2lvbiI6IFtdLCAiYXBpIjogWyB7ICJkZXNjcmlwdG9yIjogIigpTGFuZHJvaWQvY29udGVu
-dC9Db250ZW50UmVzb2x2ZXI7IiwgImNsYXNzIjogIkxhbmRyb2lkL2NvbnRlbnQvQ29udGV4dDsi
-LCAibWV0aG9kIjogImdldENvbnRlbnRSZXNvbHZlciIgfSwgeyAiZGVzY3JpcHRvciI6ICIoTGFu
-ZHJvaWQvbmV0L1VyaTsgW0xqYXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzsgW0xq
-YXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzspTGFuZHJvaWQvZGF0YWJhc2UvQ3Vy
-c29yOyIsICJjbGFzcyI6ICJMYW5kcm9pZC9jb250ZW50L0NvbnRlbnRSZXNvbHZlcjsiLCAibWV0
-aG9kIjogInF1ZXJ5IiwgImtleXdvcmQiOiBbICJjb250ZW50Oi8vY2FsbF9sb2cvY2FsbHMiIF0g
-fSBdLCAic2NvcmUiOiAxLCAibGFiZWwiOiBbICJjb2xsZWN0aW9uIiwgInNtcyIsICJjYWxsbG9n
-IiwgImNhbGVuZGFyIiBdIH0="""
+            """ewogICJjcmltZSI6ICIiLAogICJwZXJtaXNzaW9uIjogW10sCiAgImFwaSI6IFsKICAgIHsKICAg
+ICAgImRlc2NyaXB0b3IiOiAiKExqYXZhL2xhbmcvU3RyaW5nOylMYW5kcm9pZC9uZXQvVXJpIiwK
+ICAgICAgImNsYXNzIjogIkxhbmRyb2lkL25ldC9Vcmk7IiwKICAgICAgIm1ldGhvZCI6ICJwYXJz
+ZSIKICAgIH0sCiAgICB7CiAgICAgICJkZXNjcmlwdG9yIjogIihMamF2YS9sYW5nL1N0cmluZzsp
+TGFuZHJvaWQvbmV0L1VyaSIsCiAgICAgICJjbGFzcyI6ICJMYW5kcm9pZC9uZXQvVXJpOyIsCiAg
+ICAgICJtZXRob2QiOiAicGFyc2UiLAogICAgICAibWF0Y2hfa2V5d29yZHMiOiBbCiAgICAgICAg
+ImNvbnRlbnQ6Ly90ZWxlcGhvbnkvY2FycmllcnMvcHJlZmVyYXBuIgogICAgICBdCiAgICB9CiAg
+XSwKICAic2NvcmUiOiAxLAogICJsYWJlbCI6IFtdCn0K"""
     ).decode()
 
     rule_file.write_text(data)
@@ -121,12 +119,16 @@ class TestQuark:
         )[0]
 
         expect_method_analysis = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+            "Lcom/google/progress/Locate;",
+            "getLocation",
+            "()Ljava/lang/String;",
         )[0]
 
         expected_list = [expect_method_analysis]
 
-        quark_obj.find_previous_method(base_method, parent_function, wrapper=wrapper)
+        quark_obj.find_previous_method(
+            base_method, parent_function, wrapper=wrapper
+        )
 
         assert wrapper == expected_list
 
@@ -142,7 +144,9 @@ class TestQuark:
             quark_obj.find_intersection(first_method_set, second_method_set)
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_find_intersection_with_set_containing_invalid_type(self, quark_obj):
+    def test_find_intersection_with_set_containing_invalid_type(
+        self, quark_obj
+    ):
         first_method_set = {1, 2, 3}
         second_method_set = {4, 5, 6}
 
@@ -151,7 +155,9 @@ class TestQuark:
 
     def test_find_intersection_with_result(self, quark_obj):
         location_api = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+            "Lcom/google/progress/Locate;",
+            "getLocation",
+            "()Ljava/lang/String;",
         )[0]
         location_api_upper = quark_obj.apkinfo.upperfunc(location_api)
 
@@ -178,7 +184,9 @@ class TestQuark:
                 "Lcom/google/progress/AndroidClientService;", "doByte", "([B)V"
             )[0],
             quark_obj.apkinfo.find_method(
-                "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
+                "Lcom/google/progress/AndroidClientService;",
+                "sendMessage",
+                "()V",
             )[0],
             quark_obj.apkinfo.find_method(
                 "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
@@ -202,7 +210,9 @@ class TestQuark:
             )
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_check_sequence_with_lists_containing_invalid_type(self, quark_obj):
+    def test_check_sequence_with_lists_containing_invalid_type(
+        self, quark_obj
+    ):
         mutual_parent = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
         )[0]
@@ -218,7 +228,9 @@ class TestQuark:
         # Send Location via SMS
 
         location_method = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+            "Lcom/google/progress/Locate;",
+            "getLocation",
+            "()Ljava/lang/String;",
         )[0]
         sendSms_method = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/SMSHelper;",
@@ -300,7 +312,9 @@ class TestQuark:
             )
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_check_parameter_with_lists_containing_invalid_type(self, quark_obj):
+    def test_check_parameter_with_lists_containing_invalid_type(
+        self, quark_obj
+    ):
         mutual_parent = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
         )[0]
@@ -322,7 +336,9 @@ class TestQuark:
         ]
         first_method = [
             quark_obj.apkinfo.find_method(
-                "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
+                "Lcom/google/progress/Locate;",
+                "getLocation",
+                "()Ljava/lang/String;",
             )[0]
         ]
         mutual_parent = quark_obj.apkinfo.find_method(
@@ -330,7 +346,9 @@ class TestQuark:
         )[0]
 
         assert (
-            quark_obj.check_parameter(mutual_parent, first_method, second_method)
+            quark_obj.check_parameter(
+                mutual_parent, first_method, second_method
+            )
             == True
         )
 
@@ -376,7 +394,9 @@ class TestQuark:
             simple_quark_obj.run(rule_object)
             mock.assert_called()
 
-    def test_check_parameter_values_without_matched_str(self, simple_quark_obj):
+    def test_check_parameter_values_without_matched_str(
+        self, simple_quark_obj
+    ):
         source_str = (
             "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
             " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
@@ -438,7 +458,9 @@ class TestQuark:
         # Inner function for comparing two json objects
         def sorting(item):
             if isinstance(item, dict):
-                return sorted((key, sorting(values)) for key, values in item.items())
+                return sorted(
+                    (key, sorting(values)) for key, values in item.items()
+                )
             if isinstance(item, list):
                 return sorted(sorting(x) for x in item)
             else:

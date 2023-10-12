@@ -552,7 +552,7 @@ class Quark:
                         )
 
                         keyword_item_list = (
-                            rule_obj.api[i].get("keyword", None)
+                            rule_obj.api[i].get("match_keywords", None)
                             for i in range(2)
                         )
 
