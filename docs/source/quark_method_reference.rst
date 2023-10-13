@@ -1415,20 +1415,20 @@ Here is the process of ``show_rule_classification``.
 
 .. code-block:: TEXT
 
-	1. Call the print_info function to display the "Rules Classification".
+	1. Call the print_info function to display "Rules Classification".
 
 	2. Invoke the get_rule_classification_data function
-		- Using self.quark_analysis.call_graph_analysis_list and MAX_SEARCH_LAYER as parameters.
+		- Use self.quark_analysis.call_graph_analysis_list and MAX_SEARCH_LAYER as parameters.
 		- Store the returned rule classification data in the data_bundle variable.
 
 	3. Call the output_parent_function_table function to display tables on the console. 
         	- The first column of the table is "Parent Function", and the second column displays the name of that parent function. 
         	- Subsequent rows list the "Crime Description" associated with that parent function.
    
-    	4. Call the output_parent_function_json function output a JSON file named "rules_classification.json".
+    	4. Call the output_parent_function_json function to output a JSON file named "rules_classification.json".
         	- The structure of the file is a list containing multiple dictionaries. Each dictionary has two keys: parent and crime. 
  
-    	5. Call the output_parent_function_graph function create a PNG format graphic file.
+    	5. Call the output_parent_function_graph function to create a PNG format graphic file.
         	- This graphic displays the reference relationships between parent functions and the crime descriptions associated with each parent function.
 
 
