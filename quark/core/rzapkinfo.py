@@ -156,6 +156,10 @@ class RizinImp(BaseApkinfo):
 
         # -- Descriptor --
         full_method_name = json_obj["name"]
+        # Skip the starting with "imp."
+        if full_method_name[:4] == "imp.":
+            full_method_name = full_method_name[4:]
+
         raw_argument_str = next(
             re.finditer("\\(.*\\).*", full_method_name), None
         )
@@ -664,7 +668,9 @@ class RizinImp(BaseApkinfo):
             class_info_list = rz.cmdj("icj")
             for class_info in class_info_list:
                 class_name = class_info["classname"]
+                class_name = self._convert_type_to_type_signature(class_name)
                 super_class = class_info["super"]
+                super_class = self._convert_type_to_type_signature(super_class)
 
                 hierarchy_dict[class_name].add(super_class)
 
