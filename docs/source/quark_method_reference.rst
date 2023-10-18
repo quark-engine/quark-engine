@@ -4,7 +4,8 @@ Quark Method Reference
 
 quark.core.quark.py
 --------------------
-The module provides methods to check the APK with the five levels of analysis and produce reports.
+
+The module provides methods to perform the five-stage checking and Quark report generating.
 
 +--------------------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 |                                                                      Method                                                                      |                                                Function                                                 |
