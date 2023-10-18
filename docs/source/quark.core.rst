@@ -46,14 +46,6 @@ quark.core.quark module
    :undoc-members:
    :show-inheritance:
 
-quark.core.r2apkinfo module
----------------------------
-
-.. automodule:: quark.core.r2apkinfo
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 quark.core.rzapkinfo module
 ---------------------------
 
