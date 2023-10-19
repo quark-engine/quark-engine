@@ -16,12 +16,28 @@ APK_SOURCE = (
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
+APK_SOURCE_2 = (
+    "https://github.com/quark-engine/apk-samples"
+    "/raw/master/malware-samples/Ahmyth.apk"
+)
+APK_FILENAME_2 = "Ahmyth.apk"
+
+
 @pytest.fixture(scope="function")
 def simple_quark_obj():
     r = requests.get(APK_SOURCE, allow_redirects=True)
     open(APK_FILENAME, "wb").write(r.content)
 
     apk_file = APK_FILENAME
+    return Quark(apk_file)
+
+
+@pytest.fixture(scope="function")
+def simple_quark_obj_2():
+    r = requests.get(APK_SOURCE_2, allow_redirects=True, timeout=5)
+    open(APK_FILENAME_2, "wb").write(r.content)
+
+    apk_file = APK_FILENAME_2
     return Quark(apk_file)
 
 
@@ -65,20 +81,15 @@ c21zIiwgImNhbGxsb2ciLCAiY2FsZW5kYXIiIF0gfQ=="""
 
 @pytest.fixture(scope="function")
 def rule_with_one_keyword(tmp_path):
-    rule_file = tmp_path / "rule_without_keyword.json"
+    rule_file = tmp_path / "rule_with_one_keyword.json"
 
-    data = base64.b64decode(
-            """ewogICJjcmltZSI6ICIiLAogICJwZXJtaXNzaW9uIjogW10sCiAgImFwaSI6IFsKICAgIHsKICAg
-ICAgImRlc2NyaXB0b3IiOiAiKExqYXZhL2xhbmcvU3RyaW5nOylMYW5kcm9pZC9uZXQvVXJpIiwK
-ICAgICAgImNsYXNzIjogIkxhbmRyb2lkL25ldC9Vcmk7IiwKICAgICAgIm1ldGhvZCI6ICJwYXJz
-ZSIKICAgIH0sCiAgICB7CiAgICAgICJkZXNjcmlwdG9yIjogIihMamF2YS9sYW5nL1N0cmluZzsp
-TGFuZHJvaWQvbmV0L1VyaSIsCiAgICAgICJjbGFzcyI6ICJMYW5kcm9pZC9uZXQvVXJpOyIsCiAg
-ICAgICJtZXRob2QiOiAicGFyc2UiLAogICAgICAibWF0Y2hfa2V5d29yZHMiOiBbCiAgICAgICAg
-ImNvbnRlbnQ6Ly90ZWxlcGhvbnkvY2FycmllcnMvcHJlZmVyYXBuIgogICAgICBdCiAgICB9CiAg
-XSwKICAic2NvcmUiOiAxLAogICJsYWJlbCI6IFtdCn0K"""
-    ).decode()
+    data = requests.get(
+            "https://raw.githubusercontent.com/quark-engine/quark-rules/"
+            "master/rules/00192.json",
+            timeout=5
+            )
 
-    rule_file.write_text(data)
+    rule_file.write_text(data.text)
     return rule_file
 
 
@@ -119,16 +130,12 @@ class TestQuark:
         )[0]
 
         expect_method_analysis = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;",
-            "getLocation",
-            "()Ljava/lang/String;",
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
         )[0]
 
         expected_list = [expect_method_analysis]
 
-        quark_obj.find_previous_method(
-            base_method, parent_function, wrapper=wrapper
-        )
+        quark_obj.find_previous_method(base_method, parent_function, wrapper=wrapper)
 
         assert wrapper == expected_list
 
@@ -144,9 +151,7 @@ class TestQuark:
             quark_obj.find_intersection(first_method_set, second_method_set)
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_find_intersection_with_set_containing_invalid_type(
-        self, quark_obj
-    ):
+    def test_find_intersection_with_set_containing_invalid_type(self, quark_obj):
         first_method_set = {1, 2, 3}
         second_method_set = {4, 5, 6}
 
@@ -155,9 +160,7 @@ class TestQuark:
 
     def test_find_intersection_with_result(self, quark_obj):
         location_api = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;",
-            "getLocation",
-            "()Ljava/lang/String;",
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
         )[0]
         location_api_upper = quark_obj.apkinfo.upperfunc(location_api)
 
@@ -184,9 +187,7 @@ class TestQuark:
                 "Lcom/google/progress/AndroidClientService;", "doByte", "([B)V"
             )[0],
             quark_obj.apkinfo.find_method(
-                "Lcom/google/progress/AndroidClientService;",
-                "sendMessage",
-                "()V",
+                "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
             )[0],
             quark_obj.apkinfo.find_method(
                 "Lcom/google/progress/AndroidClientService$2;", "run", "()V"
@@ -210,9 +211,7 @@ class TestQuark:
             )
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_check_sequence_with_lists_containing_invalid_type(
-        self, quark_obj
-    ):
+    def test_check_sequence_with_lists_containing_invalid_type(self, quark_obj):
         mutual_parent = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
         )[0]
@@ -228,9 +227,7 @@ class TestQuark:
         # Send Location via SMS
 
         location_method = quark_obj.apkinfo.find_method(
-            "Lcom/google/progress/Locate;",
-            "getLocation",
-            "()Ljava/lang/String;",
+            "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
         )[0]
         sendSms_method = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/SMSHelper;",
@@ -312,9 +309,7 @@ class TestQuark:
             )
 
     @pytest.mark.skip(reason="discussion needed.")
-    def test_check_parameter_with_lists_containing_invalid_type(
-        self, quark_obj
-    ):
+    def test_check_parameter_with_lists_containing_invalid_type(self, quark_obj):
         mutual_parent = quark_obj.apkinfo.find_method(
             "Lcom/google/progress/AndroidClientService;", "sendMessage", "()V"
         )[0]
@@ -336,9 +331,7 @@ class TestQuark:
         ]
         first_method = [
             quark_obj.apkinfo.find_method(
-                "Lcom/google/progress/Locate;",
-                "getLocation",
-                "()Ljava/lang/String;",
+                "Lcom/google/progress/Locate;", "getLocation", "()Ljava/lang/String;"
             )[0]
         ]
         mutual_parent = quark_obj.apkinfo.find_method(
@@ -346,9 +339,7 @@ class TestQuark:
         )[0]
 
         assert (
-            quark_obj.check_parameter(
-                mutual_parent, first_method, second_method
-            )
+            quark_obj.check_parameter(mutual_parent, first_method, second_method)
             == True
         )
 
@@ -386,17 +377,15 @@ class TestQuark:
             mock.assert_not_called()
 
     def test_check_parameter_values_with_one_keyword_rule(
-        self, simple_quark_obj, rule_with_one_keyword
+        self, simple_quark_obj_2, rule_with_one_keyword
     ):
         rule_object = RuleObject(rule_with_one_keyword)
 
         with patch("quark.core.quark.Quark.check_parameter_values") as mock:
-            simple_quark_obj.run(rule_object)
+            simple_quark_obj_2.run(rule_object)
             mock.assert_called()
 
-    def test_check_parameter_values_without_matched_str(
-        self, simple_quark_obj
-    ):
+    def test_check_parameter_values_without_matched_str(self, simple_quark_obj):
         source_str = (
             "Landroid/content/ContentResolver;->query(Landroid/net/Uri;"
             " [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String;"
@@ -458,9 +447,7 @@ class TestQuark:
         # Inner function for comparing two json objects
         def sorting(item):
             if isinstance(item, dict):
-                return sorted(
-                    (key, sorting(values)) for key, values in item.items()
-                )
+                return sorted((key, sorting(values)) for key, values in item.items())
             if isinstance(item, list):
                 return sorted(sorting(x) for x in item)
             else:
