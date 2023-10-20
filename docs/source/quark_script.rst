@@ -865,7 +865,7 @@ Quark Script CWE-749.py
         exposeAPI = quarkResult.findMethodInCaller(caller, targetMethod)
 
         if enableJS and exposeAPI:
-            print(f"CWE-749 is detected in method, {caller.fullName}"
+            print(f"CWE-749 is detected in method, {caller.fullName}")
 
 Quark Rule: configureJsExecution.json
 =====================================
@@ -974,12 +974,13 @@ Quark Script CWE-780.py
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
     for useCryptographicAlgo in quarkResult.behaviorOccurList:
-
         methodCaller = useCryptographicAlgo.methodCaller
 
-        if useCryptographicAlgor.hasString("RSA") and \
-            not useCryptographicAlgo.hasString("OAEP"):
+        if useCryptographicAlgo.hasString(
+            "RSA"
+        ) and not useCryptographicAlgo.hasString("OAEP"):
             print(f"CWE-780 is detected in method, {methodCaller.fullName}")
+
 
 Quark Rule: useOfCryptographicAlgo.json
 =======================================
