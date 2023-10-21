@@ -23,7 +23,7 @@ from quark.utils.tools import (
     remove_dup_list,
 )
 
-RizinCache = namedtuple("rizin_cache", "address dexindex is_imported")
+RizinCache = namedtuple("rizin_cache", "address is_imported")
 
 PRIMITIVE_TYPE_MAPPING = {
     "void": "V",
@@ -60,32 +60,21 @@ class RizinImp(BaseApkinfo):
 
                 self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
 
-                dex_files = [
-                    file
-                    for file in apk.namelist()
-                    if file.startswith("classes") and file.endswith(".dex")
-                ]
-
-                for dex in dex_files:
-                    apk.extract(dex, path=self._tmp_dir)
-
-                self._dex_list = [os.path.join(self._tmp_dir, dex) for dex in dex_files]
-
         else:
             raise ValueError("Unsupported File type.")
 
-        self._number_of_dex = len(self._dex_list)
-
-    @functools.lru_cache
-    def _get_rz(self, index):
+    @functools.cached_property
+    def _rz(self):
         """
-        Return a Rizin object that opens the specified Dex file.
+        Return a Rizin object that opens the specified Dex file or APK file.
 
-        :param index: an index indicating which Dex file should the returned
-        object open
         :return: a Rizin object opening the specified Dex file
         """
-        rz = rzpipe.open(self._dex_list[index])
+        if self.ret_type == "DEX":
+            rz = rzpipe.open(f"{self.apk_filepath}")
+        elif self.ret_type == "APK":
+            rz = rzpipe.open(f"apk://{self.apk_filepath}")
+
         rz.cmd("aa")
         return rz
 
@@ -140,15 +129,13 @@ class RizinImp(BaseApkinfo):
             raw_str = raw_str.replace(c, "_")
         return raw_str
 
-    def _parse_method_from_isj_obj(self, json_obj, dexindex):
+    def _parse_method_from_isj_obj(self, json_obj):
         """
         Parse a JSON object provided by the Rizin command `isj` or `is.j` into
         an instance of MethodObject.
 
         :param json_obj: a JSON object provided by the Rizin command `isj` or
         `is.j`
-        :param dexindex: an index indicating from which Dex file the JSON
-        object is generated
         :return: an instance of MethodObject
         """
         if json_obj.get("type") not in ["FUNC", "METH"]:
@@ -220,7 +207,7 @@ class RizinImp(BaseApkinfo):
                 class_name="",
                 name="clone",
                 descriptor="()Ljava/lang/Object;",
-                cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+                cache=RizinCache(json_obj["vaddr"], is_imported),
             )
             return method
 
@@ -250,28 +237,23 @@ class RizinImp(BaseApkinfo):
             class_name=class_name,
             name=method_name,
             descriptor=descriptor,
-            cache=RizinCache(json_obj["vaddr"], dexindex, is_imported),
+            cache=RizinCache(json_obj["vaddr"], is_imported),
         )
 
         return method
 
     @functools.lru_cache
-    def _get_methods_classified(
-        self, dex_index: int
-    ) -> Dict[str, List[MethodObject]]:
+    def _get_methods_classified(self) -> Dict[str, List[MethodObject]]:
         """
         Use command isj to get all the methods and categorize them into
         a dictionary.
 
-        :param dex_index: an index to the Dex file that need to be parsed.
         :return: a dict that holds methods categorized by their class name
         """
-        rz = self._get_rz(dex_index)
-
-        method_json_list = rz.cmdj("isj")
+        method_json_list = self._rz.cmdj("isj")
         method_dict = defaultdict(list)
         for json_obj in method_json_list:
-            method = self._parse_method_from_isj_obj(json_obj, dex_index)
+            method = self._parse_method_from_isj_obj(json_obj)
             if method:
                 method_dict[method.class_name].append(method)
 
@@ -377,9 +359,8 @@ class RizinImp(BaseApkinfo):
         :return: a set of MethodObjects
         """
         method_set = set()
-        for dex_index in range(self._number_of_dex):
-            for method_list in self._get_methods_classified(dex_index).values():
-                method_set.update(method_list)
+        for method_list in self._get_methods_classified().values():
+            method_set.update(method_list)
 
         return method_set
 
@@ -421,22 +402,19 @@ class RizinImp(BaseApkinfo):
                 descriptor, method.descriptor
             )
 
-        dex_list = range(self._number_of_dex)
         filtered_methods = list()
 
         if class_name != ".*":
-            for dex_index in dex_list:
-                method_dict = self._get_methods_classified(dex_index)
-                filtered_methods += list(
-                    filter(method_filter, method_dict[class_name])
-                )
+            method_dict = self._get_methods_classified()
+            filtered_methods += list(
+                filter(method_filter, method_dict[class_name])
+            )
         else:
-            for dex_index in dex_list:
-                method_dict = self._get_methods_classified(dex_index)
-                for key_name in method_dict:
-                    filtered_methods += list(
-                        filter(method_filter, method_dict[key_name])
-                    )
+            method_dict = self._get_methods_classified()
+            for key_name in method_dict:
+                filtered_methods += list(
+                    filter(method_filter, method_dict[key_name])
+                )
 
         return filtered_methods
 
@@ -452,10 +430,7 @@ class RizinImp(BaseApkinfo):
         """
         cache = method_object.cache
 
-        r2 = self._get_rz(cache.dexindex)
-
-        xrefs = r2.cmdj(f"axtj @ {cache.address}")
-
+        xrefs = self._rz.cmdj(f"axtj @ {cache.address}")
         upperfunc_set = set()
         for xref in xrefs:
             if xref["type"] != "CALL":
@@ -493,9 +468,7 @@ class RizinImp(BaseApkinfo):
         """
         cache = method_object.cache
 
-        rz = self._get_rz(cache.dexindex)
-
-        instruct_flow = rz.cmdj(f"pdfj @ {cache.address}")["ops"]
+        instruct_flow = self._rz.cmdj(f"pdfj @ {cache.address}")["ops"]
 
         lowerfunc_list = []
         for ins in instruct_flow:
@@ -532,13 +505,9 @@ class RizinImp(BaseApkinfo):
         :yield: a generator of BytecodeObjects
         """
         cache = method_object.cache
-
         if not cache.is_imported:
 
-            rz = self._get_rz(cache.dexindex)
-
-            instruct_flow = rz.cmdj(f"pdfj @ {cache.address}")["ops"]
-
+            instruct_flow = self._rz.cmdj(f"pdfj @ {cache.address}")["ops"]
             if instruct_flow:
                 for ins in instruct_flow:
                     if "disasm" not in ins:
@@ -554,13 +523,10 @@ class RizinImp(BaseApkinfo):
         :return: a set of strings
         """
         strings = set()
-        for dex_index in range(self._number_of_dex):
-            rz = self._get_rz(dex_index)
-
-            string_detail_list = rz.cmdj("izzj")
-            strings.update(
-                [string_detail["string"] for string_detail in string_detail_list]
-            )
+        string_detail_list = self._rz.cmdj("izzj")
+        strings.update(
+            [string_detail["string"] for string_detail in string_detail_list]
+        )
 
         return strings
 
@@ -610,9 +576,7 @@ class RizinImp(BaseApkinfo):
         if cache.is_imported:
             return {}
 
-        rz = self._get_rz(cache.dexindex)
-
-        instruction_flow = rz.cmdj(f"pdfj @ {cache.address}")["ops"]
+        instruction_flow = self._rz.cmdj(f"pdfj @ {cache.address}")["ops"]
 
         if instruction_flow:
             for ins in instruction_flow:
@@ -661,18 +625,14 @@ class RizinImp(BaseApkinfo):
         """
         hierarchy_dict = defaultdict(set)
 
-        for dex_index in range(self._number_of_dex):
+        class_info_list = self._rz.cmdj("icj")
+        for class_info in class_info_list:
+            class_name = class_info["classname"]
+            class_name = self._convert_type_to_type_signature(class_name)
+            super_class = class_info["super"]
+            super_class = self._convert_type_to_type_signature(super_class)
 
-            rz = self._get_rz(dex_index)
-
-            class_info_list = rz.cmdj("icj")
-            for class_info in class_info_list:
-                class_name = class_info["classname"]
-                class_name = self._convert_type_to_type_signature(class_name)
-                super_class = class_info["super"]
-                super_class = self._convert_type_to_type_signature(super_class)
-
-                hierarchy_dict[class_name].add(super_class)
+            hierarchy_dict[class_name].add(super_class)
 
         return hierarchy_dict
 
@@ -690,16 +650,12 @@ class RizinImp(BaseApkinfo):
         """
         hierarchy_dict = defaultdict(set)
 
-        for dex_index in range(self._number_of_dex):
+        class_info_list = self._rz.cmdj("icj")
+        for class_info in class_info_list:
+            class_name = class_info["classname"]
+            super_class = class_info["super"]
 
-            rz = self._get_rz(dex_index)
-
-            class_info_list = rz.cmdj("icj")
-            for class_info in class_info_list:
-                class_name = class_info["classname"]
-                super_class = class_info["super"]
-
-                hierarchy_dict[super_class].add(class_name)
+            hierarchy_dict[super_class].add(class_name)
 
         return hierarchy_dict
 
@@ -710,13 +666,10 @@ class RizinImp(BaseApkinfo):
         :param address: an address used to find the corresponding method
         :return: the MethodObject of the method in the given address
         """
-        dexindex = 0
-
-        rz = self._get_rz(dexindex)
-        json_array = rz.cmdj(f"is.j @ {address}")
+        json_array = self._rz.cmdj(f"is.j @ {address}")
 
         if json_array:
-            return self._parse_method_from_isj_obj(json_array[0], dexindex)
+            return self._parse_method_from_isj_obj(json_array[0])
         else:
             return None
 
@@ -727,10 +680,7 @@ class RizinImp(BaseApkinfo):
         :param address: an address used to find the corresponding method
         :return: the content in the given address
         """
-        dexindex = 0
-
-        rz = self._get_rz(dexindex)
-        content = rz.cmd(f"pr @ {int(address, 16)}")
+        content = self._rz.cmd(f"pr @ {int(address, 16)}")
         return content
 
     @staticmethod
