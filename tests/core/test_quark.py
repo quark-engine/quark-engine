@@ -16,12 +16,28 @@ APK_SOURCE = (
 APK_FILENAME = "14d9f1a92dd984d6040cc41ed06e273e.apk"
 
 
+APK_SOURCE_2 = (
+    "https://github.com/quark-engine/apk-samples"
+    "/raw/master/malware-samples/Ahmyth.apk"
+)
+APK_FILENAME_2 = "Ahmyth.apk"
+
+
 @pytest.fixture(scope="function")
 def simple_quark_obj():
     r = requests.get(APK_SOURCE, allow_redirects=True)
     open(APK_FILENAME, "wb").write(r.content)
 
     apk_file = APK_FILENAME
+    return Quark(apk_file)
+
+
+@pytest.fixture(scope="function")
+def simple_quark_obj_2():
+    r = requests.get(APK_SOURCE_2, allow_redirects=True, timeout=5)
+    open(APK_FILENAME_2, "wb").write(r.content)
+
+    apk_file = APK_FILENAME_2
     return Quark(apk_file)
 
 
@@ -65,22 +81,15 @@ c21zIiwgImNhbGxsb2ciLCAiY2FsZW5kYXIiIF0gfQ=="""
 
 @pytest.fixture(scope="function")
 def rule_with_one_keyword(tmp_path):
-    rule_file = tmp_path / "rule_without_keyword.json"
+    rule_file = tmp_path / "rule_with_one_keyword.json"
 
-    data = base64.b64decode(
-        """eyAiY3JpbWUiOiAiUmVhZCBzZW5zaXRpdmUgZGF0YShTTVMsIENBTExMT0csIGV0YykiLCAicGVy
-bWlzc2lvbiI6IFtdLCAiYXBpIjogWyB7ICJkZXNjcmlwdG9yIjogIigpTGFuZHJvaWQvY29udGVu
-dC9Db250ZW50UmVzb2x2ZXI7IiwgImNsYXNzIjogIkxhbmRyb2lkL2NvbnRlbnQvQ29udGV4dDsi
-LCAibWV0aG9kIjogImdldENvbnRlbnRSZXNvbHZlciIgfSwgeyAiZGVzY3JpcHRvciI6ICIoTGFu
-ZHJvaWQvbmV0L1VyaTsgW0xqYXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzsgW0xq
-YXZhL2xhbmcvU3RyaW5nOyBMamF2YS9sYW5nL1N0cmluZzspTGFuZHJvaWQvZGF0YWJhc2UvQ3Vy
-c29yOyIsICJjbGFzcyI6ICJMYW5kcm9pZC9jb250ZW50L0NvbnRlbnRSZXNvbHZlcjsiLCAibWV0
-aG9kIjogInF1ZXJ5IiwgImtleXdvcmQiOiBbICJjb250ZW50Oi8vY2FsbF9sb2cvY2FsbHMiIF0g
-fSBdLCAic2NvcmUiOiAxLCAibGFiZWwiOiBbICJjb2xsZWN0aW9uIiwgInNtcyIsICJjYWxsbG9n
-IiwgImNhbGVuZGFyIiBdIH0="""
-    ).decode()
+    data = requests.get(
+            "https://raw.githubusercontent.com/quark-engine/quark-rules/"
+            "master/rules/00192.json",
+            timeout=5
+            )
 
-    rule_file.write_text(data)
+    rule_file.write_text(data.text)
     return rule_file
 
 
@@ -368,12 +377,12 @@ class TestQuark:
             mock.assert_not_called()
 
     def test_check_parameter_values_with_one_keyword_rule(
-        self, simple_quark_obj, rule_with_one_keyword
+        self, simple_quark_obj_2, rule_with_one_keyword
     ):
         rule_object = RuleObject(rule_with_one_keyword)
 
         with patch("quark.core.quark.Quark.check_parameter_values") as mock:
-            simple_quark_obj.run(rule_object)
+            simple_quark_obj_2.run(rule_object)
             mock.assert_called()
 
     def test_check_parameter_values_without_matched_str(self, simple_quark_obj):
