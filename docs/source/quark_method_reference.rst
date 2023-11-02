@@ -1504,7 +1504,7 @@ wrapper_lookup
 
 **The algorithm of wrapper_lookup**
 
-The ``wrapper_lookup`` method finds the parent method that calls the specified native API under the specified method.
+The ``wrapper_lookup`` method finds the method that calls the specified native API under the specified method.
 
 .. code-block :: TEXT
 
