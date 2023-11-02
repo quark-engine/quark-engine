@@ -1493,3 +1493,61 @@ Here is the flowchart of ``show_rule_classification``.
         output_parent_function_table(data_bundle)
         output_parent_function_json(data_bundle)
         output_parent_function_graph(data_bundle)
+
+
+quark.utils.graph.py
+-----------------------
+
+wrapper_lookup
+=======================
+
+
+**The algorithm of wrapper_lookup**
+
+The ``wrapper_lookup`` method finds the method that calls the specified native API under the specified method.
+
+.. code-block :: TEXT
+
+    1. Create a stack that stores the specified method.
+
+    2. While the stack has elements, keep doing steps 3, 4, and 5, otherwise return an empty list.
+
+    3. Check if the top element of the stack is visited.
+        - If YES, pop the top element and continue to the next loop.
+        - If NO, record the top element as visited.
+        
+    4. Find methods that the top element calls, and we refer to them as submethods.
+
+    5. Check if the specified native API is one of the submethods.
+        - If YES, return a list containing the top element.
+        - If NO, push the submethods to the stack except Android APIs.
+
+
+Here is the flowchart of ``wrapper_lookup``.
+
+.. image:: https://i.imgur.com/nNvUWVI.png
+
+
+**The code of wrapper_lookup**
+
+.. code-block:: python
+
+    def wrapper_lookup(apkinfo, method, native_api):
+        visited_method_list = set()
+        stack = [method]
+
+        while stack:
+            parent = stack[-1]
+            if parent not in visited_method_list:
+                visited_method_list.add(parent)
+
+                submethods = {reference[0] for reference in apkinfo.lowerfunc(parent)}
+                if native_api in submethods:
+                    return [parent]
+
+                next_level = filter(lambda m: not m.is_android_api(), submethods)
+                stack.extend(next_level)
+            else:
+                stack.pop()
+
+        return []
