@@ -1591,7 +1591,7 @@ The ``show_comparison_graph`` generates and displays a radar chart based on the 
     5. Display the figure
         - Display the figure using the "fig.show()" method.
 
-    6. Check and create storage directory
+    6. Check and create a storage directory
         - Check if the directory "behaviors_comparison_radar_chart exists", and create it if it does not.
             - If YES, proceed to the next step.
             - If NOT, create the "behaviors_comparison_radar_chart" directory.
