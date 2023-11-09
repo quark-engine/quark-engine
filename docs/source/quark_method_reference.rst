@@ -1551,3 +1551,101 @@ Here is the flowchart of ``wrapper_lookup``.
                 stack.pop()
 
         return []
+
+
+
+
+show_comparison_graph
+=======================
+
+
+**The algorithm of show_comparison_graph**
+
+The ``show_comparison_graph`` generates and displays a radar chart based on the maximum label confidence of rule labels which compares the behaviors between the designated APK samples.
+
+.. code-block :: TEXT
+
+    1. The function "show_comparison_graph" takes four parameters:
+        - title: Text to be displayed as the chart's title.
+        - labels: Categories to be represented on the radar chart.
+        - malware_confidences: A mapping of malware identifiers to their respective lists of confidence scores.
+        - font_size: The textual size for the chart, defaulting to 22 if not specified.
+
+    2. Initialize the figure
+        - Create a blank figure object "fig" using "go.Figure()".
+
+    3. Set the layout of the figure using "fig.update_layout"
+        - Define the polar coordinate system with the radial axis visible, ranging from 0 to 100, and having a tick every 20 units.
+        - Enable the legend display.
+        - Set the chart title with bold text.
+        - Set the font size.
+        - Center the title horizontally.
+        - Configure the position and order of the legend.
+
+    4. Add data to the figure
+        - For each "malware_name" in the "malware_confidences" dictionary, create a radar chart data trace.
+        - Use "go.Scatterpolar", specifying the radius as the array of confidence values and the angle as the labels.
+        - Set the fill mode to "toself" to create a closed radar area.
+        - Name each trace as "malware_name" and customize the line width.
+
+    5. Display the figure
+        - Display the figure using the "fig.show()" method.
+
+    6. Check and create a storage directory
+        - Check if the directory "behaviors_comparison_radar_chart exists", and create it if it does not.
+            - If YES, proceed to the next step.
+            - If NOT, create the "behaviors_comparison_radar_chart" directory.
+
+    7. Save the figure as an image
+        - Save the figure as a JPEG image in the "behaviors_comparison_radar_chart" directory.
+
+Here is the flowchart of ``show_comparison_graph``.
+
+.. image:: https://i.imgur.com/TxMHA7J.png
+
+
+**The code of show_comparison_graph**
+
+.. code-block:: python
+
+	def show_comparison_graph(title, labels, malware_confidences, font_size=22):
+	    """
+	    show radar chart based on max label confidence of several malwares
+	    :param title: title of the graph to be displayed
+	    :param labels: labels to be shown on the radar chart
+	    :param malware_confidences: dictionary with structure, malware_name=[
+	    array of confidences to be shown on radar chart]
+	    :return: None
+	    """
+	    fig = go.Figure()
+	    # plot the graph with specific layout
+	    fig.update_layout(
+		polar=dict(radialaxis=dict(visible=True, range=[0, 100], dtick=20)),
+		showlegend=True,
+		title={
+		    "text": f"<b>{title}</b>",
+		},
+		font=dict(size=font_size),
+		title_x=0.5,
+		legend=dict(
+		    y=0.5,
+		    x=0.8,
+		    traceorder="normal",
+		),
+	    )
+	    for malware_name in malware_confidences:
+		fig.add_trace(
+		    go.Scatterpolar(
+			r=malware_confidences[malware_name],
+			theta=labels,
+			fill="toself",
+			name=malware_name,
+			line=dict(
+			    width=4,
+			),
+		    )
+		)
+	    fig.show()
+	    if not os.path.exists("behaviors_comparison_radar_chart"):
+		os.mkdir("behaviors_comparison_radar_chart")
+	    fig.write_image("behaviors_comparison_radar_chart/compariso_image.jpeg")
