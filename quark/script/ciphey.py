@@ -16,7 +16,8 @@ def checkClearText(inputString: str) -> str:
     except ImportError:
         raise Exception(
             "Ciphey is not installed. Please use the command"
-            " 'python3 -m pip install ciphey --upgrade' to install the package."
+            " 'python3 -m pip install ciphey --upgrade'"
+            " to install the package."
         )
 
     return decrypt(Config().library_default().complete_config(), inputString)
