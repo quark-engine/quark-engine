@@ -2,14 +2,6 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-try:
-    from ciphey import decrypt
-    from ciphey.iface import Config
-
-    isCipheyImported = True
-except ImportError:
-    isCipheyImported = False
-
 
 def checkClearText(inputString: str) -> str:
     """Check the decrypted value of the input string.
@@ -17,9 +9,14 @@ def checkClearText(inputString: str) -> str:
     :param inputString: string to be checked.
     :return: the decrypted value
     """
-    if isCipheyImported:
-        return decrypt(
-            Config().library_default().complete_config(), inputString
+    try:
+        from ciphey import decrypt
+        from ciphey.iface import Config
+
+    except ImportError:
+        raise Exception(
+            "Ciphey is not installed. Please use the command"
+            " 'python3 -m pip install ciphey --upgrade' to install the package."
         )
 
-    return None
+    return decrypt(Config().library_default().complete_config(), inputString)

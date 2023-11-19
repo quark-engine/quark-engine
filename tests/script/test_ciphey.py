@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
-import sys
-import importlib
 from unittest import TestCase
+from unittest.mock import patch
 from quark.script.ciphey import checkClearText
 
 
 class TestWithoutCiphey(TestCase):
-    def setUp(self):
-        self._tmpCipheyModule = sys.modules["ciphey"]
-        sys.modules["ciphey"] = None
-        importlib.reload(sys.modules["quark.script.ciphey"])
-
-    def tearDown(self):
-        sys.modules["ciphey"] = self._tmpCipheyModule
-        importlib.reload(sys.modules["quark.script.ciphey"])
-
-    def testCheckClearTextWithCipheyImportError(self):
-        assert checkClearText("Clear Text") is None
+    @patch(
+        "builtins.__import__",
+        side_effect=ImportError("No module named 'ciphey'"),
+    )
+    def testCheckClearTextWithCipheyImportError(self, mock_import):
+        with self.assertRaises(Exception) as context:
+            checkClearText("Clear Text")
+        assert "Ciphey is not installed." in str(context.exception)
 
 
 def testCheckClearTextWithClearText():
