@@ -23,6 +23,14 @@ APK_SOURCE_2 = (
 APK_FILENAME_2 = "Ahmyth.apk"
 
 
+LABLE_DECS_SOURCE = (
+    "https://raw.githubusercontent.com/quark-engine/"
+    "quark-rules/master/label_desc.csv"
+)
+
+LABLE_DECS_FILENAME = "label_desc.csv"
+
+
 @pytest.fixture(scope="function")
 def simple_quark_obj():
     r = requests.get(APK_SOURCE, allow_redirects=True)
@@ -91,6 +99,17 @@ def rule_with_one_keyword(tmp_path):
 
     rule_file.write_text(data.text)
     return rule_file
+
+
+@pytest.fixture(scope="function")
+def label_desc_csv(tmp_path):
+    r = requests.get(LABLE_DECS_SOURCE, allow_redirects=True, timeout=5)
+    open(
+        os.path.join(
+            os.path.dirname(tmp_path), LABLE_DECS_FILENAME
+        ),
+        "wb"
+        ).write(r.content)
 
 
 class TestQuark:
@@ -459,3 +478,68 @@ class TestQuark:
             sample_json = json.loads(json_file.read())
 
             assert sorting(sample_json) == sorting(json_report)
+
+    def testLabelReportWithMaxTable(
+        self,
+        quark_obj,
+        tmp_path,
+        label_desc_csv
+    ):
+        scoreForLabelSms = {
+            "sms":
+            [
+                40, 20, 20, 40, 100, 100, 40, 80, 80, 60, 40,
+                20, 80, 80, 100, 40, 20, 40, 100, 20, 40, 100,
+                40, 20, 40, 100, 40, 40, 40, 40, 20, 20, 100
+            ]
+        }
+
+        quark_obj.show_label_report(
+             tmp_path,
+             scoreForLabelSms,
+             "max"
+        )
+
+        correctTableRow = [
+            '\x1b[92msms\x1b[0m',
+            '\x1b[33mRead/Write/Send sms content\x1b[0m',
+            33,
+            '\x1b[91m100\x1b[0m'
+        ]
+
+        assert (quark_obj.quark_analysis
+                .label_report_table.rows[0]) == correctTableRow
+
+    def testLabelReportWithDetailedTable(
+        self,
+        quark_obj,
+        tmp_path,
+        label_desc_csv
+    ):
+        scoreForLabelSms = {
+            "sms":
+            [
+                40, 20, 20, 40, 100, 100, 40, 80, 80, 60, 40,
+                20, 80, 80, 100, 40, 20, 40, 100, 20, 40, 100,
+                40, 20, 40, 100, 40, 40, 40, 40, 20, 20, 100
+            ]
+        }
+
+        quark_obj.show_label_report(
+             tmp_path,
+             scoreForLabelSms,
+             "detailed"
+        )
+
+        correctTableRow = [
+            '\x1b[92msms\x1b[0m',
+            '\x1b[33mRead/Write/Send sms content\x1b[0m',
+            33,
+            '\x1b[91m100\x1b[0m',
+            '\x1b[35m53.33\x1b[0m',
+            '\x1b[94m29.81\x1b[0m',
+            '\x1b[93m11\x1b[0m'
+        ]
+
+        assert (quark_obj.quark_analysis
+                .label_report_table.rows[0]) == correctTableRow
