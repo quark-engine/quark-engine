@@ -1664,6 +1664,7 @@ The ``call_graph`` method generates a call graph based on the two native APIs.
     1. Check if the two methods in the call graph analysis are the native APIs.
         - If NO, find the methods that call the native APIs under the two methods.
           And we refer to them as wrappers.
+        - If YES, continue to the following steps.
             
     2. Initialize the call graph and draw it in the following steps.
 
