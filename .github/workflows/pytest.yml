@@ -42,9 +42,9 @@ jobs:
 
         # Install Radare2 (5.8.8)
         sudo apt install -y musl-tools
-        sudo git clone https://github.com/radareorg/radare2 /opt/radare2/
-        cd /opt/radare2/
-        sudo git checkout 5.8.8
+        wget https://github.com/radareorg/radare2/releases/download/5.8.8/radare2-5.8.8.zip
+        unzip radare2-5.8.8.zip -d /opt
+        cd /opt/radare2-5.8.8
         sudo sys/install.sh
         cd -
  
