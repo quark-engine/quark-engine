@@ -6,7 +6,7 @@ from unittest.mock import patch
 from quark.script.ciphey import checkClearText
 
 
-class TestWithoutCiphey(TestCase):
+class TestCiphey(TestCase):
     @patch(
         "builtins.__import__",
         side_effect=ImportError("No module named 'ciphey'"),
@@ -16,13 +16,11 @@ class TestWithoutCiphey(TestCase):
             checkClearText("Clear Text")
         assert "Ciphey is not installed." in str(context.exception)
 
+    def testCheckClearTextWithClearText(self):
+        assert checkClearText("Clear Text") == "Clear Text"
 
-def testCheckClearTextWithClearText():
-    assert checkClearText("Clear Text") == "Clear Text"
-
-
-def testCheckClearTextWithCipherText():
-    assert (
-        checkClearText("NB2HI4DTHIXS6Z3PN5TWYZJOMNXW2===")
-        == "https://google.com"
-    )
+    def testCheckClearTextWithCipherText(self):
+        assert (
+            checkClearText("NB2HI4DTHIXS6Z3PN5TWYZJOMNXW2===")
+            == "https://google.com"
+        )
