@@ -253,7 +253,8 @@ class TestObjection:
             "handle": 11111111,
             "js": (
                 'let clz = Java.use("a.b.clazz");\n'
-                'let method = clz["methodName"].overload("java.lang.String","java.lang.String");\n'
+                'let method = clz["methodName"]'
+                '.overload("java.lang.String","java.lang.String");\n'
                 'const result = method.call(clazz,"Arg1","Arg2");\n'
                 "console.log(result);"
             ),
