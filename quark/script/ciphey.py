@@ -4,9 +4,9 @@
 
 
 def checkClearText(inputString: str) -> str:
-    """Check if the input string is in clear text with Ciphey.
+    """Check the decrypted value of the input string with Ciphey.
     If Ciphey is not installed, raise ImportError.
-    
+
     :param inputString: string to be checked.
     :return: the decrypted value
     """
