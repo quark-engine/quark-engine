@@ -131,13 +131,15 @@ class Objection:
     def execute(
         self,
         method: Union[Method, List[str], str],
-        arguments: List[object] = [],
+        arguments: List[object] = None,
     ) -> None:
         """Execute the target method.
 
         :param method: the target method
         :param arguments: the arguments passing to the method, defaults to []
         """
+        if arguments is None:
+            arguments = []
 
         if isinstance(method, (Method, List)):
             method, overloadFilter = convertMethodToString(method)
