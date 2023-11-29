@@ -24,7 +24,6 @@ prompt-toolkit = "<=3.0.36"
 rzpipe = "<=0.1.2"
 objection = "<=1.11.0"
 frida = "<=15.2.2"
-ciphey = ">=5.0.0,<=5.14.0"
 r2pipe = "==1.8.0"
 
 [requires]
