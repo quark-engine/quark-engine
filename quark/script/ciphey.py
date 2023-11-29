@@ -4,10 +4,13 @@
 
 
 def checkClearText(inputString: str) -> str:
-    """Check the decrypted value of the input string with Ciphey.
-    If Ciphey is not installed, raise ImportError.
+    """Check the decrypted value of the input string.
 
     :param inputString: string to be checked.
+    ...
+    :raises ImportError: Ciphey is not installed. Please use the command
+        'python3 -m pip install ciphey --upgrade' to install the package.
+    ...
     :return: the decrypted value
     """
     try:
