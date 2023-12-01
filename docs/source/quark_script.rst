@@ -210,7 +210,7 @@ methodInstance.getXrefTo(none)
 - **return**: python list containing tuples (callee methods, index).
 
 methodInstance.getArguments(none)
-==============================
+==================================
 
 - **Description**: Get arguments from method.
 - **params**: none
@@ -395,7 +395,7 @@ This scenario seeks to find hard-coded credentials in the APK file. See `CWE-798
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method SecretKeySpec. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method ``SecretKeySpec``. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
 
 Quark Scipt: CWE-798.py
 ========================
@@ -481,7 +481,7 @@ This scenario seeks to find code injection in the APK file. See `CWE-94 <https:/
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method createPackageContext. Then, we find the caller method who calls the createPackageContext. Finally, we check if  method checkSignatures is called in the caller method for verification.
+First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method ``createPackageContext``. Then, we find the caller method who calls the ``createPackageContext``. Finally, we check if  method ``checkSignatures`` is called in the caller method for verification.
 
 
 Quark Scipt: CWE-94.py
@@ -558,7 +558,7 @@ This scenario seeks to find unsecure storage mechanism of data in the APK file. 
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exist on given storage mechanism. Then, we use API ``getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains keyword ``sdcard``.
+First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exist on given storage mechanism. Then, we use API ``behaviorInstance.getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains keyword ``sdcard``.
 
 Quark Script CWE-921.py
 ========================
@@ -734,7 +734,7 @@ This scenario seeks to find SQL injection in the APK file. See `CWE-89 <https://
 
 Let's use this `APK <https://github.com/satishpatnayak/AndroGoat>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``isArgFromMethod`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod()`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
 
 Quark Script CWE-89.py
 ======================
@@ -802,7 +802,7 @@ This scenario seeks to find **improper export of Android application components*
 
 Let's use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we use Quark API ``getActivities`` to get all activity data in the manifest. Then we use ``activityInstance.hasIntentFilter`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
+First, we use Quark API ``getActivities(samplePath)`` to get all activity data in the manifest. Then we use ``activityInstance.hasIntentFilter()`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported()`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
 
 Quark Script CWE-926.py
 =======================
@@ -835,7 +835,7 @@ This scenario seeks to find **exposed methods or functions** in the APK file. Se
 
 Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using method ``setJavascriptEnabled``. Then, we use API ``methodInstance.getArguments`` to check if it enables JavaScript execution on websites. Finally, we look for calls to method ``addJavaScriptInterface`` in the caller method. If **yes**, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
+First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using method ``setJavascriptEnabled``. Then, we use API ``methodInstance.getArguments()`` to check if it enables JavaScript execution on websites. Finally, we look for calls to method ``addJavaScriptInterface`` in the caller method. If **yes**, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
 
 Quark Script CWE-749.py
 =======================
@@ -909,7 +909,7 @@ This scenario seeks to find **insertion of sensitive information into Log file**
 
 Let’s use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we use API ``findMethodInAPK`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is YES, that may cause sensitive data leakage into log file.
+First, we use API ``findMethodInAPK(samplePath, targetMethod)`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments()`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is YES, that may cause sensitive data leakage into log file.
 
 You can use your own keywords in the keywords list to detect sensitive data.
 
@@ -958,7 +958,7 @@ This scenario seeks to find **the use of the RSA algorithm without Optimal Asymm
 
 Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how the Quark script find this vulnerability.
 
-We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using the cryptographic algorithm. Then, we use API `behaviorInstance.hasString(pattern, isRegex)` to filter behaviors using the RSA algorithm. Finally, we use the same API to check if the algorithm runs without the OAEP scheme. If the answer is YES, the plaintext is predictable.
+We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using the cryptographic algorithm. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` to filter behaviors using the RSA algorithm. Finally, we use the same API to check if the algorithm runs without the OAEP scheme. If the answer is YES, the plaintext is predictable.
 
 Quark Script CWE-780.py
 =======================
@@ -1021,7 +1021,7 @@ This scenario seeks to find **the Cleartext Transmission of Sensitive Informatio
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols. 
 
-We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API `behaviorInstance.hasString` to filter arguments that are URL strings with cleartext protocol.
+We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API ``behaviorInstance.hasString()`` to filter arguments that are URL strings with cleartext protocol.
 
 Quark Script CWE-319.py
 =======================
@@ -1165,7 +1165,7 @@ This scenario seeks to find **Improper Input Validation**. See `CWE-20 <https://
 
 Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. Then we use API ``behaviorInstance.getMethodsInArgs`` to get a list of methods which the URL in ``loadUrl`` has passed through. Finally, we check if any validation method is in the list. If **No**, the APK does not validate user input. 
+First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. Then we use API ``behaviorInstance.getMethodsInArgs()`` to get a list of methods which the URL in ``loadUrl`` has passed through. Finally, we check if any validation method is in the list. If **No**, the APK does not validate user input. 
 That causes CWE-20 vulnerability.
 
 
@@ -1411,7 +1411,7 @@ details.
 Let’s use this `APK <https://github.com/hax0rgb/InsecureShop>`__ and the
 above APIs to show how the Quark script finds this vulnerability.
 
-We use the API ``findMethodInAPK`` to locate all
+We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all
 ``SslErrorHandler.proceed`` methods. Then we need to identify whether if
 the method ``WebViewClient.onReceivedSslError`` is overrode by its
 subclass.
@@ -1421,7 +1421,7 @@ First, we check and make sure that the ``MethodInstance.name`` is
 ``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
 
 Then we use the API 
-``MethodInstance.findSuperclassHierarchy`` to get the superclass list of
+``MethodInstance.findSuperclassHierarchy()`` to get the superclass list of
 the method’s caller class.
 
 Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the
@@ -1470,7 +1470,7 @@ This scenario seeks to find **active debug code** in the APK file. See `CWE-489 
 
 Let's use `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_, `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_, `pivaa.apk <https://github.com/HTBridge/pivaa>`_, and the above APIs to show how the Quark script finds this vulnerability.
 
-First, we use Quark API ``getApplication`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
+First, we use Quark API ``getApplication(samplePath)`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable()`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
 
 Quark Script CWE-489.py
 ===========================
@@ -1517,7 +1517,7 @@ Let’s use `ovaa.apk <https://github.com/oversecured/ovaa>`_, `InsecureBankv2.a
 
 First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
 
-Next, we use API ``methodInstance.getArguments()`` to get the argument for the file path and use `quarkResultInstance.isHardcoded(argument)` to check if the argument is hardcoded into the APK. If No, the argument is from external input.
+Next, we use API ``methodInstance.getArguments()`` to get the argument for the file path and use ``quarkResultInstance.isHardcoded(argument)`` to check if the argument is hardcoded into the APK. If No, the argument is from external input.
 
 Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for string matching. If **NO**, the APK does not neutralize special elements within the argument, which may cause CWE-22 vulnerability.
 
@@ -1704,7 +1704,7 @@ This scenario aims to detect the **Use of Cryptographically Weak Pseudo-Random N
 
 To demonstrate how the Quark script finds this vulnerability, we will use the `pivaa <https://github.com/HTBridge/pivaa>`_ APK file and the above APIs.
 
-First, we design a detection rule useMethodOfPRNG.json to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
+First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
 
 Quark Script CWE-338.py
 ========================
@@ -1865,13 +1865,13 @@ Let’s use both two of apks
 and `AndroGoat <https://github.com/satishpatnayak/AndroGoat>`__) to show
 how the Quark script finds this vulnerability.
 
-In the first step, we use the ``getReceivers`` API to find all
+In the first step, we use the ``getReceivers(samplePath)`` API to find all
 ``Receiver`` components defined in the Android application. Then, we
 exclude any receivers that are not exported.
 
 In the second step, our goal is to verify the **intentAction** is
 properly validated in each receiver which is identified in the previous
-step. To do this, we use the ``checkMethodCalls`` function.
+step. To do this, we use the ``checkMethodCalls()`` function.
 
 Finally, if any receiver’s **onReceive** method exhibits improper
 verification on **intentAction**, it could indicate a potential CWE-925
@@ -2162,7 +2162,7 @@ This scenario aims to demonstrate the detection of the **Improper Verification o
 
 To begin with, we create a detection rule named ``LoadUrlFromIntent.json`` to identify behavior that loads url from intent data to the WebView.
 
-Next, we retrieve the methods that pass the url. Following this, we check if these methods are only for setting intent, such as findViewById, getStringExtra, or getIntent.
+Next, we retrieve the methods that pass the url. Following this, we check if these methods are only for setting intent, such as ``findViewById``, ``getStringExtra``, or ``getIntent``.
 
 If **NO**, it could imply that the APK uses communication channels without proper verification, which may cause CWE-940 vulnerability.
 
