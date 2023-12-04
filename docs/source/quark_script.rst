@@ -2092,7 +2092,7 @@ Let’s use this `APK <https://github.com/t0thkr1s/allsafe>`_ and the above AP
 
 First, we design a detection rule ``writeContentToLog.json`` to spot on behavior using the method that writes contents to the log file.
 
-Then, we use ``behaviorInstance.getParamValues()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as escape, replace, format, and setFilter.
+Then, we use ``behaviorInstance.getParamValues()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as ``escape``, ``replace``, ``format``, and ``setFilter``.
 
 If the answer is **YES**, that may result in secret context leakage into the log file, or the attacker may perform log forging attacks.
 
