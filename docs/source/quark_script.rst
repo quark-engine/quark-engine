@@ -1869,12 +1869,12 @@ In the first step, we use the ``getReceivers(samplePath)`` API to find all
 ``Receiver`` components defined in the Android application. Then, we
 exclude any receivers that are not exported.
 
-In the second step, our goal is to verify the **intentAction** is
+In the second step, our goal is to verify the ``intentAction`` is
 properly validated in each receiver which is identified in the previous
-step. To do this, we use the ``checkMethodCalls()`` function.
+step. To do this, we use the ``checkMethodCalls(samplePath, targetMethod, checkMethods)`` function.
 
-Finally, if any receiver’s **onReceive** method exhibits improper
-verification on **intentAction**, it could indicate a potential CWE-925
+Finally, if any receiver’s ``onReceive`` method exhibits improper
+verification on ``intentAction``, it could indicate a potential CWE-925
 vulnerability.
 
 Quark Script CWE-925.py
