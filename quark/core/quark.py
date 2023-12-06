@@ -727,8 +727,8 @@ class Quark:
                 os.path.dirname(rule_path), "label_desc.csv"
             )
         ):
-            # associate to each label a description
-            col_list = ["label", "description"]
+            # associate each label to a description
+
             # csv file on form <label,description>
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
 

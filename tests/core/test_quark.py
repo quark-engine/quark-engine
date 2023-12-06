@@ -23,12 +23,12 @@ APK_SOURCE_2 = (
 APK_FILENAME_2 = "Ahmyth.apk"
 
 
-LABLE_DECS_SOURCE = (
+LABEL_DECS_SOURCE = (
     "https://raw.githubusercontent.com/quark-engine/"
     "quark-rules/master/label_desc.csv"
 )
 
-LABLE_DECS_FILENAME = "label_desc.csv"
+LABEL_DECS_FILENAME = "label_desc.csv"
 
 
 @pytest.fixture(scope="function")
@@ -103,10 +103,10 @@ def rule_with_one_keyword(tmp_path):
 
 @pytest.fixture(scope="function")
 def label_desc_csv(tmp_path):
-    r = requests.get(LABLE_DECS_SOURCE, allow_redirects=True, timeout=5)
+    r = requests.get(LABEL_DECS_SOURCE, allow_redirects=True, timeout=5)
     open(
         os.path.join(
-            os.path.dirname(tmp_path), LABLE_DECS_FILENAME
+            os.path.dirname(tmp_path), LABEL_DECS_FILENAME
         ),
         "wb"
         ).write(r.content)
