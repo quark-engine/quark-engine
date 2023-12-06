@@ -9,7 +9,7 @@ import re
 from typing import Generator, List, Tuple
 
 import numpy as np
-#import pandas as pd
+import csv
 
 from quark.core.analysis import QuarkAnalysis
 from quark.core.apkinfo import AndroguardImp
@@ -722,17 +722,25 @@ class Quark:
         label_desc = {}
         # clear table to manage max/detail version
         self.quark_analysis.label_report_table.clear()
-        if os.path.isfile(os.path.join(rule_path, "label_desc.csv")):
-            # associate to each label a description
-            col_list = ["label", "description"]
+        if os.path.isfile(
+            os.path.join(
+                os.path.dirname(rule_path), "label_desc.csv"
+            )
+        ):
+            # associate each label to a description
+
             # csv file on form <label,description>
             # put this file in the folder of rules (it must not be a json file since it could create conflict with management of rules)
-            # remove temporarily
-            #df = pd.read_csv(
-            #    os.path.join(rule_path, "label_desc.csv"), usecols=col_list
-            #)
-            #
-            #label_desc = dict(zip(df["label"], df["description"]))
+
+            with open(
+                os.path.join(
+                    os.path.dirname(rule_path), "label_desc.csv"
+                ), 'r'
+            ) as labelFile:
+                label_desc = {
+                        row["label"]: row["description"]
+                        for row in csv.DictReader(labelFile)
+                }
 
         for label_name in all_labels:
             confidences = np.array(all_labels[label_name])

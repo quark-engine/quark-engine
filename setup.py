@@ -17,10 +17,6 @@ required_requirements = [
     "click",
     "r2pipe==1.8.0"
 ]
-#
-#    "kaleido",
-#    "pandas",
-#]
 
 setuptools.setup(
     name="quark-engine",  # Replace with your own username
