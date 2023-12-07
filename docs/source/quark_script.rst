@@ -734,7 +734,7 @@ This scenario seeks to find SQL injection in the APK file. See `CWE-89 <https://
 
 Let's use this `APK <https://github.com/satishpatnayak/AndroGoat>`_ and the above APIs to show how Quark script find this vulnerability.
 
-First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod()`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod(targetMethod)`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
 
 Quark Script CWE-89.py
 ======================
@@ -1021,7 +1021,7 @@ This scenario seeks to find **the Cleartext Transmission of Sensitive Informatio
 
 Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols. 
 
-We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API ``behaviorInstance.hasString()`` to filter arguments that are URL strings with cleartext protocol.
+We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API ``behaviorInstance.hasString(pattern, isRegex)`` to filter arguments that are URL strings with cleartext protocol.
 
 Quark Script CWE-319.py
 =======================
@@ -1416,12 +1416,12 @@ We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all
 the method ``WebViewClient.onReceivedSslError`` is overrode by its
 subclass.
 
-First, we check and make sure that the ``MethodInstance.name`` is
-``onReceivedSslError``, and the ``MethodInstance.descriptor`` is
+First, we check and make sure that the ``methodInstance.name`` is
+``onReceivedSslError``, and the ``methodInstance.descriptor`` is
 ``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
 
 Then we use the API 
-``MethodInstance.findSuperclassHierarchy()`` to get the superclass list of
+``methodInstance.findSuperclassHierarchy()`` to get the superclass list of
 the method’s caller class.
 
 Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the
@@ -1704,7 +1704,7 @@ This scenario aims to detect the **Use of Cryptographically Weak Pseudo-Random N
 
 To demonstrate how the Quark script finds this vulnerability, we will use the `pivaa <https://github.com/HTBridge/pivaa>`_ APK file and the above APIs.
 
-First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
+First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``methodInstance.getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
 
 Quark Script CWE-338.py
 ========================
@@ -1869,12 +1869,12 @@ In the first step, we use the ``getReceivers(samplePath)`` API to find all
 ``Receiver`` components defined in the Android application. Then, we
 exclude any receivers that are not exported.
 
-In the second step, our goal is to verify the ``intentAction`` is
+In the second step, our goal is to verify the intent action is
 properly validated in each receiver which is identified in the previous
 step. To do this, we use the ``checkMethodCalls(samplePath, targetMethod, checkMethods)`` function.
 
 Finally, if any receiver’s ``onReceive`` method exhibits improper
-verification on ``intentAction``, it could indicate a potential CWE-925
+verification on the intent action, it could indicate a potential CWE-925
 vulnerability.
 
 Quark Script CWE-925.py
