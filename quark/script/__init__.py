@@ -646,7 +646,8 @@ def checkMethodCalls(
     :param checkMethods: python list contains the class name,
                          method name, and descriptor of the target method
 
-    :return: bool that indicates if the specific methods are called or defined within a target method or not
+    :return: bool that indicates if the specific methods are called or
+             defined within a target method or not
     """
     targetMethodSet = set()
     checkMethodSet = set()
