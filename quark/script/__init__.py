@@ -637,16 +637,16 @@ def checkMethodCalls(
         samplePath: PathLike,
         targetMethod: Union[Tuple[str, str, str], MethodObject],
         checkMethods: List[Tuple[str, str, str]]) -> bool:
-    """Check if any of the specific methods shown in the `targetMethod`
+    """Check if any of the specific methods shown in the target method.
 
     :param samplePath: target file
     :param targetMethod: python list contains the class name,
                          method name, and descriptor of the target method
-                         or a Method Object.
+                         or a Method Object
     :param checkMethods: python list contains the class name,
                          method name, and descriptor of the target method
 
-    :return: bool that indicate specific methods can be called or defined within a `target method` or not.
+    :return: bool that indicates if the specific methods are called or defined within a target method or not
     """
     targetMethodSet = set()
     checkMethodSet = set()
