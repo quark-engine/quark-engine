@@ -1892,7 +1892,7 @@ The ``select_label_menu`` method allows users to select labels shown in the rada
         
     3. Check the number of labels the user selects is within the specified range.
         - If YES, return the labels.
-        - If No, back to the first step.
+        - If No, go back to the first step.
 
 Here is the flowchart of ``select_label_menu``.
 
