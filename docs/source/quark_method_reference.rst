@@ -1872,3 +1872,63 @@ Here is the flowchart of ``call_graph``.
         dot.render(
             f"call_graph_image/{parent_function.name}_{first_call.name}_{second_call.name}"
         )
+
+
+
+select_label_menu
+=======================
+
+**The algorithm of select_label_menu**
+
+The ``select_label_menu`` method allows users to select labels shown in the radar chart.
+
+.. code-block :: TEXT
+    
+    1. Show a checkbox dialog for label selection.
+
+    2. Check if the number of labels the user selected is within the specified range.
+        - If YES, return the labels.
+        - If No, continue with the following steps.
+        
+    3. Check if "Cancel" is selected.
+        - If YES, print "Canceled!" and exit.
+        - If No, start again with the first step.
+
+Here is the flowchart of ``select_label_menu``.
+
+.. image:: https://i.imgur.com/HqTgj4O.png
+
+
+**The code of select_label_menu**
+
+.. code-block:: python
+
+    def select_label_menu(all_labels, min_labels=5, max_labels=10):
+        """
+        allows user to select label to be shown in radar chart
+        :param all_labels: all label found on the rules
+        :param min_labels: min label to be shown on radar chart (default 5)
+        :param max_labels: max label to be shown on radar chart (default 10)
+        :return: label selected
+        """
+
+        value_pair = [(label, label) for label in all_labels]
+
+        while True:
+            results_array = checkboxlist_dialog(
+                title="Label-base Report",
+                text=f"Select number of labels between {min_labels} and {max_labels}",
+                values=value_pair,
+            ).run()
+
+            if results_array:
+
+                if min_labels <= len(results_array) <= max_labels:
+                    break
+            else:
+                # user selects "Cancel" to leave the program.
+                print("Canceled!")
+                sys.exit()
+
+        return results_array
+
