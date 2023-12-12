@@ -1886,17 +1886,17 @@ The ``select_label_menu`` method allows users to select labels shown in the rada
     
     1. Show a checkbox dialog for label selection.
 
-    2. Check if the number of labels the user selected is within the specified range.
-        - If YES, return the labels.
-        - If No, continue with the following steps.
-        
-    3. Check if "Cancel" is selected.
+    2. Check if the user cancels the selection.
         - If YES, print "Canceled!" and exit.
-        - If No, start again with the first step.
+        - If No, continue with the following steps.  
+        
+    3. Check the number of labels the user selects is within the specified range.
+        - If YES, return the labels.
+        - If No, back to the first step.
 
 Here is the flowchart of ``select_label_menu``.
 
-.. image:: https://i.imgur.com/HqTgj4O.png
+.. image:: https://i.imgur.com/JQm8CxP.png
 
 
 **The code of select_label_menu**
