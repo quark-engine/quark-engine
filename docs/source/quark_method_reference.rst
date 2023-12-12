@@ -1896,7 +1896,7 @@ The ``select_label_menu`` method allows users to select labels shown in the rada
 
 Here is the flowchart of ``select_label_menu``.
 
-.. image:: https://i.imgur.com/JQm8CxP.png
+.. image:: https://i.imgur.com/ww5drta.png
 
 
 **The code of select_label_menu**
