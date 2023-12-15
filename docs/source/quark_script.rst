@@ -93,7 +93,7 @@ findMethodInAPK(samplePath, targetMethod)
 checkMethodCalls(samplePath, targetMethod, checkMethods)
 =========================================================
 
-- **Description**: Check if any of the specific methods shown in the target method.
+- **Description**: Check any of the specific methods shown in the target method.
 - **params**: 
     1. samplePath: target file
     2. targetMethod: python list contains the class name, method name, and descriptor of the target method or a Method Object
