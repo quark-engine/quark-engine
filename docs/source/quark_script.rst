@@ -90,6 +90,16 @@ findMethodInAPK(samplePath, targetMethod)
     2. targetMethod: A python list contains class name, method name, and descriptor of target method
 - **return**: Python list contains caller method instance of target method
 
+checkMethodCalls(samplePath, targetMethod, checkMethods)
+=========================================================
+
+- **Description**: Check any of the specific methods shown in the target method.
+- **params**: 
+    1. samplePath: target file
+    2. targetMethod: python list contains the class name, method name, and descriptor of the target method or a Method Object
+    3. checkMethods: python list contains the class name, method name, and descriptor of the target method
+- **return**: bool that indicates if the specific methods are called or defined within a target method or not
+
 Rule(rule.json)
 ===============
 
