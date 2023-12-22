@@ -71,6 +71,7 @@
 *   [CWE-489](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-489-in-android-application-allsafe-apk-androgoat-apk-pivaa-apk)  Active Debug Code
 *   [CWE-502](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-502-in-android-application-pivaa)  Deserialization of Untrusted Data
 *   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)  Insertion of Sensitive Information into Log File 
+*   [CWE-601](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-601-in-android-application-ovaa)  URL Redirection to Untrusted Site ('Open Redirect')File 
 *   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)  Exposed Dangerous Method or Function 
 *   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)  Use of RSA Algorithm without OAEP 
 *   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)  Use of Hard-coded Credentials 
