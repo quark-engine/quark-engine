@@ -1941,7 +1941,7 @@ get_rule_classification_data
 
 **The algorithm of get_rule_classification_data**
 
-The ``get_rule_classification_data`` method returns the crimes in the call graph analysis list and the cross-references between their parent functions.
+The ``get_rule_classification_data`` method returns the crimes in the call graph analysis list and the cross-references of their parent functions.
 
 .. code-block :: TEXT
     
