@@ -1932,3 +1932,35 @@ Here is the flowchart of ``select_label_menu``.
 
         return results_array
 
+
+quark.utils.output.py
+-------------------------------------
+
+get_rule_classification_data
+==============================
+
+**The algorithm of get_rule_classification_data**
+
+The ``get_rule_classification_data`` method returns the data for rule classification.
+
+
+.. code-block :: TEXT
+    
+    1. Collect the crimes for the list of call graph analysis.
+    2. Search for cross-references in the list of call graph analysis with the specified depth.
+    3. Return the results of the two steps above.
+
+Here is the flowchart of ``get_rule_classification_data``.
+
+.. image:: https://i.imgur.com/o16E5VE.png
+
+
+**The code of get_rule_classification_data**
+
+.. code-block:: python
+
+    def get_rule_classification_data(call_graph_analysis_list, search_depth):
+        return _collect_crime_description(
+            call_graph_analysis_list
+        ), _search_cross_references(call_graph_analysis_list, search_depth)
+
