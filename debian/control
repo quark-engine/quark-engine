@@ -2,19 +2,10 @@ Source: quark-engine
 Section: misc
 Priority: optional
 Maintainer: Kali Developers <devel@kali.org>
-Uploaders: JunWei Song <sungboss2004@gmail.com>
+Uploaders: Zin Wong <chriswangxxxxx@gmail.com>
 Build-Depends: debhelper-compat (= 12),
-               dh-python,
-               python3-all,
-               androguard,
-               python3-setuptools,
-               python3-requests,
-               python3-prettytable,
-               python3-tqdm,
-               python3-colorama,
-               python3-click,
-               python3-graphviz,
-               python3-prompt-toolkit
+	       dh-virtualenv (>= 0.8),
+	       python3,
 
 Standards-Version: 24.1.1
 Homepage: https://github.com/quark-engine/quark-engine
@@ -24,14 +15,7 @@ Package: quark-engine
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
-         androguard,
-         python3-requests,
-         python3-prettytable,
-         python3-tqdm,
-         python3-colorama,
-         python3-click,
-         python3-graphviz,
-         python3-prompt-toolkit
+         rizin
 Description: Android Malware (Analysis | Scoring System)
  Quark-Engine is a full-featured Android analysis framework written in
  Python for hunting threat intelligence inside the APK, DEX files.

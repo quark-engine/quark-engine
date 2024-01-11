@@ -1,0 +1,34 @@
+name: Kali Package CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup environments for packaging
+      run: |
+        cd ..
+        cp quark-engine/.github/workflows/Dockerfile .
+        docker build . -t packaging_for_kali
+        cd -
+
+    - name: Packaging
+      run: |
+        docker run --name factory packaging_for_kali:latest
+        docker cp factory:/root/ .
+
+    - name: Upload package as artifact
+      uses: actions/upload-artifact@v3
+      with:
+          name: kali-package
+          path: '${{ github.workspace }}/root/*.deb'
+    
