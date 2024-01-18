@@ -34,6 +34,15 @@ Plan for 2024
 
 * **The 4th Quarter** - We will replace the main core library and resolve the issues on tools integrating Quark because of the replacement.
 
+Process for Resolving Core Library Issues
+-----------------------------------------
+
+``Version: v1.0``
+
+When the team receives a core library issue, they resolve it as below.
+
+.. image:: https://i.imgur.com/5nPnQwJ.png
+
 ----
 
 Quark triage team
