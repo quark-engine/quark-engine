@@ -11,7 +11,6 @@ import pytest
 from quark.core.axmlreader import AxmlReader, ResValue
 
 
-
 @pytest.fixture(
     scope="function",
     params=(("radare2"), ("rizin")),
@@ -33,6 +32,11 @@ def extractManifest(samplePath: PathLike) -> str:
 @pytest.fixture(scope="session")
 def MANIFEST_PATH_14d9f(SAMPLE_PATH_14d9f):
     return extractManifest(SAMPLE_PATH_14d9f)
+
+
+@pytest.fixture(scope="session")
+def MANIFEST_PATH_pivaa(SAMPLE_PATH_pivaa):
+    return extractManifest(SAMPLE_PATH_pivaa)
 
 
 class TestAxmlReader:
@@ -57,9 +61,14 @@ class TestAxmlReader:
         assert axmlReader.axml_size == 7676
 
     @staticmethod
-    def testGetString(core_library, MANIFEST_PATH_14d9f):
+    def testGetStringFromUtf16Apk(core_library, MANIFEST_PATH_14d9f):
         axmlReader = AxmlReader(MANIFEST_PATH_14d9f, core_library)
         assert axmlReader.get_string(13) == "manifest"
+
+    @staticmethod
+    def testGetStringFromUtf8Apk(core_library, MANIFEST_PATH_pivaa):
+        axmlReader = AxmlReader(MANIFEST_PATH_pivaa, core_library)
+        assert axmlReader.get_string(58) == "manifest"
 
     @staticmethod
     def testGetAttributes(core_library, MANIFEST_PATH_14d9f):
