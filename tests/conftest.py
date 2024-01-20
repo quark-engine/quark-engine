@@ -29,6 +29,13 @@ SAMPLES = [
             "/raw/master/malware-samples/Ahmyth.apk"
         ),
         "fileName": "Ahmyth.apk"
+    },
+    {
+        "sourceUrl": (
+            "https://github.com/quark-engine/apk-samples"
+            "/raw/master/vulnerable-samples/pivaa.apk"
+        ),
+        "fileName": "pivaa.apk"
     }
 ]
 
@@ -62,3 +69,8 @@ def SAMPLE_PATH_13667(tmp_path_factory: pytest.TempPathFactory) -> str:
 @pytest.fixture(scope="session")
 def SAMPLE_PATH_Ahmyth(tmp_path_factory: pytest.TempPathFactory) -> str:
     return downloadSample(tmp_path_factory, SAMPLES[2])
+
+
+@pytest.fixture(scope="session")
+def SAMPLE_PATH_pivaa(tmp_path_factory: pytest.TempPathFactory) -> str:
+    return downloadSample(tmp_path_factory, SAMPLES[3])
