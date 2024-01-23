@@ -17,8 +17,8 @@ jobs:
     - name: Setup environments for packaging
       run: |
         cd ..
-        cp quark-engine/.github/workflows/Dockerfile .
-        docker build . -t packaging_for_kali
+        cp quark-engine/.github/workflows/kali-package.dockerfile .
+        docker build . --file kali-package.dockerfile -t packaging_for_kali
         cd -
 
     - name: Packaging
