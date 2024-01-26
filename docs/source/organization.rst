@@ -10,7 +10,7 @@ The Quark Core Library Team is responsible for developing and maintaining the co
 Core Library Team Operation Mechanism
 --------------------------------------
 
-.. image:: https://i.imgur.com/fLRGv5P.png
+.. image:: https://i.imgur.com/DAUlAAW.png
 
 The team focuses on developing, maintaining, and enhancing the core libraries, with efforts in three dimensions: **issue resolution**, **steady updates**, and **new feature development**.
 
