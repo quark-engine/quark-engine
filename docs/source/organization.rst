@@ -2,6 +2,44 @@
 Organization
 ++++++++++++
 
+Quark Core Library Team
+=======================
+
+The Quark Core Library Team is responsible for developing and maintaining the core library of Quark, including developing and maintaining the Rizin-based and Radare2-based core library and defining processes for resolving core library issues. The goal is to build accurate and stable core libraries and to ensure the core libraries are continually updated. By leveraging the core libraries, Quark delivers reliable intelligence.
+
+Core Library Team Operation Mechanism
+--------------------------------------
+
+.. image:: https://i.imgur.com/DAUlAAW.png
+
+The team focuses on developing, maintaining, and enhancing the core libraries, with efforts in three dimensions: **issue resolution**, **steady updates**, and **new feature development**.
+
+For **issue resolution**, they first evaluate the issue of the core library. Next, they report it to the relevant projects (Rizin, Radare2, or Quark) and push for fixes. Then, they ensure that the new core library meets the release criteria. Finally, they publish it in the next Quark release. If the community reports a new issue, they start the process again.
+
+For **steady updates**, they first develop a new version of the core library for the Rizin or Radare2 release. Then, they ensure that the new core library meets the release criteria. Finally, they publish it in the next Quark release. If Rizin or Radare2 publish a new release, they start the process again.
+
+For **new feature development**, they first discuss whether to accept the new feature. Next, they develop a new version of the core library to support the feature. Then, they ensure that the new core library meets the release criteria. Finally, they publish it in the next Quark release. If the community proposes a new feature, they start the process again.
+
+The core library team will follow these processes to ensure the constant renovation and strengthening of the core library. Consequently, the core library achieves the goals of accuracy, stability, and continuous updating.
+
+2024 Core Library Team Plan
+---------------------------
+
+* **The 1st Quarter** - We will develop the core library release criteria, define the process of resolving core library issues, and publish a beta release of the Rizin/Radare2 core library.
+
+* **The 2nd Quarter** - We will develop an automated evaluation process for core library releases using GitHub CI and publish a pre-release of the Rizin/Radare2 core library.
+
+* **The 3rd Quarter** - We will develop the selection criteria of Quark's main core library and publish a formal release of the Rizin/Radare2 core library.
+
+* **The 4th Quarter** - We will replace the main core library and resolve the issues on tools integrating Quark because of the replacement.
+
+Process for Resolving Core Library Issues
+-----------------------------------------
+
+When the team receives a core library issue, they resolve it as below.
+
+.. image:: https://i.imgur.com/5nPnQwJ.png
+
 Quark Script Team 
 ==================
 
