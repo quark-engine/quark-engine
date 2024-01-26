@@ -165,6 +165,7 @@ class AxmlReader(object):
             )
 
         self._stringCount = string_pool_header[1]["value"]
+        self._isUtf8Used = (string_pool_header[3]["value"] & (1 << 8)) != 0
         stringStart = string_pool_header[4]["value"]
 
         self._core.cmd(f"f string_pool_header @ 0x8 ")
@@ -284,11 +285,17 @@ class AxmlReader(object):
     def get_string(self, index):
         if index < 0 or index >= self._stringCount:
             return None
+        if self._isUtf8Used:
+            stringFormat = "z"
+            stringKey = "value"
+        else:
+            stringFormat = "Z"
+            stringKey = "string"
 
         return self._core.cmdj(
-            f"pfj Z @ string_pool_data + `pfv n4 "
+            f"pfj {stringFormat} @ string_pool_data + `pfv n4 "
             f"@ string_pool_index+ {index}*4` + 2"
-        )[0]["string"]
+        )[0][stringKey]
 
     def get_attributes(self, chunk: ResChunkHeader) -> List[ResValue]:
         """Get the attributes of a resource chunk
