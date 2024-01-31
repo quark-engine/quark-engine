@@ -1,3 +1,20 @@
+quark-engine (24.1.1-0kali1) kali-dev; urgency=medium
+  
+  * New Documents:
+    - Add a detailed explanation for the method get_rule_classification_data. Check https://quark-engine.readthedocs.io/en/latest/quark_method_reference.html#get-rule-classification-data for the details. (#596)
+    - Introduce the Quark Core Library team and the Quark Script team. Check https://quark-engine.readthedocs.io/en/latest/organization.html for the details. (#601, #605)
+
+  * Bug Fix:
+    - Fix permission analysis in the radare2 core for APKs with UTF-8 encoding. (#602) 
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Wed, 31 Jan 2024 20:00:00 +0800
+
+quark-engine (23.12.1-0kali1) kali-dev; urgency=medium
+
+  * Update to version 23.12.1
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Wed, 10 Jan 2024 20:10:10 +0800
+
 quark-engine (21.4.3-0kali1) kali-dev; urgency=medium
 
   * Initial release
