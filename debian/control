@@ -16,7 +16,7 @@ Build-Depends: debhelper-compat (= 12),
                python3-graphviz,
                python3-prompt-toolkit
 
-Standards-Version: 21.4.3
+Standards-Version: 24.1.1
 Homepage: https://github.com/quark-engine/quark-engine
 Vcs-Browser: https://github.com/quark-engine/quark-engine
 Vcs-Git: https://github.com/quark-engine/quark-engine
