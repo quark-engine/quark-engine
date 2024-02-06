@@ -1,4 +1,4 @@
-quark-engine (24.1.1-0kali1) kali-dev; urgency=medium
+quark-engine (24.2.1-0kali1) kali-dev; urgency=medium
   
   * New Documents:
     - Add a detailed explanation for the method get_rule_classification_data. Check https://quark-engine.readthedocs.io/en/latest/quark_method_reference.html#get-rule-classification-data for the details. (#596)
