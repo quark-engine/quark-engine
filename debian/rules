@@ -5,4 +5,4 @@ export PYBUILD_NAME=quark-engine
 export PYBUILD_DISABLE=test
 
 %:
-		dh $@ --with python3 --buildsystem=pybuild
+		dh $@ --with python-virtualenv
