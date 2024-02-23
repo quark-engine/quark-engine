@@ -401,14 +401,33 @@ Method (callComponentMethod) with urls is detected triggered!
 Detect CWE-798 in Android Application (ovaa.apk)
 ------------------------------------------------
 
-This scenario seeks to find hard-coded credentials in the APK file. See `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`_ for more details.
+This scenario seeks to find hard-coded credentials in the APK file. 
 
-Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-798 Use of Hard-coded Credentials
+============================================
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method ``SecretKeySpec``. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+We analyze the definition of CWE-798 and identify its characteristics.
+
+See `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`_  for more details.
+
+.. image:: https://i.imgur.com/0G9APpf.jpg
+
+Code of CWE-798 in ovaa.apk
+=========================================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-798.
+
+![截圖 2024-02-23 下午7.14.56](https://hackmd.io/_uploads/HJTBAl82T.png)
+
+.. image:: https://i.imgur.com/ikaJlDW.jpg
+
 
 Quark Scipt: CWE-798.py
 ========================
+
+Let's use the above APIs to show how Quark script find this vulnerability.
+
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method ``SecretKeySpec``. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
 
 .. code-block:: python
 
