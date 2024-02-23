@@ -417,8 +417,6 @@ Code of CWE-798 in ovaa.apk
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-798.
 
-![截圖 2024-02-23 下午7.14.56](https://hackmd.io/_uploads/HJTBAl82T.png)
-
 .. image:: https://i.imgur.com/ikaJlDW.jpg
 
 
