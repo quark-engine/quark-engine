@@ -398,7 +398,7 @@ Method (callComponentMethod) with urls is detected triggered!
 .. image:: https://i.imgur.com/ryV3f57.jpg
 
 
-Detect CWE-798 in Android Application (ovaa.apk)
+Detect CWE-798 in Android Application
 ------------------------------------------------
 
 This scenario seeks to find hard-coded credentials in the APK file. 
@@ -423,9 +423,9 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 Quark Scipt: CWE-798.py
 ========================
 
-Let's use the above APIs to show how Quark script find this vulnerability.
+Let's use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior uses method ``SecretKeySpec``. Then, we get all the parameter values that input to this method. From the returned parameter values, we identify it's a AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using method ``SecretKeySpec``. Then, we get all the parameter values that are input to this method. From the returned parameter values, we identify it as an AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
 
 .. code-block:: python
 
@@ -485,20 +485,6 @@ Quark Script Result
     $ python3 findSecretKeySpec.py 
 
     Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
-
-
-Hard-Coded AES key in the APK file
-===================================
-
-.. code-block:: TEXT
-
-    const-string v2, "49u5gh249gh24985ghf429gh4ch8f23f"
-
-    invoke-virtual {v2}, Ljava/lang/String;->getBytes()[B
-
-    move-result-object v2
-
-    invoke-direct {v1, v2, v0}, Ljavax/crypto/spec/SecretKeySpec;-><init>([BLjava/lang/String;)V
 
 
 Detect CWE-94 in Android Application (ovaa.apk)
