@@ -1,4 +1,4 @@
-++++++++++++++++++++++++++++++++++++++++++++++++++
+x++++++++++++++++++++++++++++++++++++++++++++++++++
 Quark Script
 ++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -627,7 +627,7 @@ Quark Script Result
     CWE-921 is detected in ovaa.apk.
 
 
-Detect CWE-312 in Android Application (ovaa.apk)
+Detect CWE-312 in Android Application
 ----------------------------------------------------
 
 This scenario seeks to find **cleartext storage of sensitive data** in the APK file. 
@@ -651,7 +651,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 Quark Script CWE-312.py
 ========================
 
-Let's use above APIs to show how Quark script find this vulnerability.
+Let's use the above APIs to show how the Quark script finds this vulnerability.
 
 First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ciphey <https://github.com/Ciphey/Ciphey>`_  to check if the arguments are encrypted.
 
@@ -670,9 +670,9 @@ First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the
                         "java.lang.String"
 
     fridaResult = runFridaHook(APP_PACKAGE_NAME,
-                                TARGET_METHOD,
-                                METHOD_PARAM_TYPE,
-                            secondToWait = 10)
+                               TARGET_METHOD,
+                               METHOD_PARAM_TYPE,
+                               secondToWait = 10)
 
     for putString in fridaResult.behaviorOccurList:
 
