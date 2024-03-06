@@ -627,17 +627,33 @@ Quark Script Result
     CWE-921 is detected in ovaa.apk.
 
 
-Detect CWE-312 in Android Application (ovaa.apk)
-------------------------------------------------
+Detect CWE-312 in Android Application
+----------------------------------------------------
 
-This scenario seeks to find cleartext storage of sensitive data in the APK file. See `CWE-312 <https://cwe.mitre.org/data/definitions/312.html>`_ for more details.
+This scenario seeks to find **cleartext storage of sensitive data** in the APK file. 
 
-Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-312 Cleartext Storage of Sensitive Information
+===============================================================
 
-First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ciphey <https://github.com/Ciphey/Ciphey>`_ to check if the arguments are encrypted.
+We analyze the definition of CWE-312 and identify its characteristics.
+
+See `CWE-312 <https://cwe.mitre.org/data/definitions/312.html>`_ for more details.
+
+.. image:: https://i.imgur.com/cy2EiZx.jpg
+
+Code of CWE-312 in ovaa.apk
+=========================================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-312.
+
+.. image:: https://i.imgur.com/KsFsxTu.jpg
 
 Quark Script CWE-312.py
 ========================
+
+Let's use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ciphey <https://github.com/Ciphey/Ciphey>`_  to check if the arguments are encrypted.
 
 .. code-block:: python
 
@@ -654,9 +670,9 @@ Quark Script CWE-312.py
                         "java.lang.String"
 
     fridaResult = runFridaHook(APP_PACKAGE_NAME,
-                                TARGET_METHOD,
-                                METHOD_PARAM_TYPE,
-                            secondToWait = 10)
+                               TARGET_METHOD,
+                               METHOD_PARAM_TYPE,
+                               secondToWait = 10)
 
     for putString in fridaResult.behaviorOccurList:
 
@@ -667,8 +683,10 @@ Quark Script CWE-312.py
             
             print(f'The CWE-312 vulnerability is found. The cleartext is "{secondParam}"')
 
+
 Frida Script: agent.js
 =======================
+
 
 .. code-block:: javascript
 
@@ -731,6 +749,7 @@ Frida Script: agent.js
 
     rpc.exports["watchMethodCall"] = (classAndMethodName, methodParamTypes) => watchMethodCall(classAndMethodName, methodParamTypes);
 
+
 Quark Script Result
 ====================
 
@@ -739,6 +758,7 @@ Quark Script Result
     $ python3 CWE-312.py
     The CWE-312 vulnerability is found. The cleartext is "test@email.com"
     The CWE-312 vulnerability is found. The cleartext is "password"
+
 
 Detect CWE-89 in Android Application (AndroGoat.apk)
 ----------------------------------------------------
