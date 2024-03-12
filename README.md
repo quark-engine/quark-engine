@@ -1,12 +1,12 @@
 <p align="center">
+    <a href="https://www.blackhat.com/asia-24/arsenal/schedule/index.html#quark-script---dig-vulnerabilities-in-the-blackbox-37549">
+        <img alt="Black Hat Arsenal" src="https://img.shields.io/badge/Black%20Hat%20Arsenal-Asia%202024-blue">
+    </a>
     <a href="https://www.blackhat.com/asia-21/arsenal/schedule/index.html#quark-engine-storyteller-of-android-malware-22458">
         <img alt="Black Hat Arsenal" src="https://img.shields.io/badge/Black%20Hat%20Arsenal-Asia%202021-blue">
     </a>
     <a href="https://conference.hitb.org/hitb-lockdown002/sessions/quark-engine-an-obfuscation-neglect-android-malware-scoring-system/">
         <img alt="HITB" src="https://img.shields.io/badge/HITB-Lockdown%20002-red">
-    </a>
-    <a href="https://www.youtube.com/watch?v=SOH4eqrv9_g&ab_channel=ROOTCONHackingConference">
-        <img alt="rootcon" src="https://img.shields.io/badge/ROOTCON-2020-orange">
     </a>
     <a href="https://www.youtube.com/watch?v=XK-yqHPnsvc&ab_channel=DEFCONConference">
         <img alt="defcon" src="https://img.shields.io/badge/DEFCON%2028-BTV-blue">
