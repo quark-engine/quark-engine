@@ -565,6 +565,30 @@ Quark Script Result
 
 
 
+Detect CWE-921 in Android Application (ovaa.apk)
+----------------------------------------------------
+
+This scenario seeks to find the **unsecured storage mechanism of data** in the APK file.
+
+CWE-921 Storage of Sensitive Data in a Mechanism without Access Control
+========================================================================
+
+We analyze the definition of CWE-921 and identify its characteristics.
+
+See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
+
+.. image:: https://imgur.com/lDk6Eko.jpg
+Code of CWE-921 in ovaa.apk
+=========================================
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-921.
+
+.. image:: https://imgur.com/xRW3W28.jpg
+
+Quark Scipt: CWE-921.py
+=========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
 First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API ``behaviorInstance.getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains the keyword ``sdcard``.
 
 .. code-block:: python
@@ -615,6 +639,7 @@ Quark Script Result
     This file is stored inside the SDcard
 
     CWE-921 is detected in ovaa.apk.
+
 
 
 Detect CWE-312 in Android Application
