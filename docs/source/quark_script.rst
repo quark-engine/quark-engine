@@ -565,16 +565,31 @@ Quark Script Result
 
 
 Detect CWE-921 in Android Application (ovaa.apk)
-------------------------------------------------
+----------------------------------------------------
 
-This scenario seeks to find unsecure storage mechanism of data in the APK file. See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
+This scenario seeks to find the **unsecured storage mechanism of data** in the APK file.
 
-Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-921 Storage of Sensitive Data in a Mechanism without Access Control
+========================================================================
 
-First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exist on given storage mechanism. Then, we use API ``behaviorInstance.getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains keyword ``sdcard``.
+We analyze the definition of CWE-921 and identify its characteristics.
 
-Quark Script CWE-921.py
-========================
+See CWE-921 <https://cwe.mitre.org/data/definitions/921.html> for more details.
+
+.. image:: https://imgur.com/lDk6Eko
+
+Code of CWE-921 in ovaa.apk
+=========================================
+We use the "ovaa.apk" sample to explain the vulnerability code of CWE-921.
+
+.. image:: https://imgur.com/xRW3W28
+
+Quark Scipt: CWE-921.py
+=========================
+
+Let’s use this APK <https://github.com/oversecured/ovaa> and the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule checkFileExistence.json to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API behaviorInstance.getParamValues() to get the file path. Finally, CWE-921 is found if the file path contains the keyword sdcard.
 
 .. code-block:: python
 
@@ -592,9 +607,9 @@ Quark Script CWE-921.py
             print(f"This file is stored inside the SDcard\n")
             print(f"CWE-921 is detected in {SAMPLE_PATH}.")
 
-Quark Rule: checkFileExistence.json
-===================================
 
+Quark Rule: checkFileExistence.json
+======================================
 .. code-block:: json
 
     {
@@ -617,11 +632,10 @@ Quark Rule: checkFileExistence.json
     }
 
 Quark Script Result
-====================
-
+=====================
 .. code-block:: TEXT
 
-    $ python3 CWE-921.py 
+    $ python3 CWE-921.py
     This file is stored inside the SDcard
 
     CWE-921 is detected in ovaa.apk.
@@ -760,68 +774,90 @@ Quark Script Result
     The CWE-312 vulnerability is found. The cleartext is "password"
 
 
-Detect CWE-89 in Android Application (AndroGoat.apk)
-----------------------------------------------------
+Detect CWE-89 in Android Application 
+----------------------------------------
 
-This scenario seeks to find SQL injection in the APK file. See `CWE-89 <https://cwe.mitre.org/data/definitions/89.html>`_ for more details.
+This scenario seeks to find **SQL injection** in the APK file.
 
-Let's use this `APK <https://github.com/satishpatnayak/AndroGoat>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-89 Improper Neutralization of Special Elements used in an SQL Command
+============================================================================
 
-First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod(targetMethod)`` to check if ``append`` use the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
 
-Quark Script CWE-89.py
-======================
+We analyze the definition of CWE-89 and identify its characteristics.
+
+See `CWE-89 <https://cwe.mitre.org/data/definitions/89.html>`_ for more details.
+
+.. image:: https://i.imgur.com/iJ1yIBb.jpg
+
+
+Code of CWE-89 in androgoat.apk
+=========================================
+
+We use the `androgoat.apk <https://github.com/satishpatnayak/AndroGoat>`_ sample to explain the vulnerability code of CWE-89.
+
+.. image:: https://i.imgur.com/bdQqWFb.jpg
+
+
+
+Quark Scipt: CWE-89.py
+========================
+
+Let's use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod(targetMethod)`` to check if ``append`` uses the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability. 
 
 .. code-block:: python
 
     from quark.script import runQuarkAnalysis, Rule
 
-    SAMPLE_PATH = "AndroGoat.apk"
-    RULE_PATH = "executeSQLCommand.json"
+        SAMPLE_PATH = "AndroGoat.apk"
+        RULE_PATH = "executeSQLCommand.json"
 
-    targetMethod = [
-        "Landroid/widget/EditText;", # class name 
-        "getText",                   # method name
-        "()Landroid/text/Editable;", # descriptor
-    ]
+        targetMethod = [
+            "Landroid/widget/EditText;", # class name 
+            "getText",                   # method name
+            "()Landroid/text/Editable;", # descriptor
+        ]
 
-    ruleInstance = Rule(RULE_PATH)
-    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+        ruleInstance = Rule(RULE_PATH)
+        quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
-    for sqlCommandExecution in quarkResult.behaviorOccurList:
-        if sqlCommandExecution.isArgFromMethod(
-            targetMethod
-        ):
-            print(f"CWE-89 is detected in {SAMPLE_PATH}")
+        for sqlCommandExecution in quarkResult.behaviorOccurList:
+            if sqlCommandExecution.isArgFromMethod(
+                targetMethod
+            ):
+                print(f"CWE-89 is detected in {SAMPLE_PATH}")
+
 
 Quark Rule: executeSQLCommand.json
-==================================
+====================================
 
 .. code-block:: json
 
     {
-        "crime": "Execute SQL Command",
-        "permission": [],
-        "api": [
-            {
-                "class": "Ljava/lang/StringBuilder;",
-                "method": "append",
-                "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
-            },
-            {
-                "class": "Landroid/database/sqlite/SQLiteDatabase;",
-                "method": "rawQuery",
-                "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
-            }
-        ],
-        "score": 1,
-        "label": []
+            "crime": "Execute SQL Command",
+            "permission": [],
+            "api": [
+                {
+                    "class": "Ljava/lang/StringBuilder;",
+                    "method": "append",
+                    "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
+                },
+                {
+                    "class": "Landroid/database/sqlite/SQLiteDatabase;",
+                    "method": "rawQuery",
+                    "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
+                }
+            ],
+            "score": 1,
+            "label": []
     }
 
-Quark Script Result
-====================
 
-.. code-block:: TEXT
+Quark Script Result
+=====================
+
+.. code-block:: text
 
     $ python3 CWE-89.py
 
