@@ -565,7 +565,7 @@ Quark Script Result
 
 
 
-Detect CWE-921 in Android Application (ovaa.apk)
+Detect CWE-921 in Android Application
 ----------------------------------------------------
 
 This scenario seeks to find the **unsecured storage mechanism of sensitive data** in the APK file.
