@@ -811,7 +811,7 @@ First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior
 .. code-block:: python
 
     from quark.script import runQuarkAnalysis, Rule
-    
+
     SAMPLE_PATH = "AndroGoat.apk"
     RULE_PATH = "executeSQLCommand.json"
 
@@ -823,7 +823,7 @@ First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior
 
     ruleInstance = Rule(RULE_PATH)
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
-    
+
     for sqlCommandExecution in quarkResult.behaviorOccurList:
         if sqlCommandExecution.isArgFromMethod(
             targetMethod
@@ -837,22 +837,22 @@ Quark Rule: executeSQLCommand.json
 .. code-block:: json
 
     {
-            "crime": "Execute SQL Command",
-            "permission": [],
-            "api": [
-                {
-                    "class": "Ljava/lang/StringBuilder;",
-                    "method": "append",
-                    "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
-                },
-                {
-                    "class": "Landroid/database/sqlite/SQLiteDatabase;",
-                    "method": "rawQuery",
-                    "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
-                }
-            ],
-            "score": 1,
-            "label": []
+        "crime": "Execute SQL Command",
+        "permission": [],
+        "api": [
+            {
+                "class": "Ljava/lang/StringBuilder;",
+                "method": "append",
+                "descriptor": "(Ljava/lang/String;)Ljava/lang/StringBuilder;"
+            },
+            {
+                "class": "Landroid/database/sqlite/SQLiteDatabase;",
+                "method": "rawQuery",
+                "descriptor": "(Ljava/lang/String; [Ljava/lang/String;)Landroid/database/Cursor;"
+            }
+        ],
+        "score": 1,
+        "label": []
     }
 
 
