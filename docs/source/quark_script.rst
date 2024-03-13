@@ -577,13 +577,13 @@ We analyze the definition of CWE-921 and identify its characteristics.
 
 See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
 
-.. image:: https://imgur.com/9uyywpJ.jpg
+.. image:: https://imgur.com/ihtjGAu.jpg
 
 Code of CWE-921 in ovaa.apk
 =========================================
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-921.
 
-.. image:: https://imgur.com/IQVaTIA.jpg
+.. image:: https://imgur.com/ACzJct8.jpg
 
 Quark Scipt: CWE-921.py
 =========================
