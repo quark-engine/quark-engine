@@ -899,7 +899,7 @@ Code of CWE-926 in dvba.apk
 
 We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ sample to explain the vulnerability code of CWE-926.
 
-.. image:: https://imgur.com/9V8Ghr2
+.. image:: https://imgur.com/9V8Ghr2.jpg
 
 Quark Scipt: CWE-926.py
 ========================
