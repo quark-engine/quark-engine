@@ -540,7 +540,7 @@ First, we design a detection rule ``loadExternalCode.json`` to spot on behavior 
 		    ]
 
 	    if not quarkResult.findMethodInCaller(callerMethod, targetMethod):
-		print(f"\nMethod: {targetMethod[1]} not found!")
+		print(f"Method: {targetMethod[1]} not found!")
 		print(f"CWE-94 is detected in {SAMPLE_PATH}")
 
 Quark Rule: loadExternalCode.json
@@ -906,7 +906,7 @@ Quark Scipt: CWE-926.py
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we use Quark API ``getActivities(samplePath)`` to get all activity data in the manifest. Then we use ``activityInstance.hasIntentFilter()`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported()`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
+First, we use Quark API ``getActivities(samplePath)`` to get all activity data in the manifest. Then, we use ``activityInstance.hasIntentFilter()`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported()`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
 
 .. code-block:: python
 
@@ -915,9 +915,9 @@ First, we use Quark API ``getActivities(samplePath)`` to get all activity data i
 	SAMPLE_PATH = "dvba.apk"
 
 	for activityInstance in getActivities(SAMPLE_PATH):
-        
-	if activityInstance.hasIntentFilter() and activityInstance.isExported():
-		print(f"CWE-926 is detected in the activity, {activityInstance}"
+
+	    if activityInstance.hasIntentFilter() and activityInstance.isExported():
+		print(f"CWE-926 is detected in the activity, {activityInstance}")
 
 Quark Script Result
 =====================
