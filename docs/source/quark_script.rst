@@ -487,46 +487,61 @@ Quark Script Result
     Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
 
 
-Detect CWE-94 in Android Application (ovaa.apk)
------------------------------------------------
+Detect CWE-94 in Android Application 
+------------------------------------------------
 
-This scenario seeks to find code injection in the APK file. See `CWE-94 <https://cwe.mitre.org/data/definitions/94.html>`_ for more details.
+This scenario seeks to find **code injection** in the APK file. 
 
-Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-94 Improper Control of Generation of Code
+================================================
 
-First, we design a detection rule ``loadExternalCode.json`` to spot on behavior uses method ``createPackageContext``. Then, we find the caller method who calls the ``createPackageContext``. Finally, we check if  method ``checkSignatures`` is called in the caller method for verification.
+We analyze the definition of CWE-94 and identify its characteristics.
 
+See `CWE-94 <https://cwe.mitre.org/data/definitions/94.html>`_ for more details.
+
+.. image:: https://imgur.com/2Hoi4eU.jpg
+
+Code of CWE-94 in ovaa.apk
+=========================================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-94.
+
+.. image:: https://imgur.com/OWZvuGV.jpg
 
 Quark Scipt: CWE-94.py
 ========================
 
+Let's use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``loadExternalCode.json`` to spot on behavior using the method ``createPackageContext``. Then, we find the caller method that calls the ``createPackageContext``. Finally, we check if the method ``checkSignatures`` is called in the caller method for verification.
+
 .. code-block:: python
 
-    from quark.script import runQuarkAnalysis, Rule
-                                                                                                        
-    SAMPLE_PATH = "ovaa.apk"
-    RULE_PATH = "loadExternalCode.json"
-                                                                                                        
-    targetMethod = [
-            "Landroid/content/pm/PackageManager;",
-            "checkSignatures",
-            "(Ljava/lang/String;Ljava/lang/String;)I"
-            ]
-                                                                                                        
-    ruleInstance = Rule(RULE_PATH)
-    quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
-                                                                                                        
-    for ldExternalCode in quarkResult.behaviorOccurList:
-                                                            
-        callerMethod = [
-                ldExternalCode.methodCaller.className,
-                ldExternalCode.methodCaller.methodName,
-                ldExternalCode.methodCaller.descriptor
-                ]
-                                                                                                        
-        if not quarkResult.findMethodInCaller(callerMethod, targetMethod):
-            print(f"\nMethod: {targetMethod[1]} not found!")
-            print(f"CWE-94 is detected in {SAMPLE_PATH}")
+	from quark.script import runQuarkAnalysis, Rule
+
+	SAMPLE_PATH = "ovaa.apk"
+	RULE_PATH = "loadExternalCode.json"
+
+	targetMethod = [
+		"Landroid/content/pm/PackageManager;",
+		"checkSignatures",
+		"(Ljava/lang/String;Ljava/lang/String;)I"
+		]
+
+	ruleInstance = Rule(RULE_PATH)
+	quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+
+	for ldExternalCode in quarkResult.behaviorOccurList:
+
+	    callerMethod = [
+		    ldExternalCode.methodCaller.className,
+		    ldExternalCode.methodCaller.methodName,
+		    ldExternalCode.methodCaller.descriptor
+		    ]
+
+	    if not quarkResult.findMethodInCaller(callerMethod, targetMethod):
+		print(f"Method: {targetMethod[1]} not found!")
+		print(f"CWE-94 is detected in {SAMPLE_PATH}")
 
 Quark Rule: loadExternalCode.json
 ==================================
@@ -559,7 +574,6 @@ Quark Script Result
 .. code-block:: TEXT
 
     $ python3 CWE-94.py
-
     Method: checkSignatures not found!
     CWE-94 is detected in ovaa.apk
 
@@ -866,38 +880,54 @@ Quark Script Result
     CWE-89 is detected in AndroGoat.apk
 
 
-Detect CWE-926 in Android Application (dvba.apk)
-----------------------------------------------------
+Detect CWE-926 in Android Application 
+----------------------------------------
 
-This scenario seeks to find **improper export of Android application components** in the APK file. See `CWE-926 <https://cwe.mitre.org/data/definitions/926.html>`_ for more details.
+This scenario seeks to find **Improper Export of Android Application Components** in the APK file.
 
-Let's use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-926 Improper Export of Android Application Components
+============================================================
 
-First, we use Quark API ``getActivities(samplePath)`` to get all activity data in the manifest. Then we use ``activityInstance.hasIntentFilter()`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported()`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
+We analyze the definition of CWE-926 and identify its characteristics.
 
-Quark Script CWE-926.py
-=======================
+See `CWE-926 <https://cwe.mitre.org/data/definitions/926.html>`_ for more details.
+
+.. image:: https://imgur.com/dqje0yS.jpg
+
+Code of CWE-926 in dvba.apk
+=========================================
+
+We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ sample to explain the vulnerability code of CWE-926.
+
+.. image:: https://imgur.com/9V8Ghr2.jpg
+
+Quark Scipt: CWE-926.py
+========================
+
+Let's use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we use Quark API ``getActivities(samplePath)`` to get all activity data in the manifest. Then, we use ``activityInstance.hasIntentFilter()`` to check if the activities have ``intent-filter``. Also, we use ``activityInstance.isExported()`` to check if the activities set the attribute ``android:exported=true``. If both are **true**, then the APK exports the component for use by other applications. That may cause CWE-926 vulnerabilities.
 
 .. code-block:: python
 
-    from quark.script import *
+	from quark.script import *
 
-    SAMPLE_PATH = "dvba.apk"
+	SAMPLE_PATH = "dvba.apk"
 
-    for activityInstance in getActivities(SAMPLE_PATH):
-        
-        if activityInstance.hasIntentFilter() and activityInstance.isExported():
-            print(f"CWE-926 is detected in the activity, {activityInstance}")
+	for activityInstance in getActivities(SAMPLE_PATH):
+
+	    if activityInstance.hasIntentFilter() and activityInstance.isExported():
+		print(f"CWE-926 is detected in the activity, {activityInstance}")
 
 Quark Script Result
-====================
+=====================
 
 .. code-block:: TEXT
 
-    $ python3 CWE-926.py
+	$ python3 findSecretKeySpec.py 
+	CWE-926 is found in the activity, com.app.damnvulnerablebank.CurrencyRates
+	CWE-926 is found in the activity, com.app.damnvulnerablebank.SplashScreen
 
-    CWE-926 is found in the activity, com.app.damnvulnerablebank.CurrencyRates
-    CWE-926 is found in the activity, com.app.damnvulnerablebank.SplashScreen
 
 Detect CWE-749 in Android Application (MSTG-Android-Java.apk)
 -------------------------------------------------------------
