@@ -499,14 +499,14 @@ We analyze the definition of CWE-94 and identify its characteristics.
 
 See `CWE-94 <https://cwe.mitre.org/data/definitions/94.html>`_ for more details.
 
-.. image:: https://imgur.com/2Hoi4eU.jpg
+.. image:: https://imgur.com/faWwd3p.jpg
 
 Code of CWE-94 in ovaa.apk
 =========================================
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-94.
 
-.. image:: https://imgur.com/OWZvuGV.jpg
+.. image:: https://imgur.com/duobWF2.jpg
 
 Quark Scipt: CWE-94.py
 ========================
@@ -924,7 +924,7 @@ Quark Script Result
 
 .. code-block:: TEXT
 
-	$ python3 findSecretKeySpec.py 
+	$ python3 CWE-926.py 
 	CWE-926 is found in the activity, com.app.damnvulnerablebank.CurrencyRates
 	CWE-926 is found in the activity, com.app.damnvulnerablebank.SplashScreen
 
