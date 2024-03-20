@@ -925,8 +925,8 @@ Quark Script Result
 .. code-block:: TEXT
 
 	$ python3 CWE-926.py 
-	CWE-926 is found in the activity, com.app.damnvulnerablebank.CurrencyRates
-	CWE-926 is found in the activity, com.app.damnvulnerablebank.SplashScreen
+	CWE-926 is detected in the activity, com.app.damnvulnerablebank.CurrencyRates
+	CWE-926 is detected in the activity, com.app.damnvulnerablebank.SplashScreen
 
 
 Detect CWE-749 in Android Application (MSTG-Android-Java.apk)
