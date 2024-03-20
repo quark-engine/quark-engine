@@ -892,14 +892,14 @@ We analyze the definition of CWE-926 and identify its characteristics.
 
 See `CWE-926 <https://cwe.mitre.org/data/definitions/926.html>`_ for more details.
 
-.. image:: https://imgur.com/dqje0yS.jpg
+.. image:: https://imgur.com/Km8wtGs.jpg
 
 Code of CWE-926 in dvba.apk
 =========================================
 
 We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ sample to explain the vulnerability code of CWE-926.
 
-.. image:: https://imgur.com/9V8Ghr2.jpg
+.. image:: https://imgur.com/KoOt5ii.jpg
 
 Quark Scipt: CWE-926.py
 ========================
