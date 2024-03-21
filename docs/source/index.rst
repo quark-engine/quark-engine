@@ -34,6 +34,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    quark_inside_index
    modules
    faq
+   visual_quark_scripts_program
 
 Indices and tables
 ==================
