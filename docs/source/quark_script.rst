@@ -941,14 +941,14 @@ We analyze the definition of CWE-749 and identify its characteristics.
 
 See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
 
-.. image:: https://imgur.com/aigP2KY.png
+.. image:: https://imgur.com/5NtfoUp.png
 
 Code of CWE-749 in MSTG-Android-Java.apk
 =============================================
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-749.
 
-.. image:: https://imgur.com/gQvmkiH.png
+.. image:: https://imgur.com/7W47pnH.png
 
 Quark Script CWE-749.py
 ===========================
@@ -1080,14 +1080,14 @@ We analyze the definition of CWE-780 and identify its characteristics.
 
 See `CWE-780 <https://cwe.mitre.org/data/definitions/780.html>`_ for more details.
 
-.. image:: https://imgur.com/zvy67Si.png
+.. image:: https://imgur.com/NZCEqjr.png
 
 Code of CWE-780 in dvba.apk
 =========================================
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-780.
 
-.. image:: https://imgur.com/svn8iz0.png
+.. image:: https://imgur.com/r2yLr9E.png
 
 Quark Scipt: CWE-780.py
 ========================
