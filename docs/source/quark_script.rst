@@ -1076,7 +1076,7 @@ This scenario seeks to find **the use of the RSA algorithm without Optimal Asymm
 CWE-780 Use of RSA Algorithm without OAEP
 ============================================
 
-We analyze the definition of CWE-798 and identify its characteristics.
+We analyze the definition of CWE-780 and identify its characteristics.
 
 See `CWE-780 <https://cwe.mitre.org/data/definitions/780.html>`_ for more details.
 
