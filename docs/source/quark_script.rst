@@ -948,7 +948,7 @@ Code of CWE-749 in MSTG-Android-Java.apk
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-749.
 
-.. image:: https://imgur.com/2CkUeXq.png
+.. image:: https://imgur.com/yngclNu.png
 
 Quark Script CWE-749.py
 ===========================
