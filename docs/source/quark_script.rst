@@ -941,21 +941,21 @@ We analyze the definition of CWE-749 and identify its characteristics.
 
 See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
 
-.. image:: https://imgur.com/5NtfoUp.png
+.. image:: https://imgur.com/hmihGze.png
 
 Code of CWE-749 in MSTG-Android-Java.apk
 =============================================
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-749.
 
-.. image:: https://imgur.com/7W47pnH.png
+.. image:: https://imgur.com/2CkUeXq.png
 
 Quark Script CWE-749.py
 ===========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using the method ``setJavascriptEnabled``. Then, we use the API ``methodInstance.getArguments()`` to check if it enables JavaScript execution on websites. Finally, we look for calls to the method ``addJavaScriptInterface`` in the caller method. If yes, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
+First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using the method ``setJavascriptEnabled``. Then, we use the API ``methodInstance.getArguments()`` to check if it enables JavaScript execution on websites. Finally, we look for calls to the method ``addJavaScriptInterface`` in the caller method. If yes, the APK exposes dangerous methods or functions to websites. That causes CWE-749 vulnerability.
 
 .. code-block:: python
 
@@ -1080,14 +1080,14 @@ We analyze the definition of CWE-780 and identify its characteristics.
 
 See `CWE-780 <https://cwe.mitre.org/data/definitions/780.html>`_ for more details.
 
-.. image:: https://imgur.com/NZCEqjr.png
+.. image:: https://imgur.com/veZNZcg.png
 
 Code of CWE-780 in dvba.apk
 =========================================
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-780.
 
-.. image:: https://imgur.com/r2yLr9E.png
+.. image:: https://imgur.com/c03senv.png
 
 Quark Scipt: CWE-780.py
 ========================
