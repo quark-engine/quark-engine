@@ -941,7 +941,7 @@ We analyze the definition of CWE-749 and identify its characteristics.
 
 See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
 
-.. image:: https://imgur.com/hmihGze.png
+.. image:: https://imgur.com/KiA0vRD.png
 
 Code of CWE-749 in MSTG-Android-Java.apk
 =============================================
