@@ -941,14 +941,14 @@ We analyze the definition of CWE-749 and identify its characteristics.
 
 See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
 
-.. image:: https://imgur.com/KiA0vRD.png
+.. image:: https://imgur.com/hmihGze.png
 
 Code of CWE-749 in MSTG-Android-Java.apk
 =============================================
 
 We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-749.
 
-.. image:: https://imgur.com/yngclNu.png
+.. image:: https://imgur.com/KiA0vRD.png
 
 Quark Script CWE-749.py
 ===========================
