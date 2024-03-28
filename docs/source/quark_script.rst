@@ -929,17 +929,33 @@ Quark Script Result
 	CWE-926 is detected in the activity, com.app.damnvulnerablebank.SplashScreen
 
 
-Detect CWE-749 in Android Application (MSTG-Android-Java.apk)
--------------------------------------------------------------
+Detect CWE-749 in Android Application
+----------------------------------------------
 
-This scenario seeks to find **exposed methods or functions** in the APK file. See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
+This scenario seeks to find **exposed methods or functions** in the APK file.
 
-Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how Quark script find this vulnerability.
+CWE-749 Exposed Dangerous Method or Function
+=================================================
 
-First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using method ``setJavascriptEnabled``. Then, we use API ``methodInstance.getArguments()`` to check if it enables JavaScript execution on websites. Finally, we look for calls to method ``addJavaScriptInterface`` in the caller method. If **yes**, the APK exposes methods or functions to websites. That causes CWE-749 vulnerability.
+We analyze the definition of CWE-749 and identify its characteristics.
+
+See `CWE-749 <https://cwe.mitre.org/data/definitions/749.html>`_ for more details.
+
+.. image:: https://imgur.com/hmihGze.png
+
+Code of CWE-749 in MSTG-Android-Java.apk
+=============================================
+
+We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-749.
+
+.. image:: https://imgur.com/KiA0vRD.png
 
 Quark Script CWE-749.py
-=======================
+===========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``configureJsExecution.json`` to spot on behavior using the method ``setJavascriptEnabled``. Then, we use the API ``methodInstance.getArguments()`` to check if it enables JavaScript execution on websites. Finally, we look for calls to the method ``addJavaScriptInterface`` in the caller method. If yes, the APK exposes dangerous methods or functions to websites. That causes CWE-749 vulnerability.
 
 .. code-block:: python
 
@@ -1052,17 +1068,33 @@ Quark Script Result
     CWE-532 is detected in method, Lcom/google/firebase/auth/FirebaseAuth; d (Lc/c/b/h/o;)V
 
 
-Detect CWE-780 in Android Application (MSTG-Android-Java.apk)
--------------------------------------------------------------
+Detect CWE-780 in Android Application
+-----------------------------------------
 
-This scenario seeks to find **the use of the RSA algorithm without Optimal Asymmetric Encryption Padding (OAEP)**. See `CWE-780 <https://cwe.mitre.org/data/definitions/780.html>`_ for more details.
+This scenario seeks to find **the use of the RSA algorithm without Optimal Asymmetric Encryption Padding (OAEP)** in the APK file.
 
-Let's use this `APK <https://github.com/OWASP/MASTG-Hacking-Playground>`_ and the above APIs to show how the Quark script find this vulnerability.
+CWE-780 Use of RSA Algorithm without OAEP
+============================================
+
+We analyze the definition of CWE-780 and identify its characteristics.
+
+See `CWE-780 <https://cwe.mitre.org/data/definitions/780.html>`_ for more details.
+
+.. image:: https://imgur.com/veZNZcg.png
+
+Code of CWE-780 in dvba.apk
+=========================================
+
+We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playground>`_ sample to explain the vulnerability code of CWE-780.
+
+.. image:: https://imgur.com/c03senv.png
+
+Quark Scipt: CWE-780.py
+========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
 We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using the cryptographic algorithm. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` to filter behaviors using the RSA algorithm. Finally, we use the same API to check if the algorithm runs without the OAEP scheme. If the answer is YES, the plaintext is predictable.
-
-Quark Script CWE-780.py
-=======================
 
 .. code-block:: python
 
