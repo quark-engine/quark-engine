@@ -1,3 +1,11 @@
+quark-engine (24.4.1-0kali1) kali-dev; urgency=medium
+
+  * Document Updates:
+    - Optimize the documents of CWE-89, CWE-94, CWE-312, CWE-749, CWE-780, CWE-798, CWE-921, and CWE-926. (#612, #614, #617, #618, and #621)
+    - Update the release timing of Quark in the document. (#624)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Wed, 4 Apr 2024 09:00:00 +0800
+
 quark-engine (24.2.1-0kali1) kali-dev; urgency=medium
   
   * New Documents:
