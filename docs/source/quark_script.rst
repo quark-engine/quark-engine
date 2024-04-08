@@ -1224,13 +1224,31 @@ Quark Script Result
     Here are the found URLs with cleartext protocol:
     http://example.com./api/v1/
 
+Detect CWE-327 in Android Application
+----------------------------------------------
 
-Detect CWE-327 in Android Application (InjuredAndroid.apk)
--------------------------------------------------------------
+This scenario seeks to find **Use of a Broken or Risky Cryptographic Algorithm** in the APK file.
 
-This scenario seeks to find **the use of a Broken or Risky Cryptographic Algorithm**. See `CWE-327 <https://cwe.mitre.org/data/definitions/327.html>`_ for more details.
+CWE-327 Use of a Broken or Risky Cryptographic Algorithm
+==========================================================
 
-Let's use this `APK <https://github.com/B3nac/InjuredAndroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
+We analyze the definition of CWE-327 and identify its characteristics.
+
+See `CWE-327 <https://cwe.mitre.org/data/definitions/327.html>`_ for more details.
+
+.. image:: https://imgur.com/VlX7MTc.png
+
+Code of CWE-327 in InjuredAndroid.apk
+=============================================
+
+We use the `InjuredAndroid.apk <https://github.com/B3nac/InjuredAndroid>`_ sample to explain the vulnerability code of CWE-327.
+
+.. image:: https://imgur.com/XFvu8zb.png
+
+Quark Script CWE-327.py
+===========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
 We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using cryptographic algorithms. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` with a list to check if the algorithm is risky. If YES, that may cause the exposure of sensitive data.
 
