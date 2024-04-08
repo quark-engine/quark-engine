@@ -1252,9 +1252,6 @@ Let’s use the above APIs to show how the Quark script finds this vulnerability
 
 We first design a detection rule ``useOfCryptographicAlgo.json`` to spot on behavior using cryptographic algorithms. Then, we use API ``behaviorInstance.hasString(pattern, isRegex)`` with a list to check if the algorithm is risky. If YES, that may cause the exposure of sensitive data.
 
-Quark Script CWE-327.py
-=======================
-
 .. code-block:: python 
 
     from quark.script import runQuarkAnalysis, Rule
