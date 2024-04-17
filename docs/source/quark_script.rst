@@ -1711,20 +1711,20 @@ Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod,
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
     for accessExternalDir in quarkResult.behaviorOccurList:
-
         filePath = accessExternalDir.secondAPI.getArguments()[2]
 
         if quarkResult.isHardcoded(filePath):
-            continue
+	    continue
 
         caller = accessExternalDir.methodCaller
         strMatchingAPIs = [
-                api for api in STRING_MATCHING_API if quarkResult.findMethodInCaller(
-                    caller, api)
+	    api
+	    for api in STRING_MATCHING_API
+	    if quarkResult.findMethodInCaller(caller, api)
         ]
 
         if not strMatchingAPIs:
-            print(f"CWE-22 is detected in method, {caller.fullName}")
+	    print(f"CWE-22 is detected in method, {caller.fullName}")
 
 Quark Rule: accessFileInExternalDir.json
 =========================================
@@ -1750,22 +1750,13 @@ Quark Rule: accessFileInExternalDir.json
         "label": []
     }
 
-
 Quark Script Result
 ======================
-- **ovaa.apk**
 
 .. code-block:: TEXT
     
     $ python3 CWE-22.py
     CWE-22 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
-
-- **InsecureBankv2.apk**
-
-.. code-block:: TEXT
-    
-    $ python3 CWE-22.py
-    CWE-22 is detected in method, Lcom/android/insecurebankv2/ViewStatement; onCreate (Landroid/os/Bundle;)V
 
 Detect CWE-23 in Android Application (ovaa.apk and InsecureBankv2.apk )
 -----------------------------------------------------------------------
