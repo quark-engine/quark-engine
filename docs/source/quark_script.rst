@@ -1770,7 +1770,7 @@ We analyze the definition of CWE-23 and identify its characteristics.
 
 See `CWE-23 <https://cwe.mitre.org/data/definitions/23.html>`_ for more details.
 
-.. image:: https://imgur.com/a05ejtT.png
+.. image:: https://imgur.com/YS9umQp.png
 
 Code of CWE-23 in ovaa.apk
 ============================
