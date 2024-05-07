@@ -1329,7 +1329,7 @@ We use the `diva.apk <https://github.com/payatu/diva-android>`_ sample to explai
 .. image:: https://imgur.com/llu6Jp2.jpg
 
 Quark Script CWE-20.py
-1=======================
+=======================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
