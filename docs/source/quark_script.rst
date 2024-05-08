@@ -1333,7 +1333,7 @@ Quark Script CWE-20.py
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. Then we use API ``behaviorInstance.getMethodsInArgs()`` to get a list of methods which the URL in loadUrl has passed through. Finally, we check if any validation method is in the list. If No, the APK does not validate user input. That causes CWE-20 vulnerability.
+First, we design a detection rule ``openUrlThatUserInput.json``, to spot the behavior of opening the URL that the user inputs. Then, we use API ``behaviorInstance.getMethodsInArgs()`` to get a list of methods that the URL in ``loadUrl`` passes through. Finally, we check if any validation method is in the list. If No, the APK does not validate user input. That causes CWE-20 vulnerability.
 
 .. code-block:: python
 
