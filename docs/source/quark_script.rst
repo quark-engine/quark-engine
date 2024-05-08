@@ -1307,21 +1307,33 @@ Quark Script Result
     CWE-327 is detected in method, Lb3nac/injuredandroid/k; a (Ljava/lang/String;)Ljava/lang/String;
 
 
-Detect CWE-20 in Android Application (diva.apk)
------------------------------------------------
+Detect CWE-20 in Android Application
+----------------------------------------
 
-This scenario seeks to find **Improper Input Validation**. See `CWE-20 <https://cwe.mitre.org/data/definitions/20.html>`_ for more details.
+This scenario seeks to find **Improper Input Validation** in the APK file.
 
-Let’s use this `APK <https://github.com/payatu/diva-android>`_ and the above APIs to show how the Quark script finds this vulnerability.
+CWE-20 Improper Input Validation
+=================================
 
-First, we design a detection rule ``openUrlThatUserInput.json`` to spot the behavior of opening the URL that the user input. Then we use API ``behaviorInstance.getMethodsInArgs()`` to get a list of methods which the URL in ``loadUrl`` has passed through. Finally, we check if any validation method is in the list. If **No**, the APK does not validate user input. 
-That causes CWE-20 vulnerability.
+We analyze the definition of CWE-20 and identify its characteristics.
 
+See `CWE-20 <https://cwe.mitre.org/data/definitions/20.html>`_ for more details.
 
+.. image:: https://imgur.com/21CzFUq.jpg
 
+Code of CWE-20 in diva.apk
+===============================
+
+We use the `diva.apk <https://github.com/payatu/diva-android>`_ sample to explain the vulnerability code of CWE-20.
+
+.. image:: https://imgur.com/llu6Jp2.jpg
 
 Quark Script CWE-20.py
-======================
+=======================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``openUrlThatUserInput.json``, to spot the behavior of opening the URL that the user inputs. Then, we use API ``behaviorInstance.getMethodsInArgs()`` to get a list of methods that the URL in ``loadUrl`` passes through. Finally, we check if any validation method is in the list. If No, the APK does not validate user input. That causes CWE-20 vulnerability.
 
 .. code-block:: python
 
