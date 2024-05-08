@@ -1326,7 +1326,7 @@ Code of CWE-20 in diva.apk
 
 We use the `diva.apk <https://github.com/payatu/diva-android>`_ sample to explain the vulnerability code of CWE-20.
 
-.. image:: https://imgur.com/llu6Jp2.jpg
+.. image:: https://imgur.com/kRIuEHd.jpg
 
 Quark Script CWE-20.py
 =======================
