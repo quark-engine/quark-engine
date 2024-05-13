@@ -425,7 +425,7 @@ Quark Scipt: CWE-798.py
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the method ``SecretKeySpec``. Then, we get all the parameter values that are input to this method. From the returned parameter values, we identify it as an AES key and parse the key out of the values. Finally, we dump all strings in the APK file and check if the AES key is in the strings. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the method ``SecretKeySpec``. Then, we get all the parameter values that are input to this method. From the returned parameter values, we identify it as an AES key and parse the key out of the values. Finally, by using the method ``isHardcoded``, we check if the AES key is in all strings in the APK file. If the answer is YES, BINGO!!! We find hard-coded credentials in the APK file. 
 
 .. code-block:: python
 
