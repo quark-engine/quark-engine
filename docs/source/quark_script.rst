@@ -2129,9 +2129,9 @@ Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod,
     RULE_PATH = "accessFileInExternalDir.json"
 
     OPEN_FILE_API = [
-        "Landroid/os/ParcelFileDescriptor;",                    # Class name
-        "open",                                                 # Method name   
-        "(Ljava/io/File; I)Landroid/os/ParcelFileDescriptor;",  # Descriptor
+        "Landroid/os/ParcelFileDescriptor;",                   # Class name
+        "open",                                                # Method name   
+        "(Ljava/io/File; I)Landroid/os/ParcelFileDescriptor;"  # Descriptor
     ]
 
     ruleInstance = Rule(RULE_PATH)
