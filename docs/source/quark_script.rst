@@ -2089,21 +2089,37 @@ Quark Script Result
    CWE-925 is detected in method, Lowasp/sat/agoat/ShowDataReceiver;
    CWE-925 is detected in method, Lcom/android/insecurebankv2/MyBroadCastReceiver;
 
-Detect  CWE-73 in Android Application (ovaa.apk)
----------------------------------------------------
+Detect CWE-73 in Android Application 
+-------------------------------------
 
-This scenario seeks to find **External Control of File Name or Path**. See
-`CWE-73 <https://cwe.mitre.org/data/definitions/73.html>`__ for more
-details.
+This scenario seeks to find **External Control of File Name or Path** in the APK file.
+
+CWE-73 External Control of File Name or Path
+=============================================
+
+We analyze the definition of CWE-73 and identify its characteristics.
+
+See `CWE-73 <https://cwe.mitre.org/data/definitions/73.html>`_ for more details.
+
+.. image:: https://imgur.com/ES7xg5X.png
+
+Code of CWE-73 in ovaa.apk
+===========================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-73.
+
+.. image:: https://imgur.com/9oa1HIC.png
+
+Quark Scipt: CWE-73.py
+=======================
+
+Let’s use the above APIs to show how Quark script find this vulnerability.
 
 First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
 
 Second, we use API ``methodInstance.getArguments()`` to get the argument for the file path and use ``quarkResultInstance.isHardcoded(argument)`` to check if the argument is hardcoded into the APK. If **No**, the argument is from external input.
 
 Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)``  to check if any APIs in the caller method for opening files. If **YES**, the APK performs file operations using external input as a path, which may cause CWE-73 vulnerability.
-
-Quark Script CWE-73.py
-=======================
 
 .. code:: python
 
