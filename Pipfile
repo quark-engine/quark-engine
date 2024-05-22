@@ -11,7 +11,7 @@ sphinx-rtd-theme = "*"
 
 [packages]
 prettytable = "<=2.4.0"
-tqdm = "<=4.62.3"
+tqdm = "<=4.66.3"
 colorama = "<=0.4.4"
 quark-engine = {editable = true,path = "."}
 click = "<=8.0.3"
