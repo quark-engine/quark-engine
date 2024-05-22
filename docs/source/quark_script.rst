@@ -1443,7 +1443,7 @@ Next, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMe
         [
             "Lorg/owasp/html/PolicyFactory;",
             "sanitize",
-        "(Ljava/lang/String;)Ljava/lang/String;",
+            "(Ljava/lang/String;)Ljava/lang/String;",
         ],
     ]
 
