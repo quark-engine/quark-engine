@@ -2212,7 +2212,7 @@ We analyze the definition of CWE-78 and identify its characteristics.
 
 See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
 
-.. image:: https://imgur.com/YSiqspB.png
+.. image:: https://imgur.com/aUB195P.png
 
 Code of CWE-78 in Vuldroid.apk
 ===============================
