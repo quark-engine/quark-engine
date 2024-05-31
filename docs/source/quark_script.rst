@@ -2200,12 +2200,31 @@ Quark Script Result
    
    
 
-Detect CWE-78 in Android Application (Vuldroid.apk)
-------------------------------------------------------
+Detect CWE-78 in Android Application
+--------------------------------------
 
-This scenario seeks to find **Improper Neutralization of Special Elements used in an OS Command**. See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
+This scenario seeks to find **Improper Neutralization of Special Elements used in an OS Command** in the APK file.
 
-Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
+CWE-78 Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')
+==================================================================================================
+
+We analyze the definition of CWE-78 and identify its characteristics.
+
+See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
+
+.. image:: https://imgur.com/aUB195P.png
+
+Code of CWE-78 in Vuldroid.apk
+===============================
+
+We use the `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_ sample to explain the vulnerability code of CWE-78.
+
+.. image:: https://imgur.com/hO6m3Bz.png
+
+Quark Scipt: CWE-78.py
+========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
 First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
@@ -2214,12 +2233,6 @@ Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the method
 Then we check if the method neutralizes any special elements found in the argument.
 
 If the neutralization is not complete, then it may cause CWE-78 vulnerability.
-
-
-Quark Script CWE-78.py
-=======================
-
-The Quark Script below uses Vuldroid.apk to demonstrate.
 
 .. code-block:: python
 
