@@ -1,3 +1,10 @@
+quark-engine (24.6.1-0kali1) kali-dev; urgency=medium
+
+  * Document Updates:
+    - Optimize the documents of CWE-20, CWE-73, CWE-78, CWE-79, and CWE-798. (#642, #644, #649, #645, and #643)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Wed, 5 Jun 2024 17:00:00 +0800
+
 quark-engine (24.5.1-0kali1) kali-dev; urgency=medium
 
   * Document Updates:
