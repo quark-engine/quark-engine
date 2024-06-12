@@ -1145,17 +1145,33 @@ Quark Script Result
     $ python3 CWE-780.py
     CWE-780 is detected in method, Lsg/vp/owasp_mobile/OMTG_Android/OMTG_DATAST_001_KeyStore; encryptString (Ljava/lang/String;)V
 
-Detect CWE-319 in Android Application (ovaa.apk)
--------------------------------------------------------------
+Detect CWE-319 in Android Application
+-------------------------------------
 
-This scenario seeks to find **the Cleartext Transmission of Sensitive Information**. See `CWE-319 <https://cwe.mitre.org/data/definitions/319.html>`_ for more details.
+This scenario seeks to find **Cleartext Transmission of Sensitive Information** in the APK file.
 
-Let's use this `APK <https://github.com/oversecured/ovaa>`_ and the above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols. 
+CWE-319 Cleartext Transmission of Sensitive Information
+========================================================
+
+We analyze the definition of CWE-319 and identify its characteristics.
+
+See `CWE-319 <https://cwe.mitre.org/data/definitions/319.html>`_ for more details.
+
+.. image:: https://imgur.com/tk8rtYf.jpg
+
+Code of CWE-319 in ovaa.apk
+============================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-319.
+
+.. image:: https://imgur.com/Ew4UOAR.jpg
+
+Quark Scipt: CWE-319.py
+========================
+
+Let's use above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols.
 
 We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API ``behaviorInstance.hasString(pattern, isRegex)`` to filter arguments that are URL strings with cleartext protocol.
-
-Quark Script CWE-319.py
-=======================
 
 .. code-block:: python 
     
