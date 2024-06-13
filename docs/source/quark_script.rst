@@ -1169,7 +1169,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 Quark Scipt: CWE-319.py
 ========================
 
-Let's use above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols.
+Let's use the above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols.
 
 We first design a detection rule ``setRetrofitBaseUrl.json`` to spot on behavior that sets the base URL of the Retrofit instance. Then, we loop through a custom list of cleartext protocol schemes and use API ``behaviorInstance.hasString(pattern, isRegex)`` to filter arguments that are URL strings with cleartext protocol.
 
