@@ -1528,7 +1528,7 @@ This scenario seeks to find **the use of weak Hash**.
 CWE-328 Use of Weak Hash
 =========================
 
-We analyze the definition of CWE-32 and identify its characteristics.
+We analyze the definition of CWE-328 and identify its characteristics.
 
 See `CWE-328 <https://cwe.mitre.org/data/definitions/328.html>`_ for more details.
 
