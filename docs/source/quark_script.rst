@@ -2075,67 +2075,69 @@ Quark Script Result
     $ python3 CWE-88.py
     CWE-88 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
 
-Detect CWE-925 in Android Application (InsecureBankv2, AndroGoat)
-------------------------------------------------------------------
 
-This scenario seeks to find **Improper Verification of Intent by
-Broadcast Receiver**. See
-`CWE-925 <https://cwe.mitre.org/data/definitions/925.html>`__ for more
-details.
+Detect CWE-925 in Android Application
+--------------------------------------
 
-Let’s use both two of apks
-(`InsecureBankv2 <https://github.com/dineshshetty/Android-InsecureBankv2>`__
-and `AndroGoat <https://github.com/satishpatnayak/AndroGoat>`__) to show
-how the Quark script finds this vulnerability.
+This scenario seeks to find **Improper Verification of Intent by Broadcast Receiver** in the APK file.
 
-In the first step, we use the ``getReceivers(samplePath)`` API to find all
-``Receiver`` components defined in the Android application. Then, we
-exclude any receivers that are not exported.
+CWE-925 Improper Verification of Intent by Broadcast Receiver
+==============================================================
 
-In the second step, our goal is to verify the intent action is
-properly validated in each receiver which is identified in the previous
-step. To do this, we use the ``checkMethodCalls(samplePath, targetMethod, checkMethods)`` function.
+We analyze the definition of CWE-925 and identify its characteristics.
 
-Finally, if any receiver’s ``onReceive`` method exhibits improper
-verification on the intent action, it could indicate a potential CWE-925
-vulnerability.
+See `CWE-925 <https://cwe.mitre.org/data/definitions/925.html>`_ for more details.
+
+.. image:: https://imgur.com/fMZ2bMN.jpg
+
+Code of CWE-925 in InsecureBankv2.apk
+======================================
+
+We use the `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2>`_ sample to explain the vulnerability code of CWE-925.
+
+.. image:: https://imgur.com/V7VtL3x.jpg
 
 Quark Script CWE-925.py
-=======================
+========================
 
-.. code:: python
+First, we use API ``getReceivers(samplePath)`` and ``receiverInstance.isExported()`` to find all the exported receivers defined in the APK.
 
-   from quark.script import checkMethodCalls, getReceivers
+Second, we use API ``checkMethodCalls(samplePath, targetMethod, checkMethods)`` to check if the ``onReceive`` method of every exported receiver obtains intent action.
 
-   SAMPLE_PATHS = ["AndroGoat.apk", "InsecureBankv2.apk"]
+If **No**, it could imply that the APK does not verify intent properly, potentially leading to a CWE-925 vulnerability.
 
-   TARGET_METHOD = [
-       '',
-       'onReceive',
-       '(Landroid/content/Context; Landroid/content/Intent;)V'
-   ]
+.. code-block:: python
 
-   CHECK_METHODS = [
-       ['Landroid/content/Intent;', 'getAction', '()Ljava/lang/String;']
-   ]
+    from quark.script import checkMethodCalls, getReceivers
 
-   for filepath in SAMPLE_PATHS:
-       receivers = getReceivers(filepath)
-       for receiver in receivers:
-           if receiver.isExported():
-               className = "L"+str(receiver).replace('.', '/')+';'
-               TARGET_METHOD[0] = className
-               if not checkMethodCalls(filepath, TARGET_METHOD, CHECK_METHODS):
-                   print(f"CWE-925 is detected in method, {className}")
+    sample_path = "InsecureBankv2.apk"
+
+    TARGET_METHOD = [
+        '',
+        'onReceive',
+        '(Landroid/content/Context; Landroid/content/Intent;)V'
+    ]
+
+    CHECK_METHODS = [
+        ['Landroid/content/Intent;', 'getAction', '()Ljava/lang/String;']
+    ]
+
+    receivers = getReceivers(sample_path)
+    for receiver in receivers:
+        if receiver.isExported():
+            className = "L"+str(receiver).replace('.', '/')+';'
+            TARGET_METHOD[0] = className
+            if not checkMethodCalls(sample_path, TARGET_METHOD, CHECK_METHODS):
+                print(f"CWE-925 is detected in method, {className}")
 
 Quark Script Result
-===================
+====================
 
 .. code-block:: TEXT
 
-   $ python CWE-925.py
-   CWE-925 is detected in method, Lowasp/sat/agoat/ShowDataReceiver;
-   CWE-925 is detected in method, Lcom/android/insecurebankv2/MyBroadCastReceiver;
+    $ python CWE-925.py
+    CWE-925 is detected in method, Lcom/android/insecurebankv2/MyBroadCastReceiver;
+
 
 Detect CWE-73 in Android Application 
 -------------------------------------
