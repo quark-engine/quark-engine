@@ -2594,7 +2594,7 @@ This scenario aims to demonstrate the detection of the **URL Redirection to Untr
 CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
 =============================================================
 
-We analyze the definition of CWE-604 and identify its characteristics.
+We analyze the definition of CWE-601 and identify its characteristics.
 
 See `CWE-601 <https://cwe.mitre.org/data/definitions/601.html>`_ for more details.
 
