@@ -2586,21 +2586,35 @@ Quark Script Result
     CWE-502 is detected in method, Lcom/htbridge/pivaa/handlers/ObjectSerialization; loadObject ()V
 
 
-Detect CWE-601 in Android Application (ovaa)
-------------------------------------------------------
+Detect CWE-601 in Android Application
+--------------------------------------
 
-This scenario aims to demonstrate the detection of the **URL Redirection to Untrusted Site** vulnerability using `ovaa.apk <https://github.com/oversecured/ovaa>`_. See `CWE-601 <https://cwe.mitre.org/data/definitions/601.html>`_  for more details.
+This scenario aims to demonstrate the detection of the **URL Redirection to Untrusted Site vulnerability** in the apk file.
+
+CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
+=============================================================
+
+We analyze the definition of CWE-604 and identify its characteristics.
+
+See `CWE-601 <https://cwe.mitre.org/data/definitions/601.html>`_ for more details.
+
+.. image:: https://imgur.com/I61pL2m.png
+
+Code of CWE-601 in ovaa.apk
+=========================================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-601.
+
+.. image:: https://imgur.com/I61pL2m.png
+
+Quark Scipt: CWE-601.py
+========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
 To detect the vulnerability, we need to find all the caller methods of ``startActivity`` API that might receive external input without input validation. The ``findMethodInAPK`` function finds all the methods in the APK file that call the ``startActivity`` API. Next, we examine the arguments of each method to discover the methods receiving external input. If a method receives external input but lacks of proper input validation, the CWE-601 vulnerability is identified.
 
-Quark Script CWE-601.py
-==========================
-
-The Quark Script below uses ovaa.apk to demonstrate.
-
 .. code-block:: python
-
-    
 
     from quark.script import findMethodInAPK
 
@@ -2641,17 +2655,8 @@ The Quark Script below uses ovaa.apk to demonstrate.
                 filterMethod in INPUT_FILTER_METHODS):
                 print(f"CWE-601 is detected in {redirectMethod.fullName}")
 
-
-
-
-
-
-
-
-
 Quark Script Result
 ======================
-- **ovaa.apk**
 
 .. code-block:: TEXT
 
