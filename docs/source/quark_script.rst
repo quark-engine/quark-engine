@@ -2589,7 +2589,7 @@ Quark Script Result
 Detect CWE-601 in Android Application
 --------------------------------------
 
-This scenario aims to demonstrate the detection of the **URL Redirection to Untrusted Site vulnerability** in the apk file.
+This scenario aims to demonstrate the detection of the **URL Redirection to Untrusted Site vulnerability** in the APK file.
 
 CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
 =============================================================
