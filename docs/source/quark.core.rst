@@ -46,7 +46,6 @@ quark.core.quark module
    :undoc-members:
    :show-inheritance:
 
-
 quark.core.rzapkinfo module
 ---------------------------
 
