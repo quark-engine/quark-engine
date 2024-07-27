@@ -56,7 +56,7 @@ Here are two prompts, each for executing different analysis processes.
 
    1st Prompt: Initialize the rule instance with the rule path set to "rule.json"
 
-Used Quark Script APIs/Tools that LLM used: ``Rule``
+Used Quark Script APIs/Tools that LLM used: ``loadRule``
 
 ::
 
@@ -64,9 +64,9 @@ Used Quark Script APIs/Tools that LLM used: ``Rule``
                and Check if the parameters are hard-coded. If yes, display the hard-coded values.
 
 Used Quark Script APIs/Tools that LLM used: ``runQuarkAnalysis``,
-``behaviorOccurList``, ``getParameterValues`` and ``isHardCoded``
+``getBehaviorOccurList``, ``getParameterValues`` and ``isHardCoded``
 
-The ``Rule``, ``runQuarkAnalysis``, ``behaviorOccurList``,
+The ``loadRule``, ``runQuarkAnalysis``, ``getBehaviorOccurList``,
 ``getParameterValues``, and ``isHardCoded`` functions are treated as
 **tools** within LangChain, enabling them to be invoked through the
 ``gpt-4o`` model to analyze and identify
@@ -74,7 +74,7 @@ The ``Rule``, ``runQuarkAnalysis``, ``behaviorOccurList``,
 vulnerabilities in the
 `ovaa.apk <https://github.com/oversecured/ovaa>`__ sample.
 
-.. image:: https://github.com/user-attachments/assets/4962a740-3df3-4e5e-9365-4ad0ff51f5a5
+.. image:: https://github.com/user-attachments/assets/1dd8fb68-9ab4-4afc-a15a-006ff468a883
 
 .. note::
 
