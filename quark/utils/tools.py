@@ -169,12 +169,6 @@ def get_arguments_from_argument_str(
         __valueOf(argument, next(type_hints, ""))
         for argument in reversed(arguments)
     ]
-
-    for argument in arguments:
-        if "(" in argument or ")" in argument:
-            newArgs = re.findall(r"\((.*?)\)", argument)
-            arguments.extend(filter(None, newArgs))
-
     arguments.reverse()
 
     return arguments
