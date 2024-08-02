@@ -231,10 +231,14 @@ class Method:
                 argumentStr, self.targetMethod.innerObj.descriptor
             )
 
-        argumentsOfSecondAPI = self.behavior.getParamValues()
+        allResult = self.behavior.hasString(".*", True)
+        argumentStr = max(allResult, key=len)[1:-1]
+
+        argumentsOfSecondAPI = get_arguments_from_argument_str(
+            argumentStr, self.descriptor)
 
         if self == self.behavior.secondAPI:
-            return self.behavior.getParamValues()
+            return argumentsOfSecondAPI
         else:
             methodPattern = PyEval.get_method_pattern(
                 self.className, self.methodName, self.descriptor
@@ -361,12 +365,48 @@ class Behavior:
 
         :return: python list containing parameter values
         """
-        allResult = self.hasString(".*", True)
+        def __getArgumentFromMethodCall(method_call_str: str):
 
+            # Extract the part after the method name
+            # e.g. 'La/String;->init(II)V;('ab)_',3)' extracts 'V;('ab)_',3)'
+            method_start_idx = method_call_str.find("(")
+            method_with_args = method_call_str[method_start_idx + 1:]
+            method_end_idx = method_with_args.find(")")
+            method_with_args = method_with_args[method_end_idx + 1:]
+
+            # Extract and split the arguments
+            # e.g. 'V;('ab)_',3)' extracts 'ab)_' and '3'
+            args_start_idx = method_with_args.find("(")
+            args_with_parentheses = method_with_args[args_start_idx + 1:]
+
+            args_end_idx = args_with_parentheses.rfind(")")
+
+            args_str = args_with_parentheses[:args_end_idx]
+            extracted_arguments = args_str.split(",")
+
+            return extracted_arguments
+
+        allResult = self.hasString(".*", True)
         argumentStr = max(allResult, key=len)[1:-1]
-        return get_arguments_from_argument_str(
-            argumentStr, self.secondAPI.descriptor
-        )
+
+        arguments = get_arguments_from_argument_str(
+            argumentStr, self.secondAPI.descriptor)
+        new_arguments = []
+
+        for argument in arguments:
+            if not isinstance(argument, str):
+                new_arguments.append(argument)
+                continue
+
+            # Extract the arguments from method call and remove class arguments
+            if ";->" in argument:
+                method_call = argument.split(";->")[-1]
+                new_args = __getArgumentFromMethodCall(method_call)
+                new_arguments.extend(new_args)
+            elif not (argument.startswith("L") and argument.endswith(";")):
+                new_arguments.append(argument)
+
+        return new_arguments
 
     def isArgFromMethod(self, targetMethod: List[str]) -> bool:
         """Check if there are any argument from the target method.
@@ -389,7 +429,13 @@ class Behavior:
         METHOD_REGEX = r"L(.*?)\;\("
         methodCalled = []
 
-        for param in self.getParamValues():
+        allResult = self.hasString(".*", True)
+        argumentStr = max(allResult, key=len)[1:-1]
+
+        arguments = get_arguments_from_argument_str(
+            argumentStr, self.secondAPI.descriptor)
+
+        for param in arguments:
             for result in re.findall(METHOD_REGEX, param):
                 className = "L" + result.split("->")[0]
                 methodName = re.findall(r"->(.*?)\(", result)[0]
