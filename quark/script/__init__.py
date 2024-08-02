@@ -231,10 +231,14 @@ class Method:
                 argumentStr, self.targetMethod.innerObj.descriptor
             )
 
-        argumentsOfSecondAPI = self.behavior.getParamValues()
+        allResult = self.behavior.hasString(".*", True)
+        argumentStr = max(allResult, key=len)[1:-1]
+
+        argumentsOfSecondAPI = get_arguments_from_argument_str(
+            argumentStr, self.descriptor)
 
         if self == self.behavior.secondAPI:
-            return self.behavior.getParamValues()
+            return argumentsOfSecondAPI
         else:
             methodPattern = PyEval.get_method_pattern(
                 self.className, self.methodName, self.descriptor
