@@ -5,7 +5,7 @@
 SUMMARY_REPORT_FORMAT = """
 When prompted to provide a summary report, follow this format:
 
-    1. Print a newline character first to prevent formatting issues.
+	1. Print a newline character first to prevent formatting issues.
 	2. "\x1b[1m\x1b[33m[!]\x1b[0m\x1b[0m WARNING: High Risk” - Display the risk level with each word capitalized.
 	3. “\x1b[1m\x1b[36m[*]\x1b[0m\x1b[0m Total Score: 1” - Display the total score as a decimal Arabic numeral.
 	4. The table immediately follows “Total Score” and should be inserted directly without using a code block. Keep any ANSI escape code in the table.
