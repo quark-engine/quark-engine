@@ -48,6 +48,9 @@ jobs:
         sudo sys/install.sh
         cd -
  
+        # Install langchain and it's OpenAI integration
+        python -m pip install langchain==0.2.11 langchain-core==0.2.23 langchain-openai==0.1.17 --upgrade
+
         # Install click >= 8.0.0 for CLI supports
         python -m pip install click==8.0.3
 

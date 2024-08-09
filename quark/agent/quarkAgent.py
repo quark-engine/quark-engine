@@ -60,7 +60,7 @@ def entryPoint(api_key: str) -> None:
         # langchain is not installed.
         return
 
-    from quark.agent.tools import agentTools
+    from quark.agent.agentTools import agentTools
     from quark.agent.prompts import SUMMARY_REPORT_FORMAT
 
     if not __setOrAskAPIKey(api_key):
