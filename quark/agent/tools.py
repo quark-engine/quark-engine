@@ -15,6 +15,10 @@ except ModuleNotFoundError as e:
         return func
 
 
+rule_checker = None
+quark = None
+
+
 @tool
 def initRuleObject(rule_path: str):
     """
@@ -45,11 +49,8 @@ def runQuarkAnalysis():
     """
     Run Quark analysis with a rule.
     """
-    global quark
-    global rule_checker
-
     quark.run(rule_checker)
-    quark.show_summary_report(rule_checker)  # TODO - Refactor this API.
+    quark.show_summary_report(rule_checker)
     return "Successfully run Quark analysis"
 
 
@@ -58,9 +59,6 @@ def getSummaryReportTable():
     """
     Get the summary report table from the Quark analysis result.
     """
-    global quark
-    global rule_checker
-
     summaryReport = quark.quark_analysis.summary_report_table.get_string()
 
     return summaryReport
@@ -71,8 +69,6 @@ def getAnalysisResultRisk():
     """
     Get the risk from the Quark analysis result.
     """
-
-    global quark
     weight = Weight(
         quark.quark_analysis.score_sum, quark.quark_analysis.weight_sum
     )
@@ -85,9 +81,6 @@ def getAnalysisResultScore():
     """
     Get the score from the Quark analysis result.
     """
-
-    global quark
-
     return quark.quark_analysis.score_sum
 
 

@@ -118,4 +118,4 @@ def entryPoint(api_key: str) -> None:
 
 
 if __name__ == "__main__":
-    entryPoint()
+    entryPoint()  # pylint: disable=E1120
