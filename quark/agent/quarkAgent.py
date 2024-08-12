@@ -49,6 +49,7 @@ def entryPoint(api_key: str) -> None:
             ChatPromptTemplate,
             MessagesPlaceholder,
         )
+        from langchain_core.messages import AIMessage, HumanMessage
         from langchain.agents.output_parsers.openai_tools import (
             OpenAIToolsAgentOutputParser,
         )
@@ -80,6 +81,7 @@ def entryPoint(api_key: str) -> None:
                 )
                 + SUMMARY_REPORT_FORMAT,
             ),
+            MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ]
@@ -91,6 +93,7 @@ def entryPoint(api_key: str) -> None:
             "agent_scratchpad": lambda x: format_to_openai_tool_messages(
                 x["intermediate_steps"]
             ),
+            "chat_history": lambda x: x["chat_history"],
         }
         | prompt
         | llmWithTools
@@ -99,15 +102,23 @@ def entryPoint(api_key: str) -> None:
 
     agentExecutor = AgentExecutor(agent=agent, tools=agentTools, verbose=False)
 
+    conversationHistory = []
+
     try:
         inputText = input(green("User Input: "))
         while inputText.lower() != "bye":
             if inputText:
                 response = agentExecutor.invoke(
-                    {
-                        "input": inputText,
-                    }
+                    {"input": inputText, "chat_history": conversationHistory}
                 )
+
+                conversationHistory.extend(
+                    [
+                        HumanMessage(content=inputText),
+                        AIMessage(content=response["output"]),
+                    ]
+                )
+
                 print()
                 print(cyan("Agent: "), response["output"])
                 print()
