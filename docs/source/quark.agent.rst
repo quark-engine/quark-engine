@@ -4,6 +4,14 @@ quark.agent package
 Submodules
 ----------
 
+quark.agent.agentTools module
+-----------------------------
+
+.. automodule:: quark.agent.agentTools
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 quark.agent.prompts module
 --------------------------
 
@@ -16,14 +24,6 @@ quark.agent.quarkAgent module
 -----------------------------
 
 .. automodule:: quark.agent.quarkAgent
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-quark.agent.tools module
-------------------------
-
-.. automodule:: quark.agent.tools
    :members:
    :undoc-members:
    :show-inheritance:
