@@ -8,7 +8,7 @@ When prompted to provide a summary report, follow these rules and the summary re
 	1. Print a newline character first to prevent formatting issues.
 	2. Change "<RISK_LEVEL>" in "WARNING: <RISK_LEVEL>" to the risk level with the first letter of each word capitalized.
 	3. Change "<TOTAL_SCORE>" in "Total Score: <TOTAL_SCORE>" to the total score, expressed as a decimal numeral.
-	4. Without using a code block, place the output of the tool, GetSummaryReportTable, in the line directly after "Total Score: <TOTAL_SCORE>".
+	4. Without using a code block, place the output of the tool, getSummaryReportTable, in the line directly after "Total Score: <TOTAL_SCORE>".
 
 The Summary Report Example:
 

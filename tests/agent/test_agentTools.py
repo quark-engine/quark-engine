@@ -1,3 +1,4 @@
+import sys
 import pytest
 
 from unittest.mock import patch
@@ -76,3 +77,23 @@ def testGetAnalysisResultScore(quarkObject):
     result = agentTools.getAnalysisResultScore.func()
 
     assert result == 4
+
+
+@pytest.mark.parametrize(
+    "colorizeFunction, expectedColorCode",
+    [
+        (agentTools.colorizeInYellow, 33),
+        (agentTools.colorizeInCyan, 36),
+        (agentTools.colorizeInGreen, 92),
+        (agentTools.colorizeInRed, 91),
+    ],
+)
+def testColorizeInColor(colorizeFunction, expectedColorCode):
+    text = "Text"
+
+    result = colorizeFunction(text)
+
+    if sys.platform == "win32" and os.getenv("TERM") != "xterm":
+        assert result == text
+    else:
+        assert f"\x1b[{expectedColorCode}m" in result

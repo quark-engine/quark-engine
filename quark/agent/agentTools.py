@@ -5,6 +5,7 @@
 from quark.core.struct.ruleobject import RuleObject
 from quark.utils.weight import Weight
 from quark.core.quark import Quark
+from quark.utils import colors
 
 # Import the optional dependency, langchain
 try:
@@ -84,6 +85,50 @@ def getAnalysisResultScore():
     return quark.quark_analysis.score_sum
 
 
+@tool
+def colorizeInYellow(text: str) -> str:
+    """Colorize text in yellow.
+
+    :param text: a text
+    :return: the text in yellow
+    """
+
+    return colors.yellow(text)
+
+
+@tool
+def colorizeInCyan(text: str) -> str:
+    """Colorize text in cyan.
+
+    :param text: a text
+    :return: the text in cyan
+    """
+
+    return colors.cyan(text)
+
+
+@tool
+def colorizeInGreen(text: str) -> str:
+    """Colorize text in green.
+
+    :param text: a text
+    :return: the text in green
+    """
+
+    return colors.green(text)
+
+
+@tool
+def colorizeInRed(text: str) -> str:
+    """Colorize text in red.
+
+    :param text: a text
+    :return: the text in red
+    """
+
+    return colors.red(text)
+
+
 agentTools = [
     initRuleObject,
     initQuarkObject,
@@ -91,4 +136,8 @@ agentTools = [
     getSummaryReportTable,
     getAnalysisResultRisk,
     getAnalysisResultScore,
+    colorizeInYellow,
+    colorizeInCyan,
+    colorizeInGreen,
+    colorizeInRed,
 ]
