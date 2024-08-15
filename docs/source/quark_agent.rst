@@ -43,12 +43,16 @@ Quick Start
 .. image:: https://github.com/user-attachments/assets/46407664-de0d-4849-8995-642ff636d71e
 
 
-Decode the Process
+Decode the Prompts
 ~~~~~~~~~~~~~~~~~~
 
 Here, we explain what happens after running the Quark Agent.
 
-Before processing user prompts, the Quark Agent uses a preset prompt to ensure the ``gpt-4o-mini`` model knows the format of a summary report.
+**Preset Prompt**
+
+To ensure the ``gpt-4o-mini`` model follows the correct format of a summary report, we designed the following preset prompt and hard-coded it into the Quark Agent.
+
+When the Quark Agent starts, it will automatically pass the preset prompt to the ``gpt-4o-mini`` model. Hence, we don't need to pass this prompt manually.
 
 .. code:: TEXT
 
@@ -73,7 +77,7 @@ Before processing user prompts, the Quark Agent uses a preset prompt to ensure t
 
     Ensure you adhere to these rules and the example when providing a summary report.
 
-The preset prompt is hard-coded into the Quark Agent. When the Quark Agent connects to the ``gpt-4o-mini`` model, it automatically uses the preset prompt to initialize the model. Hence, we don't need to pass this prompt manually.
+**User Prompts**
 
 Then, by passing the following prompt manually, we ask the Quark Agent to analyze the `ovaa.apk <https://github.com/oversecured/ovaa>`__ sample and generate a summary report. 
 
