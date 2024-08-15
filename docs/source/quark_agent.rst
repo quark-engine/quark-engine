@@ -17,7 +17,8 @@ Quick Start
 
    .. code-block:: shell
 
-      pip install quark-engine[QuarkAgent]
+      git clone https://github.com/quark-engine/quark-engine.git & cd quark-engine
+      pip install .[QuarkAgent]
 
 2. Prepare the rule and the sample:
 
