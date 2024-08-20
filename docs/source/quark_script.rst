@@ -245,7 +245,7 @@ objInstance.hookMethod(method, watchArgs, watchBacktrace, watchRet)
 
 - **Description**: Hook the target method with Objection.
 - **params**: 
-    1. method: the tagrget API. (type: str or method instance) 
+    1. method: the target API. (type: str or method instance) 
     2. watchArgs: Return Args information if True. (type: boolean) 
     3. watchBacktrace: Return backtrace information if True. (type: boolean) 
     4. watchRet: Return the return information of the target API if True. (type: boolean)
@@ -420,7 +420,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 .. image:: https://i.imgur.com/ikaJlDW.jpg
 
 
-Quark Scipt: CWE-798.py
+Quark Script: CWE-798.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
@@ -506,7 +506,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/duobWF2.jpg
 
-Quark Scipt: CWE-94.py
+Quark Script: CWE-94.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
@@ -597,7 +597,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/ACzJct8.jpg
 
-Quark Scipt: CWE-921.py
+Quark Script: CWE-921.py
 =========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -813,7 +813,7 @@ We use the `androgoat.apk <https://github.com/satishpatnayak/AndroGoat>`_ sample
 
 
 
-Quark Scipt: CWE-89.py
+Quark Script: CWE-89.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
@@ -899,7 +899,7 @@ We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ 
 
 .. image:: https://imgur.com/KoOt5ii.jpg
 
-Quark Scipt: CWE-926.py
+Quark Script: CWE-926.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
@@ -1087,7 +1087,7 @@ We use the `MSTG-Android-Java.apk <https://github.com/OWASP/MASTG-Hacking-Playgr
 
 .. image:: https://imgur.com/c03senv.png
 
-Quark Scipt: CWE-780.py
+Quark Script: CWE-780.py
 ========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -1166,7 +1166,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/Ew4UOAR.jpg
 
-Quark Scipt: CWE-319.py
+Quark Script: CWE-319.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability. This sample uses the package Retrofit to request Web APIs, but the APIs use cleartext protocols.
@@ -1542,7 +1542,7 @@ We use the `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_ sample to explai
 .. image:: https://imgur.com/b0yFDht.png
 
 
-Quark Scipt: CWE-328.py
+Quark Script: CWE-328.py
 ========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -1736,7 +1736,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 .. image:: https://imgur.com/WFpfzFk.png
 
 
-Quark Scipt: CWE-22.py
+Quark Script: CWE-22.py
 =========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -1835,7 +1835,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/GosANyj.png
 
-Quark Scipt: CWE-23.py
+Quark Script: CWE-23.py
 ========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -2160,7 +2160,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/9oa1HIC.png
 
-Quark Scipt: CWE-73.py
+Quark Script: CWE-73.py
 =======================
 
 Let’s use the above APIs to show how Quark script find this vulnerability.
@@ -2254,7 +2254,7 @@ We use the `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_ sample 
 
 .. image:: https://imgur.com/hO6m3Bz.png
 
-Quark Scipt: CWE-78.py
+Quark Script: CWE-78.py
 ========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
@@ -2607,7 +2607,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://imgur.com/I61pL2m.png
 
-Quark Scipt: CWE-601.py
+Quark Script: CWE-601.py
 ========================
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.

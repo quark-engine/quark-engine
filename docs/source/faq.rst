@@ -19,13 +19,13 @@ Here are two common errors that will occur. If those errors happened to you too,
 #. Errors on rules not found (Reference to `issue #237 <https://github.com/quark-engine/quark-engine/issues/237>`_\ ): Please update Quark-Rule with ``freshquark`` first. Since the way to specify rules is by adding ``<path_to_the_rule>`` as an argument, you need to input ``<path_to_the_rule>`` if the rule file is not in the current folder. If you want to select one of the rules of Quark-Rule, the default path to Quark-Rule is ``$HOME/.quark-engine/quark-rules/``.
    
    
-How do threshold, score, and weight working in Quark Engine?
+How do threshold, score, and weight work in Quark Engine?
 ------------------------------------------------------------
 
 About those details, we have a video to explain how it works. You can check out the video on YouTube:
 https://www.youtube.com/watch?v=SOH4eqrv9_g
 
-Why do scores keeping the same in all the analyses?
+Why do scores remain the same in all the analyses?
 ---------------------------------------------------
 
 The default value is one since we would like users to define these numbers themselves, and we are still doing experiments to adjust the numbers.

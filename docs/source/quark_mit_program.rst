@@ -35,7 +35,7 @@ We believe helping people is the key to build a better community.
 
 .. image:: https://i.imgur.com/kIJBqOn.png
 
-Minumum Requirements
+Minimum Requirements
 ---------------------
 
 Members need to complete at least **1** goal every **6** months.
