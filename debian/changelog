@@ -1,3 +1,16 @@
+quark-engine (24.8.1-0kali1) kali-dev; urgency=medium
+
+  * New Feature:
+    - Introduce the new AI member, Quark Script Agent, along with two showcases. Check https://quark-engine.readthedocs.io/en/latest/quark_script_agent.html for the details. (#664, #667)
+
+  * Document Enhancement:
+    - Optimize the CWE-601 and CWE-925 documents. (#663, #662)
+
+  * Bug Fix
+    - Make the getParamValue API more accurate on parameter extraction. (#666)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Wed, 7 Aug 2024 17:00:00 +0800
+
 quark-engine (24.7.1-0kali1) kali-dev; urgency=medium
 
   * Document Updates:

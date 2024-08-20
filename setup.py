@@ -15,7 +15,13 @@ required_requirements = [
     "plotly",
     "rzpipe",
     "click",
-    "r2pipe==1.8.0"
+    "r2pipe==1.8.0",
+]
+
+quarkAgentRequirements = [
+    "langchain==0.2.11",
+    "langchain-core==0.2.23",
+    "langchain-openai==0.1.17",
 ]
 
 setuptools.setup(
@@ -32,16 +38,15 @@ setuptools.setup(
         "quark.core.axmlreader": ["axml_definition"],
         "quark.webreport": [
             "analysis_report_layout.html",
-            "genrule_report_layout.html"
+            "genrule_report_layout.html",
         ],
-        "quark.script.frida": [
-            "agent.js"
-        ]
+        "quark.script.frida": ["agent.js"],
     },
     entry_points={
         "console_scripts": [
             "quark=quark.cli:entry_point",
             "freshquark=quark.freshquark:entry_point",
+            "quark-agent=quark.agent.quarkAgent:entryPoint",
         ]
     },
     classifiers=[
@@ -52,4 +57,7 @@ setuptools.setup(
     ],
     python_requires=">=3.8",
     install_requires=required_requirements,
+    extras_require={
+        "QuarkAgent": quarkAgentRequirements,
+    },
 )

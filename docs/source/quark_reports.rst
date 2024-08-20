@@ -17,6 +17,8 @@ Quark provides **7 flexible report formats** to boost your analysis.
 
 Please see below for more details.
 
+ .. _summary-report:
+
 Summary Report
 --------------
 

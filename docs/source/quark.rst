@@ -7,6 +7,7 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   quark.agent
    quark.core
    quark.evaluator
    quark.forensic

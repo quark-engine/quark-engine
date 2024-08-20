@@ -264,7 +264,6 @@ class TestMethod:
 
         arguments = behavior.secondAPI.getArguments()
         argumentsOfTargetMethod = callerMethodInstance.getArguments()
-
         assert arguments[1:] == [True]
         assert argumentsOfTargetMethod[0] == "wifi"
 

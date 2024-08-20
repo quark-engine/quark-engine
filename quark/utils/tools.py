@@ -163,7 +163,7 @@ def get_arguments_from_argument_str(
 
     arguments.append(argument_str[index_of_last_separator:])
 
-    type_hints = descriptor[1 : descriptor.find(")")].split()
+    type_hints = descriptor[1: descriptor.find(")")].split()
     type_hints = reversed(type_hints)
     arguments = [
         __valueOf(argument, next(type_hints, ""))
