@@ -21,7 +21,7 @@
         <img alt="license" src="https://img.shields.io/badge/License-GPLv3-blue.svg">
     </a>
     <a href="https://www.python.org/downloads/release/python-360/">
-        <img alt="python version" src="https://img.shields.io/badge/python-3.8-blue.svg">
+        <img alt="python version" src="https://img.shields.io/badge/python-3.9-blue.svg">
     </a>
     <a href="https://pypi.org/project/quark-engine/">
         <img alt="PyPi Download" src="https://pepy.tech/badge/quark-engine">
@@ -86,7 +86,7 @@ In this section, we will show how to detect CWE-798 with Quark Script.
 
 ### Step 1: Environments Requirements
 
-*   Quark requires Python 3.8 or above.
+*   Quark requires Python 3.9 or above.
 
 ### Step 2: Install Quark Engine
 
