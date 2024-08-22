@@ -1985,25 +1985,39 @@ Quark Script Result
     
 
 
-Detect CWE-88 in Android Application (Vuldroid.apk)
-------------------------------------------------------
+Detect CWE-88 in Android Application 
+--------------------------------------
 
-This scenario seeks to find **Improper Neutralization of Argument Delimiters in a Command**. See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
+This scenario seeks to find **Argument Injection** in the APK file.
 
-Let‘s use this `APK <https://github.com/jaiswalakshansh/Vuldroid>`_ and the above APIs to show how the Quark script finds this vulnerability.
+CWE-88 Improper Neutralization of Argument Delimiters in a Command
+===================================================================
+
+We analyze the definition of CWE-88 and identify its characteristics.
+
+See `CWE-88 <https://cwe.mitre.org/data/definitions/88.html>`_ for more details.
+
+.. image:: https://imgur.com/7EBPGUT.png
+
+Code of CWE-88 in vuldroid.apk
+=========================================
+
+We use the `vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_ sample to explain the vulnerability code of CWE-88.
+
+.. image:: https://imgur.com/emnvGcE.png
+
+Quark Script: CWE-88.py
+========================
+
+Let‘s use the above APIs to show how the Quark script finds this vulnerability.
 
 First, we design a detection rule ``ExternalStringsCommands.json`` to spot on behavior using external strings as commands.
 
 Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralizes any special elements found in the argument.
+Then we check if the method neutralizes any special elements in the argument.
 
 If the neutralization is not complete, then it may cause CWE-88 vulnerability.
-
-Quark Script CWE-88.py
-=======================
-
-The Quark Script below uses Vuldroid.apk to demonstrate.
 
 .. code-block:: python
 
@@ -2068,7 +2082,6 @@ Quark Rule: ExternalStringCommand.json
 
 Quark Script Result
 ======================
-- **Vuldroid.apk**
 
 .. code-block:: TEXT
 
