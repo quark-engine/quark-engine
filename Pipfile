@@ -11,13 +11,13 @@ sphinx-rtd-theme = "*"
 
 [packages]
 prettytable = "<=2.4.0"
-tqdm = "<=4.62.3"
+tqdm = "<=4.66.5"
 colorama = "<=0.4.4"
 quark-engine = {editable = true,path = "."}
 click = "<=8.0.3"
 androguard = "==3.4.0a1"
 graphviz = "<=0.18.2"
-requests = "<=2.31.0"
+requests = "<=2.32.3"
 plotly = "<=5.4.0"
 prompt-toolkit = "<=3.0.36"
 rzpipe = "<=0.1.2"
