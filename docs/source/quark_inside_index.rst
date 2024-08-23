@@ -1,6 +1,6 @@
 Quark-Engine Inside
 ===================
-This chapter explains how Quark work inside.
+This chapter explains how Quark works inside.
 
 .. toctree::
 
