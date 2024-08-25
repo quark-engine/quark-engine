@@ -57,7 +57,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Security",
     ],
-    python_requires=">=3.9",
+    python_requires=">=3.10",
     install_requires=required_requirements,
     extras_require={
         "QuarkAgent": quarkAgentRequirements,

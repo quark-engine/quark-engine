@@ -3,18 +3,18 @@
 # See the file 'LICENSE' for copying permission.
 from unittest import TestCase
 from unittest.mock import patch
-from quark.script.ciphey import checkClearText
+from quark.script.ares import checkClearText
 
 
-class TestCiphey(TestCase):
+class TestAres(TestCase):
     @patch(
-        "builtins.__import__",
-        side_effect=ImportError("No module named 'ciphey'"),
+        "subprocess.run",
+        side_effect=FileNotFoundError,
     )
-    def testCheckClearTextWithCipheyImportError(self, mock_import):
+    def testCheckClearTextWithAresNotInstalled(self, mock_import):
         with self.assertRaises(Exception) as context:
             checkClearText("Clear Text")
-        assert "Ciphey is not installed." in str(context.exception)
+        assert "Ares is not installed." in str(context.exception)
 
     def testCheckClearTextWithClearText(self):
         assert checkClearText("Clear Text") == "Clear Text"
