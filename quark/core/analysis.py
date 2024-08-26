@@ -12,6 +12,7 @@ def init_pretty_table():
     tb = PrettyTable()
     tb.field_names = ["Filename", "Rule", "Confidence", "Score", "Weight"]
     tb.align = "l"
+    tb.sortby = "Filename"
     return tb
 
 
