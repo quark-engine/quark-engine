@@ -28,7 +28,6 @@ h1 {
   height: 70vh;
   border: 1px solid #3e3e3e;
   padding: 10px;
-  background-color: #414141;
   background: #3a3a3aab;
   border-color: #a0a0a0;
   color: #c7c7c7;
@@ -94,7 +93,7 @@ h1 {
 
 #send::before {
   content: "\f062";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Free", sans-serif;
   font-weight: 900;
   font-size: 20px;
   color: #5c5c5c;
@@ -153,6 +152,11 @@ h1 {
   flex-direction: column;
 }
 
+.CodeMirror-scroll {
+  font-size: 16px;
+  height: 100%;
+}
+
 .cm-s-dracula .CodeMirror-gutters,
 .cm-s-dracula.CodeMirror {
   background-color: #414141 !important;
@@ -167,11 +171,6 @@ h1 {
   line-height: 1.6;
   color: #c7c7c7;
   background-color: #414141 !important;
-}
-
-.CodeMirror-scroll {
-  font-size: 16px;
-  height: 100%;
 }
 
 .CodeMirror-gutters {
