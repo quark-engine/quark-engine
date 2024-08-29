@@ -273,9 +273,6 @@ def isHardCoded():
             print(isHardcoded)
     """
 
-    global parameters
-    global quarkResultInstance
-
     hardcodedParameters = []
     for parameter in parameters:
         if quarkResultInstance.isHardcoded(parameter):
