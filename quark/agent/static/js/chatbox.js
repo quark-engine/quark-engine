@@ -30,7 +30,6 @@ function detectLanguage(code) {
 codeMirror.on("change", function (instance) {
   var code = instance.getValue();
   var detectedLanguage = detectLanguage(code);
-  console.log("Setting mode to:", detectedLanguage);
   instance.setOption("mode", detectedLanguage);
 });
 
