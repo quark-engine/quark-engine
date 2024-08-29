@@ -19,6 +19,10 @@ except ModuleNotFoundError as e:
 
 rule_checker = None
 quark = None
+parameters = None
+behaviorOccurList = None
+ruleInstance = None
+quarkResultInstance = None
 
 
 @tool
@@ -179,7 +183,6 @@ def runQuarkAnalysis(samplePath: str):
 
     """
 
-    global ruleInstance
     global quarkResultInstance
 
     quark = _getQuark(samplePath)
@@ -210,7 +213,6 @@ def getBehaviorOccurList():
 
     """
 
-    global quarkResultInstance
     global behaviorOccurList
 
     behaviorOccurList = quarkResultInstance.behaviorOccurList
@@ -240,7 +242,6 @@ def getParameterValues():
                 print(paramValues)
     """
 
-    global behaviorOccurList
     global parameters
 
     for behavior in behaviorOccurList:
