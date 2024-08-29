@@ -2,9 +2,6 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
-import os
-import subprocess
-
 from quark.script import Rule, _getQuark, QuarkResult
 from quark.core.struct.ruleobject import RuleObject
 from quark.utils.weight import Weight
@@ -298,16 +295,6 @@ def writeCodeInFile(code: str, pyFile: str):
     return pyFile
 
 
-@tool
-def executeCode(pyFile: str):
-    """
-    Given the code file, this instance executes the code.
-    """
-
-    subprocess.run(["python", pyFile], check=True)
-    return "Code executed successfully"
-
-
 agentTools = [
     initRuleObject,
     initQuarkObject,
@@ -325,5 +312,4 @@ agentTools = [
     getParameterValues,
     isHardCoded,
     writeCodeInFile,
-    executeCode
 ]
