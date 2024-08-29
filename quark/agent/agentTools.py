@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import os
+import subprocess
 
 from quark.script import Rule, _getQuark, QuarkResult
 from quark.core.struct.ruleobject import RuleObject
@@ -303,7 +304,7 @@ def executeCode(pyFile: str):
     Given the code file, this instance executes the code.
     """
 
-    os.system(f"python {pyFile}")
+    subprocess.run(["python", pyFile], check=True)
     return "Code executed successfully"
 
 
