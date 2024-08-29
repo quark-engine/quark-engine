@@ -32,6 +32,66 @@
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
+# Quark Agent - Your AI Assistant for Vulnerability Analysis
+
+
+Quark Agent is an AI assistant from the Quark team, providing an easy and intuitive experience of vulnerability analysis. Acting like a real-life assistant, Quark Agent helps you focus on the vulnerability detection process and takes care of the rest.
+
+With Quark Agent, you can perform analyses using only natural language. It creates Quark Script code following your ideas and adjusts the code promptly as you provide feedback.
+
+# Showcase: Detecting CWE-798 with Quark Agent
+
+Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerability in the ovaa.apk file.
+
+### Step 1: Environments Requirements
+
+*   Quark Agent requires Python 3.8 or above.
+
+### Step 2: Install Quark Agent
+
+*   Install Quark Agent by running:
+
+```bash
+git clone https://github.com/quark-engine/quark-engine.git & cd quark-engine
+pip install .[QuarkAgent]
+```
+
+### Step 3: Prepare the Detection Rule and the Sample File
+
+```bash
+.
+├── ...
+├── quark                   
+    ├── ...           
+    ├── agent               # Put rule file and sample file here
+    ├── ...                
+```
+
+### Step 4: Add your OpenAI API key
+
+Add your OpenAI API key in `quarkAgentWeb.py`
+
+```python
+os.environ["OPENAI_API_KEY"] = 'your-api-key-here'
+```
+
+### Step 5: Run Quark Agent
+
+```bash
+$ python3 quark/agent/quarkAgentWeb.py
+
+# You can now chat with Quark Agent in your browser. 
+# The default URL is http://127.0.0.1:5000
+```
+
+Open a browser and navigate to `127.0.0.1:5000` to start using Quark Agent, as shown below.
+
+![截圖 2024-08-28 晚上11.00.27](https://hackmd.io/_uploads/By6ggTni0.png)
+
+# Future Plan
+
+In the future, Quark Agent will visualize the vulnerability detection process as a flowchart, allowing users to easily design and edit detection workflows through the flowchart. Stay tuned!
+
 # Quark Script - Dig Vulnerabilities in the BlackBox
 
 ### Innovative & Interactive

@@ -1,0 +1,229 @@
+body {
+  font-family: Arial, sans-serif;
+  font-size: 19px;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, #efc64bcc 10%, #a02e2e 35%, #060864f2 90%);
+  color: #c7c7c7;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #ffffff;
+}
+
+.container {
+  justify-content: space-between;
+  transition: width 0.3s ease;
+  display: flex;
+  max-width: 80%;
+}
+
+.chatbox {
+  width: 49%;
+  height: 70vh;
+  border: 1px solid #3e3e3e;
+  padding: 10px;
+  background-color: #414141;
+  background: #3a3a3aab;
+  border-color: #a0a0a0;
+  color: #c7c7c7;
+  overflow-y: auto;
+  box-shadow: 0px 0px 10px rgb(133 133 133 / 70%);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+#diagram-container {
+  width: 98%;
+  height: 400px;
+  border: 1px solid #3e3e3e;
+  background-color: #414141;
+  color: #c7c7c7;
+  overflow-y: auto;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+  margin-bottom: 10px;
+}
+
+.input-container {
+  display: flex;
+  margin-top: 20px;
+  justify-content: flex-start;
+  position: relative;
+}
+
+#message {
+  width: 100%;
+  height: 65px;
+  padding: 15px;
+  border-radius: 35px;
+  border: 1px solid #3e3e3e;
+  border-color: #a0a0a0;
+  background-color: #414141;
+  box-shadow: 0px 0px 10px rgb(133 133 133 / 70%);
+  color: #c7c7c7;
+  font-size: 20px;
+  padding-right: 50px;
+  resize: vertical;
+  margin-bottom: 20px;
+}
+
+#send {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #c0c0c0;
+  color: #ffffff;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 38%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#send::before {
+  content: "\f062";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-size: 20px;
+  color: #5c5c5c;
+}
+
+.message {
+  max-width: 70%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  line-height: 1.5;
+}
+
+.message.user {
+  background-color: #5a5a5a;
+  color: white;
+  align-self: flex-end;
+  border-radius: 10px;
+  padding-right: 40px;
+  position: relative;
+}
+
+.message.user::before {
+  content: "\f007";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+}
+
+.message.bot {
+  background-color: #3e3e3e;
+  color: white;
+  align-self: flex-start;
+  border-radius: 10px;
+  padding-left: 40px;
+  position: relative;
+}
+
+.message.bot::before {
+  content: "\f5dc";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ffffff;
+}
+
+.chatbox {
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-s-dracula .CodeMirror-gutters,
+.cm-s-dracula.CodeMirror {
+  background-color: #414141 !important;
+  color: #f8f8f2 !important;
+  border: none
+}
+
+.CodeMirror {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 14px;
+  height: 100%;
+  line-height: 1.6;
+  color: #c7c7c7;
+  background-color: #414141 !important;
+}
+
+.CodeMirror-scroll {
+  font-size: 16px;
+  height: 100%;
+}
+
+.CodeMirror-gutters {
+  background-color: #2d2d2d;
+  border-right: 1px solid #3e3e3e;
+}
+
+.CodeMirror-linenumber {
+  color: #858585;
+}
+
+.CodeMirror-cursor {
+  border-left: 1px solid #ffffff;
+}
+
+.cm-s-dracula .cm-keyword {
+  color: #d73a49;
+}
+
+.cm-s-dracula .cm-string {
+  color: #a8ff60;
+}
+
+.cm-s-dracula .cm-comment {
+  color: #6a737d;
+}
+
+#textBox {
+  width: 100%;
+}
+
+#codeBox {
+  display: none;
+  width: 49%;
+}
+
+.subtitle {
+  margin-top: -10px;
+  margin-bottom: 40px;
+  font-size: 1.7rem;
+}
+
+.logo {
+  vertical-align: middle;
+  width: auto;
+  height: 125px;
+}
+
+.available-magnet {
+  fill: yellow;
+}
+
+.available-cell rect {
+  stroke-dasharray: 5, 2;
+}

@@ -2,6 +2,9 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import os
+
+from quark.script import Rule, _getQuark, QuarkResult
 from quark.core.struct.ruleobject import RuleObject
 from quark.utils.weight import Weight
 from quark.core.quark import Quark
@@ -46,7 +49,7 @@ def initQuarkObject(apk_path: str):
 
 
 @tool
-def runQuarkAnalysis():
+def runQuarkAnalysisForSummaryReport():
     """
     Run Quark analysis with a rule.
     """
@@ -129,6 +132,181 @@ def colorizeInRed(text: str) -> str:
     return colors.red(text)
 
 
+@tool
+def loadRule(rulePath: str):
+    """
+    Given a rule path,
+    this instance loads a rule from the rule path.
+
+    Used Quark Script API: Rule(rule.json)
+    - description: Making detection rule a rule instance
+    - params: Path of a single Quark rule
+    - return: Quark rule instance
+    - example:
+
+        .. code:: python
+
+            from quark.script import Rule
+
+            ruleInstance = Rule("rule.json")
+
+    """
+
+    global ruleInstance
+    ruleInstance = Rule(rulePath)
+
+    return "Rule defined successfully"
+
+
+@tool
+def runQuarkAnalysis(samplePath: str):
+    """
+    Given detection rule and target sample,
+    this instance runs the Quark Analysis.
+
+    Used Quark Script API: runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+    - description: Given detection rule and target sample,
+                   this instance runs the basic Quark analysis
+    - params:
+        1. SAMPLE_PATH: Target file
+        2. ruleInstance: Quark rule object
+    - return: quarkResult instance
+    - example:
+
+        .. code:: python
+
+            from quark.script import runQuarkAnalysis
+
+            quarkResult = runQuarkAnalysis("sample.apk", ruleInstance)
+
+    """
+
+    global ruleInstance
+    global quarkResultInstance
+
+    quark = _getQuark(samplePath)
+    quarkResultInstance = QuarkResult(quark, ruleInstance)
+
+    return "Quark analysis completed successfully"
+
+
+@tool
+def getBehaviorOccurList():
+    """
+    Extracts the behavior occurrence list from quark analysis result.
+
+    Used Quark Script API: quarkResultInstance.behaviorOccurList
+    - description: List that stores instances of detected behavior
+                   in different part of the target file
+    - params: none
+    - return: detected behavior instance
+    - example:
+
+        .. code:: python
+
+            from quark.script import runQuarkAnalysis
+
+            quarkResult = runQuarkAnalysis("sample.apk", ruleInstance)
+            for behavior in quarkResult.behaviorOccurList:
+                print(behavior)
+
+    """
+
+    global quarkResultInstance
+    global behaviorOccurList
+
+    behaviorOccurList = quarkResultInstance.behaviorOccurList
+    return "Behavior occurrence list extracted successfully"
+
+
+@tool
+def getParameterValues():
+    """
+    Given the behavior occurrence list,
+    this instance extracts the parameter values.
+
+    Used Quark Script API: behaviorInstance.getParamValues(none)
+
+    - description: Get parameter values that API1 sends to API2 in the behavior
+    - params: none
+    - return: python list containing parameter values.
+    - example:
+
+        .. code:: python
+
+            from quark.script import runQuarkAnalysis
+
+            quarkResult = runQuarkAnalysis("sample.apk", ruleInstance)
+            for behavior in quarkResult.behaviorOccurList:
+                paramValues = behavior.getParamValues()
+                print(paramValues)
+    """
+
+    global behaviorOccurList
+    global parameters
+
+    for behavior in behaviorOccurList:
+        parameters = behavior.getParamValues()
+
+    return parameters
+
+
+@tool
+def isHardCoded():
+    """
+    Given the parameter values,
+    this instance checks if the parameter values are hard-coded
+    and return the hard-coded parameter.
+
+    Used Quark Script API: quarkResultInstance.isHardcoded(argument)
+    - description: Check if the argument is hardcoded into the APK.
+    - params:
+        1. argument: string value that is passed in when a method is invoked
+    - return: True/False
+    - example:
+
+        .. code:: python
+
+            from quark.script import runQuarkAnalysis
+
+            quarkResult = runQuarkAnalysis("sample.apk", ruleInstance)
+            isHardcoded = quarkResult.isHardcoded("hardcodedValue")
+            print(isHardcoded)
+    """
+
+    global parameters
+    global quarkResultInstance
+
+    hardcodedParameters = []
+    for parameter in parameters:
+        if quarkResultInstance.isHardcoded(parameter):
+            hardcodedParameters.append(parameter)
+
+    return hardcodedParameters
+
+
+@tool
+def writeCodeInFile(code: str, pyFile: str):
+    """
+    Given the code and file name, this instance writes the code in the file.
+    """
+
+    with open(pyFile, "w") as file:
+        file.write(code)
+
+    return pyFile
+
+
+@tool
+def executeCode(pyFile: str):
+    """
+    Given the code file, this instance executes the code.
+    """
+
+    os.system(f"python {pyFile}")
+    return "Code executed successfully"
+
+
 agentTools = [
     initRuleObject,
     initQuarkObject,
@@ -140,4 +318,11 @@ agentTools = [
     colorizeInCyan,
     colorizeInGreen,
     colorizeInRed,
+    loadRule,
+    runQuarkAnalysis,
+    getBehaviorOccurList,
+    getParameterValues,
+    isHardCoded,
+    writeCodeInFile,
+    executeCode
 ]
