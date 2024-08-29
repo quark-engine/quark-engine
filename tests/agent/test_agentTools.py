@@ -39,7 +39,7 @@ def testInitQuarkObject(SAMPLE_PATH_14d9f):
     assert isinstance(agentTools.quark, Quark)
 
 
-def testRunQuarkAnalysis(SAMPLE_PATH_14d9f):
+def testRunQuarkAnalysisForSummaryReport(SAMPLE_PATH_14d9f):
     rulePath = "quark/rules/sendLocation_SMS.json"
 
     with patch("quark.core.quark.Quark.run") as mockedRun:
@@ -49,7 +49,7 @@ def testRunQuarkAnalysis(SAMPLE_PATH_14d9f):
 
             agentTools.initRuleObject.func(rulePath)
             agentTools.initQuarkObject.func(SAMPLE_PATH_14d9f)
-            agentTools.runQuarkAnalysis.func()
+            agentTools.runQuarkAnalysisForSummaryReport.func()
 
             assert mockedRun.assert_called_once
             assert mockedShowSummaryReport.assert_called_once
