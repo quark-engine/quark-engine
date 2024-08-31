@@ -23,3 +23,10 @@ The Summary Report Example:
 Ensure you adhere to these rules and the example when providing a summary report.
 
 """
+
+PREPROMPT = """
+Before beginning the analysis of samples,
+please disregard any previously remembered detection processes.
+Unless specifically requested by the user,
+do not assume any detection procedures.
+"""
