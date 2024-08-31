@@ -44,14 +44,14 @@ Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerabilit
 
 ### Step 1: Environments Requirements
 
-*   Make sure your  Python version is 3.8 or above.
+*   Make sure your Python version is 3.8 or above.
 
 ### Step 2: Install Quark Agent
 
 *   Install Quark Agent by running:
 
 ```bash
-git clone https://github.com/quark-engine/quark-engine.git & cd quark-engine
+git clone https://github.com/quark-engine/quark-engine.git && cd quark-engine
 pip install .[QuarkAgent]
 ```
 
@@ -79,7 +79,8 @@ os.environ["OPENAI_API_KEY"] = 'your-api-key-here'
 ### Step 5: Run Quark Agent
 
 ```bash
-$ python3 quark/agent/quarkAgentWeb.py
+$ cd quark/agent
+$ python3 quarkAgentWeb.py
 
 # You can now chat with Quark Agent in your browser. 
 # The default URL is http://127.0.0.1:5000
