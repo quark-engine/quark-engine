@@ -66,7 +66,7 @@ class Objection:
     ):
         """Hook the target method with Objection.
 
-        :param method: the tagrget API
+        :param method: the target API
         :param overloadFilter: _description_, defaults to ""
         :param watchArgs: Return Args information if True, defaults to False
         :param watchBacktrace: Return backtrace information if True, defaults
