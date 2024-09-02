@@ -32,93 +32,63 @@
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
-# Quark Script - Dig Vulnerabilities in the BlackBox
+# Quark Agent - Your AI-powered Android APK Analyst
 
-### Innovative & Interactive
+![quark agent demo](https://hackmd.io/_uploads/By6ggTni0.png)
 
-*   The goal of Quark Script aims to provide an innovative way for mobile security researchers to analyze or **pentest** the targets.
-*   Based on Quark, we integrate decent tools as Quark Script APIs and make them exchange valuable intelligence to each other. This enables security researchers to **interact** with staged results and perform **creative** analysis with Quark Script.
+With Quark Agent, you can perform analyses using only natural language. It creates Quark Script code following your ideas and adjusts the code promptly as you provide feedback.
 
-### Dynamic & Static Analysis
+# Showcase:
 
-*   In Quark script, we integrate not only static analysis tools (e.g. Quark itself) but also dynamic analysis tools (e.g. [objection](https://github.com/sensepost/objection)).
-
-### Re-Usable & Sharable
-
-*   Once the user creates a Quark script for specific analysis scenario. The script can be used in another targets. Also, the script can be shared to other security researchers. This enables the exchange of knowledges.
-
-### More APIs to come
-
-*   Quark Script is now in a beta version. We'll keep releasing practical APIs and analysis scenarios.
-*   **See API document [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#introduce-of-quark-script-apis).**
-
-# CWE Showcases
-*   [CWE-020](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-20-in-android-application-diva-apk)  Improper Input Validation 
-*   [CWE-022](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-22-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal') 
-*   [CWE-023](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-23-in-android-application-ovaa-apk-and-insecurebankv2-apk)  Relative Path Traversal
-*   [CWE-073](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-73-in-android-application-ovaa-apk)   External Control of File Name or Path
-*   [CWE-078](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-78-in-android-application-vuldroid-apk)   Improper Neutralization of Special Elements used in an OS Command
-*   [CWE-088](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-88-in-android-application-vuldroid-apk)  Improper Neutralization of Argument Delimiters in a Command
-*   [CWE-089](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-89-in-android-application-androgoat-apk)  Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection') 
-*   [CWE-094](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-94-in-android-application-ovaa-apk)  Improper Control of Generation of Code ('Code Injection') 
-*   [CWE-117](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-117-in-android-application-allsafe-apk)  Improper Output Neutralization for Logs 
-*   [CWE-295](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-295-in-android-application-insecureshop-apk)  Improper Certificate Validation 
-*   [CWE-312](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-312-in-android-application-ovaa-apk)  Cleartext Storage of Sensitive Information 
-*   [CWE-319](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-319-in-android-application-ovaa-apk)  Cleartext Transmission of Sensitive Information 
-*   [CWE-327](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-327-in-android-application-injuredandroid-apk)  Use of a Broken or Risky Cryptographic Algorithm 
-*   [CWE-328](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-328-in-android-application-allsafe-apk)  Use of Weak Hash 
-*   [CWE-338](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-338-in-android-application-pivva-apk)  Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG) 
-*   [CWE-489](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-489-in-android-application-allsafe-apk-androgoat-apk-pivaa-apk)  Active Debug Code
-*   [CWE-502](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-502-in-android-application-pivaa)  Deserialization of Untrusted Data
-*   [CWE-532](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-532-in-android-application-dvba-apk)  Insertion of Sensitive Information into Log File 
-*   [CWE-601](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-601-in-android-application-ovaa)  URL Redirection to Untrusted Site ('Open Redirect')File 
-*   [CWE-749](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-749-in-android-application-mstg-android-java-apk)  Exposed Dangerous Method or Function 
-*   [CWE-780](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-780-in-android-application-mstg-android-java-apk)  Use of RSA Algorithm without OAEP 
-*   [CWE-798](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk)  Use of Hard-coded Credentials 
-*   [CWE-921](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-921-in-android-application-ovaa-apk)  Storage of Sensitive Data in a Mechanism without Access Control 
-*   [CWE-925](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-925-in-android-application-insecurebankv2-androgoat)  Improper Verification of Intent by Broadcast Receiver
-*   [CWE-926](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-926-in-android-application-dvba-apk)  Improper Export of Android Application Components
-*   [CWE-940](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-940-in-android-application-ovaa-vuldroid)  Improper Verification of Source of a Communication Channel 
- 
-# Quick Start
-
-In this section, we will show how to detect CWE-798 with Quark Script.
+Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerability in the ovaa.apk file.
 
 ### Step 1: Environments Requirements
 
-*   Quark requires Python 3.9 or above.
+*   Make sure your Python version is 3.9 or above.
 
-### Step 2: Install Quark Engine
+### Step 2: Install Quark Agent
 
-*   Install Quark Engine by running:
-
-```bash
-$ pip3 install -U quark-engine
-```
-
-### Step 3: Prepare Quark Script, Detection Rule and the Sample File
-
-1.  Get the CWE-798 Quark Script and the detection rule [here](https://quark-engine.readthedocs.io/en/latest/quark_script.html#detect-cwe-798-in-android-application-ovaa-apk).
-2.  Get the sampe file (ovaa.apk) [here](https://github.com/dark-warlord14/ovaa/releases/tag/1.0).
-3.  Put the script, detection rule, and sample file in the same directory.
-4.  Edit accordingly to the file names:
+*   Install Quark Agent by running:
 
 ```bash
-SAMPLE_PATH = "ovaa.apk"
-RULE_PATH = "findSecretKeySpec.json"
-# Now you are ready to run the script!
+git clone https://github.com/quark-engine/quark-engine.git && cd quark-engine
+pip install .[QuarkAgent]
 ```
 
-### Step 4: Run the script
+### Step 3: Prepare the Detection Rule and the Sample File
 
 ```bash
-$ python3 CWE-798.py
-
-# You should now see the detection result in the terminal.
-Found hard-coded AES key 49u5gh249gh24985ghf429gh4ch8f23f
+.
+├── ...
+├── quark                   
+    ├── ...           
+    ├── agent               # Put rule file and sample file here
+    ├── ...                
 ```
 
-*   **Check the [document](https://quark-engine.readthedocs.io/en/latest/quark_script.html#quark-script) for more examples.**
+You can download the **rule file** [here](https://github.com/quark-engine/quark-script/blob/main/constructCryptoGraphicKey.json) and the **sample file** [here](https://github.com/oversecured/ovaa).
+
+### Step 4: Add your OpenAI API key
+
+Add your OpenAI API key in `quarkAgentWeb.py`
+
+```python
+os.environ["OPENAI_API_KEY"] = 'your-api-key-here'
+```
+
+### Step 5: Run Quark Agent
+
+```bash
+$ cd quark/agent
+$ python3 quarkAgentWeb.py
+
+# You can now chat with Quark Agent in your browser. 
+# The default URL is http://127.0.0.1:5000
+```
+
+Open a browser and navigate to `127.0.0.1:5000` to start using Quark Agent
+
+See more CWE detections using [quark scripts](https://quark-engine.readthedocs.io/en/latest/quark_script.html) and play them with Quark Agent !
 
 # Acknowledgments
 
