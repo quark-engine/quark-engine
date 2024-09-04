@@ -1,3 +1,13 @@
+quark-engine (24.9.1-0kali1) kali-dev; urgency=medium
+
+  * New Feature:
+    - Introduce Quark Agent and its web interface, enabling users to perform analyses using natural language. (#670, #678)
+
+  * Document Enhancement:
+    - Optimize the CWE-88 document. (#677)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Wed, 4 Sep 2024 17:00:00 +0800
+
 quark-engine (24.8.1-0kali1) kali-dev; urgency=medium
 
   * New Feature:
