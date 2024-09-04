@@ -34,6 +34,10 @@ function detectLanguage(code) {
   return "plaintext";
 }
 
+function safeSetInnerHTML(element, html) {
+    element.innerHTML = DOMPurify.sanitize(html);
+}
+
 codeMirror.on("change", function (instance) {
   var code = instance.getValue();
   var detectedLanguage = detectLanguage(code);
@@ -45,8 +49,7 @@ send.addEventListener("click", function () {
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  /* eslint-disable-next-line no-unsanitized/property */
-  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage));
+  safeSetInnerHTML(userDiv, marked.parse(userMessage));
 
   textBox.appendChild(userDiv);
 
@@ -60,8 +63,7 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      /* eslint-disable-next-line no-unsanitized/property */
-      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
+      safeSetInnerHTML(textDiv, marked.parse(botMessage.plain_text));
 
       textBox.appendChild(textDiv);
 
