@@ -45,8 +45,7 @@ send.addEventListener("click", function () {
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  // eslint-disable-next-line
-  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage));
+  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage)); // eslint-disable-line
 
   textBox.appendChild(userDiv);
 
@@ -60,8 +59,7 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      // eslint-disable-next-line
-      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
+      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text)); // eslint-disable-line
 
       textBox.appendChild(textDiv);
 
