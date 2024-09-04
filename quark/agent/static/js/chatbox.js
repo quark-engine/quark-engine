@@ -45,7 +45,7 @@ send.addEventListener("click", function () {
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  // eslint-disable-next-line no-unsanitized/property
+  // eslint-disable-next-line
   userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage));
 
   textBox.appendChild(userDiv);
@@ -60,7 +60,7 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      // eslint-disable-next-line no-unsanitized/property
+      // eslint-disable-next-line
       textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
 
       textBox.appendChild(textDiv);
