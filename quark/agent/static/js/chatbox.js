@@ -45,7 +45,12 @@ send.addEventListener("click", function () {
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage));
+  const sanitizedHTML = DOMPurify.sanitize(marked.parse(userMessage));
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = sanitizedHTML;
+  while (tempDiv.firstChild) {
+    userDiv.appendChild(tempDiv.firstChild);
+  }
 
   textBox.appendChild(userDiv);
 
@@ -59,7 +64,12 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
+      const sanitizedHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = sanitizedHTML;
+      while (tempDiv.firstChild) {
+        textDiv.appendChild(tempDiv.firstChild);
+      }
 
       textBox.appendChild(textDiv);
 
