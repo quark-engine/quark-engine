@@ -1,5 +1,6 @@
 /*global CodeMirror*/
 /*global marked*/
+/*global DOMPurify*/
 
 var textBox = document.getElementById("textBox");
 var codeBox = document.getElementById("codeBox");
