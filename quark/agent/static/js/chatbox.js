@@ -41,11 +41,11 @@ codeMirror.on("change", function (instance) {
 });
 
 send.addEventListener("click", function () {
-  var userMessage = DOMPurify.sanitize(message.value);
+  var userMessage = message.value;
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  userDiv.innerHTML = marked.parse(userMessage);
+  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage));
 
   textBox.appendChild(userDiv);
 
@@ -59,7 +59,7 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      textDiv.innerHTML = marked.parse(DOMPurify.sanitize(botMessage.plain_text));
+      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text));
 
       textBox.appendChild(textDiv);
 
