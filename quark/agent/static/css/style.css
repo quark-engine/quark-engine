@@ -13,7 +13,7 @@ body {
 h1 {
   text-align: center;
   margin-bottom: 20px;
-  color: #ffffff;
+  color: #fff;
 }
 
 .container {
@@ -32,7 +32,7 @@ h1 {
   border-color: #a0a0a0;
   color: #c7c7c7;
   overflow-y: auto;
-  box-shadow: 0px 0px 10px rgb(133 133 133 / 70%);
+  box-shadow: 0 0 10px rgb(133 133 133 / 70%);
   border-radius: 5px;
   transition: width 0.3s ease;
 }
@@ -44,7 +44,7 @@ h1 {
   background-color: #414141;
   color: #c7c7c7;
   overflow-y: auto;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   transition: width 0.3s ease;
   margin-bottom: 10px;
@@ -65,7 +65,7 @@ h1 {
   border: 1px solid #3e3e3e;
   border-color: #a0a0a0;
   background-color: #414141;
-  box-shadow: 0px 0px 10px rgb(133 133 133 / 70%);
+  box-shadow: 0 0 10px rgb(133 133 133 / 70%);
   color: #c7c7c7;
   font-size: 20px;
   padding-right: 50px;
@@ -78,7 +78,7 @@ h1 {
   height: 50px;
   border-radius: 50%;
   background-color: #c0c0c0;
-  color: #ffffff;
+  color: #fff;
   border: none;
   font-size: 16px;
   cursor: pointer;
@@ -118,13 +118,13 @@ h1 {
 
 .message.user::before {
   content: "\f007";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Free", sans-serif;
   font-weight: 900;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ffffff;
+  color: #fff;
 }
 
 .message.bot {
@@ -138,13 +138,13 @@ h1 {
 
 .message.bot::before {
   content: "\f5dc";
-  font-family: "Font Awesome 5 Free";
+  font-family: "Font Awesome 5 Free", sans-serif;
   font-weight: 900;
   position: absolute;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  color: #ffffff;
+  color: #fff;
 }
 
 .chatbox {
@@ -155,6 +155,11 @@ h1 {
 .CodeMirror-scroll {
   font-size: 16px;
   height: 100%;
+}
+
+.CodeMirror-gutters {
+  background-color: #2d2d2d;
+  border-right: 1px solid #3e3e3e;
 }
 
 .cm-s-dracula .CodeMirror-gutters,
@@ -173,17 +178,12 @@ h1 {
   background-color: #414141 !important;
 }
 
-.CodeMirror-gutters {
-  background-color: #2d2d2d;
-  border-right: 1px solid #3e3e3e;
-}
-
 .CodeMirror-linenumber {
   color: #858585;
 }
 
 .CodeMirror-cursor {
-  border-left: 1px solid #ffffff;
+  border-left: 1px solid #fff;
 }
 
 .cm-s-dracula .cm-keyword {

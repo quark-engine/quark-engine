@@ -1,3 +1,7 @@
+/*global CodeMirror*/
+/*global marked*/
+/*global DOMPurify*/
+
 var textBox = document.getElementById("textBox");
 var codeBox = document.getElementById("codeBox");
 var message = document.getElementById("message");
@@ -6,7 +10,7 @@ var copyButton = document.getElementById("copyButton");
 var languageLabel = document.getElementById("languageLabel");
 
 // Initialize CodeMirror with dark theme
-var codeMirror = CodeMirror(codeBox, {
+var codeMirror = new CodeMirror(codeBox, {
   lineNumbers: true,
   theme: "dracula",
   readOnly: false,
@@ -14,14 +18,17 @@ var codeMirror = CodeMirror(codeBox, {
 });
 
 function detectLanguage(code) {
-  if (/^\s*<!DOCTYPE html>|<html/.test(code)) {
-    return "xml";
-  } else if (/^\s*#include|int\s+main\s*\(/.test(code)) {
-    return "clike";
-  } else if (/^\s*def\s+|import\s/.test(code)) {
-    return "python";
-  } else if (/^\s*(function|var|let|const)\s+/.test(code) || /console\.log/.test(code)) {
-    return "javascript";
+  const patterns = {
+    xml: /^\s*<!DOCTYPE html>|<html/,
+    clike: /^\s*#include|int\s+main\s*\(/,
+    python: /^\s*def\s+|import\s/,
+    javascript: /^\s*(function|var|let|const)\s+/.test(code) || /console\.log/.test(code)
+  };
+
+  for (const [language, pattern] of Object.entries(patterns)) {
+    if (pattern.test(code)) {
+      return language;
+    }
   }
 
   return "plaintext";
@@ -38,7 +45,7 @@ send.addEventListener("click", function () {
   var userDiv = document.createElement("div");
 
   userDiv.className = "message user";
-  userDiv.innerHTML = marked.parse(userMessage);
+  userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage)); // eslint-disable-line
 
   textBox.appendChild(userDiv);
 
@@ -52,7 +59,7 @@ send.addEventListener("click", function () {
       var textDiv = document.createElement("div");
 
       textDiv.className = "message bot";
-      textDiv.innerHTML = marked.parse(botMessage.plain_text);
+      textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text)); // eslint-disable-line
 
       textBox.appendChild(textDiv);
 
