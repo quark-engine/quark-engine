@@ -7,6 +7,7 @@ from pathlib import Path
 HOME_DIR = f"{Path.home()}/.quark-engine/"
 SOURCE = "https://github.com/quark-engine/quark-rules"
 DIR_PATH = f"{HOME_DIR}quark-rules/rules"
+OPENAI_API_KEY = ''
 
 DEBUG = False
 

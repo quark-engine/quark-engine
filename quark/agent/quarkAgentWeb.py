@@ -15,10 +15,11 @@ from langchain.agents.format_scratchpad.openai_tools import (
 from langchain_core.messages import AIMessage, HumanMessage
 from quark.agent.agentTools import agentTools
 from quark.agent.prompts import PREPROMPT
+from quark.config import OPENAI_API_KEY
 
 app = Flask(__name__)
 
-os.environ["OPENAI_API_KEY"] = ''
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 conversation_history = []
 
