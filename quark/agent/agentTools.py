@@ -3,6 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import os
+from typing import List
 
 from quark.script import Rule, _getQuark, QuarkResult
 from quark.core.struct.ruleobject import RuleObject
@@ -76,7 +77,7 @@ def runQuarkAnalysisForSummaryReport():
 
 
 @tool
-def calculateTotalScore(scores: list[float], weights: list[float]) -> float:
+def calculateTotalScore(scores: List[float], weights: List[float]) -> float:
     """Calculate the total score using the scores and the weights.
 
     :param scores: a list of scores
