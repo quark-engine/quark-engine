@@ -31,10 +31,10 @@ jobs:
         # Install graphviz & ninja
         sudo apt-get -y install graphviz ninja-build
  
-        # Install Rizin (0.6.2)
+        # Install Rizin (0.7.3)
         sudo git clone https://github.com/rizinorg/rizin /opt/rizin/
         cd /opt/rizin/
-        sudo git checkout v0.6.2
+        sudo git checkout v0.7.3
         meson build
         ninja -C build
         sudo ninja -C build install
