@@ -1,19 +1,302 @@
+###########
 Quark Agent
-===========
+###########
 
-Introducing Quark's new member, the Quark Agent, the second AI assistant in the Quark team. This agent lets users get Quark reports using natural language, eliminating the need for terminal commands and making the analysis simple and user-friendly.
+Introducing Quark's new member, Quark Agent, the AI assistant in the Quark team. This agent lets users perform Quark analysis using natural language, eliminating the need for scripting expertise or terminal commands, which makes the analysis simple and user-friendly.
 
-The Quark Agent integrates with LangChain, using OpenAI's large language model to act as a bridge between the natural language and the Quark APIs. LangChain defines the Quark APIs as tools that large language models can understand and use. This means users can run any Quark analysis using natural language by simply adding new tools as needed.
+Quark Agent integrates with LangChain, using OpenAI's large language model to act as a bridge between the natural language and the Quark/Quark Script APIs. LangChain defines these APIs as tools that large language models can understand and use. This means users can run Quark analysis using natural language by simply adding new tools as needed.
 
-Showcase: Generate Summary Report with Quark Agent
---------------------------------------------------
+Below are showcases of using Quark Agent for vulnerability and malware analysis.
 
-Here's an example of using the Quark Agent. This agent can currently analyze `ovaa.apk <https://github.com/oversecured/ovaa>`__ and generate a :ref:`summary report <summary-report>`. See the details below.
+**********************
+Vulnerability Analysis
+**********************
+
+Showcase: Detecting CWE-798 with Quark Agent
+---------------------------------------------------
+
+This example uses Quark Agent to detect `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`__ vulnerability in `ovaa.apk <https://github.com/oversecured/ovaa>`__. See the details below.
 
 Quick Start
 ~~~~~~~~~~~
 
-1. Install the Quark Agent:
+1. Clone the repository:
+
+   .. code-block::
+
+      git clone https://github.com/quark-engine/quark-script.git
+
+2. Install the required packages:
+
+   .. code-block::
+
+      pip install -r requirements.txt
+
+3. Add your OpenAI API key in quarkScriptAgent.py.
+
+   .. code-block:: python
+
+      os.environ["OPENAI_API_KEY"] = {your API Key}
+
+4. Run the script:
+
+   .. code-block::
+
+      python quarkScriptAgent.py
+
+5. Result:
+
+.. image:: https://github.com/user-attachments/assets/9c8ba9d3-c8b5-4583-8cb8-750f8c3bf2a7
+
+
+Decode the Prompts
+~~~~~~~~~~~~~~~~~~
+
+Here are two prompts, each for executing different analysis processes.
+
+.. code:: TEXT
+
+   1st Prompt: Initialize the rule instance with the rule path set to "constructCryptoGraphicKey.json"
+
+Used Quark Script APIs/Tools that LLM used: ``loadRule``
+
+.. code:: TEXT
+
+   2nd Prompt: Run Quark Analysis using the rule instance on the apk sample "ovaa.apk", 
+               and Check if the parameters are hard-coded. If yes, display the hard-coded values.
+
+Used Quark Script APIs/Tools that LLM used: ``runQuarkAnalysis``,
+``getBehaviorOccurList``, ``getParameterValues`` and ``isHardCoded``
+
+The ``loadRule``, ``runQuarkAnalysis``, ``getBehaviorOccurList``,
+``getParameterValues``, and ``isHardCoded`` functions are treated as
+**tools** within LangChain, enabling them to be invoked through the
+``gpt-4o`` model to analyze and identify
+`CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`__ vulnerabilities in the `ovaa.apk <https://github.com/oversecured/ovaa>`__ sample.
+
+.. image:: https://hackmd.io/_uploads/BkplMjvYR.png
+
+
+Showcase: Generating Quark Script with Quark Agent
+---------------------------------------------------------
+
+Quark Agent allows you to automate the creation of Quark Script code. This lets users concentrate on designing the detection process, while the LLM and Quark Script API handle the coding. This approach greatly enhances efficiency and streamlines the workflow.
+
+Here's an example for generating a Quark Script to detect CWE-798.
+
+Demo Video
+~~~~~~~~~~
+
+.. raw:: html
+
+   <iframe src="https://github.com/user-attachments/assets/dc0e782b-3500-4260-a961-c499c14e495c" width="700" height="300" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+
+
+
+Decode the Prompts
+~~~~~~~~~~~~~~~~~~
+
+Now, let's instruct Quark Agent to detect CWE-798 and write the Quark Script for the detection process using the following prompt.
+
+**Assign a role to the Agent**
+
+To make Quark Agent's responses more precise and relevant to vulnerability detection, we assign it the role of an Android APK vulnerability analyst.
+
+.. code-block:: TEXT
+
+   User: 
+   Now you are an Android APK vulnerability analyst. Please follow the steps below to analyze a sample.
+
+.. code-block:: TEXT
+
+   Agent: 
+   Sure, I'd be happy to help with that. Please provide the sample APK file and the detection rule file that you would like to use for the analysis.
+
+
+**Instruct the detection process**
+
+Instruct Quark Agent to detect CWE-798 using the following detection process.
+
+.. code-block:: TEXT
+
+   Detection Process:
+   1. Define the behavior "Construct Cryptographic Key" in the rule instance.
+   2. Run Quark Analysis using the rule instance on the APK sample.
+   3. Obtain all instances of detected behaviors from the Quark Analysis results.
+   4. Retrieve the parameter values for each occurred behavior.
+   5. Check if any parameters are hard-coded. If found, print the hard-coded parameters.
+
+..
+
+.. note::
+   
+   The prompt will include details like the sample or rule path.
+
+
+
+1. Define the behavior "Construct Cryptographic Key" in the rule instance.
+ 
+.. code-block:: TEXT
+   
+   User: 
+   1. Define the behavior "Construct Cryptographic Key" in the rule instance, with the rule path set to "constructCryptoGraphicKey.json".
+
+
+.. code-block:: TEXT
+
+   Agent: 
+   The behavior "Construct Cryptographic Key" has been successfully defined in the rule instance with the rule path set to "constructCryptoGraphicKey.json". How would you like to proceed?
+
+
+2. Run Quark Analysis using the rule instance on the APK sample.
+
+.. code-block:: TEXT
+   
+   User:
+   2. Run Quark Analysis using the rule instance on the APK sample "ovaa.apk".
+
+
+.. code-block:: TEXT
+
+   Agent:
+   The Quark analysis on the APK sample "ovaa.apk" has been completed successfully. What would you like to do next?
+
+
+3. Obtain all instances of detected behaviors from the Quark Analysis results.
+   
+.. code-block:: TEXT
+   
+   User:
+   3. Obtain all instances of detected behaviors from the Quark Analysis results in the sample "ovaa.apk".
+
+
+.. code-block:: TEXT
+
+   Agent
+   I have obtained all instances of detected behaviors from the Quark Analysis results in the sample "ovaa.apk". If you need further details or specific information about these behaviors, please let me know!
+
+
+4. Retrieve the parameter values for each occurred behavior.
+
+.. code-block:: TEXT
+   
+   User:
+   4. Retrieve the parameter values for each occurred behavior.
+
+
+.. code-block:: TEXT
+
+   Agent:
+   The parameter values for the occurred behavior are:
+   1. "49u5gh249gh24985ghf429gh4ch8f23f"
+   2. "AES"
+
+   Would you like to check if any of these values are hard-coded?
+
+
+5. Check if any parameters are hard-coded. If found, print the hard-coded parameters.
+
+.. code-block:: TEXT
+   
+   User:
+   5. Check if any parameter values are hard-coded. If yes, display the hard-coded values.
+
+
+.. code-block:: TEXT
+
+   Agent:
+   The following parameter values are hard-coded:
+
+   1. `49u5gh249gh24985ghf429gh4ch8f23f`
+   2. `AES`
+
+
+**Generate Quark Script**
+
+Finally, ask Quark Agent to write and execute the Python code based on the detection process outlined above.
+
+.. code-block:: TEXT
+
+   User:
+   Using the Quark Script API, implement the above logic in Python and save it to 'detectCWE798.py', with the rule path set to 'constructCryptoGraphicKey.json' and the sample path to 'ovaa.apk'.
+
+
+.. code-block:: TEXT
+
+   Agent:
+   The code has been written to `detectCWE798.py`. You can now execute this script to perform the analysis.
+
+
+Here is the generated code:
+
+.. code-block:: python
+
+   from quark.script import Rule, runQuarkAnalysis
+
+   # Load the rule
+   rule_path = 'constructCryptoGraphicKey.json'
+   rule_instance = Rule(rule_path)
+
+   # Define the sample path
+   sample_path = 'ovaa.apk'
+
+   # Run the Quark analysis
+   quark_result = runQuarkAnalysis(sample_path, rule_instance)
+
+   # Extract the behavior occurrence list
+   behavior_occur_list = quark_result.behaviorOccurList
+
+   # Iterate through each behavior and get parameter values
+   for behavior in behavior_occur_list:
+       param_values = behavior.getParamValues()
+       for param in param_values:
+           # Check if the parameter value is hardcoded
+           is_hardcoded = quark_result.isHardcoded(param)
+           if is_hardcoded:
+               print(f'Hardcoded value found: {param}')
+
+
+.. code-block:: TEXT
+
+   User:
+   Execute detectCWE798.py
+
+
+Here is the result.
+
+.. code-block:: shell
+
+   Hardcoded value found: 49u5gh249gh24985ghf429gh4ch8f23f
+   Hardcoded value found: AES
+
+
+We added 2 tools, ``writeCodeInFile`` and ``executeCode`` , to enable Quark Agent to generate and execute Quark Script code.
+
+.. image:: https://github.com/user-attachments/assets/d8fd805a-86c9-4eff-b120-d340fc43d792
+
+
+.. note::
+   1. The code is generated by OpenAI's GPT model, and the output may not always match the documentation exactly.
+   2. Since LangChain currently does not support passing Python
+      instances between tools, we are temporarily using global variables
+      to pass parameters between tools in ``quarkScriptAgent.py``.
+   3. Place the rules, samples, and ``quarkScriptAgent.py`` in the same
+      folder; the LLM will automatically find files with matching names.
+   4. A web GUI is under construction, please stay tuned!
+
+****************
+Malware Analysis
+****************
+
+Showcase: Generate Summary Report with Quark Agent
+--------------------------------------------------
+
+This example uses Quark Agent to analyze `ovaa.apk <https://github.com/oversecured/ovaa>`__ and generate a :ref:`summary report <summary-report>`. See the details below.
+
+Quick Start
+~~~~~~~~~~~
+
+1. Install Quark Agent:
 
    .. code-block:: shell
 
@@ -33,7 +316,7 @@ Quick Start
 
       export OPENAI_API_KEY='your-api-key-here'
 
-4. Run the Quark Agent:
+4. Run Quark Agent:
 
    .. code-block:: shell
 
@@ -47,13 +330,13 @@ Quick Start
 Decode the Prompts
 ~~~~~~~~~~~~~~~~~~
 
-Here, we explain what happens after running the Quark Agent.
+Here, we explain what happens after running Quark Agent.
 
 **Preset Prompt**
 
-To ensure the ``gpt-4o-mini`` model follows the correct format of a summary report, we designed the following preset prompt and hard-coded it into the Quark Agent.
+To ensure the ``gpt-4o-mini`` model follows the correct format of a summary report, we designed the following preset prompt and hard-coded it into Quark Agent.
 
-When the Quark Agent starts, it will automatically pass the preset prompt to the ``gpt-4o-mini`` model. Hence, we don't need to pass this prompt manually.
+When Quark Agent starts, it will automatically pass the preset prompt to the ``gpt-4o-mini`` model. Hence, we don't need to pass this prompt manually.
 
 .. code:: TEXT
 
@@ -80,7 +363,7 @@ When the Quark Agent starts, it will automatically pass the preset prompt to the
 
 **User Prompts**
 
-Then, by passing the following prompt manually, we ask the Quark Agent to analyze the `ovaa.apk <https://github.com/oversecured/ovaa>`__ sample and generate a summary report. 
+Then, by passing the following prompt manually, we ask Quark Agent to analyze the `ovaa.apk <https://github.com/oversecured/ovaa>`__ sample and generate a summary report. 
 
 .. code:: TEXT
 
@@ -89,7 +372,7 @@ Then, by passing the following prompt manually, we ask the Quark Agent to analyz
 
 Used Quark APIs/Tools that LLM used: ``initRuleObject``, ``initQuarkObject``, ``runQuarkAnalysisForSummaryReport``, ``getSummaryReportTable``, ``getAnalysisResultRisk``, and ``getAnalysisResultScore``
 
-To highlight the analysis result, we ask the Quark Agent to colorize the summary report.
+To highlight the analysis result, we ask Quark Agent to colorize the summary report.
 
 .. code:: TEXT
 
@@ -123,11 +406,11 @@ Demo Video
 Decode the Prompts
 ~~~~~~~~~~~~~~~~~~
 
-Now, let's explain what happens after running the Quark Agent.
+Now, let's explain what happens after running Quark Agent.
 
 **Generate a summary report**
 
-We ask the Quark Agent to generate a summary report for `Ahmyth.apk <https://github.com/quark-engine/apk-samples/blob/master/malware-samples/Ahmyth.apk>`__ .
+We ask Quark Agent to generate a summary report for `Ahmyth.apk <https://github.com/quark-engine/apk-samples/blob/master/malware-samples/Ahmyth.apk>`__.
 
 .. code-block:: TEXT
 
@@ -157,7 +440,7 @@ We ask the Quark Agent to generate a summary report for `Ahmyth.apk <https://git
 
 **Assign a role to the agent**
 
-To make the Quark Agent's responses more precise and relevant to malware analysis, we assign it the role of an Android malware analysis expert.
+To make Quark Agent's responses more precise and relevant to malware analysis, we assign it the role of an Android malware analysis expert.
 
 .. code-block:: TEXT
 
@@ -319,7 +602,7 @@ Then, the agent is ready to enhance the summary report. We then ask it to adjust
    +------------+---------------------------------------------------------------------------+------------+-------+--------+
 
 
-Here is the summary report enhanced by the Quark Agent.
+Here is the summary report enhanced by Quark Agent.
 
 .. code-block:: TEXT
    
@@ -340,7 +623,7 @@ Here is the summary report enhanced by the Quark Agent.
    | 00010.json | Read sensitive data(SMS, CALLLOG) and put it into JSON object             | 100%       | 1.0   | 1.0    |  
    +------------+---------------------------------------------------------------------------+------------+-------+--------+
 
-We added the tool ``listDirectory`` to enable the Quark Agent access rules in a directory and the tool ``calculateTotalScore`` to recalculate the total score. The entire enhancement of the summary report relies on the Quark Agent's understanding of Quark analysis and rules.
+We added the tool ``listDirectory`` to enable Quark Agent access rules in a directory and the tool ``calculateTotalScore`` to recalculate the total score. The entire enhancement of the summary report relies on Quark Agent's understanding of Quark analysis and rules.
 
 .. image:: https://github.com/user-attachments/assets/3e0dd6a3-b31c-4d85-8f92-3f0a2bc9918b
 
