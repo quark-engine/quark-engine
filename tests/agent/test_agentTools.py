@@ -38,7 +38,8 @@ def testInitRuleObject():
 
     agentTools.initRuleObject.func(rulePath)
 
-    assert isinstance(agentTools.rule_checker, RuleObject)
+    assert isinstance(agentTools.rule_checker, list)
+    assert isinstance(agentTools.rule_checker[0], RuleObject)
 
 
 def testInitQuarkObject(SAMPLE_PATH_14d9f):
