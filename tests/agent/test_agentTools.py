@@ -25,12 +25,21 @@ def testImportAgentToolsWithoutLangChain():
     reload("quark.agent.agentTools")
 
 
+def testListDirectory():
+    directory = "tests/agent"
+
+    result = agentTools.listDirectory.func(directory)
+
+    assert "test_agentTools.py" in result
+
+
 def testInitRuleObject():
     rulePath = "quark/rules/sendLocation_SMS.json"
 
     agentTools.initRuleObject.func(rulePath)
 
-    assert isinstance(agentTools.rule_checker, RuleObject)
+    assert isinstance(agentTools.rule_checker, list)
+    assert isinstance(agentTools.rule_checker[0], RuleObject)
 
 
 def testInitQuarkObject(SAMPLE_PATH_14d9f):
@@ -53,6 +62,15 @@ def testRunQuarkAnalysisForSummaryReport(SAMPLE_PATH_14d9f):
 
             assert mockedRun.assert_called_once
             assert mockedShowSummaryReport.assert_called_once
+
+
+def testCalculateTotalScore():
+    scores = [0, 0.5, 1]
+    weights = [1, 0.5, 0]
+
+    result = agentTools.calculateTotalScore.func(scores, weights)
+
+    assert result == 0.25
 
 
 def testGetSummaryReportTable(quarkObject):

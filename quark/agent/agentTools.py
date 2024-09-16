@@ -2,6 +2,9 @@
 # This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
+import os
+from typing import List
+
 from quark.script import Rule, _getQuark, QuarkResult
 from quark.core.struct.ruleobject import RuleObject
 from quark.utils.weight import Weight
@@ -17,12 +20,23 @@ except ModuleNotFoundError as e:
         return func
 
 
-rule_checker = None
+rule_checker = []
 quark = None
 parameters = None
 behaviorOccurList = None
 ruleInstance = None
 quarkResultInstance = None
+
+
+@tool
+def listDirectory(directory_path: str):
+    """List the contents of a directory
+
+    :param directory_path: the path of a directory
+    :return: a list of the contents in the directory
+    """
+
+    return os.listdir(directory_path)
 
 
 @tool
@@ -32,7 +46,7 @@ def initRuleObject(rule_path: str):
     """
     global rule_checker
 
-    rule_checker = RuleObject(rule_path)
+    rule_checker.append(RuleObject(rule_path))
 
     return "Rule initialized successfully"
 
@@ -55,9 +69,27 @@ def runQuarkAnalysisForSummaryReport():
     """
     Run Quark analysis with a rule.
     """
-    quark.run(rule_checker)
-    quark.show_summary_report(rule_checker)
+    for rule in rule_checker:
+        quark.run(rule)
+        quark.show_summary_report(rule)
+
     return "Successfully run Quark analysis"
+
+
+@tool
+def calculateTotalScore(scores: List[float], weights: List[float]) -> float:
+    """Calculate the total score using the scores and the weights.
+
+    :param scores: a list of scores
+    :param weights: a list of weights
+    :return: the total score
+    """
+
+    totalScore = sum(
+        (score * weight for score, weight in zip(scores, weights))
+    )
+
+    return totalScore
 
 
 @tool
@@ -294,9 +326,11 @@ def writeCodeInFile(code: str, pyFile: str):
 
 
 agentTools = [
+    listDirectory,
     initRuleObject,
     initQuarkObject,
-    runQuarkAnalysis,
+    runQuarkAnalysisForSummaryReport,
+    calculateTotalScore,
     getSummaryReportTable,
     getAnalysisResultRisk,
     getAnalysisResultScore,

@@ -123,7 +123,7 @@ def entryPoint(api_key: str) -> None:
                 print(cyan("Agent: "), response["output"])
                 print()
 
-                inputText = input(green("User Input: "))
+            inputText = input(green("User Input: "))
     except click.Abort:
         return
 

@@ -28,6 +28,14 @@ quark.agent.quarkAgent module
    :undoc-members:
    :show-inheritance:
 
+quark.agent.quarkAgentWeb module
+--------------------------------
+
+.. automodule:: quark.agent.quarkAgentWeb
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
