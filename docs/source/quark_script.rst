@@ -2351,20 +2351,35 @@ Quark Script Result
 
 
 
-Detect CWE-117 in Android Application (allsafe.apk)
-------------------------------------------------------
-This scenario seeks to find **Improper Output Neutralization for Logs**. See `CWE-117 <https://cwe.mitre.org/data/definitions/117.html>`_ for more details.
+Detect CWE-117 in Android Application
+--------------------------------------
 
-Let’s use this `APK <https://github.com/t0thkr1s/allsafe>`_ and the above APIs to show how the Quark script finds this vulnerability.
+This scenario seeks to find **Improper Output Neutralization for Logs**.
+
+CWE-117: Improper Output Neutralization for Logs
+=================================================
+
+We analyze the definition of CWE-117 and identify its characteristics.
+
+See `CWE-117 <https://cwe.mitre.org/data/definitions/117.html>`_ for more details.
+
+.. image:: https://imgur.com/poFP2Py.jpg
+
+Code of CWE-117 in allsafe.apk
+===============================
+
+We use the `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_ sample to explain the vulnerability code of CWE-117.
+
+.. image:: https://imgur.com/AgCpFzr.jpg
+
+Quark Script CWE-117.py
+========================
 
 First, we design a detection rule ``writeContentToLog.json`` to spot on behavior using the method that writes contents to the log file.
 
 Then, we use ``behaviorInstance.getParamValues()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as ``escape``, ``replace``, ``format``, and ``setFilter``.
 
 If the answer is **YES**, that may result in secret context leakage into the log file, or the attacker may perform log forging attacks.
-
-Quark Script CWE-117.py
-==========================
 
 .. code-block:: python
 
