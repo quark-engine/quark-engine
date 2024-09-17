@@ -2434,7 +2434,6 @@ Quark Rule: writeContentToLog.json
 
 Quark Script Result
 ======================
-- **allsafe.apk**
 
 .. code-block:: TEXT
 
