@@ -440,8 +440,8 @@ First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior
 
     for secretKeySpec in quarkResult.behaviorOccurList:
 
-        firstParam = secretKeySpec.getParamValues()[1]
-        secondParam = secretKeySpec.getParamValues()[2]
+        firstParam = secretKeySpec.secondAPI.getArguments()[1]
+        secondParam = secretKeySpec.secondAPI.getArguments()[2]
 
         if secondParam == "AES":
             AESKey = re.findall(r"\((.*?)\)", firstParam)[1]
@@ -602,7 +602,7 @@ Quark Script: CWE-921.py
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API ``behaviorInstance.getParamValues()`` to get the file path. Finally, CWE-921 is found if the file path contains the keyword ``sdcard``.
+First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API ``methodInstance.getArguments()`` to get the file path. Finally, CWE-921 is found if the file path contains the keyword ``sdcard``.
 
 .. code-block:: python
 
@@ -615,7 +615,7 @@ First, we design a detection rule ``checkFileExistence.json`` to spot on behavio
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
     for existingFile in quarkResult.behaviorOccurList:
-        filePath = existingFile.getParamValues()[0]
+        filePath = existingFile.secondAPI.getArguments()[0]
         if "sdcard" in filePath:
             print(f"This file is stored inside the SDcard\n")
             print(f"CWE-921 is detected in {SAMPLE_PATH}.")
@@ -690,26 +690,27 @@ First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the
 
     APP_PACKAGE_NAME = "oversecured.ovaa"
 
-    TARGET_METHOD = "android.app." \
-                    "SharedPreferencesImpl$EditorImpl." \
-                    "putString"
+    TARGET_METHOD = "android.app." "SharedPreferencesImpl$EditorImpl." "putString"
 
-    METHOD_PARAM_TYPE = "java.lang.String," \
-                        "java.lang.String"
+    METHOD_PARAM_TYPE = "java.lang.String," "java.lang.String"
 
-    fridaResult = runFridaHook(APP_PACKAGE_NAME,
-                               TARGET_METHOD,
-                               METHOD_PARAM_TYPE,
-                               secondToWait = 10)
+    fridaResult = runFridaHook(
+        APP_PACKAGE_NAME, TARGET_METHOD, METHOD_PARAM_TYPE, secondToWait=10
+    )
 
     for putString in fridaResult.behaviorOccurList:
 
-        firstParam, secondParam = putString.getParamValues()
+        firstParam = putString.firstAPI.getArguments()
+        secondParam = putString.secondAPI.getArguments()
 
-        if firstParam in ["email", "password"] and \
-            secondParam == checkClearText(secondParam):
-            
-            print(f'The CWE-312 vulnerability is found. The cleartext is "{secondParam}"')
+        if firstParam in ["email", "password"] and secondParam == checkClearText(
+            secondParam
+        ):
+
+            print(
+                "The CWE-312 vulnerability is found. "
+                f'The cleartext is "{secondParam}"'
+            )
 
 
 Frida Script: agent.js
@@ -2377,7 +2378,7 @@ Quark Script CWE-117.py
 
 First, we design a detection rule ``writeContentToLog.json`` to spot on behavior using the method that writes contents to the log file.
 
-Then, we use ``behaviorInstance.getParamValues()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as ``escape``, ``replace``, ``format``, and ``setFilter``.
+Then, we use ``methodInstance.getArguments()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as ``escape``, ``replace``, ``format``, and ``setFilter``.
 
 If the answer is **YES**, that may result in secret context leakage into the log file, or the attacker may perform log forging attacks.
 
@@ -2393,9 +2394,9 @@ If the answer is **YES**, that may result in secret context leakage into the log
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 
     for logOutputBehavior in quarkResult.behaviorOccurList:
-        
-        secondAPIParam = logOutputBehavior.getParamValues()[1]
-        
+
+        secondAPIParam = logOutputBehavior.secondAPI.getArguments()
+
         isKeywordFound = False
         for keyword in KEYWORDS_FOR_NEUTRALIZATION:
             if keyword in secondAPIParam:
@@ -2403,7 +2404,9 @@ If the answer is **YES**, that may result in secret context leakage into the log
                 break
 
         if not isKeywordFound:
-            print(f"CWE-117 is detected in method,{secondAPIParam}")
+            caller = logOutputBehavior.methodCaller.fullName
+            print(f"CWE-117 is detected in method, {caller}")
+
 
 Quark Rule: writeContentToLog.json
 ==============================================
@@ -2436,7 +2439,8 @@ Quark Script Result
 .. code-block:: TEXT
 
     $ python CWE-117.py
-    CWE-117 is detected in method,Ljava/lang/StringBuilder;->toString()Ljava/lang/String;(Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;(Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;(Ljava/lang/StringBuilder;-><init>()V(Ljava/lang/StringBuilder;),User entered secret: ),Ljava/lang/Object;->toString()Ljava/lang/String;(Lcom/google/android/material/textfield/TextInputEditText;->getText()Landroid/text/Editable;())))
+    CWE-117 is detected in method, Linfosecadventures/allsafe/challenges/InsecureLogging; lambda$onCreateView$0 (Lcom/google/android/material/textfield/TextInputEditText; Landroid/widget/TextView; I Landroid/view/KeyEvent;)Z
+
 
 Detect CWE-940 in Android Application (ovaa,Vuldroid)
 ------------------------------------------------------
