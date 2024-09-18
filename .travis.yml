@@ -1,7 +1,7 @@
 # Set the build language to Python
 language: python
 
-python: 3.8
+python: 3.9
 
 before-install:
   - RIZIN_LATEST=https://github.com/rizinorg/rizin/releases/latest

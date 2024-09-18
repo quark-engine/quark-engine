@@ -35,7 +35,7 @@ Quickstart
 
 Step 1: Environments Requirements
 ==================================
-- Quark Script requires Python 3.8 or above.
+- Quark Script requires Python 3.9 or above.
 
 Step 2: Install Quark Engine
 =============================
