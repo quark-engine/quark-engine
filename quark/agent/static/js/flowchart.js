@@ -448,3 +448,21 @@ message.addEventListener("compositionend", function () {
 });
 
 processNodesAndLinks(jsonData);
+
+
+const buttonContainer = document.getElementById('buttonContainer');
+
+function callButtonContainer(){
+    if (buttonContainer.classList.contains('hidden')) {
+        buttonContainer.classList.remove('hidden');
+        buttonContainer.classList.add('show');
+    } else {
+        buttonContainer.classList.remove('show');
+        buttonContainer.classList.add('hidden');
+    }
+}
+
+function calAddNewNode(button){
+    const buttonText = button.textContent;
+    addNewNode(1, buttonText, 2, 3);
+}
