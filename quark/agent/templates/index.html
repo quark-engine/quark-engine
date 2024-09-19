@@ -22,9 +22,21 @@
 <body>
   <img class="logo" src="{{url_for('static', filename='images/quark-logo.png')}}" />
   <h1 class="subtitle">Quark Agent: Your AI-powered Android APK Analyst</h1>
+
   <div class="container">
-    <div class="chatbox" id="textBox"></div>
-    <div class="chatbox" id="codeBox"></div>
+    <div class="row">
+      
+        <div id="diagram-container" class="container">
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="chatbox" id="textBox"></div>
+      <div class="chatbox" id="codeBox"></div>
+    </div>
   </div>
   <div class="container input-container">
     <textarea type="text" id="message" placeholder="Type your message here..."></textarea>
@@ -35,7 +47,9 @@
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joint/core@4.0.1/dist/joint.js"></script>
-<script src="{{url_for('static', filename='js/joint.shapes.devs.js')}}"></script>
+<!-- <script src="{{url_for('static', filename='js/joint.shapes.devs.js')}}"></script> -->
+
+<script src="{{url_for('static', filename='js/flowchart.js')}}"></script>
 <script src="{{url_for('static', filename='js/chatbox.js')}}"></script>
 
 </html>

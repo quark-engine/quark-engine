@@ -74,6 +74,8 @@ send.addEventListener("click", function () {
         textBox.style.width = "100%";
       }
 
+      processNodesAndLinks(botMessage.flowdata);
+
       textBox.scrollTop = textBox.scrollHeight;
     });
 });
