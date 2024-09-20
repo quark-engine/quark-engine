@@ -1,64 +1,22 @@
 {
   "QuarkScriptTools": [
     {
+      "title": "get Caller Method",
+      "description": "Get the caller method of the behavior."
+    },
+    {
+      "title": "Check Clear Text",
+      "description": "Check if the text is clear text."
+    },
+    {
       "title": "init Rule Object",
       "description": "Initialize a rule from the rule path.",
       "id": 10
     },
     {
-      "title": "init Quark Object",
-      "description": "Init Quark using the apk path.",
-      "id": 11
-    },
-    {
-      "title": "run Quark Analysis For Summary Report",
+      "title": "run Quark Analysis",
       "description": "Run Quark analysis with a rule.",
       "id": 12
-    },
-    {
-      "title": "get Summary Report Table",
-      "description": "Get the summary report table from the Quark analysis result.",
-      "id": 13
-    },
-    {
-      "title": "get Analysis Result Risk",
-      "description": "Get the risk from the Quark analysis result.",
-      "id": 14
-    },
-    {
-      "title": "get Analysis Result Score",
-      "description": "Get the score from the Quark analysis result.",
-      "id": 15
-    },
-    {
-      "title": "colorize In Yellow",
-      "description": "Colorize text in yellow.",
-      "id": 16
-    },
-    {
-      "title": "colorize In Cyan",
-      "description": "Colorize text in cyan.",
-      "id": 17
-    },
-    {
-      "title": "colorize In Green",
-      "description": "Colorize text in green.",
-      "id": 18
-    },
-    {
-      "title": "colorize In Red",
-      "description": "Colorize text in red.",
-      "id": 19
-    },
-    {
-      "title": "load Rule",
-      "description": "Load a rule from the rule path.",
-      "id": 20
-    },
-    {
-      "title": "run Quark Analysis",
-      "description": "Run the Quark analysis.",
-      "id": 21
     },
     {
       "title": "get Behavior Occur List",
@@ -74,11 +32,6 @@
       "title": "is Hard Coded",
       "description": "Check if the parameter values are hard-coded.",
       "id": 24
-    },
-    {
-      "title": "write Code In File",
-      "description": "Write the code in the specified file.",
-      "id": 25
     }
   ]
 }

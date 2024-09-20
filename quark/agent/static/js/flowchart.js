@@ -3,13 +3,17 @@
 // 初始化 JSON 物件
 let jsonData = {
     nodes: {
-        node1: { label: "1. Define the behavior 'Construct Cryptographic Key' in the rule instance." },
+        node1: { label: "Define the behavior 'Construct Cryptographic Key' in the rule instance." },
         node2: { label: "Define the behavior" },
-        node3: { label: "Obtain all instancesss" }
+        node3: { label: "Obtain all instancesss" },
+        node4: { label: "Check if the parameter values are hard-coded." },
+        node5: { label: "Write the code in the specified file." }
     },
     links: [
         { source: "node1", target: "node2" },
-        { source: "node2", target: "node3" }
+        { source: "node2", target: "node3" },
+        { source: "node3", target: "node4" },
+        { source: "node4", target: "node5" }
     ]
 };
 
@@ -77,7 +81,7 @@ const paper = new joint.dia.Paper({
                 stroke: 'white',
                 strokeWidth: 2
             }
-            
+
         }
     }
 });
@@ -85,6 +89,8 @@ const paper = new joint.dia.Paper({
 var paperHeight = paper.getComputedSize().height;
 var paperCenterY = (paperHeight / 2) - 25;
 
+var papaerWidth = paper.getComputedSize().width;
+var paperCenterX = (papaerWidth / 2) - 75;
 
 let selectedElement = null;
 let firstNode = null; // 用于存储连结线的起点
@@ -219,6 +225,7 @@ function addNewNode(nodeId, text, x, y) {
     graph.addCell(newNode);
 
     nodes[nodeId] = newNode;
+    return newNode;
 }
 
 function addLink(sourceNode, targetNode) {
@@ -235,7 +242,7 @@ function addLink(sourceNode, targetNode) {
     connection.prop('sourceId', sourceNode.id);
     connection.prop('targetId', targetNode.id);
     connection.attr({
-        line: { 
+        line: {
             stroke: '#fff'
         }
     });
@@ -278,10 +285,8 @@ var removeButton = new joint.linkTools.Remove({
                     codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
                 } else {
                     codeBox.style.display = "none";
-                    textBox.style.width = "100%";
-                }
 
-                // processNodesAndLinks(botMessage.flowdata);
+                }
 
                 textBox.scrollTop = textBox.scrollHeight;
             })
@@ -295,7 +300,7 @@ var toolsView = new joint.dia.ToolsView({
     ]
 });
 
-paper.on('element:mouseover', function(elementView,evt) {
+paper.on('element:mouseover', function (elementView, evt) {
 
     const fullText = elementView.model.get("fullText")
     // const fullText = 'This is an example of a very long description that exceeds 20 characters';
@@ -309,12 +314,12 @@ paper.on('element:mouseover', function(elementView,evt) {
     tooltip.style.padding = '5px';
     tooltip.style.borderRadius = '5px';
     tooltip.style.left = `${evt.clientX + 10}px`;
-    tooltip.style.top = `${evt.clientY + 20}px`; 
+    tooltip.style.top = `${evt.clientY + 20}px`;
 
     document.body.appendChild(tooltip);
 
     // Remove tooltip on mouseout
-    elementView.on('element:mouseout', function() {
+    elementView.on('element:mouseout', function () {
         tooltip.remove();
     });
 });
@@ -339,6 +344,7 @@ paper.on('link:snap:connect', function (linkView, evt, elementViewConnected, mag
 
     const sourceId = linkView.model.get('source').id;
     const targetId = linkView.model.get('target').id;
+    console.log(sourceId, targetId)
 
     fetch('/add_link', {
         method: 'POST',
@@ -370,11 +376,7 @@ paper.on('link:snap:connect', function (linkView, evt, elementViewConnected, mag
                 codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
             } else {
                 codeBox.style.display = "none";
-                textBox.style.width = "100%";
             }
-
-            // processNodesAndLinks(botMessage.flowdata);
-
             textBox.scrollTop = textBox.scrollHeight;
         })
         .catch(error => console.error("Error:", error));
@@ -410,25 +412,25 @@ async function processNodesAndLinks(flowData) {
     paper.model.clear();
     var paperWidth = paper.getComputedSize().width;
     var nodeCount = Object.keys(flowData.nodes).length;
-    var spacing = paperWidth / (nodeCount + 1);
+    var spacing = paperHeight / (nodeCount + 1);
     var i = 1;
     var x = 0;
 
-    const sortedNodes = Object.entries(flowData.nodes).sort(([, a], [, b]) => a.step - b.step);
+    const sortedNodes = Object.entries(flowData.nodes).sort(([, a], [, b]) => a.no - b.no);
     const sortedNodesObj = Object.fromEntries(sortedNodes);
     console.log(sortedNodesObj)
 
     for (const nodeId in sortedNodesObj) {
         const node = flowData.nodes[nodeId];
-        posX = (spacing * i) - 75;
+        posY = (spacing * i) - 75;
         i = i + 1;
 
         // remove flowdata node
         delete flowData.nodes[nodeId];
 
-        await addNewNode(nodeId, node.label, posX, paperCenterY);
+        await addNewNode(nodeId, node.label, paperCenterX, posY);
     }
-  
+
     for (const link of flowData.links) {
         let sourceNode = nodes[link.source]
         let targetNode = nodes[link.target]
@@ -447,12 +449,9 @@ message.addEventListener("compositionend", function () {
     isComposing = false;
 });
 
-processNodesAndLinks(jsonData);
-
-
 const buttonContainer = document.getElementById('buttonContainer');
 
-function callButtonContainer(){
+function callButtonContainer() {
     if (buttonContainer.classList.contains('hidden')) {
         buttonContainer.classList.remove('hidden');
         buttonContainer.classList.add('show');
@@ -463,9 +462,44 @@ function callButtonContainer(){
     }
 }
 
-function callAddNewNode(nodeId, button){
+function callAddNewNode(nodeId, button) {
     const buttonText = button.textContent;
-    addNewNode(nodeId, buttonText, 2, 3);
+    newNode = addNewNode(nodeId, buttonText, 2, 3);
+    fetch('/add_analyze_step', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            node: buttonText,
+            nodeId: newNode.id
+        })
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (botMessage) {
+            console.log(botMessage)
+            var textDiv = document.createElement("div");
+
+            textDiv.className = "message bot";
+            textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text)); // eslint-disable-line
+
+            textBox.appendChild(textDiv);
+
+            if (botMessage.code_blocks.length > 0) {
+                codeBox.style.display = "block";
+                textBox.style.width = "49%";
+                var codeLines = botMessage.code_blocks.join("\n").split("\n").slice(1).join("\n");
+                codeMirror.setValue(codeLines);
+                codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
+            } else {
+                codeBox.style.display = "none";
+            }
+
+            textBox.scrollTop = textBox.scrollHeight;
+        })
+        .catch(error => console.error("Error:", error));
 }
 
 function loadJson() {
@@ -480,10 +514,13 @@ function loadJson() {
                 const button = document.createElement('button');
                 button.className = 'grid-button';
                 button.innerText = tool.title; // 設定按鈕文字
-                button.setAttribute('onclick', 'callAddNewNode('+tool.id+', this)');
+                button.setAttribute('onclick', 'callAddNewNode(' + tool.id + ', this)');
 
                 buttonContainer.appendChild(button); // 將按鈕添加到容器中
             });
         })
         .catch(error => console.error('錯誤:', error));
 }
+
+
+// processNodesAndLinks(jsonData);

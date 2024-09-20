@@ -48,6 +48,7 @@ send.addEventListener("click", function () {
   userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage)); // eslint-disable-line
 
   textBox.appendChild(userDiv);
+  textBox.scrollTop = textBox.scrollHeight;
 
   message.value = "";
 
