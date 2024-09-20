@@ -26,29 +26,28 @@
   <div class="container" id="largeContainer">
     <div class="container">
       <div class="row">
-        <button id="toggleButton" class="circle-button" onclick="callButtonContainer()">+</button>
-      
-        <div id="diagram-container" class="container">
-        </div>
+        <div class="chatbox" id="codeBox"></div>
       </div>
     </div>
 
     <div class="container">
       <div class="row">
         <div class="chatbox" id="textBox"></div>
-        <div class="chatbox" id="codeBox"></div>
+        <button id="toggleButton" class="circle-button" onclick="callButtonContainer()">+</button>
+        <div id="diagram-container" class="container">
+        </div>
       </div>
-    </div>
-    
-    <div id="buttonContainer" class="hidden">
-      <div class="centerText">新增動作</div>
-      <div class="button-grid">
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 1</button>
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 2</button>
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 3</button>
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 4</button>
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 5</button>
-        <button class="grid-button" onclick="calAddNewNode(this)">Button 6</button>
+      
+      <div id="buttonContainer" class="hidden">
+        <div class="centerText">新增動作</div>
+        <div class="button-grid" id="grids">
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 1</button>
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 2</button>
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 3</button>
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 4</button>
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 5</button>
+          <button class="grid-button" onclick="callAddNewNode(this)">Button 6</button>
+        </div>
       </div>
     </div>
   </div>
