@@ -65,13 +65,13 @@ send.addEventListener("click", function () {
 
       if (botMessage.code_blocks.length > 0) {
         codeBox.style.display = "block";
-        textBox.style.width = "49%";
+        //textBox.style.width = "49%";
         var codeLines = botMessage.code_blocks.join("\n").split("\n").slice(1).join("\n");
         codeMirror.setValue(codeLines);
         codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
       } else {
         codeBox.style.display = "none";
-        textBox.style.width = "100%";
+        //textBox.style.width = "100%";
       }
 
       processNodesAndLinks(botMessage.flowdata);
