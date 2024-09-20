@@ -52,7 +52,7 @@ const width = document.getElementById('diagram-container').width;
 const paper = new joint.dia.Paper({
     el: document.getElementById('diagram-container'),
     model: graph,
-    width: width, height: 200, gridSize: 2,
+    width: width, height: 815, gridSize: 2,
     // drawGrid: true,
     linkPinning: false,
     // background: {
@@ -409,7 +409,7 @@ async function processNodesAndLinks(flowData) {
 
     paper.model.clear();
     var paperWidth = paper.getComputedSize().width;
-    var nodeCount = Object.keys(flowData.nodes).length
+    var nodeCount = Object.keys(flowData.nodes).length;
     var spacing = paperWidth / (nodeCount + 1);
     var i = 1;
     var x = 0;
@@ -456,13 +456,34 @@ function callButtonContainer(){
     if (buttonContainer.classList.contains('hidden')) {
         buttonContainer.classList.remove('hidden');
         buttonContainer.classList.add('show');
+        loadJson();
     } else {
         buttonContainer.classList.remove('show');
         buttonContainer.classList.add('hidden');
     }
 }
 
-function calAddNewNode(button){
+function callAddNewNode(nodeId, button){
     const buttonText = button.textContent;
-    addNewNode(1, buttonText, 2, 3);
+    addNewNode(nodeId, buttonText, 2, 3);
+}
+
+function loadJson() {
+    fetch('/getToolList') // 向 Flask 請求
+        .then(response => response.json())
+        .then(data => {
+            const buttonContainer = document.getElementById('grids');
+            buttonContainer.innerHTML = ''; // 清空容器
+
+            // 從 JSON 數據中創建按鈕
+            data.QuarkScriptTools.forEach(tool => {
+                const button = document.createElement('button');
+                button.className = 'grid-button';
+                button.innerText = tool.title; // 設定按鈕文字
+                button.setAttribute('onclick', 'callAddNewNode('+tool.id+', this)');
+
+                buttonContainer.appendChild(button); // 將按鈕添加到容器中
+            });
+        })
+        .catch(error => console.error('錯誤:', error));
 }
