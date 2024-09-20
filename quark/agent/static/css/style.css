@@ -18,13 +18,16 @@ h1 {
 
 .container {
   justify-content: space-between;
-  transition: width 0.3s ease;
-  /* display: flex; */
+  transition: width 0.3s ease, height 0.3s ease;
+  margin-bottom: 10px;
+  position: relative;
+  /*display: flex;*/
   /* max-width: 80%; */
 }
 
 #largeContainer{
   position: relative;
+  justify-content: space-between;
 }
 
 .chatbox {
@@ -42,8 +45,8 @@ h1 {
 }
 
 #diagram-container {
-  /* width: 98%; */
-  height: 400px;
+  width: 49%;
+  height: 815px;
   border: 1px solid #3e3e3e;
   background-color: #414141;
   color: #c7c7c7;
@@ -51,7 +54,14 @@ h1 {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   transition: width 0.3s ease;
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
+}
+
+#toggleButton {
+  position: absolute;
+  right: -13px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .input-container {
@@ -204,12 +214,14 @@ h1 {
 }
 
 #textBox {
-  width: 100%;
+  width: 49%;
 }
 
 #codeBox {
   display: none;
-  width: 49%;
+  width: 99%;
+  height: 20%;
+  position: relative;
 }
 
 .subtitle {
@@ -232,36 +244,35 @@ h1 {
   stroke-dasharray: 5, 2;
 }
 
-#codeBox {
-  position: relative;
-  left: 25px;
-}
-
 
 .circle-button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: white;
-    border: 2px solid #ccc;
-    font-size: 24px;
-    cursor: pointer;
-    position: absolute;
-    top: 78px;
-    right: -14px;
-    z-index: 1;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #ccc;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
 }
 
 #buttonContainer {
-    position: absolute;
-    top: 0;
-    right: -280px;
-    width: 250px;
-    height: 1000px;
-    background-color: white;
-    border: 2px solid #ccc;
-    padding: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  position: absolute;
+  top: 0;
+  right: -280px;
+  width: 250px;
+  height: 815px;
+  padding: 20px;
+  overflow-y: auto;
+  border: 1px solid #3e3e3e;
+  background-color: #414141;
+  color: #c7c7c7;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+  /*margin-bottom: 10px;*/
 }
 
 .centerText {
@@ -274,21 +285,22 @@ h1 {
 /* 六個按鈕的佈局 */
 .button-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     grid-gap: 15px;
 }
 
 .grid-button {
     padding: 10px;
-    background-color: #ddd;
-    border: 2px solid #666;
+    background-color: #252526;
+    border: 2px solid #FFF;
     cursor: pointer;
     transition: background-color 0.3s;
-    border-radius: 8px;
+    border-radius: 5px;
+    color: #c7c7c7;
 }
 
 .grid-button:hover {
-    background-color: #bbb;
+    background-color: #888;
 }
 
 .show {
