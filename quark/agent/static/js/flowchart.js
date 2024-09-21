@@ -469,15 +469,18 @@ message.addEventListener("compositionend", function () {
 });
 
 const buttonContainer = document.getElementById('buttonContainer');
+const button = document.getElementById('new-action-button');
 
 function callButtonContainer() {
     if (buttonContainer.classList.contains('hidden')) {
         buttonContainer.classList.remove('hidden');
         buttonContainer.classList.add('show');
         loadJson();
+        button.textContent="-";
     } else {
         buttonContainer.classList.remove('show');
         buttonContainer.classList.add('hidden');
+        button.textContent="+";
     }
 }
 
