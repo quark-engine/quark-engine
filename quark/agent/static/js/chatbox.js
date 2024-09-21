@@ -11,7 +11,8 @@ var languageLabel = document.getElementById("languageLabel");
 
 // Initialize CodeMirror with dark theme
 var codeMirror = new CodeMirror(codeBox, {
-  lineNumbers: true,
+  // lineNumbers: true,
+  padding: 10,
   theme: "dracula",
   readOnly: false,
   backgroundColor: "#fff",
@@ -100,3 +101,11 @@ message.addEventListener("keydown", function (event) {
     send.click();
   }
 });
+
+function showCodeBlock() {
+  if (codeBox.style.display === "none") {
+    codeBox.style.display = "block";
+  } else {
+    codeBox.style.display = "none";
+  }
+}

@@ -2,36 +2,31 @@
   "QuarkScriptTools": [
     {
       "title": "get Caller Method",
-      "description": "Get the caller method of the behavior."
+      "description": "Get caller method of the behavior."
     },
     {
       "title": "Check Clear Text",
-      "description": "Check if the text is clear text."
+      "description": "Check if any parameter is clear text."
     },
     {
       "title": "init Rule Object",
-      "description": "Initialize a rule from the rule path.",
-      "id": 10
+      "description": "Initialize a rule from the rule path."
     },
     {
       "title": "run Quark Analysis",
-      "description": "Run Quark analysis with a rule.",
-      "id": 12
+      "description": "Run Quark analysis with a rule."
     },
     {
       "title": "get Behavior Occur List",
-      "description": "Extracts the behavior occurrence list from quark analysis result.",
-      "id": 22
+      "description": "Extracts the behavior occurrence list from quark analysis result."
     },
     {
       "title": "get Parameter Values",
-      "description": "Extract the parameter values from the behavior occurrence list.",
-      "id": 23
+      "description": "Extract the parameter values from the behavior occurrence list."
     },
     {
       "title": "is Hard Coded",
-      "description": "Check if the parameter values are hard-coded.",
-      "id": 24
+      "description": "Check if the parameter values are hard-coded."
     }
   ]
 }

@@ -1,14 +1,43 @@
 body {
   font-family: Arial, sans-serif;
   font-size: 19px;
-  display: flex;
-  /* height: 100vh; */
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  height: 100vh;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  padding-inline: 30px;
   background: linear-gradient(45deg, #efc64bcc 10%, #a02e2e 35%, #060864f2 90%);
   color: #c7c7c7;
+  grid-template-columns: 3fr 7fr;
+  grid-template-rows: 1fr 9fr;
+  grid-template-areas: 
+    "header header" 
+    "chatbox flowchart";
 }
+
+.header {
+  grid-area: header;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.chatbox-container {
+  grid-area: chatbox;
+  /* background-color: #2c3e50; */
+  color: white;
+  padding: 20px;
+}
+
+.flowchart-container {
+  grid-area: flowchart;
+  /* background-color: #37502c; */
+  color: white;
+  padding: 20px;
+  position: relative;
+}
+
+
 
 h1 {
   text-align: center;
@@ -31,8 +60,7 @@ h1 {
 }
 
 .chatbox {
-  width: 49%;
-  height: 815px;
+  height: 85%;
   border: 1px solid #3e3e3e;
   padding: 10px;
   background: #3a3a3aab;
@@ -42,33 +70,30 @@ h1 {
   box-shadow: 0 0 10px rgb(133 133 133 / 70%);
   border-radius: 5px;
   transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 #diagram-container {
-  width: 49%;
-  height: 815px;
-  border: 1px solid #3e3e3e;
-  background-color: #414141;
   color: #c7c7c7;
   overflow-y: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   transition: width 0.3s ease;
-  /*margin-bottom: 10px;*/
 }
 
-#toggleButton {
+#new-action-button {
   position: absolute;
-  right: -13px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 100px;
+  right: 6%;
+  bottom: 13%;
 }
 
-.input-container {
-  display: flex;
-  margin-top: 20px;
+.container.input {
   justify-content: flex-start;
   position: relative;
+  padding:0;
+  width: 100%;
 }
 
 #message {
@@ -83,7 +108,8 @@ h1 {
   color: #c7c7c7;
   font-size: 20px;
   padding-right: 50px;
-  resize: vertical;
+  /* resize: vertical; */
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -97,12 +123,9 @@ h1 {
   font-size: 16px;
   cursor: pointer;
   position: absolute;
-  right: 20px;
-  top: 38%;
+  right: 8px;
+  top: 47%;
   transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 #send::before {
@@ -161,15 +184,10 @@ h1 {
   color: #fff;
 }
 
-.chatbox {
-  display: flex;
-  flex-direction: column;
-  /* margin: 5px; */
-}
-
 .CodeMirror-scroll {
   font-size: 16px;
   height: 100%;
+  padding: 15px;
 }
 
 .CodeMirror-gutters {
@@ -213,20 +231,18 @@ h1 {
   color: #6a737d;
 }
 
-#textBox {
-  width: 49%;
-}
-
 #codeBox {
   display: none;
-  width: 99%;
-  height: 20%;
-  position: relative;
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  left: 8%;
+  bottom: 15%;
 }
 
 .subtitle {
-  margin-top: -10px;
-  margin-bottom: 40px;
+  /* margin-top: -10px; */
+  /* margin-bottom: 40px; */
   font-size: 1.7rem;
 }
 
@@ -246,8 +262,8 @@ h1 {
 
 
 .circle-button {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   background-color: white;
   border: 2px solid #ccc;
@@ -259,12 +275,10 @@ h1 {
 
 #buttonContainer {
   position: absolute;
-  top: 0;
-  right: -280px;
-  width: 250px;
-  height: 815px;
+  right: 8%;
+  bottom: 15%;
+  height: 77%;
   padding: 20px;
-  overflow-y: auto;
   border: 1px solid #3e3e3e;
   background-color: #414141;
   color: #c7c7c7;
@@ -272,7 +286,6 @@ h1 {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   transition: width 0.3s ease;
-  /*margin-bottom: 10px;*/
 }
 
 .centerText {
@@ -310,4 +323,10 @@ h1 {
 
 .hidden {
     display: none;
+}
+
+#codeblock-button {
+  position: absolute;
+  left: 6%;
+  bottom: 13%;
 }

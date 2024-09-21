@@ -48,6 +48,7 @@ function onLinksChange() {
         .catch(error => console.error("Error:", error));
 }
 
+
 var nodes = {};
 
 // 創建 JointJS 畫布
@@ -56,12 +57,13 @@ const width = document.getElementById('diagram-container').width;
 const paper = new joint.dia.Paper({
     el: document.getElementById('diagram-container'),
     model: graph,
-    width: width, height: 815, gridSize: 2,
-    // drawGrid: true,
+    width: "100%", height: "93%",
+    drawGrid: true,
+    gridSize: 10,
     linkPinning: false,
-    // background: {
-    //     color: '#f4f4f4'
-    // },
+    background: {
+        color: 'rgba(128, 128, 128, 0.4)' // 灰色 (RGB 128,128,128) 且透明度 40%
+    },
 
     validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
         // Prevent linking from output ports to input ports within one element
@@ -86,6 +88,8 @@ const paper = new joint.dia.Paper({
     }
 });
 
+paper.setGrid({ name: 'mesh', args: { color: 'hsla(212, 7%, 50%, 0.5)' }});
+
 var paperHeight = paper.getComputedSize().height;
 var paperCenterY = (paperHeight / 2) - 25;
 
@@ -97,7 +101,7 @@ let firstNode = null; // 用于存储连结线的起点
 
 joint.dia.Link.define('standard.Link', {
     router: {
-        name: 'orthogonal'
+        name: 'manhattan'
     },
     attrs: {
         line: {
@@ -135,9 +139,16 @@ joint.dia.Link.define('standard.Link', {
     }]
 });
 
-
 // Function to add a new node
 function addNewNode(nodeId, text, x, y) {
+
+    //Check if node already exists
+    for (let cell in graph.getCells()) {
+        if (cell.fullText === text) {
+            console.log(label, "already exists");
+            return; // 如果找到重复的 label，返回 true
+        }
+    }
 
     label = text.length > 20 ? text.slice(0, 20) + '...' : text;
 
@@ -234,9 +245,18 @@ function addLink(sourceNode, targetNode) {
         return;
     }
 
-    const connection = new joint.shapes.standard.Link({ router: { name: 'orthogonal' }, });
+    // Check if paper have same connection
+    for (const link of graph.getLinks()) {
+        console.log(link.source().id, link.target().id)
+        if (link.source().id === sourceNode.id && link.target().id === targetNode.id) {
+            return;
+        }
+    }
+
+    const connection = new joint.shapes.standard.Link({ router: { name: 'manhattan' }, });
     connection.source(sourceNode);
     connection.target(targetNode);
+    // Check if paper have same connection
     connection.addTo(graph);
 
     connection.prop('sourceId', sourceNode.id);
@@ -300,7 +320,7 @@ var toolsView = new joint.dia.ToolsView({
     ]
 });
 
-paper.on('element:mouseover', function (elementView, evt) {
+paper.on('element:mouseenter', function (elementView, evt) {
 
     const fullText = elementView.model.get("fullText")
     // const fullText = 'This is an example of a very long description that exceeds 20 characters';
@@ -409,16 +429,15 @@ function autosize(element) {
 
 async function processNodesAndLinks(flowData) {
 
-    paper.model.clear();
+    // paper.model.clear();
     var paperWidth = paper.getComputedSize().width;
     var nodeCount = Object.keys(flowData.nodes).length;
-    var spacing = paperHeight / (nodeCount + 1);
+    var spacing = 50 + paperHeight / 10;
     var i = 1;
     var x = 0;
 
     const sortedNodes = Object.entries(flowData.nodes).sort(([, a], [, b]) => a.no - b.no);
     const sortedNodesObj = Object.fromEntries(sortedNodes);
-    console.log(sortedNodesObj)
 
     for (const nodeId in sortedNodesObj) {
         const node = flowData.nodes[nodeId];
@@ -426,7 +445,7 @@ async function processNodesAndLinks(flowData) {
         i = i + 1;
 
         // remove flowdata node
-        delete flowData.nodes[nodeId];
+        // delete flowData.nodes[nodeId];
 
         await addNewNode(nodeId, node.label, paperCenterX, posY);
     }
@@ -462,16 +481,16 @@ function callButtonContainer() {
     }
 }
 
-function callAddNewNode(nodeId, button) {
-    const buttonText = button.textContent;
-    newNode = addNewNode(nodeId, buttonText, 2, 3);
+function callAddNewNode(nodeId, title, description) {
+
+    newNode = addNewNode(nodeId, title, 2, 3);
     fetch('/add_analyze_step', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            node: buttonText,
+            node: description,
             nodeId: newNode.id
         })
     })
@@ -514,7 +533,7 @@ function loadJson() {
                 const button = document.createElement('button');
                 button.className = 'grid-button';
                 button.innerText = tool.title; // 設定按鈕文字
-                button.setAttribute('onclick', 'callAddNewNode(' + tool.id + ', this)');
+                button.setAttribute('onclick', 'callAddNewNode(' + tool.id + ', "' + tool.title + '", "' + tool.description + '")');
 
                 buttonContainer.appendChild(button); // 將按鈕添加到容器中
             });

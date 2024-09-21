@@ -20,6 +20,38 @@
 </head>
 
 <body>
+  <div class="header">
+    <img class="logo" src="{{url_for('static', filename='images/quark-logo.png')}}" />
+    <h1 class="subtitle">Quark Agent: Your AI-powered Android APK Analyst</h1>
+  </div>
+
+  <div class="chatbox-container">
+    <div class="chatbox" id="textBox"></div>
+    <div class="container input">
+      <textarea type="text" id="message" placeholder="Type your message here..."></textarea>
+      <button id="send"></button>
+    </div>
+  </div>
+
+  <div class="flowchart-container">
+    <button id="new-action-button" class="circle-button" onclick="callButtonContainer()">+</button>
+    <button id="codeblock-button" class="circle-button" onclick="showCodeBlock()">
+      <i class="fa-solid fa-code"></i>
+    </button>
+
+    <div id="diagram-container"></div>
+
+    <div id="codeBox" class="chatbox"></div>
+    <div id="buttonContainer" class="hidden">
+      <div class="centerText">New Action</div>
+      <div class="button-grid" id="grids"></div>
+    </div>
+  </div>
+
+</body>
+
+<!-- 
+<body>
   <img class="logo" src="{{url_for('static', filename='images/quark-logo.png')}}" />
   <h1 class="subtitle">Quark Agent: Your AI-powered Android APK Analyst</h1>
 
@@ -37,33 +69,30 @@
         <div id="diagram-container" class="container">
         </div>
       </div>
+
       
-      <div id="buttonContainer" class="hidden">
-        <div class="centerText">New Action</div>
-        <div class="button-grid" id="grids">
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 1</button>
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 2</button>
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 3</button>
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 4</button>
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 5</button>
-          <button class="grid-button" onclick="callAddNewNode(this)">Button 6</button>
-        </div>
-      </div>
     </div>
   </div>
-  
+
   <div class="container input-container">
     <textarea type="text" id="message" placeholder="Type your message here..."></textarea>
     <button id="send"></button>
   </div>
 
-</body>
+</body> -->
+
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joint/core@4.0.1/dist/joint.js"></script>
-<!-- <script src="{{url_for('static', filename='js/joint.shapes.devs.js')}}"></script> -->
-
 <script src="{{url_for('static', filename='js/flowchart.js')}}"></script>
 <script src="{{url_for('static', filename='js/chatbox.js')}}"></script>
+{% if debug %}
+<script type="text/javascript">
+  console.log("Debug mode is ON.");
+  // set codebox to be visible
+  // document.getElementById('codeBox').style.display = 'block';
+  processNodesAndLinks(jsonData);
+</script>
+{% endif %}
 
 </html>
