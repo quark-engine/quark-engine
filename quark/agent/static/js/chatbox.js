@@ -102,10 +102,14 @@ message.addEventListener("keydown", function (event) {
   }
 });
 
+const codeblockButton = document.getElementById('codeblock-button');
+
 function showCodeBlock() {
   if (codeBox.style.display === "none") {
     codeBox.style.display = "block";
+    codeblockButton.style.color = "#008";
   } else {
     codeBox.style.display = "none";
+    codeblockButton.style.color = "#000";
   }
 }
