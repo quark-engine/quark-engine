@@ -13,7 +13,10 @@ function addLink(sourceNode, targetNode) {
         }
     }
 
-    const connection = new joint.shapes.standard.Link({ router: { name: 'manhattan' }, });
+    const connection = new joint.shapes.standard.Link({
+        router: { name: 'manhattan', args: { step: 50,} },
+        connector: { name: 'rounded', args: { radius: 50, }, },
+    });
     
     const sourceTopPort = sourceNode.getGroupPorts('top')[0].id
     const sourceRightPort = sourceNode.getGroupPorts('right')[0].id
@@ -24,7 +27,8 @@ function addLink(sourceNode, targetNode) {
     const targetLeftPort = targetNode.getGroupPorts('left')[0].id
 
     connection.source(sourceNode, {"port": sourceRightPort});
-    connection.target(targetNode, {"port": targetTopPort});
+    //connection.target(targetNode, {"port": targetTopPort});
+    connection.target(targetNode, {"port": targetLeftPort});
     // Check if paper have same connection
     connection.addTo(graph);
 
