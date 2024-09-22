@@ -98,7 +98,16 @@ let firstNode = null; // 用于存储连结线的起点
 
 joint.dia.Link.define('standard.Link', {
     router: {
-        name: 'manhattan'
+        name: 'manhattan',
+        args: { 
+            step: 50,
+        }
+    },
+    connector: { 
+        name: 'rounded', 
+        args: { 
+            radius: 50,
+        },
     },
     attrs: {
         line: {
