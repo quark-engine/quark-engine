@@ -17,20 +17,13 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='css/flowchart.css')}}">
 </head>
 
 <body>
   <div class="header">
     <img class="logo" src="{{url_for('static', filename='images/quark-logo.png')}}" />
     <h1 class="subtitle">Quark Agent: Your AI-powered Android APK Analyst</h1>
-  </div>
-
-  <div class="chatbox-container">
-    <div class="chatbox" id="textBox"></div>
-    <div class="container input">
-      <textarea type="text" id="message" placeholder="Type your message here..."></textarea>
-      <button id="send"></button>
-    </div>
   </div>
 
   <div class="flowchart-container">
@@ -45,6 +38,14 @@
     <div id="buttonContainer" class="hidden">
       <div class="centerText">New Action</div>
       <div class="button-grid" id="grids"></div>
+    </div>
+  </div>
+
+  <div class="chatbox-container">
+    <div class="chatbox" id="textBox"></div>
+    <div class="container input">
+      <textarea type="text" id="message" placeholder="Type your message here..."></textarea>
+      <button id="send"></button>
     </div>
   </div>
 
@@ -81,11 +82,19 @@
 
 </body> -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.4/underscore-min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@joint/core@4.0.1/dist/joint.js"></script>
+<script src="{{url_for('static', filename='js/jointJS/node.js')}}"></script>
+<script src="{{url_for('static', filename='js/jointJS/link.js')}}"></script>
 <script src="{{url_for('static', filename='js/flowchart.js')}}"></script>
 <script src="{{url_for('static', filename='js/chatbox.js')}}"></script>
+
+
+<!-- <script src="{{url_for('static', filename='js/jointJS/test.js')}}"></script> -->
 {% if debug %}
 <script type="text/javascript">
   console.log("Debug mode is ON.");

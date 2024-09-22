@@ -1,10 +1,8 @@
-
-
 // 初始化 JSON 物件
 let jsonData = {
     nodes: {
         node1: { label: "Define the behavior 'Construct Cryptographic Key' in the rule instance." },
-        node2: { label: "Define the behavior" },
+        node2: { label: "run Quark Analysis using the rule instance on the APK sample." },
         node3: { label: "Obtain all instancesss" },
         node4: { label: "Check if the parameter values are hard-coded." },
         node5: { label: "Write the code in the specified file." }
@@ -66,7 +64,6 @@ const paper = new joint.dia.Paper({
     },
 
     validateConnection: function (cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-        // Prevent linking from output ports to input ports within one element
         return cellViewS !== cellViewT
     },
     validateMagnet: function (cellView, magnet) {
@@ -88,7 +85,7 @@ const paper = new joint.dia.Paper({
     }
 });
 
-paper.setGrid({ name: 'mesh', args: { color: 'hsla(212, 7%, 50%, 0.5)' }});
+paper.setGrid({ name: 'mesh', args: { color: 'hsla(212, 7%, 50%, 0.5)' } });
 
 var paperHeight = paper.getComputedSize().height;
 var paperCenterY = (paperHeight / 2) - 25;
@@ -139,186 +136,19 @@ joint.dia.Link.define('standard.Link', {
     }]
 });
 
-// Function to add a new node
-function addNewNode(nodeId, text, x, y) {
 
-    //Check if node already exists
-    for (let cell in graph.getCells()) {
-        if (cell.fullText === text) {
-            console.log(label, "already exists");
-            return; // 如果找到重复的 label，返回 true
-        }
-    }
-
-    label = text.length > 20 ? text.slice(0, 20) + '...' : text;
-
-    for (let nodeKey in flowData.nodes) {
-        if (flowData.nodes[nodeKey].label === label) {
-            console.log(label, "already exists");
-            return; // 如果找到重复的 label，返回 true
-        }
-    }
-
-    var port = {
-        attrs: {
-            portBody: {
-                magnet: true,
-                width: 9,
-                height: 9,
-                x: -4,
-                y: -4,
-                fill: 'white',
-                visibility: 'hidden' // 默认隐藏
-            },
-            label: {
-                text: 'port'
-            }
-        },
-        markup: [{
-            tagName: 'rect',
-            selector: 'portBody',
-        }]
-    };
-
-    var portTop = { ...port, position: { name: 'top' }, }
-    var portRight = { ...port, position: { name: 'right' }, }
-    var portBottom = { ...port, position: { name: 'bottom' }, }
-    var portLeft = { ...port, position: { name: 'left' }, }
-
-    var wraptext = joint.util.breakText('yourtext|escapejs', {
-        width: 300
-    });
-
-    var newNode = new joint.shapes.standard.Rectangle({
-        id: nodeId,
-        fullText: text,
-        position: { x: x, y: y },
-        size: { width: 175, height: 50 },
-        root: {
-            magnet: false
-        },
-        ports: {
-            groups: {
-                'top': portTop,
-                'right': portRight,
-                'bottom': portBottom,
-                'left': portLeft
-            }
-        },
-        attrs: {
-            text: {
-                text: wraptext,
-            },
-            label: {
-                text: label,
-                fill: '#FFFFFF',
-                fontSize: 16
-            },
-            body: {
-                fill: '#252526',
-                stroke: '#FFFFFF',
-                strokeWidth: 2,
-                rx: 5,
-                ry: 5,
-                width: 'calc(w)',
-                height: 'calc(h)',
-            },
-        }
-    }).addTo(graph);
-
-    newNode.addPorts([
-        { group: 'top', },
-        { group: 'right', },
-        { group: 'bottom', },
-        { group: 'left', }
-    ]);
-
-    graph.addCell(newNode);
-
-    nodes[nodeId] = newNode;
-    return newNode;
-}
-
-function addLink(sourceNode, targetNode) {
-
-    if (!sourceNode || !targetNode) {
-        return;
-    }
-
-    // Check if paper have same connection
-    for (const link of graph.getLinks()) {
-        console.log(link.source().id, link.target().id)
-        if (link.source().id === sourceNode.id && link.target().id === targetNode.id) {
-            return;
-        }
-    }
-
-    const connection = new joint.shapes.standard.Link({ router: { name: 'manhattan' }, });
-    connection.source(sourceNode);
-    connection.target(targetNode);
-    // Check if paper have same connection
-    connection.addTo(graph);
-
-    connection.prop('sourceId', sourceNode.id);
-    connection.prop('targetId', targetNode.id);
-    connection.attr({
-        line: {
-            stroke: '#fff'
-        }
-    });
-}
-
-var removeButton = new joint.linkTools.Remove({
-    action: function (evt) {
-        // a link was removed  (cell.id contains the ID of the removed link)
-        const sourceId = this.model.get('source').id;
-        const targetId = this.model.get('target').id;
-
-        // 發送 REST request 至 Flask 伺服器
-        fetch('/remove_link', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                source: sourceId,
-                target: targetId
-            })  // 你可以自定義需要發送的內容
-        })
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (botMessage) {
-                console.log(botMessage)
-                var textDiv = document.createElement("div");
-
-                textDiv.className = "message bot";
-                textDiv.innerHTML = DOMPurify.sanitize(marked.parse(botMessage.plain_text)); // eslint-disable-line
-
-                textBox.appendChild(textDiv);
-
-                if (botMessage.code_blocks.length > 0) {
-                    codeBox.style.display = "block";
-                    textBox.style.width = "49%";
-                    var codeLines = botMessage.code_blocks.join("\n").split("\n").slice(1).join("\n");
-                    codeMirror.setValue(codeLines);
-                    codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
-                } else {
-                    codeBox.style.display = "none";
-
-                }
-
-                textBox.scrollTop = textBox.scrollHeight;
-            })
-            .catch(error => console.error("Error:", error));
-        this.remove()
-    }
-});
 var toolsView = new joint.dia.ToolsView({
     tools: [
         removeButton
     ]
 });
+
+
+// paper.on('element:pointerclick', function (elementView, evt) {
+//     console.log(elementView, evt)
+//     // elementView.model.attr('label/text', 'test')
+//     elementView.model.size({height: 200})
+// });
 
 paper.on('element:mouseenter', function (elementView, evt) {
 
@@ -441,13 +271,14 @@ async function processNodesAndLinks(flowData) {
 
     for (const nodeId in sortedNodesObj) {
         const node = flowData.nodes[nodeId];
-        posY = (spacing * i) - 75;
+        posY = (spacing * i) - 20;
+        posX = (spacing+200 * i) - 300;
         i = i + 1;
 
         // remove flowdata node
         // delete flowData.nodes[nodeId];
 
-        await addNewNode(nodeId, node.label, paperCenterX, posY);
+        await addNewNode(nodeId, node.label, posX, posY);
     }
 
     for (const link of flowData.links) {
@@ -476,11 +307,11 @@ function callButtonContainer() {
         buttonContainer.classList.remove('hidden');
         buttonContainer.classList.add('show');
         loadJson();
-        button.textContent="-";
+        button.textContent = "-";
     } else {
         buttonContainer.classList.remove('show');
         buttonContainer.classList.add('hidden');
-        button.textContent="+";
+        button.textContent = "+";
     }
 }
 
@@ -545,4 +376,101 @@ function loadJson() {
 }
 
 
+
 // processNodesAndLinks(jsonData);
+
+
+// const Form = joint.dia.Element.define('example.form', {
+//     attrs: {
+//         foreignObject: {
+//             width: 'calc(w)',
+//             height: 'calc(h)'
+//         }
+//     }
+// }, {
+//     markup: joint.util.svg/* xml */`
+//             <foreignObject @selector="foreignObject">
+//             <div xmlns="http://www.w3.org/1999/xhtml" class="outer" >
+//                 <div class="inner">
+//                 <text @selector="fff" x="20" y="35" class="small">My</text>
+
+//                         <input @selector="name" type="text" name="name" autocomplete="off" placeholder="Your diagram name"/>
+//                         <button onclick="tttttt('fuck')">
+//                             <span>Submit</span>
+//                         </button>
+
+//                 </div>
+//             </div>
+//         </foreignObject>
+//         `
+// });
+
+
+
+const Form = joint.dia.Element.define('example.form', {
+    attrs: {
+        foreignObject: {
+            width: 'calc(w)',
+            height: 'calc(h)'
+        },
+        card: {
+            class: 'card'
+        }
+    }
+}, {
+    markup: joint.util.svg/* xml */`
+    <foreignObject @selector="foreignObject">
+        <div xmlns="http://www.w3.org/1999/xhtml" class="outer" >
+
+            <div @selector="card" class="card">
+                <text class="card-title">fff</text>
+                <button class="expand-button" onclick="expandCard(this)">+</button>
+                <div class="card-content">
+                    <label class="card-label">Edit Quark detection rules (Edit behavior)</label>
+                    <label class="card-label">First API of behavior</label>
+                    <input type="text" name="name" autocomplete="off" placeholder="Input API full name"/>
+                    <label class="card-label">Second API of behavior</label>
+                    <input type="text" name="name" autocomplete="off" placeholder="Input API full name"/>
+                    <button>Save</button>
+                </div>
+            </div>
+
+        </div>
+    </foreignObject>
+        `
+});
+
+const FormView = joint.dia.ElementView.extend({
+
+});
+
+
+paper.on('element:mouseenter', (elementView, evt) => {
+    elementView.model.toFront();
+});
+
+var highestZIndex = 1;
+function expandCard(button) {
+    const card = button.parentElement;
+    if (card.classList.contains('expanded')) {
+        card.classList.remove('expanded');
+    } else {
+        card.classList.add('expanded');
+        highestZIndex++;
+        card.style.zIndex = highestZIndex+1;
+
+    }
+}
+// paper.on('element:pointerclick', function (elementView, evt) {
+//     console.log("fick")
+//     const cardClass = elementView.model.attr('card/class');
+//     // console.log(cardClass)
+//     // elementView.model.attr('card/class', 'card expanded');
+
+//     if (cardClass === 'card expanded') {
+//         elementView.model.attr('card/class', 'card');
+//     } else {
+//         elementView.model.attr('card/class', 'card expanded');
+//     }
+// })
+

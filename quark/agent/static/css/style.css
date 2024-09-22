@@ -9,11 +9,11 @@ body {
   padding-inline: 30px;
   background: linear-gradient(45deg, #efc64bcc 10%, #a02e2e 35%, #060864f2 90%);
   color: #c7c7c7;
-  grid-template-columns: 3fr 7fr;
+  grid-template-columns: 7fr 3fr;
   grid-template-rows: 1fr 9fr;
   grid-template-areas: 
     "header header" 
-    "chatbox flowchart";
+    "flowchart chatbox";
 }
 
 .header {
@@ -27,6 +27,7 @@ body {
   /* background-color: #2c3e50; */
   color: white;
   padding: 20px;
+  overflow-y: auto;
 }
 
 .flowchart-container {
@@ -233,8 +234,8 @@ h1 {
 
 #codeBox {
   display: none;
-  width: 50%;
-  height: 50%;
+  width: 60%;
+  height: 60%;
   position: absolute;
   left: 8%;
   bottom: 15%;
