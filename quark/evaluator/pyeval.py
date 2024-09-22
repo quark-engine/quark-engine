@@ -474,7 +474,10 @@ class PyEval:
                 value_type = self.type_mapping[instruction[0][index:]]
             else:
                 array_reg_index = int(instruction[2][1:])
-                value_type = self.table_obj.pop(array_reg_index).current_type[1:]
+                value_type = self.table_obj.pop(array_reg_index).current_type
+                # If value_type is not None
+                if value_type:
+                    value_type = value_type[1:]
 
             self._move_value_to_register(
                 instruction, "{src0}[{src1}]", wide=True, value_type=value_type
@@ -703,6 +706,20 @@ class PyEval:
         source_list = [int(reg[1:]) for reg in instruction[2:-1]]
         data = instruction[-1]
 
+        for source in source_list:
+            if not self.table_obj.get_obj_list(source):
+                value_dict = {
+                    f"src{0}": instruction
+                }
+                value_dict["data"] = data
+
+                new_register = RegisterObject(
+                    f"v{source}",
+                    str_format.format(**value_dict),
+                    value_type=value_type,
+                )
+                self.table_obj.insert(source, new_register)
+
         self._transfer_register(
             source_list,
             destination,
@@ -733,7 +750,11 @@ class PyEval:
     def _transfer_register(
         self, source_list, destination, str_format, data=None, value_type=None
     ):
-        source_register_list = [self.table_obj.pop(index) for index in source_list]
+        try:
+            source_register_list = [self.table_obj.pop(index) for index in source_list]
+        except IndexError:
+            return
+
         if not value_type:
             value_type = source_register_list[0].current_type
 

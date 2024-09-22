@@ -377,6 +377,70 @@ class TestApkinfo:
         for expected in expected_bytecode_list:
             assert expected in bytecodes
 
+    def test_another_get_method_bytecode(self, apkinfo_without_R2Imp):
+        apkinfo = apkinfo_without_R2Imp
+
+        # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00193.json rule
+        expected_bytecode_list1 = [
+            BytecodeObject(
+                "invoke-virtual/range",
+                ["v2", "v3", "v4", "v5", "v6", "v7"],
+                (
+                    "Landroid/telephony/SmsManager;"
+                    "->sendTextMessage(Ljava/lang/String; "
+                    "Ljava/lang/String; Ljava/lang/String; "
+                    "Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
+                ),
+            ),
+            BytecodeObject(
+                "const-string",
+                ["v4"],
+                "SMS"
+            ),
+            BytecodeObject(
+                "invoke-virtual",
+                ["v8"],
+                "Ljava/lang/String;->length()I",
+            ),
+        ]
+        # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00189.json rule
+        expected_bytecode_list2 = [
+            BytecodeObject(
+                "invoke-virtual/range",
+                ["v0", "v1", "v2", "v3", "v4", "v5"],
+                (
+                    "Landroid/content/ContentResolver;"
+                    "->query(Landroid/net/Uri; "
+                    "[Ljava/lang/String; "
+                    "Ljava/lang/String; "
+                    "[Ljava/lang/String; Ljava/lang/String;)"
+                    "Landroid/database/Cursor;"
+                ),
+            ),
+        ]
+
+        method1 = apkinfo.find_method(
+            class_name="Lcom/example/google/service/SMSSender;",
+            method_name="SendSMS",
+            descriptor="(Landroid/os/Message;)V",
+        )[0]
+
+        bytecodes1 = list(apkinfo.get_method_bytecode(method1))
+
+        for expected in expected_bytecode_list1:
+            assert expected in bytecodes1
+
+        method2 = apkinfo.find_method(
+            class_name="Lcom/example/google/service/ContactsHelper;",
+            method_name="getPhoneContactNumbers",
+            descriptor="()V",
+        )[0]
+
+        bytecodes2 = list(apkinfo.get_method_bytecode(method2))
+
+        for expected in expected_bytecode_list2:
+            assert expected in bytecodes2
+
     def test_lowerfunc(self, apkinfo_without_R2Imp):
         apkinfo = apkinfo_without_R2Imp
         method = apkinfo.find_method(
