@@ -470,6 +470,46 @@ function expandCard(button) {
 
     }
 }
+
+let isDragging = false;  // 用於追蹤是否正在拖動
+let isCardTitle = false; // 用於追蹤是否按住了 .card-title
+
+// JointJS 的 interactive 配置，用於控制元素的互動性
+paper.options.interactive = function (cellView) {
+    // 如果按住了 .card-title 才允許移動
+    return { elementMove: isCardTitle };
+};
+
+// 監聽 element 上的 mousedown 事件，當使用者按住時觸發
+paper.on('element:pointerdown', function (elementView, evt) {
+    const clickedElement = evt.target;
+
+    // 檢查是否按住了 .card-title
+    if (clickedElement.classList.contains('card-title')) {
+        isDragging = true;
+        isCardTitle = true;  // 表示按住了 .card-title
+
+        console.log("Card title pressed! Node is movable.");
+    } else {
+        // 如果按住的不是 .card-title，則禁止移動
+        isDragging = false;
+        isCardTitle = false;
+
+        console.log("Node pressed outside card-title. Node is not movable.");
+    }
+});
+
+// 監聽 element 上的 mouseup 事件，當使用者放開時觸發
+paper.on('element:pointerup', function (elementView, evt) {
+    if (isDragging) {
+        console.log("Card title released! Stopping drag.");
+
+        // 停止拖動並重置狀態
+        isDragging = false;
+        isCardTitle = false; // 重置為不在 .card-title 範圍內
+    }
+});
+
 // paper.on('element:pointerclick', function (elementView, evt) {
 //     console.log("fick")
 //     const cardClass = elementView.model.attr('card/class');
