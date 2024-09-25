@@ -94,7 +94,7 @@ See more CWE detections using [Quark scripts](https://quark-engine.readthedocs.i
 
 # Showcase: Generate & Enhance a Quark Report of Ahmyth.apk
 
-Here’s a demonstration of using Quark Agent to generate and enhance a Quark report. We first generate a Quark [summary report](https://quark-engine.readthedocs.io/en/latest/quark_reports.html#id1) of Ahmyth.apk. Next, we enhance the report's scoring system to emphasize high-risk behaviors.
+Here’s a demonstration of using Quark Agent to generate and enhance a Quark report. The demonstration first generates a Quark [summary report](https://quark-engine.readthedocs.io/en/latest/quark_reports.html#id1) of Ahmyth.apk. Then, it enhances the report's scoring system to emphasize high-risk behaviors.
 
 In this demonstration, we use the command-line interface of Quark Agent.
 
