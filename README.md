@@ -32,6 +32,23 @@
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
 
+# New Features Coming Soon to Quark Agent
+
+![Screenshot 2024-09-26 at 2 40 55 PM](https://github.com/user-attachments/assets/9a83b256-1b9f-480f-a061-2400e2e868bc)
+<img width="1507" alt="Screenshot 2024-09-26 at 2 41 52 PM" src="https://github.com/user-attachments/assets/b6c3c1bf-aa6a-40e3-aebb-7f1ec375d3d5">
+
+We are currently focused on:
+
+- Effortlessly create detection workflows with natural language—no coding required.
+- Easily adjust and refine workflows through an intuitive drag-and-drop interface.
+- Instantly update and integrate changes as Quark Agent understands and adapts to workflow modifications.
+
+We are committed to providing an intuitive and user-friendly experience, enabling users to design detection workflows seamlessly through both textual and visual methods. 
+
+Many features are still under development and fine-tuning, and we will roll them out step by step as they become ready.
+
+If you have any suggestions, please don’t hesitate to share them with us!
+
 # Quark Agent - Your AI-powered Android APK Analyst
 
 ![quark agent demo](https://hackmd.io/_uploads/By6ggTni0.png)
