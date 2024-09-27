@@ -49,6 +49,8 @@ Many features are still under development and fine-tuning, and we will roll them
 
 If you have any suggestions, please don’t hesitate to share them with us!
 
+To stay updated with the latest news, make sure to watch our GitHub repository and follow us on [X (Twitter)](https://twitter.com/quarkengine).
+
 # Quark Agent - Your AI-powered Android APK Analyst
 
 ![quark agent demo](https://hackmd.io/_uploads/By6ggTni0.png)
