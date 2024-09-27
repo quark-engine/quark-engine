@@ -1,14 +1,44 @@
 body {
   font-family: Arial, sans-serif;
   font-size: 19px;
-  display: flex;
+  display: grid;
   height: 100vh;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  padding-inline: 30px;
   background: linear-gradient(45deg, #efc64bcc 10%, #a02e2e 35%, #060864f2 90%);
   color: #c7c7c7;
+  grid-template-columns: 7fr 3fr;
+  grid-template-rows: 1fr 9fr;
+  grid-template-areas: 
+    "header header" 
+    "flowchart chatbox";
 }
+
+.header {
+  grid-area: header;
+  padding-top: 20px;
+  text-align: center;
+}
+
+.chatbox-container {
+  grid-area: chatbox;
+  /* background-color: #2c3e50; */
+  color: white;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.flowchart-container {
+  grid-area: flowchart;
+  /* background-color: #37502c; */
+  color: white;
+  padding: 20px;
+  position: relative;
+}
+
+
 
 h1 {
   text-align: center;
@@ -18,14 +48,20 @@ h1 {
 
 .container {
   justify-content: space-between;
-  transition: width 0.3s ease;
-  display: flex;
-  max-width: 80%;
+  transition: width 0.3s ease, height 0.3s ease;
+  margin-bottom: 10px;
+  position: relative;
+  /*display: flex;*/
+  /* max-width: 80%; */
+}
+
+#largeContainer{
+  position: relative;
+  justify-content: space-between;
 }
 
 .chatbox {
-  width: 49%;
-  height: 70vh;
+  height: 85%;
   border: 1px solid #3e3e3e;
   padding: 10px;
   background: #3a3a3aab;
@@ -35,26 +71,30 @@ h1 {
   box-shadow: 0 0 10px rgb(133 133 133 / 70%);
   border-radius: 5px;
   transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 #diagram-container {
-  width: 98%;
-  height: 400px;
-  border: 1px solid #3e3e3e;
-  background-color: #414141;
   color: #c7c7c7;
   overflow-y: auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
   border-radius: 5px;
   transition: width 0.3s ease;
-  margin-bottom: 10px;
 }
 
-.input-container {
-  display: flex;
-  margin-top: 20px;
+#new-action-button {
+  position: absolute;
+  right: 100px;
+  right: 6%;
+  bottom: 13%;
+}
+
+.container.input {
   justify-content: flex-start;
   position: relative;
+  padding:0;
+  width: 100%;
 }
 
 #message {
@@ -69,7 +109,8 @@ h1 {
   color: #c7c7c7;
   font-size: 20px;
   padding-right: 50px;
-  resize: vertical;
+  /* resize: vertical; */
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -83,12 +124,9 @@ h1 {
   font-size: 16px;
   cursor: pointer;
   position: absolute;
-  right: 20px;
-  top: 38%;
+  right: 8px;
+  top: 47%;
   transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 #send::before {
@@ -147,14 +185,10 @@ h1 {
   color: #fff;
 }
 
-.chatbox {
-  display: flex;
-  flex-direction: column;
-}
-
 .CodeMirror-scroll {
   font-size: 16px;
   height: 100%;
+  padding: 15px;
 }
 
 .CodeMirror-gutters {
@@ -198,18 +232,18 @@ h1 {
   color: #6a737d;
 }
 
-#textBox {
-  width: 100%;
-}
-
 #codeBox {
   display: none;
-  width: 49%;
+  width: 60%;
+  height: 60%;
+  position: absolute;
+  left: 8%;
+  bottom: 15%;
 }
 
 .subtitle {
-  margin-top: -10px;
-  margin-bottom: 40px;
+  /* margin-top: -10px; */
+  /* margin-bottom: 40px; */
   font-size: 1.7rem;
 }
 
@@ -225,4 +259,75 @@ h1 {
 
 .available-cell rect {
   stroke-dasharray: 5, 2;
+}
+
+
+.circle-button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #ccc;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  z-index: 1;
+}
+
+#buttonContainer {
+  position: absolute;
+  right: 8%;
+  bottom: 15%;
+  height: 77%;
+  padding: 20px;
+  border: 1px solid #3e3e3e;
+  background-color: #414141;
+  color: #c7c7c7;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.centerText {
+    text-align: center;
+    font-size: 20px;
+    line-height: 50px;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+/* 六個按鈕的佈局 */
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 15px;
+}
+
+.grid-button {
+    padding: 10px;
+    background-color: #252526;
+    border: 2px solid #FFF;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-radius: 5px;
+    color: #c7c7c7;
+}
+
+.grid-button:hover {
+    background-color: #888;
+}
+
+.show {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+#codeblock-button {
+  position: absolute;
+  left: 6%;
+  bottom: 13%;
 }

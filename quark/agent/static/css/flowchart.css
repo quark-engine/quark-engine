@@ -1,0 +1,89 @@
+.card {
+    height: 50px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    background-color: rgb(62, 62, 62);
+    color: white;
+    transition: height 0.3s ease;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 18px;
+    text-align: left; /* 文字向右靠齊 */
+    line-height: 50px; /* 這裡的 line-height 可以設為 1 來確保字體不會有過大的空隙 */
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    justify-content: flex-start; /* 水平靠右 */
+    padding-left: 20px;
+    flex-shrink: 0;
+    background-color: #1d1d1d;
+}
+
+
+.card-content {
+    display: none;
+    flex-direction: column;
+    /* align-items: center; */
+    flex-grow: 1;
+    padding: 0px 20px 20px 20px;
+}
+
+.card-content input {
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.card-content button {
+    padding: 5px 5px;
+    border: none;
+    background-color: #007d72;
+    color: rgb(211, 211, 211);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    height: 30px;
+    width: 80px;
+    margin-top: 10px;
+    align-self: end;
+}
+
+.card-content button:hover {
+    background-color: #00c1b0;
+}
+
+.card.expanded {
+    height: 300px;
+    border-radius: 10px;
+}
+
+.card.expanded .card-content {
+    display: flex;
+}
+
+.card .expand-button {
+    position: absolute;
+    top: 14px;
+    right: 20px;
+    background-color: #195856;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.card-label {
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+}

@@ -11,7 +11,8 @@ var languageLabel = document.getElementById("languageLabel");
 
 // Initialize CodeMirror with dark theme
 var codeMirror = new CodeMirror(codeBox, {
-  lineNumbers: true,
+  // lineNumbers: true,
+  padding: 10,
   theme: "dracula",
   readOnly: false,
   backgroundColor: "#fff",
@@ -48,6 +49,7 @@ send.addEventListener("click", function () {
   userDiv.innerHTML = DOMPurify.sanitize(marked.parse(userMessage)); // eslint-disable-line
 
   textBox.appendChild(userDiv);
+  textBox.scrollTop = textBox.scrollHeight;
 
   message.value = "";
 
@@ -65,14 +67,16 @@ send.addEventListener("click", function () {
 
       if (botMessage.code_blocks.length > 0) {
         codeBox.style.display = "block";
-        textBox.style.width = "49%";
+        //textBox.style.width = "49%";
         var codeLines = botMessage.code_blocks.join("\n").split("\n").slice(1).join("\n");
         codeMirror.setValue(codeLines);
         codeMirror.setOption("mode", detectLanguage(botMessage.code_blocks.join("\n\n\n")));
       } else {
         codeBox.style.display = "none";
-        textBox.style.width = "100%";
+        //textBox.style.width = "100%";
       }
+
+      processNodesAndLinks(botMessage.flowdata);
 
       textBox.scrollTop = textBox.scrollHeight;
     });
@@ -97,3 +101,15 @@ message.addEventListener("keydown", function (event) {
     send.click();
   }
 });
+
+const codeblockButton = document.getElementById('codeblock-button');
+
+function showCodeBlock() {
+  if (codeBox.style.display === "none") {
+    codeBox.style.display = "block";
+    codeblockButton.style.color = "#008";
+  } else {
+    codeBox.style.display = "none";
+    codeblockButton.style.color = "#000";
+  }
+}
