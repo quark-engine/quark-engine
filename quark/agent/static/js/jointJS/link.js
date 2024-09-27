@@ -28,7 +28,7 @@ function addLink(sourceNode, targetNode) {
 
     connection.source(sourceNode, {"port": sourceRightPort});
     //connection.target(targetNode, {"port": targetTopPort});
-    connection.target(targetNode, {"port": targetLeftPort});
+    connection.target(targetNode, {"port": targetTopPort});
     // Check if paper have same connection
     connection.addTo(graph);
 

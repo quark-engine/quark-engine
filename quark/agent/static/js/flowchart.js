@@ -2,7 +2,7 @@
 let jsonData = {
     nodes: {
         node1: { label: "Define the behavior 'Construct Cryptographic Key' in the rule instance." },
-        node2: { label: "run Quark Analysis using the rule instance on the APK sample." },
+        node2: { label: "Run Quark Analysis using the rule instance on the APK sample." },
         node3: { label: "Obtain all instancesss" },
         node4: { label: "Check if the parameter values are hard-coded." },
         node5: { label: "Write the code in the specified file." }
@@ -281,7 +281,7 @@ async function processNodesAndLinks(flowData) {
     for (const nodeId in sortedNodesObj) {
         const node = flowData.nodes[nodeId];
         posY = (spacing * i) - 20;
-        posX = (spacing+200 * i) - 300;
+        posX = (spacing+230 * i) - 300;
         i = i + 1;
 
         // remove flowdata node
@@ -383,38 +383,6 @@ function loadJson() {
         })
         .catch(error => console.error('錯誤:', error));
 }
-
-
-
-// processNodesAndLinks(jsonData);
-
-
-// const Form = joint.dia.Element.define('example.form', {
-//     attrs: {
-//         foreignObject: {
-//             width: 'calc(w)',
-//             height: 'calc(h)'
-//         }
-//     }
-// }, {
-//     markup: joint.util.svg/* xml */`
-//             <foreignObject @selector="foreignObject">
-//             <div xmlns="http://www.w3.org/1999/xhtml" class="outer" >
-//                 <div class="inner">
-//                 <text @selector="fff" x="20" y="35" class="small">My</text>
-
-//                         <input @selector="name" type="text" name="name" autocomplete="off" placeholder="Your diagram name"/>
-//                         <button onclick="tttttt('fuck')">
-//                             <span>Submit</span>
-//                         </button>
-
-//                 </div>
-//             </div>
-//         </foreignObject>
-//         `
-// });
-
-
 
 const Form = joint.dia.Element.define('example.form', {
     attrs: {
