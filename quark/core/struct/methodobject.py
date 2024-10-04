@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass(unsafe_hash=True)
+@dataclass(unsafe_hash=False)
 class MethodObject(object):
     """
     Information about a method in a dex file.
@@ -12,6 +12,12 @@ class MethodObject(object):
     descriptor: str
     access_flags: str = field(compare=False, default="")
     cache: object = field(compare=False, default=None, repr=False)
+
+    def __hash__(self):
+        return hash(self.descriptor)
+
+    def __eq__(self, other):
+        return isinstance(other, MethodObject) and self.descriptor == other.descriptor
 
     @property
     def full_name(self) -> str:
