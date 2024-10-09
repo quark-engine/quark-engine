@@ -190,15 +190,13 @@ class TestApkinfo:
                 "v2",
                 "LDexParserTest;-><init>()V",
             ],
-            # "first_hex": "70 10 00 00 02 00",
-            "first_hex": "",  # TODO - Finish me
+            "first_hex": "70 10 00 00 02 00",
             "second": [
                 "invoke-direct",
                 "v2",
                 "LDexParserTest;->printMessage()V",
             ],
-            # "second_hex": "70 10 03 00 02 00",
-            "second_hex": "",  # TODO - Finish me
+            "second_hex": "70 10 03 00 02 00",
         }
 
         parentMethod = apkinfo.find_method(

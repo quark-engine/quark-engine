@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-# This file is part of Quark-Engine:
-# https://github.com/quark-engine/quark-engine
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 
 import re
@@ -9,14 +8,19 @@ from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union, Iterator, Tuple
 
-from shuriken import Dex
-from shuriken.dex import hdvmmethodanalysis_t
+from shuriken import Dex, Apk
+from shuriken.dex import (
+    hdvmmethodanalysis_t,
+    hdvminstruction_t,
+    dvmdisassembled_method_t,
+    hdvmclass_t,
+)
 
 from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-from quark.utils.tools import remove_dup_list
+from quark.utils.tools import descriptor_to_androguard_format
 
 
 class ShurikenImp(BaseApkinfo):
@@ -28,7 +32,7 @@ class ShurikenImp(BaseApkinfo):
         super().__init__(apk_filepath, "shuriken")
 
         if self.ret_type == "APK":
-            pass
+            self.analysis = Apk(apk_filepath, create_xrefs=True)
         elif self.ret_type == "DEX":
             self.analysis = Dex(apk_filepath)
             self.analysis.disassemble_dex()
@@ -105,27 +109,41 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def custom_methods(self) -> Set[MethodObject]:
-        methods = self.all_methods
-        customMethods = set(
-            filter(lambda method: not method.cache.external, methods)
-        )
-
-        return customMethods
+        return {
+            method for method in self.all_methods if not method.cache.external
+        }
 
     @property
     def all_methods(self) -> Set[MethodObject]:
         methods = set()
-        for i in range(self.analysis.get_number_of_classes()):
-            rawClass = self.analysis.get_class_by_id(i)
-            className = rawClass.class_name.decode()
-            classAnalysis = self.analysis.get_analyzed_class(className)
-            for j in range(classAnalysis.n_of_methods):
-                methodAnalysis = classAnalysis.methods[j].contents
-                method = self._convert_to_method_object(methodAnalysis)
-                lowerMethodInfo = self.lowerfunc(method)
-                lowerMethods = [info[0] for info in lowerMethodInfo]
-                methods = methods.union(set(lowerMethods))
-                methods.add(method)
+
+        match self.ret_type:
+            case "APK":
+                numOfMethod = (
+                    self.analysis.get_number_of_methodanalysis_objects()
+                )
+                for i in range(numOfMethod):
+                    methodAnalysis = self.analysis.get_analyzed_method_by_idx(
+                        i
+                    )
+                    methods.add(self._convert_to_method_object(methodAnalysis))
+
+            case "DEX":
+                # TODO - Wait for the upstream to add an API to get all methods.
+                for i in range(self.analysis.get_number_of_classes()):
+                    rawClass = self.analysis.get_class_by_id(i)
+                    className = rawClass.class_name.decode()
+                    classAnalysis = self.analysis.get_analyzed_class(className)
+                    for j in range(classAnalysis.n_of_methods):
+                        methodAnalysis = classAnalysis.methods[j].contents
+                        method = self._convert_to_method_object(methodAnalysis)
+                        lowerMethodInfo = self.lowerfunc(method)
+                        lowerMethods = [info[0] for info in lowerMethodInfo]
+                        methods = methods.union(set(lowerMethods))
+                        methods.add(method)
+            case _:
+                raise ValueError("Unsupported File type.")
+
         return methods
 
     @functools.lru_cache()
@@ -150,7 +168,6 @@ class ShurikenImp(BaseApkinfo):
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
         methodAnalysis = method_object.cache
-
         upperFuncs = set()
         for i in range(methodAnalysis.n_of_xreffrom):
             upperFuncs.add(
@@ -190,14 +207,12 @@ class ShurikenImp(BaseApkinfo):
         bytecodes
         :yield: a generator of BytecodeObjects
         """
-        methodAnalysis = method_object.cache
-        disassembledMethod = self.analysis.get_disassembled_method(
-            methodAnalysis.full_name.decode()
-        )
+        disassembledMethod = self.__getDisassembledMethod(method_object)
+
         for i in range(disassembledMethod.n_of_instructions):
             rawBytecode = disassembledMethod.instructions[
                 i
-            ].disassembly.decode()
+            ].disassembly.decode(errors="backslashreplace")
             yield self._parseSmali(rawBytecode)
 
     def _parseParameters(self, parameter: str) -> Union[int, float, str]:
@@ -275,26 +290,109 @@ class ShurikenImp(BaseApkinfo):
         return BytecodeObject(mnemonic, argsList, parameter)
 
     def get_strings(self) -> Set[str]:
-        strings = set()
-        for i in range(self.analysis.get_number_of_strings()):
-            strings.add(self.analysis.get_string_by_id(i).decode())
-        return strings
+        match self.ret_type:
+            case "APK":
+                dexList = (
+                    self.analysis.get_dex_file_by_index(i)
+                    for i in range(self.analysis.get_number_of_dex_files())
+                )
 
-    def _find_first_bytecode_by_calling_method(
-        self, bytecodes: Iterator[BytecodeObject], target_method: MethodObject
-    ) -> Optional[BytecodeObject]:
+                rawString = (
+                    self.analysis.get_string_by_id_from_dex(dex, i)
+                    for dex in dexList
+                    for i in range(
+                        self.analysis.get_number_of_strings_from_dex(dex)
+                    )
+                )
+
+            case "DEX":
+                rawString = (
+                    self.analysis.get_string_by_id(i).decode(
+                        errors="backslashreplace"
+                    )
+                    for i in range(self.analysis.get_number_of_strings())
+                )
+
+            case _:
+                raise ValueError("Unsupported File type.")
+
+        return {s for s in rawString if s}
+
+    @functools.lru_cache()
+    def _construct_bytecode_instruction(self, instruction):
+        """
+        Construct a list of strings from the given bytecode instructions.
+
+        :param instruction: instruction instance from androguard
+        :return: a list with bytecode instructions strings
+        """
+        pass
+
+    def __findMethodCallInstruction(
+        self,
+        method: MethodObject,
+        instructions: List[hdvminstruction_t],
+        start=0,
+    ) -> Optional[int]:
         targetMethodCall = (
-            f"{target_method.class_name}"
-            f"->{target_method.name}"
-            f"{target_method.descriptor}"
+            f"{method.class_name}->{method.name}{method.descriptor}"
         )
 
-        for bytecode in bytecodes:
+        for idx in range(start, len(instructions)):
+            bytecodeStr = instructions[idx].disassembly.decode(
+                errors="backslashreplace"
+            )
             if (
-                bytecode.mnemonic.startswith("invoke")
-                and targetMethodCall in bytecode.parameter
+                bytecodeStr.startswith("invoke")
+                and targetMethodCall in bytecodeStr
             ):
-                return bytecode
+                return idx
+
+    def __getDisassembledMethod(
+        self, method: MethodObject
+    ) -> dvmdisassembled_method_t:
+        methodAnalysis = method.cache
+
+        match self.ret_type:
+            case "DEX":
+                return self.analysis.get_disassembled_method(
+                    methodAnalysis.full_name.decode()
+                )
+            case "APK":
+                return self.analysis.get_disassembled_method_from_apk(
+                    methodAnalysis.full_name.decode()
+                )
+            case _:
+                raise ValueError("Unsupported File type.")
+
+    def __extractMethodCallDetails(
+        self,
+        targetMethod: MethodObject,
+        instructions: List[hdvminstruction_t],
+        rawBytes: bytes,
+        start: int = 0,
+    ):
+        idx = self.__findMethodCallInstruction(
+            targetMethod, instructions, start
+        )
+        smali = self._parseSmali(
+            instructions[idx].disassembly.decode(errors="backslashreplace")
+        )
+
+        offset = sum(ins.instruction_length for ins in instructions[:idx])
+        hex_bytes = rawBytes[
+            offset : offset + instructions[idx].instruction_length
+        ].hex(" ")
+
+        return {
+            "index": idx,
+            "smali": [
+                smali.mnemonic,
+                " ".join(smali.registers),
+                smali.parameter,
+            ],
+            "hex": hex_bytes,
+        }
 
     @functools.lru_cache()
     def get_wrapper_smali(
@@ -303,36 +401,65 @@ class ShurikenImp(BaseApkinfo):
         first_method: MethodObject,
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
-        bytecodes = self.get_method_bytecode(parent_method)
 
-        first = self._find_first_bytecode_by_calling_method(
-            bytecodes, first_method
+        disassembledMethod = self.__getDisassembledMethod(parent_method)
+
+        numOfIns = disassembledMethod.n_of_instructions
+        instructions = disassembledMethod.instructions[:numOfIns]
+
+        method = disassembledMethod.method_id.contents # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
+        rawBytes = bytes(method.code[: method.code_size])
+
+        firstResult = self.__extractMethodCallDetails(
+            first_method, instructions, rawBytes
         )
-        second = self._find_first_bytecode_by_calling_method(
-            bytecodes, second_method
+        secondResult = self.__extractMethodCallDetails(
+            second_method,
+            instructions,
+            rawBytes,
+            start=firstResult["index"] + 1,
         )
 
         return {
-            "first": [
-                first.mnemonic,
-                " ".join(first.registers),
-                first.parameter,
-            ],
-            "first_hex": "",  # TODO - Finish me
-            "second": [
-                second.mnemonic,
-                " ".join(second.registers),
-                second.parameter,
-            ],
-            "second_hex": "",  # TODO - Finish me
+            "first": firstResult["smali"],
+            "first_hex": firstResult["hex"],
+            "second": secondResult["smali"],
+            "second_hex": secondResult["hex"],
         }
+
+    def __getClasses(self) -> Iterator[hdvmclass_t]:
+        match self.ret_type:
+            case "APK":
+                dexList = (
+                    self.analysis.get_dex_file_by_index(i)
+                    for i in range(self.analysis.get_number_of_dex_files())
+                )
+
+                rawClasses = (
+                    self.analysis.get_hdvmclass_from_dex_by_index(dex, i)
+                    for dex in dexList
+                    for i in range(
+                        self.analysis.get_number_of_classes_for_dex_file(dex)
+                    )
+                )
+
+            case "DEX":
+                rawClasses = (
+                    self.analysis.get_class_by_id(i)
+                    for i in range(self.analysis.get_number_of_classes())
+                )
+
+            case _:
+                raise ValueError("Unsupported File type.")
+        return rawClasses
 
     @property
     def superclass_relationships(self) -> Dict[str, Set[str]]:
+        rawClasses = self.__getClasses()
+
         hierarchyDict = defaultdict(set)
 
-        for i in range(self.analysis.get_number_of_classes()):
-            rawClass = self.analysis.get_class_by_id(i)
+        for rawClass in rawClasses:
             className = self._convertClassNameFormat(
                 rawClass.class_name.decode()
             )
@@ -346,10 +473,11 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def subclass_relationships(self) -> Dict[str, Set[str]]:
+        rawClasses = self.__getClasses()
+
         hierarchyDict = defaultdict(set)
 
-        for i in range(self.analysis.get_number_of_classes()):
-            rawClass = self.analysis.get_class_by_id(i)
+        for rawClass in rawClasses:
             className = self._convertClassNameFormat(
                 rawClass.class_name.decode()
             )
@@ -373,7 +501,9 @@ class ShurikenImp(BaseApkinfo):
             # access_flags=methodAnalysis.access_flags,
             class_name=className,
             name=methodAnalysis.name.decode(),
-            descriptor=methodAnalysis.descriptor.decode(),
+            descriptor=descriptor_to_androguard_format(
+                methodAnalysis.descriptor.decode()
+            ),
             cache=methodAnalysis,
         )
 

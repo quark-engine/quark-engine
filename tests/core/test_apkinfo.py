@@ -8,46 +8,32 @@ from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.rzapkinfo import RizinImp
 from quark.core.r2apkinfo import R2Imp
+from quark.core.shurikenapkinfo import ShurikenImp
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-
-APK_SOURCE = (
-    "https://github.com/quark-engine/apk-samples"
-    "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
-)
-APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
-
-
-@pytest.fixture(scope="function")
-def apk_path():
-    r = requests.get(APK_SOURCE, allow_redirects=True)
-    file = open(APK_FILENAME, "wb")
-    file.write(r.content)
-
-    return APK_FILENAME
 
 
 @pytest.fixture(
     scope="function",
-    params=((AndroguardImp), (RizinImp), (R2Imp)),
+    params=((AndroguardImp), (RizinImp), (R2Imp), (ShurikenImp)),
 )
-def apkinfo(request, apk_path):
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
+def apkinfo(request, SAMPLE_PATH_13667):
+    Apkinfo = request.param
+    apkinfo = Apkinfo(SAMPLE_PATH_13667)
 
     yield apkinfo
 
 
 @pytest.fixture(
     scope="function",
-    params=((AndroguardImp), (RizinImp)),
+    params=((AndroguardImp), (RizinImp), (ShurikenImp)),
 )
-def apkinfo_without_R2Imp(request, apk_path):
+def apkinfo_without_R2Imp(request, SAMPLE_PATH_13667):
     """Since R2 has some issue,
     create this function to skip R2 relevant test for some test functions.
     """
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
+    Apkinfo = request.param
+    apkinfo = Apkinfo(SAMPLE_PATH_13667)
 
     yield apkinfo
 
@@ -56,11 +42,10 @@ def apkinfo_without_R2Imp(request, apk_path):
     scope="function",
     params=((R2Imp),),
 )
-def apkinfo_with_R2Imp_only(request, apk_path):
-    """For testcases involved with R2 core lib.
-    """
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
+def apkinfo_with_R2Imp_only(request, SAMPLE_PATH_13667):
+    """For testcases involved with R2 core lib."""
+    Apkinfo = request.param
+    apkinfo = Apkinfo(SAMPLE_PATH_13667)
 
     yield apkinfo
 
@@ -68,7 +53,8 @@ def apkinfo_with_R2Imp_only(request, apk_path):
 @pytest.fixture(scope="function")
 def dex_file():
     APK_SOURCE = (
-        "https://github.com/quark-engine/apk-samples" "/raw/master/malware-samples/Ahmyth.apk"
+        "https://github.com/quark-engine/apk-samples"
+        "/raw/master/malware-samples/Ahmyth.apk"
     )
     APK_NAME = "Ahmyth.apk"
     DEX_NAME = "classes.dex"
@@ -99,8 +85,8 @@ class TestApkinfo:
         with pytest.raises(FileNotFoundError):
             _ = BaseApkinfo(filepath)
 
-    def test_init_with_apk(self, apk_path):
-        apkinfo = BaseApkinfo(apk_path)
+    def test_init_with_apk(self, SAMPLE_PATH_13667):
+        apkinfo = BaseApkinfo(SAMPLE_PATH_13667)
 
         assert apkinfo.ret_type == "APK"
 
@@ -110,7 +96,9 @@ class TestApkinfo:
         assert apkinfo.ret_type == "DEX"
 
     def test_filename(self, apkinfo):
-        assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        assert (
+            apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        )
 
     def test_filesize(self, apkinfo):
         assert apkinfo.filesize == 266155
@@ -134,9 +122,11 @@ class TestApkinfo:
     @staticmethod
     def test_application(apkinfo):
         application = apkinfo.application
-        label = str(application.get(
-            "{http://schemas.android.com/apk/res/android}label"
-        ))
+        label = str(
+            application.get(
+                "{http://schemas.android.com/apk/res/android}label"
+            )
+        )
         assert label == "@7F050001" or label == "2131034113"
 
     @staticmethod
@@ -198,7 +188,11 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.android_apis) == 1270
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.android_apis) > 0
+            assert len(apkinfo.android_apis) == 1269
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.android_apis) == 1438
+            return
+
         assert api.issubset(apkinfo.android_apis)
 
     def test_custom_methods(self, apkinfo):
@@ -217,7 +211,10 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.custom_methods) == 3999
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.custom_methods) > 0
+            assert len(apkinfo.custom_methods) == 3990
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.custom_methods) == 3999
+
         assert test_custom_method.issubset(apkinfo.custom_methods)
 
     def test_all_methods(self, apkinfo):
@@ -237,7 +234,9 @@ class TestApkinfo:
         if apkinfo.core_library == "androguard":
             assert len(apkinfo.all_methods) == 5452
         elif apkinfo.core_library == "rizin":
-            assert len(apkinfo.all_methods) > 0
+            assert len(apkinfo.all_methods) == 5260
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.all_methods) == 5451
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
@@ -308,7 +307,9 @@ class TestApkinfo:
         ],
     )
     def test_find_method(apkinfo, test_input, expected):
-        result = apkinfo.find_method(test_input[0], test_input[1], test_input[2])
+        result = apkinfo.find_method(
+            test_input[0], test_input[1], test_input[2]
+        )
         expect_method = MethodObject(
             expected[0],
             expected[1],
@@ -392,11 +393,7 @@ class TestApkinfo:
                     "Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
                 ),
             ),
-            BytecodeObject(
-                "const-string",
-                ["v4"],
-                "SMS"
-            ),
+            BytecodeObject("const-string", ["v4"], "SMS"),
             BytecodeObject(
                 "invoke-virtual",
                 ["v8"],
@@ -468,7 +465,6 @@ class TestApkinfo:
 
         assert expected_upper_class == upper_set
 
-
     @staticmethod
     @pytest.mark.parametrize(
         "test_input, expected",
@@ -478,12 +474,14 @@ class TestApkinfo:
                 str,
             ),
             (
-                0x3e8,
+                0x3E8,
                 float,
             ),
             (
-                ("Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
-                 "Ljava/lang/StringBuilder;"),
+                (
+                    "Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
+                    "Ljava/lang/StringBuilder;"
+                ),
                 str,
             ),
             (
@@ -496,3 +494,41 @@ class TestApkinfo:
         apkinfo = apkinfo_with_R2Imp_only
         parsed_param = apkinfo._parse_parameter(test_input)
         assert isinstance(parsed_param, expected)
+
+    def test_get_strings(self, apkinfo):
+        expectStrings = {"cache", "display_name", "ACTION_CUT"}
+
+        result = apkinfo.get_strings()
+
+        assert expectStrings.issubset(result)
+
+    def test_get_wrapper_smali(self, apkinfo):
+        parent_method = apkinfo.find_method(
+            'Lcom/example/google/service/ContactsHelper;',
+            "getSIMContacts",
+            "()V",
+        )[0]
+
+        first_method = apkinfo.find_method(
+            "Landroid/content/ContentResolver;",
+            "query",
+            "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+        )[0]
+
+        second_method = apkinfo.find_method(
+            "Landroid/database/Cursor;",
+            "getColumnIndex",
+            "(Ljava/lang/String;)I",
+        )[0]
+
+        expected_result = {
+            "first": ['invoke-virtual/range', 'v0', 'v1', 'v2', 'v3', 'v4', 'v5', 'Landroid/content/ContentResolver;->query(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;'],
+            "first_hex": '74 06 83 00 00 00',
+            "second": ['invoke-interface', 'v7', 'v2', 'Landroid/database/Cursor;->getColumnIndex(Ljava/lang/String;)I'],
+            "second_hex": '72 20 f5 00 27 00',
+        }
+
+        result = apkinfo.get_wrapper_smali(parent_method, first_method, second_method)
+
+        for key, expected in expected_result.items():
+            assert result[key] == expected
