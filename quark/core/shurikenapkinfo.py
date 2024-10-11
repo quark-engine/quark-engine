@@ -69,7 +69,7 @@ class ShurikenImp(BaseApkinfo):
             className = rawClass.class_name.decode()
             classAnalysis = self.analysis.get_analyzed_class(className)
             for j in range(classAnalysis.n_of_methods):
-                methodAnalysis = classAnalysis.methods[i].contents
+                methodAnalysis = classAnalysis.methods[j].contents
                 if methodAnalysis.is_android_api:
                     methods.add(self._convert_to_method_object(methodAnalysis))
         return methods
@@ -82,7 +82,7 @@ class ShurikenImp(BaseApkinfo):
             className = rawClass.class_name.decode()
             classAnalysis = self.analysis.get_analyzed_class(className)
             for j in range(classAnalysis.n_of_methods):
-                methodAnalysis = classAnalysis.methods[i].contents
+                methodAnalysis = classAnalysis.methods[j].contents
                 if methodAnalysis.external:
                     methods.add(self._convert_to_method_object(methodAnalysis))
         return methods

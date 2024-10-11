@@ -15,7 +15,7 @@ APK_FILENAME = "DexParserTest.dex"
 
 @pytest.fixture(scope="function")
 def apk_path():
-    r = requests.get(APK_SOURCE, allow_redirects=True)
+    r = requests.get(APK_SOURCE, allow_redirects=True, timeout=10)
     file = open(APK_FILENAME, "wb")
     file.write(r.content)
 
