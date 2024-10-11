@@ -34,11 +34,16 @@
 
 # New Features Coming Soon to Quark Agent
 
+
+![Oct-11-2024 17-27-46](https://github.com/user-attachments/assets/6643b80b-bd85-450a-b646-9ef1a8b55bc3)
+
+
 ![Screenshot 2024-09-26 at 2 40 55 PM](https://github.com/user-attachments/assets/9a83b256-1b9f-480f-a061-2400e2e868bc)
 <img width="1507" alt="Screenshot 2024-09-26 at 2 41 52 PM" src="https://github.com/user-attachments/assets/b6c3c1bf-aa6a-40e3-aebb-7f1ec375d3d5">
 
 We are currently focused on:
 
+- The next step of the detection process for auto-suggestion.
 - Effortlessly create detection workflows with natural language—no coding required.
 - Easily adjust and refine workflows through an intuitive drag-and-drop interface.
 - Instantly update and integrate changes as Quark Agent understands and adapts to workflow modifications.
