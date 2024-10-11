@@ -47,6 +47,9 @@ jobs:
         cd /opt/radare2-5.8.8
         sudo sys/install.sh
         cd -
+        
+        # Install Shuriken-Analyzer
+        python -m pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
  
         # Install langchain and it's OpenAI integration
         python -m pip install langchain==0.2.11 langchain-core==0.2.23 langchain-openai==0.1.17 --upgrade
