@@ -36,7 +36,8 @@ setuptools.setup(
     url="https://github.com/quark-engine/quark-engine",
     packages=setuptools.find_packages(exclude=("tests",)),
     package_data={
-        "quark.core.axmlreader": ["axml_definition"],
+        "quark.core.axmlreader.rizin": ["axml_definition"],
+        "quark.core.axmlreader.radare2": ["axml_definition"],
         "quark.webreport": [
             "analysis_report_layout.html",
             "genrule_report_layout.html",

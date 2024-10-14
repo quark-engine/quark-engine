@@ -87,20 +87,22 @@ class AxmlReader(object):
 
     def __init__(self, file_path, core_library="rizin", structure_path=None):
         if structure_path is None:
+            base_path = f"quark.core.axmlreader.{core_library}"
             structure_path = pkg_resources.resource_filename(
-                "quark.core.axmlreader", "axml_definition"
+                base_path, "axml_definition"
             )
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
                 f"Cannot find printing format definition file"
-                f" of Rizin in {structure_path}"
+                f" of {core_library} in {structure_path}"
             )
 
         if core_library == "rizin":
             self._core = rzpipe.open(file_path)
-        else:
+        elif core_library == "radare2":
             self._core = r2pipe.open(file_path)
+
         self._core.cmd(f"pfo {structure_path}")
 
         self._file_size = int(self._core.cmd("i~size[1]"), 16)
