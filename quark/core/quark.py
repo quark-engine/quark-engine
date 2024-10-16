@@ -130,14 +130,16 @@ class Quark:
 
         # Extend the xref from function into next layer.
         for method in first_method_set:
-            if self.apkinfo.upperfunc(method):
+            method_caller = self.apkinfo.upperfunc(method)
+            if method_caller:
                 next_level_set_1 = (
-                    self.apkinfo.upperfunc(method) | next_level_set_1
+                    method_caller | next_level_set_1
                 )
         for method in second_method_set:
-            if self.apkinfo.upperfunc(method):
+            method_caller = self.apkinfo.upperfunc(method)
+            if method_caller:
                 next_level_set_2 = (
-                    self.apkinfo.upperfunc(method) | next_level_set_2
+                    method_caller | next_level_set_2
                 )
 
         return self.find_intersection(
@@ -256,6 +258,13 @@ class Quark:
             for c_func in val_obj.called_by_func
         )
 
+        register_usage_records = (
+            c_func
+            for table in usage_table
+            for val_obj in table
+            for c_func in val_obj.called_by_func
+        )
+
         matched_records = filter(
             lambda r: first_method_pattern in r and second_method_pattern in r,
             register_usage_records,
@@ -315,7 +324,6 @@ class Quark:
         state = False
         for first_call_method in first_method_list:
             for second_call_method in second_method_list:
-
                 result_generator = self.check_parameter_on_single_method(
                     usage_table,
                     first_call_method,
@@ -542,7 +550,6 @@ class Quark:
                     self.find_previous_method(
                         second_api, parent_function, second_wrapper
                     )
-
                     if self.check_sequence(
                         parent_function, first_wrapper, second_wrapper
                     ):

@@ -21,7 +21,7 @@
         <img alt="license" src="https://img.shields.io/badge/License-GPLv3-blue.svg">
     </a>
     <a href="https://www.python.org/downloads/release/python-360/">
-        <img alt="python version" src="https://img.shields.io/badge/python-3.8-blue.svg">
+        <img alt="python version" src="https://img.shields.io/badge/python-3.9-blue.svg">
     </a>
     <a href="https://pypi.org/project/quark-engine/">
         <img alt="PyPi Download" src="https://pepy.tech/badge/quark-engine">
@@ -31,6 +31,30 @@
     </a><br>
     <img src="https://i.imgur.com/8GwkWei.png"/>
 </p>
+
+# New Features Coming Soon to Quark Agent
+
+
+![Oct-11-2024 17-27-46](https://github.com/user-attachments/assets/6643b80b-bd85-450a-b646-9ef1a8b55bc3)
+
+
+![Screenshot 2024-09-26 at 2 40 55 PM](https://github.com/user-attachments/assets/9a83b256-1b9f-480f-a061-2400e2e868bc)
+<img width="1507" alt="Screenshot 2024-09-26 at 2 41 52 PM" src="https://github.com/user-attachments/assets/b6c3c1bf-aa6a-40e3-aebb-7f1ec375d3d5">
+
+We are currently focused on:
+
+- The next step of the detection process for auto-suggestion.
+- Effortlessly create detection workflows with natural language—no coding required.
+- Easily adjust and refine workflows through an intuitive drag-and-drop interface.
+- Instantly update and integrate changes as Quark Agent understands and adapts to workflow modifications.
+
+We are committed to providing an intuitive and user-friendly experience, enabling users to design detection workflows seamlessly through both textual and visual methods. 
+
+Many features are still under development and fine-tuning, and we will roll them out step by step as they become ready.
+
+If you have any suggestions, please don’t hesitate to share them with us!
+
+To stay updated with the latest news, make sure to watch our GitHub repository and follow us on [X (Twitter)](https://twitter.com/quarkengine).
 
 # Quark Agent - Your AI-powered Android APK Analyst
 
@@ -44,7 +68,7 @@ Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerabilit
 
 ### Step 1: Environments Requirements
 
-*   Make sure your Python version is 3.8 or above.
+*   Make sure your Python version is 3.9 or above.
 
 ### Step 2: Install Quark Agent
 

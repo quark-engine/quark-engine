@@ -1,3 +1,24 @@
+quark-engine (24.10.1-0kali1) kali-dev; urgency=medium
+
+  * New Feature
+
+    - Add a Quark Agent showcase that can enhance Quark Reports. (#685)
+
+  * Document Enhancement
+
+    - Optimize the CWE-117 document. (#691)
+
+  * Requirement Update
+
+    - Update the minimum required Python version to 3.9. (#680)
+
+  * Bug Fixes
+
+    - Fix coding style issues in Quark Agent web interface. (#683)
+    - Fix incorrect outputs of the CWE-117, 798, and 921 showcases. (#689)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Wed, 2 Oct 2024 17:00:00 +0800
+
 quark-engine (24.9.1-0kali1) kali-dev; urgency=medium
 
   * New Feature:

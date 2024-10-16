@@ -16,10 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python 3.8
+    - name: Set up Python 3.9
       uses: actions/setup-python@v4
       with:
-        python-version: 3.8
+        python-version: 3.9
         cache: pip
         cache-dependency-path: setup.py
 
@@ -31,9 +31,10 @@ jobs:
         # Install graphviz & ninja
         sudo apt-get -y install graphviz ninja-build
  
-        # Install Rizin
-        sudo git clone --branch v0.3.4 https://github.com/rizinorg/rizin /opt/rizin/
+        # Install Rizin (0.7.3)
+        sudo git clone https://github.com/rizinorg/rizin /opt/rizin/
         cd /opt/rizin/
+        sudo git checkout v0.7.3
         meson build
         ninja -C build
         sudo ninja -C build install
