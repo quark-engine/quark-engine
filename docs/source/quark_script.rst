@@ -1921,17 +1921,32 @@ Quark Script Result
 	$ python3 CWE-23.py
 	CWE-23 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
 
-Detect CWE-338 in Android Application (pivva.apk)
-------------------------------------------------------
+Detect CWE-338 in Android Application
+--------------------------------------
 
-This scenario aims to detect the **Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG).** See `CWE-338 <https://cwe.mitre.org/data/definitions/338.html>`_ for more details.
+This scenario seeks to find **Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)**.
 
-To demonstrate how the Quark script finds this vulnerability, we will use the `pivaa <https://github.com/HTBridge/pivaa>`_ APK file and the above APIs.
+CWE-338: Use of Cryptographically Weak Pseudo-Random Number Generator (PRNG)
+=============================================================================
 
-First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``methodInstance.getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
+We analyze the definition of CWE-338 and identify its characteristics.
+
+See `CWE-338 <https://cwe.mitre.org/data/definitions/338.html>`_ for more details.
+
+.. image:: https://imgur.com/SSTvgYO.jpg
+
+Code of CWE-338 in pivaa.apk
+=============================
+
+We use the `pivaa.apk <https://github.com/HTBridge/pivaa>`_ sample to explain the vulnerability code of CWE-338.
+
+.. image:: https://imgur.com/OPmo8Df.jpg
 
 Quark Script CWE-338.py
 ========================
+
+First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``methodInstance.getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
+
 .. code-block:: python
      
     from quark.script import runQuarkAnalysis, Rule
@@ -1953,8 +1968,8 @@ Quark Script CWE-338.py
                 for keyword in CREDENTIAL_KEYWORDS):
                 print("CWE-338 is detected in %s" % prngCaller.fullName)
 
-useMethodOfPRNG.json
-========================
+Quark Rule: useMethodOfPRNG.json
+=================================
 .. code-block:: json
     
     {
