@@ -1969,7 +1969,7 @@ First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior t
                 print("CWE-338 is detected in %s" % prngCaller.fullName)
 
 Quark Rule: useMethodOfPRNG.json
-========================
+=================================
 .. code-block:: json
     
     {
