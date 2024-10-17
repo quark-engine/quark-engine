@@ -1933,7 +1933,7 @@ We analyze the definition of CWE-338 and identify its characteristics.
 
 See `CWE-338 <https://cwe.mitre.org/data/definitions/338.html>`_ for more details.
 
-.. image:: https://imgur.com/qXNSQER.jpg
+.. image:: https://imgur.com/SSTvgYO.jpg
 
 Code of CWE-338 in pivaa.apk
 =============================
@@ -1968,7 +1968,7 @@ First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior t
                 for keyword in CREDENTIAL_KEYWORDS):
                 print("CWE-338 is detected in %s" % prngCaller.fullName)
 
-useMethodOfPRNG.json
+Quark Rule: useMethodOfPRNG.json
 ========================
 .. code-block:: json
     
