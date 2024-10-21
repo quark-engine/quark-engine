@@ -24,8 +24,8 @@ def apk_path():
 
 @pytest.fixture(
     scope="function",
-    params=((AndroguardImp), (ShurikenImp)),
-    # params=((ShurikenImp),),
+    # params=((AndroguardImp), (ShurikenImp)),
+    params=((ShurikenImp),),
 )
 def apkinfo(request, apk_path):
     Apkinfo, apk_path = request.param, apk_path

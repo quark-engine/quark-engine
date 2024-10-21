@@ -63,29 +63,21 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def android_apis(self) -> Set[MethodObject]:
-        methods = set()
-        for i in range(self.analysis.get_number_of_classes()):
-            rawClass = self.analysis.get_class_by_id(i)
-            className = rawClass.class_name.decode()
-            classAnalysis = self.analysis.get_analyzed_class(className)
-            for j in range(classAnalysis.n_of_methods):
-                methodAnalysis = classAnalysis.methods[j].contents
-                if methodAnalysis.is_android_api:
-                    methods.add(self._convert_to_method_object(methodAnalysis))
-        return methods
+        methods = self.all_methods
+        androidAPIs = set(
+            filter(lambda method: method.cache.external, methods)
+        )
+
+        return androidAPIs
 
     @property
     def custom_methods(self) -> Set[MethodObject]:
-        methods = set()
-        for i in range(self.analysis.get_number_of_classes()):
-            rawClass = self.analysis.get_class_by_id(i)
-            className = rawClass.class_name.decode()
-            classAnalysis = self.analysis.get_analyzed_class(className)
-            for j in range(classAnalysis.n_of_methods):
-                methodAnalysis = classAnalysis.methods[j].contents
-                if methodAnalysis.external:
-                    methods.add(self._convert_to_method_object(methodAnalysis))
-        return methods
+        methods = self.all_methods
+        customMethods = set(
+            filter(lambda method: not method.cache.external, methods)
+        )
+
+        return customMethods
 
     @property
     def all_methods(self) -> Set[MethodObject]:
@@ -96,7 +88,9 @@ class ShurikenImp(BaseApkinfo):
             classAnalysis = self.analysis.get_analyzed_class(className)
             for j in range(classAnalysis.n_of_methods):
                 methodAnalysis = classAnalysis.methods[j].contents
-                methods.add(self._convert_to_method_object(methodAnalysis))
+                method = self._convert_to_method_object(methodAnalysis)
+                methods = methods.union(self.lowerfunc(method))
+                methods.add(method)
         return methods
 
     @functools.lru_cache
