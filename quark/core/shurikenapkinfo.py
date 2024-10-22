@@ -7,10 +7,10 @@ import re
 import functools
 from collections import defaultdict
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Set, Union, Iterator
 
 from shuriken import Dex
-from shuriken.dex import hdvmmethodanalysis_t
+from shuriken.dex import hdvmmethodanalysis_t, hdvminstruction_t
 
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
@@ -196,11 +196,106 @@ class ShurikenImp(BaseApkinfo):
 
     def get_method_bytecode(
         self, method_object: MethodObject
-    ) -> Set[MethodObject]:
-        pass
+    ) -> Iterator[BytecodeObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Return the bytecodes of the specified method.
 
-    def get_strings(self) -> str:
-        pass
+        :param method_object: a target method to get the corresponding
+        bytecodes
+        :yield: a generator of BytecodeObjects
+        """
+        methodAnalysis = method_object.cache
+        disassembledMethod = self.analysis.get_disassembled_method(
+            methodAnalysis.full_name.decode()
+        )
+        for i in range(disassembledMethod.n_of_instructions):
+            rawBytecode = disassembledMethod.instructions[
+                i
+            ].disassembly.decode()
+            yield self._parseSmali(rawBytecode)
+
+    def _parseParameters(self, parameter: str) -> Union[int, float]:
+
+        if parameter[:2] == "0x":
+            try:
+                parameter = int(parameter, 16)
+                return parameter
+            except (TypeError, ValueError):
+                pass
+
+        try:
+            parameter = int(parameter, 10)
+            return parameter
+        except (TypeError, ValueError):
+            pass
+        try:
+            parameter = float(parameter)
+            return parameter
+        except (TypeError, ValueError):
+            pass
+
+        typeTable = {
+            "void": "V",
+            "boolean": "Z",
+            "byte": "B",
+            "short": "S",
+            "char": "C",
+            "int": "I",
+            "long": "J",
+            "float": "F",
+            "double": "D",
+        }
+        for typeName, abbreviation in typeTable.items():
+            parameter = parameter.strip()
+            pattern = r" ({})(\[\])*$".format(typeName)
+            if re.search(pattern, parameter):
+                parameter = re.sub(
+                    pattern, r" {}\2".format(abbreviation), parameter
+                )
+                break
+
+        parameter = re.sub(r"([^;])->", r"\1;->", parameter)
+
+        if parameter[0] != "L":
+            parameter = "L" + parameter
+        return parameter
+
+    def _parseSmali(self, smali: str) -> BytecodeObject:
+
+        smali = smali.split("//")[0].strip()
+        if smali == "":
+            raise ValueError("Argument cannot be empty.")
+
+        if " " not in smali:
+            return BytecodeObject(smali, None, None)
+
+        mnemonic, args = smali.split(maxsplit=1)
+        parameter = None
+
+        # extract string
+        if args[-1] == '"' or args[-1] == "'":
+            quoteChar = '"'
+            if args[-1] == "'":
+                quoteChar = "'"
+
+            firstQuotePosition = args.find(quoteChar)
+            parameter = args[firstQuotePosition:][1:-1]
+            args = args[:firstQuotePosition].strip()
+
+        argsList = [arg.strip() for arg in re.split("[{},]+", args) if arg]
+
+        if parameter is None:
+            if argsList and not argsList[-1].startswith("v"):
+                parameter = self._parseParameters(argsList.pop())
+
+        return BytecodeObject(mnemonic, argsList, parameter)
+
+    def get_strings(self) -> Set[str]:
+        strings = set()
+        for i in range(self.analysis.get_number_of_strings()):
+            strings.add(self.analysis.get_string_by_id(i).decode())
+        return strings
 
     @functools.lru_cache()
     def _construct_bytecode_instruction(self, instruction):
@@ -212,6 +307,18 @@ class ShurikenImp(BaseApkinfo):
         """
         pass
 
+    def _find_first_bytecode_by_calling_method(
+        self, bytecodes: Iterator[BytecodeObject], target_method: MethodObject
+    ) -> Optional[BytecodeObject]:
+        targetMethodCall = f"{target_method.class_name}->{target_method.name}{target_method.descriptor}"
+
+        for bytecode in bytecodes:
+            if (
+                bytecode.mnemonic.startswith("invoke")
+                and targetMethodCall in bytecode.parameter
+            ):
+                return bytecode
+
     @functools.lru_cache()
     def get_wrapper_smali(
         self,
@@ -219,7 +326,29 @@ class ShurikenImp(BaseApkinfo):
         first_method: MethodObject,
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
-        pass
+        bytecodes = self.get_method_bytecode(parent_method)
+
+        first = self._find_first_bytecode_by_calling_method(
+            bytecodes, first_method
+        )
+        second = self._find_first_bytecode_by_calling_method(
+            bytecodes, second_method
+        )
+
+        return {
+            "first": [
+                first.mnemonic,
+                " ".join(first.registers),
+                first.parameter,
+            ],
+            "first_hex": "",  # TODO - Finish me
+            "second": [
+                second.mnemonic,
+                " ".join(second.registers),
+                second.parameter,
+            ],
+            "second_hex": "",  # TODO - Finish me
+        }
 
     @property
     def superclass_relationships(self) -> Dict[str, Set[str]]:

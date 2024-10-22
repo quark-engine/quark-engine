@@ -4,6 +4,7 @@ import requests
 from quark.core.shurikenapkinfo import ShurikenImp
 from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
 APK_SOURCE = (
@@ -24,7 +25,7 @@ def apk_path():
 
 @pytest.fixture(
     scope="function",
-    # params=((AndroguardImp), (ShurikenImp)),
+    # params=((AndroguardImp),),
     params=((ShurikenImp),),
 )
 def apkinfo(request, apk_path):
@@ -141,3 +142,84 @@ class TestApkinfo:
         lower_methods = list(apkinfo.lowerfunc(api))
 
         assert expect_function in lower_methods
+
+    def test_get_method_bytecode(self, apkinfo):
+        expected_bytecode_list = [
+            BytecodeObject(
+                "invoke-direct", ["v1"], "Ljava/lang/Object;-><init>()V"
+            ),
+            BytecodeObject("const/16", ["v0"], 42),
+            BytecodeObject("iput", ["v0", "v1"], "LDexParserTest;->field1 I"),
+            BytecodeObject("const-string", ["v0"], "Hello, Dex Parser!"),
+            BytecodeObject(
+                "iput-object",
+                ["v0", "v1"],
+                "LDexParserTest;->field2 Ljava/lang/String;",
+            ),
+            # BytecodeObject("iput-object", ["v0", "v1"], "LDexParserTest;->field2 java.lang.String"),
+            BytecodeObject("return-void", None, None),
+        ]
+
+        method = apkinfo.find_method(
+            class_name="LDexParserTest;",
+            method_name="<init>",
+            descriptor="()V",
+        )[0]
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        for expected in expected_bytecode_list:
+            assert expected in bytecodes
+
+    def test_get_strings(self, apkinfo):
+        expectedValue = {
+            " and ",
+            " is: ",
+            "Field 1: ",
+            "Field 2: ",
+            "Hello, Dex Parser!",
+            "Sum of ",
+            "This is a test message printed from DexParserTest class.",
+        }
+        result = apkinfo.get_strings()
+        assert expectedValue == result
+
+    def test_get_wrapper_smali(self, apkinfo):
+        expectedValue = {
+            "first": [
+                "invoke-direct",
+                "v2",
+                "LDexParserTest;-><init>()V",
+            ],
+            # "first_hex": "70 10 00 00 02 00",
+            "first_hex": "",  # TODO - Finish me
+            "second": [
+                "invoke-direct",
+                "v2",
+                "LDexParserTest;->printMessage()V",
+            ],
+            # "second_hex": "70 10 03 00 02 00",
+            "second_hex": "",  # TODO - Finish me
+        }
+
+        parentMethod = apkinfo.find_method(
+            class_name="LDexParserTest;",
+            method_name="main",
+            descriptor="([Ljava/lang/String;)V",
+        )[0]
+
+        firstAPI = apkinfo.find_method(
+            class_name="LDexParserTest;",
+            method_name="<init>",
+            descriptor="()V",
+        )[0]
+
+        secondAPI = apkinfo.find_method(
+            class_name="LDexParserTest;",
+            method_name="printMessage",
+            descriptor="()V",
+        )[0]
+
+        result = apkinfo.get_wrapper_smali(parentMethod, firstAPI, secondAPI)
+
+        assert result == expectedValue
