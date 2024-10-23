@@ -1669,19 +1669,31 @@ Quark Script Result
    CWE-295 is detected in method, Lcom/insecureshop/util/CustomWebViewClient; onReceivedSslError (Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V
 
 
-Detect CWE-489 in Android Application (allsafe.apk, AndroGoat.apk, pivaa.apk)
--------------------------------------------------------------------------------
+Detect CWE-489 in Android Application
+--------------------------------------
 
-This scenario seeks to find **active debug code** in the APK file. See `CWE-489 <https://cwe.mitre.org/data/definitions/489.html>`_ for more details.
+This scenario seeks to find **active debug code**.
 
-Let's use `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_, `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_, `pivaa.apk <https://github.com/HTBridge/pivaa>`_, and the above APIs to show how the Quark script finds this vulnerability.
-
-First, we use Quark API ``getApplication(samplePath)`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable()`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
-
-Quark Script CWE-489.py
+CWE-489: active debug code
 ===========================
 
-The Quark Script below uses allsafe.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example, ``SAMPLE_PATH = AndroGoat.apk`` or ``SAMPLE_PATH = pivaa.apk``.
+We analyze the definition of CWE-489 and identify its characteristics.
+
+See `CWE-489 <https://cwe.mitre.org/data/definitions/489.html>`_ for more details.
+
+.. image:: https://imgur.com/JgD7YHU.jpg
+
+Code of CWE-489 in allsafe.apk
+===============================
+
+We use the `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_ sample to explain the vulnerability code of CWE-489.
+
+.. image:: https://imgur.com/wtPg8uv.jpg
+
+Quark Script CWE-489.py
+========================
+
+First, we use Quark API ``getApplication(samplePath)`` to get the application element in the manifest file. Then we use ``applicationInstance.isDebuggable()`` to check if the application element sets the attribute ``android:debuggable`` to true. If **Yes**, that causes CWE-489 vulnerabilities.
 
 .. code-block:: python
 
@@ -1690,30 +1702,16 @@ The Quark Script below uses allsafe.apk to demonstrate. You can change the ``SAM
     SAMPLE_PATH = "allsafe.apk"
 
     if getApplication(SAMPLE_PATH).isDebuggable():
-        print(f"CWE-489 is detected in {SAMPLE_PATH}.")    
+        print(f"CWE-489 is detected in {SAMPLE_PATH}.")
 
 Quark Script Result
-======================
-- **allsafe.apk**
+====================
 
 .. code-block:: TEXT
-    
+
     $ python3 CWE-489.py
     CWE-489 is detected in allsafe.apk
 
-- **AndroGoat.apk**
-
-.. code-block:: TEXT
-    
-    $ python3 CWE-489.py
-    CWE-489 is detected in AndroGoat.apk
-
-- **pivaa.apk**
-
-.. code-block:: TEXT
-    
-    $ python3 CWE-489.py
-    CWE-489 is detected in pivaa.apk
 
 Detect CWE-22 in Android Application
 ----------------------------------------
