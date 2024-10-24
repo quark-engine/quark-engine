@@ -1710,7 +1710,7 @@ Quark Script Result
 .. code-block:: TEXT
 
     $ python3 CWE-489.py
-    CWE-489 is detected in allsafe.apk
+    CWE-489 is detected in allsafe.apk.
 
 
 Detect CWE-22 in Android Application
