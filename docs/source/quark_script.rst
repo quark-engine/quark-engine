@@ -1018,14 +1018,33 @@ Quark Script Result
     CWE-749 is detected in method, Lsg/vp/owasp_mobile/OMTG_Android/OMTG_ENV_005_WebView_Local; onCreate (Landroid/os/Bundle;)V
 
 
-Detect CWE-532 in Android Application (dvba.apk)
--------------------------------------------------------------
+Detect CWE-532 in Android Application
+-------------------------------------------------
 
-This scenario seeks to find **insertion of sensitive information into Log file**. See `CWE-532 <https://cwe.mitre.org/data/definitions/532.html>`_ for more details.
+This scenario seeks to find **insertion of sensitive information into Log file** in the APK file.
 
-Let’s use this `APK <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ and the above APIs to show how the Quark script finds this vulnerability.
+CWE-532 Insertion of Sensitive Information into Log File
+=========================================================
 
-First, we use API ``findMethodInAPK(samplePath, targetMethod)`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments()`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is YES, that may cause sensitive data leakage into log file.
+We analyze the definition of CWE-532 and identify its characteristics.
+
+See `CWE-532 <https://cwe.mitre.org/data/definitions/532.html>`_ for more details.
+
+.. image:: https://imgur.com/I8sCUtM.jpg
+
+Code of CWE-532 in dvba.apk
+=========================================
+
+We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_  sample to explain the vulnerability code of CWE-532.
+
+.. image:: https://imgur.com/THWm2gN.jpg
+
+Quark Scipt: CWE-532.py
+========================
+
+Let's use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we use API ``findMethodInAPK(samplePath, targetMethod)`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments()`` to get the argument that input to ``log.d``. Finally, we use some keywords such as “token”, “password”, and “decrypt” to check if arguments include sensitive data. If the answer is **YES**, that may cause sensitive data leakage into log file.
 
 You can use your own keywords in the keywords list to detect sensitive data.
 
