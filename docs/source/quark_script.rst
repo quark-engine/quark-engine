@@ -1023,7 +1023,7 @@ Detect CWE-532 in Android Application
 
 This scenario seeks to find **insertion of sensitive information into Log file** in the APK file.
 
-CWE-532 Insertion of Sensitive Information into Log File
+CWE-532: Insertion of Sensitive Information into Log File
 =========================================================
 
 We analyze the definition of CWE-532 and identify its characteristics.
