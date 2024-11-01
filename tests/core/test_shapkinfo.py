@@ -223,3 +223,19 @@ class TestApkinfo:
         result = apkinfo.get_wrapper_smali(parentMethod, firstAPI, secondAPI)
 
         assert result == expectedValue
+
+    def test_superclass_relationships_with_expected_class(self, apkinfo):
+        expected_upper_class = {"Ljava/lang/Object;"}
+        class_name = "LDexParserTest;"
+
+        upper_set = apkinfo.superclass_relationships[class_name]
+
+        assert expected_upper_class == upper_set
+
+    def test_subclass_relationships_with_expected_class(self, apkinfo):
+        expected_upper_class = {"LDexParserTest;"}
+        class_name = "Ljava/lang/Object;"
+
+        lower_set = apkinfo.subclass_relationships[class_name]
+
+        assert expected_upper_class == lower_set

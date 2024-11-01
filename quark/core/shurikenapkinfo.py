@@ -352,11 +352,43 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def superclass_relationships(self) -> Dict[str, Set[str]]:
-        pass
+        hierarchyDict = defaultdict(set)
+
+        for i in range(self.analysis.get_number_of_classes()):
+            rawClass = self.analysis.get_class_by_id(i)
+            className = rawClass.class_name.decode() + ";"
+            superclassName = (
+                rawClass.super_class.decode().replace(".", "/") + ";"
+            )
+
+            if className[0] != "L":
+                className = "L" + className
+            if superclassName[0] != "L":
+                superclassName = "L" + superclassName
+
+            hierarchyDict[className].add(superclassName)
+
+        return hierarchyDict
 
     @property
     def subclass_relationships(self) -> Dict[str, Set[str]]:
-        pass
+        hierarchyDict = defaultdict(set)
+
+        for i in range(self.analysis.get_number_of_classes()):
+            rawClass = self.analysis.get_class_by_id(i)
+            className = rawClass.class_name.decode() + ";"
+            superclassName = (
+                rawClass.super_class.decode().replace(".", "/") + ";"
+            )
+
+            if className[0] != "L":
+                className = "L" + className
+            if superclassName[0] != "L":
+                superclassName = "L" + superclassName
+
+            hierarchyDict[superclassName].add(className)
+
+        return hierarchyDict
 
     @staticmethod
     def _convert_to_method_object(
