@@ -46,7 +46,7 @@ jobs:
         wget https://github.com/radareorg/radare2/archive/refs/tags/5.9.0.zip -O radare2-5.9.0.zip
         unzip radare2-5.9.0.zip -d /opt
         cd /opt/radare2-5.9.0
-        sudo sys/install.sh
+        sudo sys/install.sh --without-pull
         cd -
  
         # Install langchain and it's OpenAI integration
