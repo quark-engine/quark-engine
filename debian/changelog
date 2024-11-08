@@ -1,3 +1,11 @@
+quark-engine (24.11.1-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+
+    - Optimize the CWE-338, CWE-489 and CWE-532 documents. (#700, #702 and #704)
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Wed, 06 Nov 2024 12:00:00 +0800
+
 quark-engine (24.10.1-0kali1) kali-dev; urgency=medium
 
   * New Feature

@@ -41,12 +41,12 @@ jobs:
         sudo ldconfig -v
         cd -
 
-        # Install Radare2 (5.8.8)
+        # Install Radare2 (5.9.0)
         sudo apt install -y musl-tools
-        wget https://github.com/radareorg/radare2/releases/download/5.8.8/radare2-5.8.8.zip
-        unzip radare2-5.8.8.zip -d /opt
-        cd /opt/radare2-5.8.8
-        sudo sys/install.sh
+        wget https://github.com/radareorg/radare2/archive/refs/tags/5.9.0.zip -O radare2-5.9.0.zip
+        unzip radare2-5.9.0.zip -d /opt
+        cd /opt/radare2-5.9.0
+        sudo sys/install.sh --without-pull
         cd -
  
         # Install langchain and it's OpenAI integration
