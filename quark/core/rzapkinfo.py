@@ -266,19 +266,19 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of permissions.
         """
-        axml = AxmlReader(self._manifest)
-        permission_list = set()
+        with AxmlReader(self._manifest) as axml:
+            permission_list = set()
 
-        for tag in axml:
-            label = tag.get("Name")
-            if label and axml.get_string(label) == "uses-permission":
-                attrs = axml.get_attributes(tag)
+            for tag in axml:
+                label = tag.get("Name")
+                if label and axml.getString(label) == "uses-permission":
+                    attrs = axml.getAttributes(tag)
 
-                if attrs:
-                    permission = axml.get_string(attrs[0].value)
-                    permission_list.add(permission)
+                    if attrs:
+                        permission = axml.getString(attrs[0].value)
+                        permission_list.add(permission)
 
-        return permission_list
+            return permission_list
 
     @functools.cached_property
     def application(self) -> XMLElement:
@@ -286,11 +286,10 @@ class RizinImp(BaseApkinfo):
 
         :return: an application element
         """
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        axml = AxmlReader(self._manifest)
-        root = axml.get_xml_tree()
-
-        return root.find("application")
+            return root.find("application")
 
     @functools.cached_property
     def activities(self) -> List[XMLElement]:
@@ -299,10 +298,10 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of all activities
         """
-        axml = AxmlReader(self._manifest)
-        root = axml.get_xml_tree()
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        return root.findall("application/activity")
+            return root.findall("application/activity")
 
     @functools.cached_property
     def receivers(self) -> List[XMLElement]:
@@ -311,10 +310,10 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of all receivers
         """
-        axml = AxmlReader(self._manifest)
-        root = axml.get_xml_tree()
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        return root.findall("application/receiver")
+            return root.findall("application/receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:

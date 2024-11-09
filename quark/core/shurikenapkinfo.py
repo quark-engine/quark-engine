@@ -12,6 +12,7 @@ from typing import Dict, List, Optional, Set, Union, Iterator
 from shuriken import Dex
 from shuriken.dex import hdvmmethodanalysis_t, hdvminstruction_t
 
+from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
@@ -38,7 +39,25 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def permissions(self) -> List[str]:
-        pass
+        """
+        Inherited from baseapkinfo.py.
+        Return the permissions used by the sample.
+
+        :return: a list of permissions.
+        """
+        with AxmlReader(self._manifest) as axml:
+            permission_list = set()
+
+            for tag in axml:
+                label = tag.get("Name")
+                if label and axml.getString(label) == "uses-permission":
+                    attrs = axml.getAttributes(tag)
+
+                    if attrs:
+                        permission = axml.getString(attrs[0].value)
+                        permission_list.add(permission)
+
+            return permission_list
 
     @property
     def application(self) -> XMLElement:
@@ -46,11 +65,22 @@ class ShurikenImp(BaseApkinfo):
 
         :return: an application element
         """
-        pass
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.find("application")
 
     @property
     def activities(self) -> List[XMLElement]:
-        pass
+        """
+        Return all activity from given APK.
+
+        :return: a list of all activities
+        """
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.findall("application/activity")
 
     @property
     def receivers(self) -> List[XMLElement]:
@@ -59,7 +89,10 @@ class ShurikenImp(BaseApkinfo):
 
         :return: a list of all receivers
         """
-        pass
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.findall("application/receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
@@ -297,20 +330,14 @@ class ShurikenImp(BaseApkinfo):
             strings.add(self.analysis.get_string_by_id(i).decode())
         return strings
 
-    @functools.lru_cache()
-    def _construct_bytecode_instruction(self, instruction):
-        """
-        Construct a list of strings from the given bytecode instructions.
-
-        :param instruction: instruction instance from androguard
-        :return: a list with bytecode instructions strings
-        """
-        pass
-
     def _find_first_bytecode_by_calling_method(
         self, bytecodes: Iterator[BytecodeObject], target_method: MethodObject
     ) -> Optional[BytecodeObject]:
-        targetMethodCall = f"{target_method.class_name}->{target_method.name}{target_method.descriptor}"
+        targetMethodCall = (
+            f"{target_method.class_name}"
+            f"->{target_method.name}"
+            f"{target_method.descriptor}"
+        )
 
         for bytecode in bytecodes:
             if (

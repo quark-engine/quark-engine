@@ -214,14 +214,14 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of permissions.
         """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        elm_key_name = "{http://schemas.android.com/apk/res/android}name"
-        permission_list = set()
-        for elm in axml.get_xml_tree().iter("uses-permission"):
-            permission = elm.attrib.get(elm_key_name)
-            permission_list.add(permission)
+        with AxmlReader(self._manifest) as axml:
+            elm_key_name = "{http://schemas.android.com/apk/res/android}name"
+            permission_list = set()
+            for elm in axml.getXmlTree().iter("uses-permission"):
+                permission = elm.attrib.get(elm_key_name)
+                permission_list.add(permission)
 
-        return permission_list
+            return permission_list
 
     @functools.cached_property
     def application(self) -> XMLElement:
@@ -230,10 +230,10 @@ class R2Imp(BaseApkinfo):
         :return: an application element
         """
 
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        return root.find("application")
+            return root.find("application")
 
     @functools.cached_property
     def activities(self) -> List[XMLElement]:
@@ -242,10 +242,10 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all activities
         """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        return root.findall("application/activity")
+            return root.findall("application/activity")
 
     @functools.cached_property
     def receivers(self) -> List[XMLElement]:
@@ -254,10 +254,10 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all receivers
         """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
 
-        return root.findall("application/receiver")
+            return root.findall("application/receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
