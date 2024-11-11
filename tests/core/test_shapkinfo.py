@@ -140,8 +140,8 @@ class TestApkinfo:
             "()V",
         )[0]
         lower_methods = list(apkinfo.lowerfunc(api))
-
-        assert expect_function in lower_methods
+        expected_offset = 60
+        assert (expect_function, expected_offset) in lower_methods
 
     def test_get_method_bytecode(self, apkinfo):
         expected_bytecode_list = [
@@ -156,7 +156,6 @@ class TestApkinfo:
                 ["v0", "v1"],
                 "LDexParserTest;->field2 Ljava/lang/String;",
             ),
-            # BytecodeObject("iput-object", ["v0", "v1"], "LDexParserTest;->field2 java.lang.String"),
             BytecodeObject("return-void", None, None),
         ]
 

@@ -7,7 +7,7 @@ import re
 import functools
 from collections import defaultdict
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union, Iterator
+from typing import Dict, List, Optional, Set, Union, Iterator, Tuple
 
 from shuriken import Dex
 from shuriken.dex import hdvmmethodanalysis_t, hdvminstruction_t
@@ -98,7 +98,7 @@ class ShurikenImp(BaseApkinfo):
     def android_apis(self) -> Set[MethodObject]:
         methods = self.all_methods
         androidAPIs = set(
-            filter(lambda method: method.cache.external, methods)
+            filter(lambda method: method.cache.is_android_api, methods)
         )
 
         return androidAPIs
@@ -122,7 +122,9 @@ class ShurikenImp(BaseApkinfo):
             for j in range(classAnalysis.n_of_methods):
                 methodAnalysis = classAnalysis.methods[j].contents
                 method = self._convert_to_method_object(methodAnalysis)
-                methods = methods.union(self.lowerfunc(method))
+                lowerMethodInfo = self.lowerfunc(method)
+                lowerMethods = [info[0] for info in lowerMethodInfo]
+                methods = methods.union(set(lowerMethods))
                 methods.add(method)
         return methods
 
@@ -150,54 +152,21 @@ class ShurikenImp(BaseApkinfo):
     @functools.lru_cache()
     def find_method(
         self,
-        class_name: Optional[str] = ".*",
-        method_name: Optional[str] = ".*",
-        descriptor: Optional[str] = ".*",
+        class_name: Optional[str] = None,
+        method_name: Optional[str] = None,
+        descriptor: Optional[str] = None,
     ) -> List[MethodObject]:
-        if not class_name:
-            class_name = ".*"
+        methods = self.all_methods
+        if class_name:
+            methods = (m for m in methods if class_name == m.class_name)
 
-        if class_name != ".*":
-            regexClassName = re.escape(class_name)
-        else:
-            regexClassName = class_name
+        if method_name:
+            methods = (m for m in methods if method_name == m.name)
 
-        if not method_name:
-            method_name = ".*"
+        if descriptor:
+            methods = (m for m in methods if descriptor == m.descriptor)
 
-        if method_name != ".*":
-            regexMethodName = f"^{re.escape(method_name)}$"
-        else:
-            regexMethodName = f"^{method_name}$"
-
-        if not descriptor:
-            descriptor = ".*"
-
-        if descriptor != ".*":
-            regexDescriptor = re.escape(descriptor)
-        else:
-            regexDescriptor = descriptor
-
-        def methodFilter(method):
-            return re.match(regexMethodName, method.name) and re.match(
-                regexDescriptor, method.descriptor
-            )
-
-        filteredMethods = list()
-
-        if regexClassName != ".*":
-            methodDict = self._getMethodsClassified()
-            filteredMethods += list(
-                filter(methodFilter, methodDict[class_name])
-            )
-        else:
-            methodDict = self._getMethodsClassified()
-            for key_name in methodDict:
-                filteredMethods += list(
-                    filter(methodFilter, methodDict[key_name])
-                )
-
-        return filteredMethods
+        return list(methods)
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
@@ -214,14 +183,18 @@ class ShurikenImp(BaseApkinfo):
         return upperFuncs
 
     @functools.lru_cache()
-    def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+    def lowerfunc(
+        self, method_object: MethodObject
+    ) -> list[Tuple[MethodObject, int]]:
         methodAnalysis = method_object.cache
 
-        lowerFuncs = set()
+        lowerFuncs = []
         for i in range(methodAnalysis.n_of_xrefto):
-            lowerFuncs.add(
-                self._convert_to_method_object(
-                    methodAnalysis.xrefto[i].method.contents
+            xref = methodAnalysis.xrefto[i]
+            lowerFuncs.append(
+                (
+                    self._convert_to_method_object(xref.method.contents),
+                    xref.idx,
                 )
             )
 
@@ -288,10 +261,7 @@ class ShurikenImp(BaseApkinfo):
                 )
                 break
 
-        parameter = re.sub(r"([^;])->", r"\1;->", parameter)
-
-        if parameter[0] != "L":
-            parameter = "L" + parameter
+        parameter = self._convertClassNameFormat(parameter)
         return parameter
 
     def _parseSmali(self, smali: str) -> BytecodeObject:
@@ -307,10 +277,8 @@ class ShurikenImp(BaseApkinfo):
         parameter = None
 
         # extract string
-        if args[-1] == '"' or args[-1] == "'":
-            quoteChar = '"'
-            if args[-1] == "'":
-                quoteChar = "'"
+        quoteChar = args[-1]
+        if quoteChar == '"' or quoteChar == "'":
 
             firstQuotePosition = args.find(quoteChar)
             parameter = args[firstQuotePosition:][1:-1]
@@ -383,15 +351,12 @@ class ShurikenImp(BaseApkinfo):
 
         for i in range(self.analysis.get_number_of_classes()):
             rawClass = self.analysis.get_class_by_id(i)
-            className = rawClass.class_name.decode() + ";"
-            superclassName = (
-                rawClass.super_class.decode().replace(".", "/") + ";"
+            className = self._convertClassNameFormat(
+                rawClass.class_name.decode()
             )
-
-            if className[0] != "L":
-                className = "L" + className
-            if superclassName[0] != "L":
-                superclassName = "L" + superclassName
+            superclassName = self._convertClassNameFormat(
+                rawClass.super_class.decode()
+            )
 
             hierarchyDict[className].add(superclassName)
 
@@ -403,28 +368,43 @@ class ShurikenImp(BaseApkinfo):
 
         for i in range(self.analysis.get_number_of_classes()):
             rawClass = self.analysis.get_class_by_id(i)
-            className = rawClass.class_name.decode() + ";"
-            superclassName = (
-                rawClass.super_class.decode().replace(".", "/") + ";"
+            className = self._convertClassNameFormat(
+                rawClass.class_name.decode()
             )
-
-            if className[0] != "L":
-                className = "L" + className
-            if superclassName[0] != "L":
-                superclassName = "L" + superclassName
+            superclassName = self._convertClassNameFormat(
+                rawClass.super_class.decode()
+            )
 
             hierarchyDict[superclassName].add(className)
 
         return hierarchyDict
 
-    @staticmethod
     def _convert_to_method_object(
+        self,
         methodAnalysis: hdvmmethodanalysis_t,
     ) -> MethodObject:
+        className = self._convertClassNameFormat(
+            methodAnalysis.class_name.decode()
+        )
+
         return MethodObject(
             # access_flags=methodAnalysis.access_flags,
-            class_name=methodAnalysis.class_name.decode(),
+            class_name=className,
             name=methodAnalysis.name.decode(),
             descriptor=methodAnalysis.descriptor.decode(),
             cache=methodAnalysis,
         )
+
+    def _convertClassNameFormat(self, className: str) -> str:
+
+        typeChar = ["V", "Z", "B", "S", "C", "I", "J", "F", "D"]
+
+        patternOne = r"( ?)((?![{}]$)[A-Za-z\./]+)($)".format(
+            "".join(typeChar)
+        )
+        patternTwo = r"(^)([a-zA-Z\./]+)(->)"
+        className = re.sub(patternOne, r"\1L\2;\3", className)
+        className = re.sub(patternTwo, r"\1L\2;\3", className)
+        className = className.replace(".", "/")
+
+        return className
