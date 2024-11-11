@@ -10,7 +10,7 @@ from os import PathLike
 from typing import Dict, List, Optional, Set, Union, Iterator, Tuple
 
 from shuriken import Dex
-from shuriken.dex import hdvmmethodanalysis_t, hdvminstruction_t
+from shuriken.dex import hdvmmethodanalysis_t
 
 from quark.core.axmlreader import AxmlReader
 from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
@@ -57,7 +57,7 @@ class ShurikenImp(BaseApkinfo):
                         permission = axml.getString(attrs[0].value)
                         permission_list.add(permission)
 
-            return permission_list
+            return list(permission_list)
 
     @property
     def application(self) -> XMLElement:
@@ -221,7 +221,7 @@ class ShurikenImp(BaseApkinfo):
             ].disassembly.decode()
             yield self._parseSmali(rawBytecode)
 
-    def _parseParameters(self, parameter: str) -> Union[int, float]:
+    def _parseParameters(self, parameter: str) -> Union[int, float, str]:
 
         if parameter[:2] == "0x":
             try:

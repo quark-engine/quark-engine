@@ -2,7 +2,7 @@ import enum
 import functools
 import os.path
 from collections import namedtuple
-from typing import Any, Dict, Iterator, List, Tuple
+from typing import Any, Dict, Iterator, List
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 import struct
@@ -113,7 +113,7 @@ class AxmlReader(object):
 
         if self._axmlSize > self._fileSize:
             raise AxmlException(
-                f"Decleared size ({self._axmlSize} bytes) is"
+                f"Declared size ({self._axmlSize} bytes) is"
                 f" larger than total size({self._fileSize})."
             )
 
@@ -210,7 +210,7 @@ class AxmlReader(object):
 
             if headerSize != 16:
                 raise AxmlException(
-                    f"heardsize should be 16 bytes rather"
+                    f"Header size should be 16 bytes rather"
                     f" than { headerSize } bytes."
                 )
 
@@ -269,12 +269,12 @@ class AxmlReader(object):
             self._ptr = self._ptr + nodeSize
             yield chunk
 
-    def __readStructWithFormat(self, format: str, position: int) -> Tuple[Any]:
-        structSize = struct.calcsize(format)
+    def __readStructWithFormat(self, structFormat: str, position: int) -> list[Any] | None:
+        structSize = struct.calcsize(structFormat)
         self._file.seek(position)
         data = self._file.read(structSize)
         if data:
-            return struct.unpack(format, data)
+            return list(struct.unpack(structFormat, data))
         return None
 
     @property
@@ -289,7 +289,7 @@ class AxmlReader(object):
         if self._file and not self._file.closed:
             self._file.close()
 
-    def __readAsStringUntilNull(self, position, encodingMethod) -> str:
+    def __readAsStringUntilNull(self, position, encodingMethod) -> str | None:
 
         if encodingMethod == "utf-16":
             numBytesReadPerLoop = 2
@@ -298,17 +298,17 @@ class AxmlReader(object):
             numBytesReadPerLoop = 1
             dataFormat = "b"
         else:
-            return
+            return None
 
         self._file.seek(position)
         result = []
         while True:
-            bytes = self._file.read(numBytesReadPerLoop)
+            byteData = self._file.read(numBytesReadPerLoop)
 
-            if len(bytes) < numBytesReadPerLoop:
+            if len(byteData) < numBytesReadPerLoop:
                 break
 
-            charCode = struct.unpack(dataFormat, bytes)[0]
+            charCode = struct.unpack(dataFormat, byteData)[0]
 
             if charCode == 0:
                 break
@@ -334,7 +334,7 @@ class AxmlReader(object):
             self._stringPoolDataPosition + stringPoolIndex + 2, encodingMethod
         )
 
-    def getAttributes(self, chunk: ResChunkHeader) -> List[ResValue]:
+    def getAttributes(self, chunk: ResChunkHeader) -> List[ResValue] | None:
         """Get the attributes of a resource chunk
 
         :param chunk: header of a resource chunk
@@ -408,7 +408,7 @@ class AxmlReader(object):
         """Find the resource chunk of the first XML label named manifest and
          convert it into an XMLElement instance.
 
-        :param chunk_iterator: iterator of the resource chunk headers
+        :param chunkIterator: iterator of the resource chunk headers
         :return: XMLElement instance
         """
         manifestChunk = next(
@@ -453,5 +453,5 @@ class AxmlReader(object):
     def __del__(self):
         try:
             self.close()
-        except BaseException:
-            pass
+        except Exception as e:
+            raise e
