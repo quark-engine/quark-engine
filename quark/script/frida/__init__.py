@@ -122,10 +122,16 @@ def _injectAgent(frida: FridaSession) -> MethodCallEventDispatcher:
     """
     dispatcher = MethodCallEventDispatcher(frida)
 
-    pathToFridaAgentSource = importlib_resources.files("quark.script.frida") / "agent.js"
+    pathToFridaAgentSource = (
+        importlib_resources.files("quark.script.frida") / "agent.js"
+    )
 
-    with importlib_resources.as_file(pathToFridaAgentSource) as fridaAgentSource:
-        fridaAgent = dispatcher.frida.create_script(fridaAgentSource.read_text())
+    with importlib_resources.as_file(
+        pathToFridaAgentSource
+    ) as fridaAgentSource:
+        fridaAgent = dispatcher.frida.create_script(
+            fridaAgentSource.read_text()
+        )
         fridaAgent.on("message", dispatcher.handleCapturedEvent)
         fridaAgent.load()
         dispatcher.script = fridaAgent

@@ -92,7 +92,9 @@ class AxmlReader(object):
             base_path = f"quark.core.axmlreader.{core_library}"
 
             ref = importlib_resources.files(base_path) / "axml_definition"
-            structure_path = file_manager.enter_context(importlib_resources.as_file(ref))
+            structure_path = file_manager.enter_context(
+                importlib_resources.as_file(ref)
+            )
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
@@ -142,7 +144,9 @@ class AxmlReader(object):
             return
 
         # String Pool
-        string_pool_header = self._core.cmdj("pfj axml_ResStringPool_header @ 8")
+        string_pool_header = self._core.cmdj(
+            "pfj axml_ResStringPool_header @ 8"
+        )
 
         string_pool_size = string_pool_header[0]["value"][2]["value"]
 
@@ -312,7 +316,9 @@ class AxmlReader(object):
             return None
         extAddress = int(chunk["Address"]) + 16
 
-        attrExt = self._core.cmdj(f"pfj axml_ResXMLTree_attrExt @ {extAddress}")
+        attrExt = self._core.cmdj(
+            f"pfj axml_ResXMLTree_attrExt @ {extAddress}"
+        )
 
         attrAddress = extAddress + attrExt[2]["value"]
         attributeSize = attrExt[3]["value"]
