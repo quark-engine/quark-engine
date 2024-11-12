@@ -1,4 +1,4 @@
-import pkg_resources
+import importlib_resources
 
 
 class ReportGenerator:
@@ -11,20 +11,15 @@ class ReportGenerator:
         self.json_report = json_report
 
         # Load html layout
-        rulegenerate_html_path = pkg_resources.resource_filename(
-            "quark.webreport", "genrule_report_layout.html"
-        )
-        analysis_result_html_path = pkg_resources.resource_filename(
-            "quark.webreport", "analysis_report_layout.html"
-        )
+        rulegenerate_html_path = importlib_resources.files("quark.webreport") / "genrule_report_layout.html"
 
-        with open(rulegenerate_html_path, "r") as file:
-            self.rulegenerate_layout = file.read()
-            file.close()
+        analysis_result_html_path = importlib_resources.files("quark.webreport") / "analysis_report_layout.html"
 
-        with open(analysis_result_html_path, "r") as file:
-            self.analysis_result_layout = file.read()
-            file.close()
+        with importlib_resources.as_file(rulegenerate_html_path) as file:
+            self.rulegenerate_layout = file.read_text()
+
+        with importlib_resources.as_file(analysis_result_html_path) as file:
+            self.analysis_result_layout = file.read_text()
 
     def get_rule_generate_editor_html(self):
         """

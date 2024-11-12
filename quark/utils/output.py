@@ -153,7 +153,7 @@ def output_parent_function_graph(rule_classification_data_bundle):
     dot = Digraph(**_GRAPH_SETTINGS)
 
     for parent, identifier in identifier_dict.items():
-        descriptions = "\l".join(report_dict[parent]) + "\l"
+        descriptions = "\\l".join(report_dict[parent]) + "\\l"
 
         with dot.subgraph(
             name=f"cluster_{identifier}",

@@ -25,6 +25,7 @@ frida-tools = "<=12.3.0"
 objection = "<=1.11.0"
 frida = "<=15.2.2"
 r2pipe = "==1.8.0"
+importlib-resources = "<=6.4.5"
 
 [requires]
 python_version = "3.9"

@@ -6,7 +6,8 @@ from typing import Any, Dict, Iterator, List
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
-import pkg_resources
+import importlib_resources
+from contextlib import ExitStack
 import rzpipe
 import r2pipe
 
@@ -86,11 +87,12 @@ class AxmlReader(object):
     """
 
     def __init__(self, file_path, core_library="rizin", structure_path=None):
+        file_manager = ExitStack()
         if structure_path is None:
             base_path = f"quark.core.axmlreader.{core_library}"
-            structure_path = pkg_resources.resource_filename(
-                base_path, "axml_definition"
-            )
+
+            ref = importlib_resources.files(base_path) / "axml_definition"
+            structure_path = file_manager.enter_context(importlib_resources.as_file(ref))
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
@@ -104,6 +106,7 @@ class AxmlReader(object):
             self._core = r2pipe.open(file_path)
 
         self._core.cmd(f"pfo {structure_path}")
+        file_manager.close()
 
         self._file_size = int(self._core.cmd("i~size[1]"), 16)
         self._ptr = 0
