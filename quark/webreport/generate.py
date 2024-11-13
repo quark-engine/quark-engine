@@ -37,19 +37,16 @@ class ReportGenerator:
 
         generate_result = self.json_report["result"]
         filesize = format(
-            float(self.json_report["size_bytes"]) / float(1024 * 1024),
-            ".2f",
+            float(self.json_report["size_bytes"])/float(1024*1024), '.2f',
         )
         filename = self.json_report["apk_filename"]
         md5 = self.json_report["md5"]
         rule_number = len(generate_result)
 
         self.insert_genrule_report_html(
-            generate_result, filename, md5, filesize, rule_number
-        )
+            generate_result, filename, md5, filesize, rule_number)
         self.rulegenerate_layout = get_json_report_html(
-            self.rulegenerate_layout, generate_result
-        )
+            self.rulegenerate_layout, generate_result)
 
         return self.rulegenerate_layout
 
@@ -63,8 +60,7 @@ class ReportGenerator:
 
         analysis_result = self.json_report["crimes"]
         filesize = format(
-            float(self.json_report["size_bytes"]) / float(1024 * 1024),
-            ".2f",
+            float(self.json_report["size_bytes"])/float(1024*1024), '.2f',
         )
         filename = self.json_report["apk_filename"]
         md5 = self.json_report["md5"]
@@ -84,14 +80,12 @@ class ReportGenerator:
         all_labels = get_all_labels(analysis_result)
 
         self.insert_sample_information_html(
-            rule_number_set, filename, md5, filesize, five_stages_labels
-        )
+            rule_number_set, filename, md5, filesize, five_stages_labels)
         self.insert_radarchart_html(five_stages_labels, all_labels)
         self.insert_report_html(analysis_result)
 
         self.analysis_result_layout = get_json_report_html(
-            self.analysis_result_layout, analysis_result
-        )
+            self.analysis_result_layout, analysis_result)
 
         return self.analysis_result_layout
 
@@ -133,11 +127,15 @@ class ReportGenerator:
 
         for key, replace_str in replace_dict.items():
             self.analysis_result_layout = self.analysis_result_layout.replace(
-                key, str(replace_str)
-            )
+                key, str(replace_str))
 
     def insert_genrule_report_html(
-        self, data, filename, md5, filesize, rule_number
+        self,
+        data,
+        filename,
+        md5,
+        filesize,
+        rule_number
     ):
         """
         Generate the HTML of rule generation result secton.
@@ -147,14 +145,10 @@ class ReportGenerator:
         contentHTML = ""
 
         for rule in data:
-            api1 = (
-                rule["api"][0]["class"].split("/")[-1]
-                + rule["api"][0]["method"]
-            )
-            api2 = (
-                rule["api"][0]["class"].split("/")[-1]
-                + rule["api"][1]["method"]
-            )
+            api1 = rule["api"][0]["class"].split(
+                '/')[-1] + rule["api"][0]["method"]
+            api2 = rule["api"][0]["class"].split(
+                '/')[-1] + rule["api"][1]["method"]
             api1 = api1.replace("<", "&lt;").replace(">", "&gt;")
             api2 = api2.replace("<", "&lt;").replace(">", "&gt;")
             contentHTML += f"""
@@ -179,8 +173,7 @@ class ReportGenerator:
 
         for key, replace_str in replace_dict.items():
             self.rulegenerate_layout = self.rulegenerate_layout.replace(
-                key, str(replace_str)
-            )
+                key, str(replace_str))
 
     def insert_report_html(self, data):
         """
@@ -202,7 +195,7 @@ class ReportGenerator:
         for crime in data:
             description = crime["crime"]
             confidence = crime["confidence"]
-            rule_number = crime["rule"].split(".")[0]
+            rule_number = crime["rule"].split('.')[0]
             contentHTML += f"""
                 <tr>
                     <td><p class="fw-normal mb-1">{rule_number}</p></td>
@@ -216,11 +209,15 @@ class ReportGenerator:
             """
 
         self.analysis_result_layout = self.analysis_result_layout.replace(
-            "$report_content$", contentHTML
-        )
+            "$report_content$", contentHTML)
 
     def insert_sample_information_html(
-        self, rules_number_set, filename, md5, filesize, labels
+        self,
+        rules_number_set,
+        filename,
+        md5,
+        filesize,
+        labels
     ):
         """
         Generate the HTML of sample information secton in Quark web report.
@@ -247,13 +244,12 @@ class ReportGenerator:
             "$filename$": filename,
             "$md5$": md5,
             "$filesize$": filesize,
-            "$five_labels_html$": five_labels_html,
+            "$five_labels_html$": five_labels_html
         }
 
         for key, replace_str in replace_dict.items():
             self.analysis_result_layout = self.analysis_result_layout.replace(
-                key, str(replace_str)
-            )
+                key, str(replace_str))
 
 
 def get_json_report_html(layout, data):
@@ -264,7 +260,8 @@ def get_json_report_html(layout, data):
     :return: the string of Quark JSON report HTML
     """
     report_data_html = f"""<script>var reportData = {str(data)}</script>"""
-    layout = layout.replace("$report_data$", report_data_html)
+    layout = layout.replace(
+        "$report_data$", report_data_html)
 
     return layout
 
