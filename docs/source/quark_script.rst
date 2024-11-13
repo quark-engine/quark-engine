@@ -2496,9 +2496,9 @@ Quark Script: CWE-940.py
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-To begin with, we create a detection rule named ``LoadUrlFromIntent.json`` to identify behavior that loads url from intent data to the ``WebView``.
+To begin with, we create a detection rule named ``LoadUrlFromIntent.json`` to identify behavior that loads URLs from intent data to the ``WebView``.
 
-Next, we retrieve the methods that pass the url. Then, we check if these methods are only for getting the url, such as ``findViewById``, ``getStringExtra``, or ``getIntent``.
+Next, we retrieve the methods that pass the URL. Then, we check if these methods are only for getting the URL, such as ``findViewById``, ``getStringExtra``, or ``getIntent``.
 
 If **YES**, it could imply that the APK uses communication channels without proper verification, which may cause CWE-940 vulnerability.
 
