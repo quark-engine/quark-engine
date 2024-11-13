@@ -2509,7 +2509,7 @@ If **YES**, it could imply that the APK uses communication channels without prop
     SAMPLE_PATH = "ovaa.apk"
     RULE_PATH = "LoadUrlFromIntent.json"
 
-    INTENT_GETTING_METHODS = [
+    URL_GETTING_METHODS = [
         "findViewById",
         "getStringExtra",
         "getIntent",
@@ -2525,7 +2525,7 @@ If **YES**, it could imply that the APK uses communication channels without prop
         verifiedMethodCandidates = []
 
         for method in methodsInArgs:
-            if method.methodName not in INTENT_GETTING_METHODS:
+            if method.methodName not in URL_GETTING_METHODS:
                 verifiedMethodCandidates.append(method)
 
         if verifiedMethodCandidates == []:
