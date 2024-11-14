@@ -6,7 +6,7 @@ from typing import Any, Dict, Iterator, List
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
-import pkg_resources
+import importlib_resources
 import rzpipe
 import r2pipe
 
@@ -86,11 +86,15 @@ class AxmlReader(object):
     """
 
     def __init__(self, file_path, core_library="rizin", structure_path=None):
-        if structure_path is None:
-            base_path = f"quark.core.axmlreader.{core_library}"
-            structure_path = pkg_resources.resource_filename(
-                base_path, "axml_definition"
-            )
+
+        base_path = f"quark.core.axmlreader.{core_library}"
+        axmlDefinitionPath = (
+            importlib_resources.files(base_path) / "axml_definition"
+        )
+        with importlib_resources.as_file(
+                axmlDefinitionPath) as axmlDefinitionFile:
+            if structure_path is None:
+                structure_path = axmlDefinitionFile
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
@@ -139,7 +143,9 @@ class AxmlReader(object):
             return
 
         # String Pool
-        string_pool_header = self._core.cmdj("pfj axml_ResStringPool_header @ 8")
+        string_pool_header = self._core.cmdj(
+            "pfj axml_ResStringPool_header @ 8"
+        )
 
         string_pool_size = string_pool_header[0]["value"][2]["value"]
 
@@ -309,7 +315,9 @@ class AxmlReader(object):
             return None
         extAddress = int(chunk["Address"]) + 16
 
-        attrExt = self._core.cmdj(f"pfj axml_ResXMLTree_attrExt @ {extAddress}")
+        attrExt = self._core.cmdj(
+            f"pfj axml_ResXMLTree_attrExt @ {extAddress}"
+        )
 
         attrAddress = extAddress + attrExt[2]["value"]
         attributeSize = attrExt[3]["value"]
