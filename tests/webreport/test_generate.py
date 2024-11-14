@@ -12,7 +12,6 @@ class TestReportGenerator:
             / "genrule_report_layout.html"
         )
         with importlib_resources.as_file(ruleGenLayoutPath) as file:
-            a = file.read_text()
             assert reportGenerator.rulegenerate_layout == file.read_text()
 
         analysisResultLayoutPath = (
