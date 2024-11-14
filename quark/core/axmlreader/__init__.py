@@ -91,7 +91,8 @@ class AxmlReader(object):
         axmlDefinitionPath = (
             importlib_resources.files(base_path) / "axml_definition"
         )
-        with importlib_resources.as_file(axmlDefinitionPath) as axmlDefinitionFile:
+        with importlib_resources.as_file(
+                axmlDefinitionPath) as axmlDefinitionFile:
             if structure_path is None:
                 structure_path = axmlDefinitionFile
 
