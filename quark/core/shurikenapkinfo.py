@@ -31,15 +31,16 @@ class ShurikenImp(BaseApkinfo):
     def __init__(self, apk_filepath: Union[str, PathLike]):
         super().__init__(apk_filepath, "shuriken")
 
-        if self.ret_type == "APK":
-            self.analysis = Apk(apk_filepath, create_xrefs=True)
-        elif self.ret_type == "DEX":
-            self.analysis = Dex(apk_filepath)
-            self.analysis.disassemble_dex()
-            self.analysis.create_dex_analysis(1)
-            self.analysis.analyze_classes()
-        else:
-            raise ValueError("Unsupported File type.")
+        match self.ret_type:
+            case "APK":
+                self.analysis = Apk(apk_filepath, create_xrefs=True)
+            case "DEX":
+                self.analysis = Dex(apk_filepath)
+                self.analysis.disassemble_dex()
+                self.analysis.create_dex_analysis(1)
+                self.analysis.analyze_classes()
+            case _:
+                raise ValueError("Unsupported File type.")
 
     @property
     def permissions(self) -> List[str]:
