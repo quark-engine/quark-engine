@@ -7,7 +7,6 @@ from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
 import importlib_resources
-from contextlib import ExitStack
 import rzpipe
 import r2pipe
 
@@ -87,14 +86,14 @@ class AxmlReader(object):
     """
 
     def __init__(self, file_path, core_library="rizin", structure_path=None):
-        file_manager = ExitStack()
-        if structure_path is None:
-            base_path = f"quark.core.axmlreader.{core_library}"
 
-            ref = importlib_resources.files(base_path) / "axml_definition"
-            structure_path = file_manager.enter_context(
-                importlib_resources.as_file(ref)
-            )
+        base_path = f"quark.core.axmlreader.{core_library}"
+        axmlDefinitionPath = (
+            importlib_resources.files(base_path) / "axml_definition"
+        )
+        with importlib_resources.as_file(axmlDefinitionPath) as axmlFile:
+            if structure_path is None:
+                structure_path = axmlFile
 
         if not os.path.isfile(structure_path):
             raise AxmlException(
@@ -108,7 +107,6 @@ class AxmlReader(object):
             self._core = r2pipe.open(file_path)
 
         self._core.cmd(f"pfo {structure_path}")
-        file_manager.close()
 
         self._file_size = int(self._core.cmd("i~size[1]"), 16)
         self._ptr = 0
