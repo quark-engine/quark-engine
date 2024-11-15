@@ -269,7 +269,11 @@ class AxmlReader(object):
             self._ptr = self._ptr + nodeSize
             yield chunk
 
-    def __readStructWithFormat(self, structFormat: str, position: int) -> list[Any] | None:
+    def __readStructWithFormat(
+        self,
+        structFormat: str,
+        position: int
+    ) -> list[Any] | None:
         structSize = struct.calcsize(structFormat)
         self._file.seek(position)
         data = self._file.read(structSize)

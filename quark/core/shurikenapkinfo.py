@@ -128,27 +128,6 @@ class ShurikenImp(BaseApkinfo):
                 methods.add(method)
         return methods
 
-    @functools.lru_cache
-    def _getMethodsClassified(self):
-        """
-        Parse all methods in the specified Dex and convert them into a
-        dictionary. The dictionary takes their belonging classes as the keys.
-        Then, it categorizes them into lists.
-
-        :return: a dictionary taking a class name as the key and a list of
-        MethodObject as the corresponding value.
-        """
-        methodDict = defaultdict(list)
-        for method in self.all_methods:
-            if method:
-                methodDict[method.class_name].append(method)
-
-        # Remove duplicates
-        for class_name, method_list in methodDict.items():
-            methodDict[class_name] = remove_dup_list(method_list)
-
-        return methodDict
-
     @functools.lru_cache()
     def find_method(
         self,
@@ -261,7 +240,10 @@ class ShurikenImp(BaseApkinfo):
                 )
                 break
 
-        parameter = self._convertClassNameFormat(parameter)
+        patternToIdentifyMemberField = r"->\w+(?!\(\)) "
+        if re.search(patternToIdentifyMemberField, parameter):
+            parameter = self._convertMemberFieldFormat(parameter)
+
         return parameter
 
     def _parseSmali(self, smali: str) -> BytecodeObject:
@@ -397,14 +379,23 @@ class ShurikenImp(BaseApkinfo):
 
     def _convertClassNameFormat(self, className: str) -> str:
 
-        typeChar = ["V", "Z", "B", "S", "C", "I", "J", "F", "D"]
-
-        patternOne = r"( ?)((?![{}]$)[A-Za-z\./]+)($)".format(
-            "".join(typeChar)
-        )
-        patternTwo = r"(^)([a-zA-Z\./]+)(->)"
-        className = re.sub(patternOne, r"\1L\2;\3", className)
-        className = re.sub(patternTwo, r"\1L\2;\3", className)
-        className = className.replace(".", "/")
+        if not className.endswith(";"):
+            className = "L" + className.replace(".", "/") + ";"
 
         return className
+
+    def _convertMemberFieldFormat(self, memberField: str) -> str:
+
+        className, field = memberField.split("->")
+        fieldName, fieldType = field.split(" ")
+
+        className = self._convertClassNameFormat(className)
+
+        primitiveTypeChar = ["V", "Z", "B", "S", "C", "I", "J", "F", "D"]
+
+        isFieldPrimitiveType = fieldType in primitiveTypeChar
+        isFieldPrimitiveArray = fieldType.split("[")[-1] in primitiveTypeChar
+        if not isFieldPrimitiveType or not isFieldPrimitiveArray:
+            fieldType = self._convertClassNameFormat(fieldType)
+
+        return f"{className}->{fieldName} {fieldType}"
