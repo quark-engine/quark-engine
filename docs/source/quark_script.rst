@@ -2470,61 +2470,75 @@ Quark Script Result
     CWE-117 is detected in method, Linfosecadventures/allsafe/challenges/InsecureLogging; lambda$onCreateView$0 (Lcom/google/android/material/textfield/TextInputEditText; Landroid/widget/TextView; I Landroid/view/KeyEvent;)Z
 
 
-Detect CWE-940 in Android Application (ovaa,Vuldroid)
-------------------------------------------------------
-This scenario aims to demonstrate the detection of the **Improper Verification of Source of a Communication Channel** vulnerability using `ovaa.apk <https://github.com/oversecured/ovaa>`_ and `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_. See `CWE-940 <https://cwe.mitre.org/data/definitions/940.html>`_  for more details.
+Detect CWE-940 in Android Application
+--------------------------------------
 
-To begin with, we create a detection rule named ``LoadUrlFromIntent.json`` to identify behavior that loads url from intent data to the WebView.
+This scenario seeks to find the **Improper Verification of Source of a Communication Channel** in the APK file.
 
-Next, we retrieve the methods that pass the url. Following this, we check if these methods are only for setting intent, such as ``findViewById``, ``getStringExtra``, or ``getIntent``.
+CWE-940: Improper Verification of Source of a Communication Channel
+====================================================================
 
-If **NO**, it could imply that the APK uses communication channels without proper verification, which may cause CWE-940 vulnerability.
+We analyze the definition of CWE-940 and identify its characteristics.
 
-Quark Script CWE-940.py
-==========================
+See `CWE-940 <https://cwe.mitre.org/data/definitions/940.html>`_ for more details.
 
-The Quark Script below uses ovaa.apk to demonstrate. You can change the ``SAMPLE_PATH`` to the sample you want to detect. For example,  ``SAMPLE_PATH = "Vuldroid.apk"``.
+.. image:: https://imgur.com/wia3OKo.png
 
+Code of CWE-940 in ovaa.apk
+============================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-940.
+
+.. image:: https://imgur.com/1zP5xkN.png
+
+Quark Script: CWE-940.py
+=========================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
+To begin with, we create a detection rule named ``LoadUrlFromIntent.json`` to identify behavior that loads URLs from intent data to the ``WebView``.
+
+Next, we retrieve the methods that pass the URL. Then, we check if these methods are only for getting the URL, such as ``findViewById``, ``getStringExtra``, or ``getIntent``.
+
+If **YES**, it could imply that the APK uses communication channels without proper verification, which may cause CWE-940 vulnerability.
 
 .. code-block:: python
 
     from quark.script import runQuarkAnalysis, Rule
-    
+
     SAMPLE_PATH = "ovaa.apk"
     RULE_PATH = "LoadUrlFromIntent.json"
-    
-    INTENT_SETTING_METHODS = [
+
+    URL_GETTING_METHODS = [
         "findViewById",
         "getStringExtra",
         "getIntent",
     ]
-    
+
     ruleInstance = Rule(RULE_PATH)
-    
+
     quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
-    
+
     for behaviorInstance in quarkResult.behaviorOccurList:
         methodsInArgs = behaviorInstance.getMethodsInArgs()
-    
+
         verifiedMethodCandidates = []
-    
+
         for method in methodsInArgs:
-            if method.methodName not in INTENT_SETTING_METHODS:
+            if method.methodName not in URL_GETTING_METHODS:
                 verifiedMethodCandidates.append(method)
-    
+
         if verifiedMethodCandidates == []:
             caller = behaviorInstance.methodCaller.fullName
-            print(f"cwe-940 is detected in method, {caller}")
-
-
+            print(f"CWE-940 is detected in method, {caller}")
 
 Quark Rule: LoadUrlFromIntent.json
-==============================================
+===================================
 
 .. code-block:: json
 
     {
-        "crime": "Load Url from Intent and open WebView",
+        "crime": "Load Url from Intent",
         "permission": [],
         "api": [
             {
@@ -2543,8 +2557,7 @@ Quark Rule: LoadUrlFromIntent.json
     }
 
 Quark Script Result
-======================
-- **ovaa.apk**
+====================
 
 .. code-block:: TEXT
 
