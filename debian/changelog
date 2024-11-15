@@ -8,7 +8,7 @@ quark-engine (24.11.2-0kali1) kali-dev; urgency=medium
 
     - Replace deprecated package in Python 3.12. (#712)
 
- --  Zin Wong <chriswangxxxxx@gmail.com>  Thu, 14 Nov 2024 20:00:00 +0800
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Fri, 15 Nov 2024 20:00:00 +0800
 
 quark-engine (24.11.1-0kali1) kali-dev; urgency=medium
 
