@@ -2,8 +2,11 @@ quark-engine (24.11.2-0kali1) kali-dev; urgency=medium
 
   * Bug Fix
 
-    - Replace deprecated package and change syntax to solve issues in Python
-    3.12. (#712) 
+    - Change syntax to solve syntax warning in Python 3.12. (#712)
+
+  * Dependency Update 
+
+    - Replace deprecated package in Python 3.12. (#712)
 
  --  Zin Wong <chriswangxxxxx@gmail.com>  Thu, 14 Nov 2024 20:00:00 +0800
 
