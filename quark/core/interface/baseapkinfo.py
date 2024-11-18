@@ -6,11 +6,12 @@ import hashlib
 import os.path
 from abc import abstractmethod
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union
+from typing import Dict, List, Optional, Set, Union, Tuple
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
+from quark.core.axmlreader import AxmlReader
 
 
 class BaseApkinfo:
@@ -61,43 +62,72 @@ class BaseApkinfo:
         return md5.hexdigest()
 
     @property
-    @abstractmethod
     def permissions(self) -> List[str]:
         """
         Return all permissions from given APK.
 
         :return: a list of all permissions
         """
-        pass
+        if self.ret_type != "APK":
+            return []
+
+        with AxmlReader(self._manifest) as axml:
+            permissionList = set()
+
+            for tag in axml:
+                label = tag.get("Name")
+                if label and axml.getString(label) == "uses-permission":
+                    attrs = axml.getAttributes(tag)
+
+                    if attrs:
+                        permission = axml.getString(attrs[0].value)
+                        permissionList.add(permission)
+
+            return list(permissionList)
 
     @property
-    @abstractmethod
     def application(self) -> XMLElement:
         """Get the application element from the manifest file.
 
         :return: an application element
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.find("application")
 
     @property
-    @abstractmethod
     def activities(self) -> List[XMLElement]:
         """
         Return all activity from given APK.
 
         :return: a list of all activities
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.findall("application/activity")
 
     @property
-    @abstractmethod
     def receivers(self) -> List[XMLElement]:
         """
         Return all receivers from the given APK.
 
         :return: a list of all receivers
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.getXmlTree()
+
+            return root.findall("application/receiver")
 
     @property
     @abstractmethod
@@ -157,12 +187,12 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+    def lowerfunc(self, method_object: MethodObject) -> list[Tuple[MethodObject, int]]:
         """
         Return the xref from method from given MethodObject instance.
 
         :param method_object: the MethodObject instance
-        :return: a set of all xref from functions
+        :return: a list of all xref from functions and their
         """
         pass
 

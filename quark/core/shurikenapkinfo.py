@@ -3,10 +3,13 @@
 # See the file 'LICENSE' for copying permission.
 
 import re
+import os
+import zipfile
+import tempfile
 import functools
 from collections import defaultdict
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union, Iterator, Tuple
+from typing import Dict, List, Optional, Set, Union, Iterator, Generator, Tuple
 
 from shuriken import Dex, Apk
 from shuriken.dex import (
@@ -16,8 +19,7 @@ from shuriken.dex import (
     hdvmclass_t,
 )
 
-from quark.core.axmlreader import AxmlReader
-from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
+from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.utils.tools import descriptor_to_androguard_format
@@ -26,96 +28,67 @@ from quark.utils.tools import descriptor_to_androguard_format
 class ShurikenImp(BaseApkinfo):
     """Information about apk based on Shuriken-Analyzer analysis"""
 
-    __slots__ = ("apk", "dalvikvmformat", "analysis")
+    __slots__ = ("apk", "dalvikvmformat", "analysis", "_tmp_dir", "_manifest")
 
-    def __init__(self, apk_filepath: Union[str, PathLike]):
+    def __init__(
+        self,
+        apk_filepath: Union[str, PathLike],
+        tmp_dir: Union[str, PathLike] = None,
+    ):
         super().__init__(apk_filepath, "shuriken")
-
         match self.ret_type:
             case "APK":
                 self.analysis = Apk(apk_filepath, create_xrefs=True)
+                self._tmp_dir = (
+                    tempfile.mkdtemp() if tmp_dir is None else tmp_dir
+                )
+                with zipfile.ZipFile(self.apk_filepath) as apk:
+                    apk.extract("AndroidManifest.xml", path=self._tmp_dir)
+                    self._manifest = os.path.join(
+                        self._tmp_dir, "AndroidManifest.xml"
+                    )
             case "DEX":
                 self.analysis = Dex(apk_filepath)
                 self.analysis.disassemble_dex()
                 self.analysis.create_dex_analysis(1)
                 self.analysis.analyze_classes()
+                self._manifest = None
             case _:
                 raise ValueError("Unsupported File type.")
 
     @property
-    def permissions(self) -> List[str]:
-        """
-        Inherited from baseapkinfo.py.
-        Return the permissions used by the sample.
-
-        :return: a list of permissions.
-        """
-        with AxmlReader(self._manifest) as axml:
-            permission_list = set()
-
-            for tag in axml:
-                label = tag.get("Name")
-                if label and axml.getString(label) == "uses-permission":
-                    attrs = axml.getAttributes(tag)
-
-                    if attrs:
-                        permission = axml.getString(attrs[0].value)
-                        permission_list.add(permission)
-
-            return list(permission_list)
-
-    @property
-    def application(self) -> XMLElement:
-        """Get the application element from the manifest file.
-
-        :return: an application element
-        """
-        with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
-
-            return root.find("application")
-
-    @property
-    def activities(self) -> List[XMLElement]:
-        """
-        Return all activity from given APK.
-
-        :return: a list of all activities
-        """
-        with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
-
-            return root.findall("application/activity")
-
-    @property
-    def receivers(self) -> List[XMLElement]:
-        """
-        Return all receivers from the given APK.
-
-        :return: a list of all receivers
-        """
-        with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
-
-            return root.findall("application/receiver")
-
-    @property
     def android_apis(self) -> Set[MethodObject]:
+        """
+        Return all Android native APIs from given APK.
+
+        :return: a set of all Android native APIs MethodObject
+        """
         methods = self.all_methods
         androidAPIs = set(
-            filter(lambda method: method.cache.is_android_api, methods)
+            filter(lambda method: method.is_android_api(), methods)
         )
 
         return androidAPIs
 
     @property
     def custom_methods(self) -> Set[MethodObject]:
+        """
+        Return all custom methods from given APK.
+
+        :return: a set of all custom methods MethodObject
+        """
         return {
             method for method in self.all_methods if not method.cache.external
         }
 
     @property
     def all_methods(self) -> Set[MethodObject]:
+        """
+        Return all methods including Android native
+        API and custom methods from given APK.
+
+        :return: a set of all method MethodObject
+        """
         methods = set()
 
         match self.ret_type:
@@ -127,7 +100,7 @@ class ShurikenImp(BaseApkinfo):
                     methodAnalysis = self.analysis.get_analyzed_method_by_idx(
                         i
                     )
-                    methods.add(self._convert_to_method_object(methodAnalysis))
+                    methods.add(self.__convert_to_method_object(methodAnalysis))
 
             case "DEX":
                 # TODO - Wait for the upstream to add an API to get all methods.
@@ -137,7 +110,7 @@ class ShurikenImp(BaseApkinfo):
                     classAnalysis = self.analysis.get_analyzed_class(className)
                     for j in range(classAnalysis.n_of_methods):
                         methodAnalysis = classAnalysis.methods[j].contents
-                        method = self._convert_to_method_object(methodAnalysis)
+                        method = self.__convert_to_method_object(methodAnalysis)
                         lowerMethodInfo = self.lowerfunc(method)
                         lowerMethods = [info[0] for info in lowerMethodInfo]
                         methods = methods.union(set(lowerMethods))
@@ -154,6 +127,18 @@ class ShurikenImp(BaseApkinfo):
         method_name: Optional[str] = None,
         descriptor: Optional[str] = None,
     ) -> List[MethodObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Find a method with the given class name, method name, and descriptor.
+
+        :param class_name: the class name of the target method. Defaults to
+        None
+        :param method_name: the method name of the target method. Defaults to
+        None
+        :param descriptor: the descriptor of the target method. Defaults to
+        None
+        :return: a list of the target MethodObject
+        """
         methods = self.all_methods
         if class_name:
             methods = (m for m in methods if class_name == m.class_name)
@@ -168,11 +153,19 @@ class ShurikenImp(BaseApkinfo):
 
     @functools.lru_cache()
     def upperfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the xrefs from the specified method.
+
+        :param method_object: a target method which the returned methods
+        should call
+        :return: a set of MethodObjects
+        """
         methodAnalysis = method_object.cache
         upperFuncs = set()
         for i in range(methodAnalysis.n_of_xreffrom):
             upperFuncs.add(
-                self._convert_to_method_object(
+                self.__convert_to_method_object(
                     methodAnalysis.xreffrom[i].method.contents
                 )
             )
@@ -183,6 +176,15 @@ class ShurikenImp(BaseApkinfo):
     def lowerfunc(
         self, method_object: MethodObject
     ) -> list[Tuple[MethodObject, int]]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the xrefs to the specified method.
+
+        :param method_object: a target method used to find what methods it
+        calls
+        :return: a set of tuples consisting of the called method and the
+        offset of the invocation
+        """
         methodAnalysis = method_object.cache
 
         lowerFuncs = []
@@ -190,7 +192,7 @@ class ShurikenImp(BaseApkinfo):
             xref = methodAnalysis.xrefto[i]
             lowerFuncs.append(
                 (
-                    self._convert_to_method_object(xref.method.contents),
+                    self.__convert_to_method_object(xref.method.contents),
                     xref.idx,
                 )
             )
@@ -199,7 +201,7 @@ class ShurikenImp(BaseApkinfo):
 
     def get_method_bytecode(
         self, method_object: MethodObject
-    ) -> Iterator[BytecodeObject]:
+    ) -> Generator[BytecodeObject, None, None]:
         """
         Inherited from baseapkinfo.py.
         Return the bytecodes of the specified method.
@@ -214,9 +216,9 @@ class ShurikenImp(BaseApkinfo):
             rawBytecode = disassembledMethod.instructions[
                 i
             ].disassembly.decode(errors="backslashreplace")
-            yield self._parseSmali(rawBytecode)
+            yield self.__parseSmali(rawBytecode)
 
-    def _parseParameters(self, parameter: str) -> Union[int, float, str]:
+    def __parseParameters(self, parameter: str) -> Union[int, float, str]:
 
         if parameter[:2] == "0x":
             try:
@@ -236,33 +238,13 @@ class ShurikenImp(BaseApkinfo):
         except (TypeError, ValueError):
             pass
 
-        typeTable = {
-            "void": "V",
-            "boolean": "Z",
-            "byte": "B",
-            "short": "S",
-            "char": "C",
-            "int": "I",
-            "long": "J",
-            "float": "F",
-            "double": "D",
-        }
-        for typeName, abbreviation in typeTable.items():
-            parameter = parameter.strip()
-            pattern = r" ({})(\[\])*$".format(typeName)
-            if re.search(pattern, parameter):
-                parameter = re.sub(
-                    pattern, r" {}\2".format(abbreviation), parameter
-                )
-                break
-
         patternToIdentifyMemberField = r"->\w+(?!\(\)) "
         if re.search(patternToIdentifyMemberField, parameter):
-            parameter = self._convertMemberFieldFormat(parameter)
+            parameter = self.__convertMemberFieldFormat(parameter)
 
         return parameter
 
-    def _parseSmali(self, smali: str) -> BytecodeObject:
+    def __parseSmali(self, smali: str) -> BytecodeObject:
 
         smali = smali.split("//")[0].strip()
         if smali == "":
@@ -274,23 +256,27 @@ class ShurikenImp(BaseApkinfo):
         mnemonic, args = smali.split(maxsplit=1)
         parameter = None
 
-        # extract string
-        quoteChar = args[-1]
-        if quoteChar == '"' or quoteChar == "'":
-
+        if args[-1] == '"' or args[-1] == "'":
+            # Extract string
+            quoteChar = args[-1]
             firstQuotePosition = args.find(quoteChar)
             parameter = args[firstQuotePosition:][1:-1]
             args = args[:firstQuotePosition].strip()
 
         argsList = [arg.strip() for arg in re.split("[{},]+", args) if arg]
 
-        if parameter is None:
-            if argsList and not argsList[-1].startswith("v"):
-                parameter = self._parseParameters(argsList.pop())
+        if parameter is None and argsList and not argsList[-1].startswith("v"):
+            parameter = self.__parseParameters(argsList.pop())
 
         return BytecodeObject(mnemonic, argsList, parameter)
 
     def get_strings(self) -> Set[str]:
+        """
+        Inherited from baseapkinfo.py.
+        Return all strings in the sample.
+
+        :return: a set of strings
+        """
         match self.ret_type:
             case "APK":
                 dexList = (
@@ -320,7 +306,7 @@ class ShurikenImp(BaseApkinfo):
         return {s for s in rawString if s}
 
     @functools.lru_cache()
-    def _construct_bytecode_instruction(self, instruction):
+    def __construct_bytecode_instruction(self, instruction):
         """
         Construct a list of strings from the given bytecode instructions.
 
@@ -376,13 +362,13 @@ class ShurikenImp(BaseApkinfo):
         idx = self.__findMethodCallInstruction(
             targetMethod, instructions, start
         )
-        smali = self._parseSmali(
+        smali = self.__parseSmali(
             instructions[idx].disassembly.decode(errors="backslashreplace")
         )
 
         offset = sum(ins.instruction_length for ins in instructions[:idx])
         hex_bytes = rawBytes[
-            offset : offset + instructions[idx].instruction_length
+            offset: offset + instructions[idx].instruction_length
         ].hex(" ")
 
         return {
@@ -402,13 +388,24 @@ class ShurikenImp(BaseApkinfo):
         first_method: MethodObject,
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Find the invocations that call two specified methods, first_method
+        and second_method, respectively. Then, return a dictionary storing
+        the corresponding bytecodes and hex values.
 
+        :param parent_method: a parent method to scan
+        :param first_method: the first method called by the parent method
+        :param second_method: the second method called by the parent method
+        :return: a dictionary storing the corresponding bytecodes and hex
+        values.
+        """
         disassembledMethod = self.__getDisassembledMethod(parent_method)
 
         numOfIns = disassembledMethod.n_of_instructions
         instructions = disassembledMethod.instructions[:numOfIns]
 
-        method = disassembledMethod.method_id.contents # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
+        method = disassembledMethod.method_id.contents  # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
         rawBytes = bytes(method.code[: method.code_size])
 
         firstResult = self.__extractMethodCallDetails(
@@ -456,15 +453,24 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def superclass_relationships(self) -> Dict[str, Set[str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Return a dictionary holding the inheritance relationship of classes in
+        the sample. The dictionary takes a class name as the key and the
+        corresponding superclass as the value.
+
+        :return: a dictionary taking a class name as the key and the
+        corresponding superclass as the value.
+        """
         rawClasses = self.__getClasses()
 
         hierarchyDict = defaultdict(set)
 
         for rawClass in rawClasses:
-            className = self._convertClassNameFormat(
+            className = self.__convertClassNameFormat(
                 rawClass.class_name.decode()
             )
-            superclassName = self._convertClassNameFormat(
+            superclassName = self.__convertClassNameFormat(
                 rawClass.super_class.decode()
             )
 
@@ -474,15 +480,25 @@ class ShurikenImp(BaseApkinfo):
 
     @property
     def subclass_relationships(self) -> Dict[str, Set[str]]:
+        """
+        Inherited from baseapkinfo.py.
+        Return a dictionary holding the inheritance relationship of classes in
+        the sample. Return a dictionary holding the inheritance relationship
+        of classes in the sample. The dictionary takes a class name as the key
+        and the corresponding subclasses as the value.
+
+        :return: a dictionary taking a class name as the key and the
+        corresponding subclasses as the value.
+        """
         rawClasses = self.__getClasses()
 
         hierarchyDict = defaultdict(set)
 
         for rawClass in rawClasses:
-            className = self._convertClassNameFormat(
+            className = self.__convertClassNameFormat(
                 rawClass.class_name.decode()
             )
-            superclassName = self._convertClassNameFormat(
+            superclassName = self.__convertClassNameFormat(
                 rawClass.super_class.decode()
             )
 
@@ -490,11 +506,11 @@ class ShurikenImp(BaseApkinfo):
 
         return hierarchyDict
 
-    def _convert_to_method_object(
+    def __convert_to_method_object(
         self,
         methodAnalysis: hdvmmethodanalysis_t,
     ) -> MethodObject:
-        className = self._convertClassNameFormat(
+        className = self.__convertClassNameFormat(
             methodAnalysis.class_name.decode()
         )
 
@@ -508,25 +524,45 @@ class ShurikenImp(BaseApkinfo):
             cache=methodAnalysis,
         )
 
-    def _convertClassNameFormat(self, className: str) -> str:
+    def __convertClassNameFormat(self, className: str) -> str:
 
         if not className.endswith(";"):
             className = "L" + className.replace(".", "/") + ";"
 
         return className
 
-    def _convertMemberFieldFormat(self, memberField: str) -> str:
+    def __convertMemberFieldFormat(self, memberField: str) -> str:
+
+        typeTable = {
+            "void": "V",
+            "boolean": "Z",
+            "byte": "B",
+            "short": "S",
+            "char": "C",
+            "int": "I",
+            "long": "J",
+            "float": "F",
+            "double": "D",
+        }
+        for typeName, abbreviation in typeTable.items():
+            memberField = memberField.strip()
+            pattern = r" ({})(\[\])*$".format(typeName)
+            if re.search(pattern, memberField):
+                memberField = re.sub(
+                    pattern, r" {}\2".format(abbreviation), memberField
+                )
+                break
 
         className, field = memberField.split("->")
         fieldName, fieldType = field.split(" ")
 
-        className = self._convertClassNameFormat(className)
+        className = self.__convertClassNameFormat(className)
 
-        primitiveTypeChar = ["V", "Z", "B", "S", "C", "I", "J", "F", "D"]
+        primitiveTypeChar = list(typeTable.values())
 
         isFieldPrimitiveType = fieldType in primitiveTypeChar
         isFieldPrimitiveArray = fieldType.split("[")[-1] in primitiveTypeChar
         if not isFieldPrimitiveType or not isFieldPrimitiveArray:
-            fieldType = self._convertClassNameFormat(fieldType)
+            fieldType = self.__convertClassNameFormat(fieldType)
 
         return f"{className}->{fieldName} {fieldType}"
