@@ -18,7 +18,7 @@ class TestAres(TestCase):
         assert "Ares is not installed." in str(context.exception)
 
     def testCheckClearTextWithNone(self):
-        assert checkClearText(None) == None
+        assert checkClearText(None) is None
 
     def testCheckClearTextWithClearText(self):
         assert checkClearText("Clear Text") == "Clear Text"
