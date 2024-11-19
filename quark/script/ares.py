@@ -14,22 +14,23 @@ def checkClearText(inputString: str) -> str:
     :return: the decrypted value
     """
     try:
+        if inputString is None:
+            return None
+
         command = ["ares", "-dt", inputString]
         aresOutput = subprocess.run(
             command, capture_output=True, text=True, check=True
         )
-        patternToEscapeColorCode = re.compile(
+        patternToEscapeANSIColorCode = re.compile(
             r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])"
         )
         matchClearText = re.search(
             r"The plaintext is:\s*(.+)",
-            patternToEscapeColorCode.sub("", aresOutput.stdout),
+            patternToEscapeANSIColorCode.sub("", aresOutput.stdout),
         )
 
         if matchClearText:
             return matchClearText.group(1).strip()
-        else:
-            return None
 
     except FileNotFoundError as exception:
         raise Exception(
