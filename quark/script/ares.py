@@ -2,7 +2,7 @@
 # This file is part of Quark-Engine:
 # https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
-import subprocess
+import subprocess  # nosec B404
 import re
 
 
@@ -20,7 +20,7 @@ def checkClearText(inputString: str) -> str:
         command = ["ares", "-dt", inputString]
         aresOutput = subprocess.run(
             command, capture_output=True, text=True, check=True
-        )
+        )  # nosec B603
         patternToEscapeANSIColorCode = re.compile(
             r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])"
         )
