@@ -35,7 +35,7 @@ Quickstart
 
 Step 1: Environments Requirements
 ==================================
-- Quark Script requires Python 3.9 or above.
+- Quark Script requires Python 3.10 or above.
 
 Step 2: Install Quark Engine
 =============================
@@ -681,12 +681,12 @@ Quark Script CWE-312.py
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ciphey <https://github.com/Ciphey/Ciphey>`_  to check if the arguments are encrypted.
+First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ares <https://github.com/bee-san/Ares>`_  to check if the arguments are encrypted.
 
 .. code-block:: python
 
     from quark.script.frida import runFridaHook
-    from quark.script.ciphey import checkClearText
+    from quark.script.ares import checkClearText
 
     APP_PACKAGE_NAME = "oversecured.ovaa"
 

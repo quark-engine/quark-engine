@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
-# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# This file is part of Quark-Engine:
+# https://github.com/quark-engine/quark-engine
 # See the file 'LICENSE' for copying permission.
 from unittest import TestCase
 from unittest.mock import patch
-from quark.script.ciphey import checkClearText
+from quark.script.ares import checkClearText
 
 
-class TestCiphey(TestCase):
+class TestAres(TestCase):
     @patch(
-        "builtins.__import__",
-        side_effect=ImportError("No module named 'ciphey'"),
+        "subprocess.run",
+        side_effect=FileNotFoundError,
     )
-    def testCheckClearTextWithCipheyImportError(self, mock_import):
+    def testCheckClearTextWithAresNotInstalled(self, mock_import):
         with self.assertRaises(Exception) as context:
             checkClearText("Clear Text")
-        assert "Ciphey is not installed." in str(context.exception)
+        assert "Ares is not installed." in str(context.exception)
+
+    def testCheckClearTextWithNone(self):
+        assert checkClearText(None) is None
 
     def testCheckClearTextWithClearText(self):
         assert checkClearText("Clear Text") == "Clear Text"

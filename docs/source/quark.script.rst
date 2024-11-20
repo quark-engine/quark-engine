@@ -12,10 +12,10 @@ Subpackages
 Submodules
 ----------
 
-quark.script.ciphey module
+quark.script.ares module
 --------------------------
 
-.. automodule:: quark.script.ciphey
+.. automodule:: quark.script.ares
    :members:
    :undoc-members:
    :show-inheritance:

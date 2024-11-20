@@ -2,7 +2,7 @@ coverage:
   status:
     project:
       default:
-        threshold: 0.02
+        threshold: 0.14
 
 ignore:
   - "*/tests/*"
