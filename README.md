@@ -20,8 +20,8 @@
     <a href="https://github.com/18z/quark-rules/blob/master/LICENSE">
         <img alt="license" src="https://img.shields.io/badge/License-GPLv3-blue.svg">
     </a>
-    <a href="https://www.python.org/downloads/release/python-360/">
-        <img alt="python version" src="https://img.shields.io/badge/python-3.9-blue.svg">
+    <a href="https://www.python.org/downloads/release/python-31015/">
+        <img alt="python version" src="https://img.shields.io/badge/python-3.10-blue.svg">
     </a>
     <a href="https://pypi.org/project/quark-engine/">
         <img alt="PyPi Download" src="https://pepy.tech/badge/quark-engine">
@@ -68,7 +68,7 @@ Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerabilit
 
 ### Step 1: Environments Requirements
 
-*   Make sure your Python version is 3.9 or above.
+*   Make sure your Python version is 3.10 or above.
 
 ### Step 2: Install Quark Agent
 
