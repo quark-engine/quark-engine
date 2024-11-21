@@ -1640,14 +1640,14 @@ See `CWE-295 <https://cwe.mitre.org/data/definitions/295.html>`_ for more detail
 Code of CWE-295 in InsecureShop.apk
 ====================================
 
-We use the `InsecureShop.apk <https://github.com/hax0rgb/InsecureShop>`_ sample to explain the vulnerability code of CWE-20.
+We use the `InsecureShop.apk <https://github.com/hax0rgb/InsecureShop>`_ sample to explain the vulnerability code of CWE-295.
 
 .. image:: https://imgur.com/t7Y5clb.jpg
 
 Quark Script CWE-295.py
 ========================
 
-We use the API ``findMethodInAPK(samplePath, targetMethod) ``to locate all ``SslErrorHandler.proceed`` methods. Then we need to identify whether if the method ``WebViewClient.onReceivedSslError`` is overrode by its subclass.
+We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all ``SslErrorHandler.proceed`` methods. Then we need to identify whether if the method ``WebViewClient.onReceivedSslError`` is overrode by its subclass.
 
 First, we check and make sure that the ``methodInstance.name`` is ``onReceivedSslError``, and the ``methodInstance.descriptor`` is ``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
 
