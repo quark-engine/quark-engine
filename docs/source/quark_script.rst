@@ -1647,7 +1647,7 @@ We use the `InsecureShop.apk <https://github.com/hax0rgb/InsecureShop>`_ sample 
 Quark Script CWE-295.py
 ========================
 
-We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all ``SslErrorHandler.proceed`` methods. Then we need to identify whether if the method ``WebViewClient.onReceivedSslError`` is overrode by its subclass.
+We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all ``SslErrorHandler.proceed`` methods. Then we need to identify whether the method ``WebViewClient.onReceivedSslError`` is overridden by its subclass.
 
 First, we check and make sure that the ``methodInstance.name`` is ``onReceivedSslError``, and the ``methodInstance.descriptor`` is ``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
 
