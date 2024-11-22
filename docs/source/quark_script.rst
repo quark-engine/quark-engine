@@ -1647,13 +1647,13 @@ We use the `InsecureShop.apk <https://github.com/hax0rgb/InsecureShop>`_ sample 
 Quark Script CWE-295.py
 ========================
 
-We use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all ``SslErrorHandler.proceed`` methods. Then we need to identify whether the method ``WebViewClient.onReceivedSslError`` is overridden by its subclass.
+To begin with, we use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all callers of method ``SslErrorHandler.proceed``.
 
-First, we check and make sure that the ``methodInstance.name`` is ``onReceivedSslError``, and the ``methodInstance.descriptor`` is ``(Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V``.
+Next, we must verify whether the caller overrides the method ``WebViewClient.onReceivedSslErroris``.
 
-Then we use the API ``methodInstance.findSuperclassHierarchy()`` to get the superclass list of the method’s caller class.
+Therefore, we check if the method name and descriptor of the caller match those of ``WebViewClient.onReceivedSslErroris``. After that, we use the API ``methodInstance.findSuperclassHierarchy()`` to check if the superclasses of the caller include ``Landroid/webkit/WebViewClient``.
 
-Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the superclass list. If **YES**, that may cause CWE-295 vulnerability.
+If both are **YES**, the APK will call ``SslErrorHandler.procees`` without certificate validation when an SSL error occurs, which may cause CWE-295 vulnerability.
 
 .. code-block:: python
      
@@ -1665,7 +1665,7 @@ Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the superclass li
         "proceed",                           # method name
         "()V"                                # descriptor
     ]
-    OVERRIDE_METHOD = [
+    OVERRIDDEN_METHOD = [
         "Landroid/webkit/WebViewClient;",    # class name
         "onReceivedSslError",                # method name
         "(Landroid/webkit/WebView;" + " Landroid/webkit/SslErrorHandler;" + \
@@ -1674,9 +1674,9 @@ Finally, we check the ``Landroid/webkit/WebViewClient;`` is on the superclass li
 
     for sslProceedCaller in findMethodInAPK(SAMPLE_PATH, TARGET_METHOD):
         if (
-            sslProceedCaller.name == OVERRIDE_METHOD[1]
-            and sslProceedCaller.descriptor == OVERRIDE_METHOD[2]
-            and OVERRIDE_METHOD[0] in sslProceedCaller.findSuperclassHierarchy()
+            sslProceedCaller.name == OVERRIDDEN_METHOD[1]
+            and sslProceedCaller.descriptor == OVERRIDDEN_METHOD[2]
+            and OVERRIDDEN_METHOD[0] in sslProceedCaller.findSuperclassHierarchy()
         ):
             print(f"CWE-295 is detected in method, {sslProceedCaller.fullName}")
 
