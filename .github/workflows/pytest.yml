@@ -48,9 +48,6 @@ jobs:
         cd /opt/radare2-5.9.0
         sudo sys/install.sh --without-pull
         cd -
-        
-        # Install Shuriken-Analyzer
-        python -m pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
  
         # Install langchain and it's OpenAI integration
         python -m pip install langchain==0.2.11 langchain-core==0.2.23 langchain-openai==0.1.17 --upgrade
@@ -62,6 +59,17 @@ jobs:
         wget https://sh.rustup.rs -O install.sh
         sh install.sh -y
         cargo install project_ares
+
+    - name: Install Shuriken-Analyzer
+      run: |
+        sudo apt-get install -y cmake git default-jdk iputils-ping
+        git clone https://github.com/Shuriken-Group/Shuriken-Analyzer.git /opt/Shuriken-Analyzer
+        cd /opt/Shuriken-Analyzer
+        cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -DGITHUB_ACTION=ON
+        cmake --build build/ -j
+        sudo cmake --install build/
+        pip install /opt/Shuriken-Analyzer/shuriken/bindings/Python/
+        cd -
 
     - name: Install Quark-Engine
       run: pip install .
