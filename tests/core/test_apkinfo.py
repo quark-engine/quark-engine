@@ -1,4 +1,5 @@
 import os
+from typing import Literal, Tuple
 import zipfile
 
 import pytest
@@ -25,6 +26,8 @@ def dex_file(SAMPLE_PATH_13667):
     os.remove(DEX_NAME)
     os.remove(APK_NAME)
 
+def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
+    return f"{testInput[0].__name__} with {testInput[1]}"
 
 @pytest.fixture(
     scope="function",
@@ -38,34 +41,9 @@ def dex_file(SAMPLE_PATH_13667):
          (ShurikenImp, "DEX"),
          (ShurikenImp, "APK"),
     ),
+    ids=__generateTestIDs
 )
 def apkinfo(request, SAMPLE_PATH_13667, dex_file):
-    apkinfoClass, fileType = request.param
-
-    fileToBeAnalyzed = SAMPLE_PATH_13667
-    if fileType == "DEX":
-        fileToBeAnalyzed = dex_file
-
-    apkinfo = apkinfoClass(fileToBeAnalyzed)
-
-    yield apkinfo
-
-
-@pytest.fixture(
-    scope="function",
-    params=(
-         #(AndroguardImp, "DEX"),
-         #(AndroguardImp, "APK"),
-         #(RizinImp, "DEX"),
-         #(RizinImp, "APK"),
-         (ShurikenImp, "DEX"),
-         (ShurikenImp, "APK"),
-    ),
-)
-def apkinfo_without_R2Imp(request, SAMPLE_PATH_13667, dex_file):
-    """Since R2 has some issue,
-    create this function to skip R2 relevant test for some test functions.
-    """
     apkinfoClass, fileType = request.param
 
     fileToBeAnalyzed = SAMPLE_PATH_13667
@@ -370,8 +348,11 @@ class TestApkinfo:
         assert isinstance(result, list)
         assert expect_method in result
 
-    def test_upperfunc(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_upperfunc(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="The upstream missed the xrefs of the function.")
+
         api = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
@@ -388,8 +369,11 @@ class TestApkinfo:
 
         assert expect_function in upper_methods
 
-    def test_get_method_bytecode(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_get_method_bytecode(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="Upstream missed the bytecodes in the latter part of the function.")
+
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
@@ -429,8 +413,10 @@ class TestApkinfo:
         for expected in expected_bytecode_list:
             assert expected in bytecodes
 
-    def test_another_get_method_bytecode(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_another_get_method_bytecode(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="Upstream missed the bytecodes in the latter part of the function.")
 
         # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00193.json rule
         expected_bytecode_list1 = [
@@ -489,8 +475,11 @@ class TestApkinfo:
         for expected in expected_bytecode_list2:
             assert expected in bytecodes2
 
-    def test_lowerfunc(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_lowerfunc(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="The upstream missed the xrefs of the function.")
+
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
@@ -554,6 +543,10 @@ class TestApkinfo:
         assert expectStrings.issubset(result)
 
     def test_get_wrapper_smali(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="Upstream missed the bytecodes in the latter part of the function.")
+
         parent_method = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "getSIMContacts",
