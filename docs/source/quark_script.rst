@@ -676,12 +676,24 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 
 .. image:: https://i.imgur.com/KsFsxTu.jpg
 
+CWE-312 Detection Process Using Quark Script API
+=================================================
+
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
+We have designed a `Frida <https://frida.re/>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. It can be found in `quark-engine/quark/script/frida <https://github.com/quark-engine/quark-engine/tree/master/quark/script/frida>`_.
+ 
+To begin with, we hook the method ``putString`` to catch its arguments. Then, we check if sensitive information like email or password is passed. Finally, we use ``checkClearText`` imported from `Ares <https://github.com/bee-san/Ares>`_ to check if the arguments are encrypted. If both **YES**, CWE-312 vulnerability might be caused.
+
+.. image:: https://imgur.com/DiekfBm.jpg
+
+Quark Script for CWE-312 Detection
+===================================
+
+.. image:: https://imgur.com/rWNs4og.jpg
+
 Quark Script CWE-312.py
 ========================
-
-Let's use the above APIs to show how the Quark script finds this vulnerability.
-
-First, we designed a `Frida <https://frida.re>`_ script ``agent.js`` to hook the target method and get the arguments when the target method is called. Then we hook the method ``putString`` to catch its arguments. Finally, we use `Ares <https://github.com/bee-san/Ares>`_  to check if the arguments are encrypted.
 
 .. code-block:: python
 
