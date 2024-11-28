@@ -685,12 +685,12 @@ We have designed a `Frida <https://frida.re/>`_ script ``agent.js`` to hook a sp
  
 To begin with, we hook the method ``putString`` to catch its arguments. Then, we check if sensitive information like email or password is passed. Finally, we use ``checkClearText`` imported from `Ares <https://github.com/bee-san/Ares>`_ to check if the arguments are cleartext. If both **YES**, CWE-312 vulnerability might be caused.
 
-.. image:: https://imgur.com/kw2hjcq.jpg
+.. image:: https://imgur.com/cqVyq8j.jpg
 
 Quark Script for CWE-312 Detection
 ===================================
 
-.. image:: https://imgur.com/rWNs4og.jpg
+.. image:: https://imgur.com/rxMPZX8.jpg
 
 Quark Script CWE-312.py
 ========================
