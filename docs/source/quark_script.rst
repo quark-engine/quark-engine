@@ -658,7 +658,7 @@ Quark Script Result
 Detect CWE-312 in Android Application
 --------------------------------------
 
-This scenario seeks to find cleartext storage of sensitive data in the APK file.
+This scenario seeks to find **cleartext storage of sensitive data** in the APK file.
 
 CWE-312: Cleartext Storage of Sensitive Information
 ====================================================
