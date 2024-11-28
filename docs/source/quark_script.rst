@@ -687,13 +687,10 @@ To begin with, we hook the method ``putString`` to catch its arguments. Then, we
 
 .. image:: https://imgur.com/eNjm3ES.jpg
 
-Quark Script for CWE-312 Detection
-===================================
-
-.. image:: https://imgur.com/rxMPZX8.jpg
-
 Quark Script: CWE-312.py
 ========================
+
+.. image:: https://imgur.com/rxMPZX8.jpg
 
 .. code-block:: python
 
