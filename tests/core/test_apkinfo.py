@@ -23,8 +23,11 @@ def dex_file(SAMPLE_PATH_13667):
 
     yield DEX_NAME
 
-    os.remove(DEX_NAME)
-    os.remove(APK_NAME)
+    if os.path.exists(DEX_NAME):
+        os.remove(DEX_NAME)
+
+    if os.path.exists(APK_NAME):
+        os.remove(APK_NAME)
 
 
 def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
