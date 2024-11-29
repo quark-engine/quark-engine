@@ -103,7 +103,7 @@ class TestApkinfo:
             case "DEX":
                 assert apkinfo.filename == "classes.dex"
             case "APK":
-                apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+                assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
     def test_filesize(self, apkinfo):
         match apkinfo.ret_type:
