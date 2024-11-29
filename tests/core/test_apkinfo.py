@@ -34,12 +34,12 @@ def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
 @pytest.fixture(
     scope="function",
     params=(
-        # (AndroguardImp, "DEX"),
-        # (AndroguardImp, "APK"),
-        # (RizinImp, "DEX"),
-        # (RizinImp, "APK"),
-        # (R2Imp, "DEX"),
-        # (R2Imp, "APK"),
+        (AndroguardImp, "DEX"),
+        (AndroguardImp, "APK"),
+        (RizinImp, "DEX"),
+        (RizinImp, "APK"),
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
         (ShurikenImp, "DEX"),
         (ShurikenImp, "APK"),
     ),
@@ -408,7 +408,7 @@ class TestApkinfo:
             BytecodeObject("const/4", ["v3"], 0),
             BytecodeObject("add-int/lit8", ["v2", "v2"], 1),
         ]
-        expected_bytecode_list = [expected_bytecode_list[3]]
+
         method = apkinfo.find_method(
             class_name="Landroid/support/v4/app/FragmentManagerImpl;",
             method_name="execPendingActions",
