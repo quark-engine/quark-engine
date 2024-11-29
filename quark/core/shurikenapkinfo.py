@@ -102,7 +102,9 @@ class ShurikenImp(BaseApkinfo):
                     methodAnalysis = self.analysis.get_analyzed_method_by_idx(
                         i
                     )
-                    methods.add(self.__convert_to_method_object(methodAnalysis))
+                    methods.add(
+                        self.__convert_to_method_object(methodAnalysis)
+                    )
 
             case "DEX":
                 # TODO - Wait for the upstream to add an API to get all methods.
@@ -112,7 +114,9 @@ class ShurikenImp(BaseApkinfo):
                     classAnalysis = self.analysis.get_analyzed_class(className)
                     for j in range(classAnalysis.n_of_methods):
                         methodAnalysis = classAnalysis.methods[j].contents
-                        method = self.__convert_to_method_object(methodAnalysis)
+                        method = self.__convert_to_method_object(
+                            methodAnalysis
+                        )
                         lowerMethodInfo = self.lowerfunc(method)
                         lowerMethods = [info[0] for info in lowerMethodInfo]
                         methods = methods.union(set(lowerMethods))
@@ -215,9 +219,9 @@ class ShurikenImp(BaseApkinfo):
         disassembledMethod = self.__getDisassembledMethod(method_object)
 
         for i in range(disassembledMethod.n_of_instructions):
-            rawSmali = disassembledMethod.instructions[
-                i
-            ].disassembly.decode(errors="backslashreplace")
+            rawSmali = disassembledMethod.instructions[i].disassembly.decode(
+                errors="backslashreplace"
+            )
             yield self.__parseSmali(rawSmali)
 
     def __parseParameters(self, parameter: str) -> Union[int, float, str]:
@@ -421,7 +425,9 @@ class ShurikenImp(BaseApkinfo):
         numOfIns = disassembledMethod.n_of_instructions
         instructions = disassembledMethod.instructions[:numOfIns]
 
-        method = disassembledMethod.method_id.contents  # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
+        method = (
+            disassembledMethod.method_id.contents
+        )  # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
         rawBytes = bytes(method.code[: method.code_size])
 
         firstResult = self.__extractMethodCallDetails(
@@ -581,7 +587,9 @@ class ShurikenImp(BaseApkinfo):
             fieldTypeArrayDimension += 1
             fieldType = fieldType[:-2]
 
-        isFieldPrimitiveArray = fieldTypeArrayDimension and fieldType in primitiveTypeChar
+        isFieldPrimitiveArray = (
+            fieldTypeArrayDimension and fieldType in primitiveTypeChar
+        )
 
         if not isFieldPrimitiveType or not isFieldPrimitiveArray:
             fieldType = self.__convertClassNameFormat(fieldType)

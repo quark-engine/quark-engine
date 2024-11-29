@@ -187,7 +187,9 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def lowerfunc(self, method_object: MethodObject) -> list[Tuple[MethodObject, int]]:
+    def lowerfunc(
+        self, method_object: MethodObject
+    ) -> list[Tuple[MethodObject, int]]:
         """
         Return the xref from method from given MethodObject instance.
 
