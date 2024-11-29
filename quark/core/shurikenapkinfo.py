@@ -324,16 +324,6 @@ class ShurikenImp(BaseApkinfo):
 
         return {s for s in rawString if s}
 
-    @functools.lru_cache()
-    def __construct_bytecode_instruction(self, instruction):
-        """
-        Construct a list of strings from the given bytecode instructions.
-
-        :param instruction: instruction instance from androguard
-        :return: a list with bytecode instructions strings
-        """
-        pass
-
     def __findMethodCallInstruction(
         self,
         method: MethodObject,
