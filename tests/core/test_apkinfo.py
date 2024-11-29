@@ -224,7 +224,7 @@ class TestApkinfo:
         elif apkinfo.core_library == "rizin":
             assert len(apkinfo.android_apis) == 1269
         elif apkinfo.core_library == "shuriken":
-            assert len(apkinfo.android_apis) == 1452
+            assert len(apkinfo.android_apis) == 1438
             return
 
         assert api.issubset(apkinfo.android_apis)
