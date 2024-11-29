@@ -112,7 +112,7 @@ class ShurikenImp(BaseApkinfo):
                     )
 
             case "DEX":
-                # TODO - Wait for the upstream to add an API to get all methods.
+                # TODO - Wait for the upstream to support getting all methods.
                 for i in range(self.analysis.get_number_of_classes()):
                     rawClass = self.analysis.get_class_by_id(i)
                     className = rawClass.class_name.decode()
@@ -387,7 +387,7 @@ class ShurikenImp(BaseApkinfo):
 
         offset = sum(ins.instruction_length for ins in instructions[:idx])
         hex_bytes = rawBytes[
-            offset : offset + instructions[idx].instruction_length
+            offset: offset + instructions[idx].instruction_length
         ].hex(" ")
 
         return {

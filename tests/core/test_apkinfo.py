@@ -378,7 +378,9 @@ class TestApkinfo:
     def test_get_method_bytecode(self, apkinfo):
         if apkinfo.core_library == "radare2":
             pytest.skip(
-                reason="Upstream missed the bytecodes in the latter part of the function."
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function.")
             )
 
         expected_bytecode_list = [
@@ -423,7 +425,10 @@ class TestApkinfo:
     def test_another_get_method_bytecode(self, apkinfo):
         if apkinfo.core_library == "radare2":
             pytest.skip(
-                reason="Upstream missed the bytecodes in the latter part of the function."
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function."
+                )
             )
 
         # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00193.json rule
@@ -560,7 +565,10 @@ class TestApkinfo:
     def test_get_wrapper_smali(self, apkinfo):
         if apkinfo.core_library in ["radare2", "rizin"]:
             pytest.skip(
-                reason="Upstream missed the bytecodes in the latter part of the function."
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function."
+                )
             )
 
         parent_method = apkinfo.find_method(
@@ -572,7 +580,11 @@ class TestApkinfo:
         first_method = apkinfo.find_method(
             "Landroid/content/ContentResolver;",
             "query",
-            "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+            (
+                "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; "
+                "[Ljava/lang/String; Ljava/lang/String;)"
+                "Landroid/database/Cursor;"
+            ),
         )[0]
 
         second_method = apkinfo.find_method(
@@ -590,14 +602,22 @@ class TestApkinfo:
                 "v3",
                 "v4",
                 "v5",
-                "Landroid/content/ContentResolver;->query(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; [Ljava/lang/String; Ljava/lang/String;)Landroid/database/Cursor;",
+                (
+                    "Landroid/content/ContentResolver;->query"
+                    "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String;"
+                    " [Ljava/lang/String; Ljava/lang/String;)"
+                    "Landroid/database/Cursor;"
+                ),
             ],
             "first_hex": "74 06 83 00 00 00",
             "second": [
                 "invoke-interface",
                 "v7",
                 "v2",
-                "Landroid/database/Cursor;->getColumnIndex(Ljava/lang/String;)I",
+                (
+                    "Landroid/database/Cursor;->getColumnIndex"
+                    "(Ljava/lang/String;)I"
+                ),
             ],
             "second_hex": "72 20 f5 00 27 00",
         }
