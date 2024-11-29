@@ -554,15 +554,22 @@ class ShurikenImp(BaseApkinfo):
                 break
 
         className, field = memberField.split("->")
+        className = self.__convertClassNameFormat(className)
         fieldName, fieldType = field.split(" ")
 
-        className = self.__convertClassNameFormat(className)
-
         primitiveTypeChar = list(typeTable.values())
-
         isFieldPrimitiveType = fieldType in primitiveTypeChar
-        isFieldPrimitiveArray = fieldType.split("[")[-1] in primitiveTypeChar
+
+        fieldTypeArrayDimension = 0
+        while fieldType.endswith("[]"):
+            fieldTypeArrayDimension += 1
+            fieldType = fieldType[:-2]
+
+        isFieldPrimitiveArray = fieldTypeArrayDimension and fieldType in primitiveTypeChar
+
         if not isFieldPrimitiveType or not isFieldPrimitiveArray:
             fieldType = self.__convertClassNameFormat(fieldType)
+
+        fieldType = "[" * fieldTypeArrayDimension + fieldType
 
         return f"{className}->{fieldName} {fieldType}"
