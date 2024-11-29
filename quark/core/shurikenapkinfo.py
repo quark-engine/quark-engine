@@ -65,7 +65,12 @@ class ShurikenImp(BaseApkinfo):
         """
         methods = self.all_methods
         androidAPIs = set(
-            filter(lambda method: method.is_android_api(), methods)
+            filter(
+                lambda method: (
+                    method.is_android_api()
+                    and method.cache.is_android_api
+                ), methods
+            )
         )
 
         return androidAPIs
@@ -225,16 +230,6 @@ class ShurikenImp(BaseApkinfo):
             yield self.__parseSmali(rawSmali)
 
     def __parseParameters(self, parameter: str) -> Union[int, float, str]:
-        """
-        Parse the given parameter string into its correspond type,
-        such as int, float or str.
-
-        :param paremeter: a parameter of a disassembled instruction
-        :return:
-            - int: If the parameter is parsed as an integer
-            - float: If the parameter is parsed as a float
-            - str: If the parameter is parsed as a string
-        """
         if parameter[:2] == "0x":
             try:
                 parameter = int(parameter, 16)
@@ -253,7 +248,11 @@ class ShurikenImp(BaseApkinfo):
         except (TypeError, ValueError):
             pass
 
-        patternToIdentifyMemberField = r"->\w+(?!\(\)) "
+        patternToIdentifyMethodCall = r"->\w+\("
+        if re.search(patternToIdentifyMethodCall, parameter):
+            parameter = self.__convertMethodCallForamt(parameter)
+
+        patternToIdentifyMemberField = r"->\w+(?!\() "
         if re.search(patternToIdentifyMemberField, parameter):
             parameter = self.__convertMemberFieldFormat(parameter)
 
@@ -597,3 +596,14 @@ class ShurikenImp(BaseApkinfo):
         fieldType = "[" * fieldTypeArrayDimension + fieldType
 
         return f"{className}->{fieldName} {fieldType}"
+
+    def __convertMethodCallForamt(self, methodCall: str) -> str:
+        if methodCall.count(';') < 3:
+            return methodCall
+
+        fragment = methodCall.split(";")
+        className = fragment[0]
+        returnType = fragment[-2]
+        fragment = fragment[1:-2]
+        parsedMethodCall = className + ";" + "; ".join(fragment) + ";" + returnType + ";"
+        return parsedMethodCall

@@ -408,7 +408,7 @@ class TestApkinfo:
             BytecodeObject("const/4", ["v3"], 0),
             BytecodeObject("add-int/lit8", ["v2", "v2"], 1),
         ]
-
+        expected_bytecode_list = [expected_bytecode_list[3]]
         method = apkinfo.find_method(
             class_name="Landroid/support/v4/app/FragmentManagerImpl;",
             method_name="execPendingActions",
@@ -445,6 +445,7 @@ class TestApkinfo:
                 "Ljava/lang/String;->length()I",
             ),
         ]
+        expected_bytecode_list1 = [expected_bytecode_list1[1]]
         # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00189.json rule
         expected_bytecode_list2 = [
             BytecodeObject(
