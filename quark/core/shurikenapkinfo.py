@@ -67,9 +67,9 @@ class ShurikenImp(BaseApkinfo):
         androidAPIs = set(
             filter(
                 lambda method: (
-                    method.is_android_api()
-                    and method.cache.is_android_api
-                ), methods
+                    method.is_android_api() and method.cache.is_android_api
+                ),
+                methods,
             )
         )
 
@@ -387,7 +387,7 @@ class ShurikenImp(BaseApkinfo):
 
         offset = sum(ins.instruction_length for ins in instructions[:idx])
         hex_bytes = rawBytes[
-            offset: offset + instructions[idx].instruction_length
+            offset : offset + instructions[idx].instruction_length
         ].hex(" ")
 
         return {
@@ -598,12 +598,14 @@ class ShurikenImp(BaseApkinfo):
         return f"{className}->{fieldName} {fieldType}"
 
     def __convertMethodCallForamt(self, methodCall: str) -> str:
-        if methodCall.count(';') < 3:
+        if methodCall.count(";") < 3:
             return methodCall
 
         fragment = methodCall.split(";")
         className = fragment[0]
         returnType = fragment[-2]
         fragment = fragment[1:-2]
-        parsedMethodCall = className + ";" + "; ".join(fragment) + ";" + returnType + ";"
+        parsedMethodCall = (
+            className + ";" + "; ".join(fragment) + ";" + returnType + ";"
+        )
         return parsedMethodCall
