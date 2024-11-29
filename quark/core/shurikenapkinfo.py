@@ -61,7 +61,7 @@ class ShurikenImp(BaseApkinfo):
         """
         Return all Android native APIs from given APK.
 
-        :return: a set of all Android native APIs MethodObject
+        :return: a set of MethodObjects
         """
         methods = self.all_methods
         androidAPIs = set(
@@ -73,9 +73,10 @@ class ShurikenImp(BaseApkinfo):
     @property
     def custom_methods(self) -> Set[MethodObject]:
         """
-        Return all custom methods from given APK.
+        Inherited from baseapkinfo.py.
+        Return all custom methods declared by the sample.
 
-        :return: a set of all custom methods MethodObject
+        :return: a set of MethodObjects
         """
         return {
             method for method in self.all_methods if not method.cache.external
@@ -84,10 +85,11 @@ class ShurikenImp(BaseApkinfo):
     @property
     def all_methods(self) -> Set[MethodObject]:
         """
-        Return all methods including Android native
-        API and custom methods from given APK.
+        Inherited from baseapkinfo.py.
+        Return all methods including Android native APIs and custom methods
+        declared in the sample.
 
-        :return: a set of all method MethodObject
+        :return: a set of MethodObjects
         """
         methods = set()
 
@@ -213,13 +215,22 @@ class ShurikenImp(BaseApkinfo):
         disassembledMethod = self.__getDisassembledMethod(method_object)
 
         for i in range(disassembledMethod.n_of_instructions):
-            rawBytecode = disassembledMethod.instructions[
+            rawSmali = disassembledMethod.instructions[
                 i
             ].disassembly.decode(errors="backslashreplace")
-            yield self.__parseSmali(rawBytecode)
+            yield self.__parseSmali(rawSmali)
 
     def __parseParameters(self, parameter: str) -> Union[int, float, str]:
+        """
+        Parse the given parameter string into its correspond type,
+        such as int, float or str.
 
+        :param paremeter: a parameter of a disassembled instruction
+        :return:
+            - int: If the parameter is parsed as an integer
+            - float: If the parameter is parsed as a float
+            - str: If the parameter is parsed as a string
+        """
         if parameter[:2] == "0x":
             try:
                 parameter = int(parameter, 16)
@@ -245,7 +256,12 @@ class ShurikenImp(BaseApkinfo):
         return parameter
 
     def __parseSmali(self, smali: str) -> BytecodeObject:
+        """
+        Parses the given smali code string into a BytecodeObject.
 
+        :param smali: a smali code string disassembled from an instruction
+        :return: a BytecodeObject
+        """
         smali = smali.split("//")[0].strip()
         if smali == "":
             raise ValueError("Argument cannot be empty.")
