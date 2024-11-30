@@ -250,7 +250,7 @@ class ShurikenImp(BaseApkinfo):
 
         patternToIdentifyMethodCall = r"->\w+\("
         if re.search(patternToIdentifyMethodCall, parameter):
-            parameter = self.__convertMethodCallForamt(parameter)
+            parameter = self.__convertMethodCallFormat(parameter)
 
         patternToIdentifyMemberField = r"->\w+(?!\() "
         if re.search(patternToIdentifyMemberField, parameter):
@@ -327,11 +327,14 @@ class ShurikenImp(BaseApkinfo):
     def __findMethodCallInstruction(
         self,
         method: MethodObject,
-        instructions: List[hdvminstruction_t],
-        start=0,
-    ) -> Optional[int]:
+        instructions: list[hdvminstruction_t],
+        start: int = 0,
+    ) -> int | None:
         targetMethodCall = (
-            f"{method.class_name}->{method.name}{method.descriptor}"
+            (
+                f"{method.class_name}->{method.name}"
+                f"{method.descriptor.replace(' ', '')}"
+            )
         )
 
         for idx in range(start, len(instructions)):
@@ -364,7 +367,7 @@ class ShurikenImp(BaseApkinfo):
     def __extractMethodCallDetails(
         self,
         targetMethod: MethodObject,
-        instructions: List[hdvminstruction_t],
+        instructions: list[hdvminstruction_t],
         rawBytes: bytes,
         start: int = 0,
     ):
@@ -382,21 +385,17 @@ class ShurikenImp(BaseApkinfo):
 
         return {
             "index": idx,
-            "smali": [
-                smali.mnemonic,
-                " ".join(smali.registers),
-                smali.parameter,
-            ],
+            "smali": [smali.mnemonic] + smali.registers + [smali.parameter],
             "hex": hex_bytes,
         }
 
-    @functools.lru_cache()
+    @functools.lru_cache
     def get_wrapper_smali(
         self,
         parent_method: MethodObject,
         first_method: MethodObject,
         second_method: MethodObject,
-    ) -> Dict[str, Union[BytecodeObject, str]]:
+    ) -> dict[str, BytecodeObject | str]:
         """
         Inherited from baseapkinfo.py.
         Find the invocations that call two specified methods, first_method
@@ -416,7 +415,7 @@ class ShurikenImp(BaseApkinfo):
 
         method = (
             disassembledMethod.method_id.contents
-        )  # TODO - Throw ValueError due to a bug from the upstream. Wait for the upstream to fix it.
+        )
         rawBytes = bytes(method.code[: method.code_size])
 
         firstResult = self.__extractMethodCallDetails(
@@ -587,7 +586,7 @@ class ShurikenImp(BaseApkinfo):
 
         return f"{className}->{fieldName} {fieldType}"
 
-    def __convertMethodCallForamt(self, methodCall: str) -> str:
+    def __convertMethodCallFormat(self, methodCall: str) -> str:
         if methodCall.count(";") < 3:
             return methodCall
 
