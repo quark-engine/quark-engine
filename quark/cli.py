@@ -133,7 +133,10 @@ logo()
     "--core-library",
     "core_library",
     help="Specify the core library used to analyze an APK",
-    type=click.Choice(("androguard", "rizin", "radare2"), case_sensitive=False),
+    type=click.Choice(
+        ("androguard", "rizin", "radare2", "shuriken"),
+        case_sensitive=False
+    ),
     required=False,
     default="androguard",
 )
