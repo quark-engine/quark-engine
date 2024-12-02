@@ -6,7 +6,7 @@ from typing import Any, Dict, Iterator, List
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 
-import importlib_resources
+import importlib.resources
 import rzpipe
 import r2pipe
 
@@ -89,9 +89,9 @@ class AxmlReader(object):
 
         base_path = f"quark.core.axmlreader.{core_library}"
         axmlDefinitionPath = (
-            importlib_resources.files(base_path) / "axml_definition"
+            importlib.resources.files(base_path) / "axml_definition"
         )
-        with importlib_resources.as_file(
+        with importlib.resources.as_file(
                 axmlDefinitionPath) as axmlDefinitionFile:
             if structure_path is None:
                 structure_path = axmlDefinitionFile
