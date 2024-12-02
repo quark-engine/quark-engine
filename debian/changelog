@@ -1,3 +1,19 @@
+quark-engine (24.12.1-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+  
+    - Optimize the Quark Script documents for CWE-295, CWE-312, and CWE-940. (#716, #717, and #711) 
+
+  * Dependency Update
+
+    - Update the minimum required Python version to 3.10. (#715)
+
+  * Bug Fix
+
+    - Fix a ModuleNotFoundError during the installation via PyPI. (#720)
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Mon, 02 Dec 2024 20:00:00 +0800
+
 quark-engine (24.11.2-0kali1) kali-dev; urgency=medium
 
   * Bug Fix
