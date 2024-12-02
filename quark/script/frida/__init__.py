@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from time import sleep
 from typing import Any, Dict, List, Tuple, Union
 
-import importlib_resources
+import importlib.resources
 from quark.utils.regex import URL_REGEX
 
 import frida
@@ -123,10 +123,10 @@ def _injectAgent(frida: FridaSession) -> MethodCallEventDispatcher:
     dispatcher = MethodCallEventDispatcher(frida)
 
     pathToFridaAgentSource = (
-        importlib_resources.files("quark.script.frida") / "agent.js"
+        importlib.resources.files("quark.script.frida") / "agent.js"
     )
 
-    with importlib_resources.as_file(
+    with importlib.resources.as_file(
         pathToFridaAgentSource
     ) as fridaAgentSource:
         fridaAgent = dispatcher.frida.create_script(

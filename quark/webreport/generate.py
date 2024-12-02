@@ -1,4 +1,4 @@
-import importlib_resources
+import importlib.resources
 
 
 class ReportGenerator:
@@ -12,19 +12,19 @@ class ReportGenerator:
 
         # Load html layout
         rulegenerate_html_path = (
-            importlib_resources.files("quark.webreport")
+            importlib.resources.files("quark.webreport")
             / "genrule_report_layout.html"
         )
 
         analysis_result_html_path = (
-            importlib_resources.files("quark.webreport")
+            importlib.resources.files("quark.webreport")
             / "analysis_report_layout.html"
         )
 
-        with importlib_resources.as_file(rulegenerate_html_path) as file:
+        with importlib.resources.as_file(rulegenerate_html_path) as file:
             self.rulegenerate_layout = file.read_text()
 
-        with importlib_resources.as_file(analysis_result_html_path) as file:
+        with importlib.resources.as_file(analysis_result_html_path) as file:
             self.analysis_result_layout = file.read_text()
 
     def get_rule_generate_editor_html(self):
