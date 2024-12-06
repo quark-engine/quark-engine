@@ -590,11 +590,17 @@ class ShurikenImp(BaseApkinfo):
         if methodCall.count(";") < 3:
             return methodCall
 
+        endWithSemiColon = methodCall.endswith(";")
+        if endWithSemiColon:
+            methodCall = methodCall[:-1]
+
         fragment = methodCall.split(";")
         className = fragment[0]
-        returnType = fragment[-2]
-        fragment = fragment[1:-2]
+        returnType = fragment[-1]
+        fragment = fragment[1:-1]
         parsedMethodCall = (
-            className + ";" + "; ".join(fragment) + ";" + returnType + ";"
+            className + ";" + "; ".join(fragment) + ";" + returnType
         )
+        if endWithSemiColon:
+            parsedMethodCall += ";"
         return parsedMethodCall
