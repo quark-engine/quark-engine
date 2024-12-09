@@ -375,6 +375,11 @@ class ShurikenImp(BaseApkinfo):
         idx = self.__findMethodCallInstruction(
             targetMethod, instructions, start
         )
+        if idx is None:
+            idx = self.__findMethodCallInstruction(
+                targetMethod, instructions, 0
+            )
+
         smali = self.__parseSmali(
             instructions[idx].disassembly.decode(errors="backslashreplace")
         )
