@@ -42,27 +42,28 @@ jobs:
         # Install click <= 8.1.7 for CLI supports
         python -m pip install "click<=8.1.7"
    
-
-    - run: sudo apt-get install -y cmake git
-      if: matrix.os == 'ubuntu-latest'
-    - run: brew install cmake git
-      if: matrix.os == 'macos-13'
-
-    - name: Install Shuriken-Analyzer for Linux/MacOS
+    - name: Install Shuriken-Analyzer for Linux
       run: |
+        sudo apt-get install -y cmake git
         sudo git clone https://github.com/Shuriken-Group/Shuriken-Analyzer.git /opt/Shuriken-Analyzer
         cd /opt/Shuriken-Analyzer
         sudo cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -DGITHUB_ACTION=ON
         sudo cmake --build build/ -j
         sudo cmake --install build/
-      
-    - run: |
         pip install /opt/Shuriken-Analyzer/shuriken/bindings/Python/
-        cd /home/runner
+        cd -
       if: matrix.os == 'ubuntu-latest'
-    - run: |
+
+    - name: Install Shuriken-Analyzer for MacOS
+      run: |
+        brew install cmake git
+        sudo git clone https://github.com/Shuriken-Group/Shuriken-Analyzer.git /opt/Shuriken-Analyzer
+        cd /opt/Shuriken-Analyzer
+        sudo cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -DGITHUB_ACTION=ON
+        sudo cmake --build build/ -j
+        sudo cmake --install build/
         sudo pip install /opt/Shuriken-Analyzer/shuriken/bindings/Python/
-        cd /Users/runner
+        cd -
       if: matrix.os == 'macos-13'
 
     - name: Install MacPorts
