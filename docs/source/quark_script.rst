@@ -403,35 +403,35 @@ Detect CWE-798 in Android Application
 
 This scenario seeks to find **hard-coded credentials** in the APK file.
 
-CWE-798 Use of Hard-coded Credentials
+CWE-798: Use of Hard-coded Credentials
 ======================================
 
 We analyze the definition of CWE-798 and identify its characteristics.
 
 See `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`_ for more details.
 
-.. image:: https://imgur.com/rkoJ8so.png
+.. image:: https://imgur.com/CO4w6zw.png
 
 Code of CWE-798 in ovaa.apk
 ============================
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-798.
 
-.. image:: https://imgur.com/lBjgAqQ.png
+.. image:: https://imgur.com/Cg7DacP.png
 
 CWE-798 Detection Process Using Quark Script API
 =================================================
 
-.. image:: https://imgur.com/5pMc01a.png
+.. image:: https://imgur.com/IRFU9K8.png
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the method ``SecretKeySpec``. Then, we get all the parameter values that are input to this method. And we parse the AES key from the parameter values. Finally, we check if the AES key is hardcoded in the APK file. If the answer is **YES**, BINGO!!! We find hard-coded credentials in the APK file.
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the constructor ``SecretKeySpec``. Second, we get all the input parameter values from this constructor. Then, we parse the AES key from the parameter values. Finally, we check if the AES key is hardcoded in the APK file. If the answer is **YES**, BINGO!!! We find hard-coded credentials in the APK file.
 
 Quark Scipt: CWE-798.py
 ========================
 
-.. image:: https://imgur.com/s9q5XSp.png
+.. image:: https://imgur.com/IOyrqDc.png
 
 .. code-block:: python
 
