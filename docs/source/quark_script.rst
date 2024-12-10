@@ -410,7 +410,7 @@ We analyze the definition of CWE-798 and identify its characteristics.
 
 See `CWE-798 <https://cwe.mitre.org/data/definitions/798.html>`_ for more details.
 
-.. image:: https://imgur.com/gCVcbO9.png
+.. image:: https://imgur.com/rF8J8hE.png
 
 Code of CWE-798 in ovaa.apk
 ============================
