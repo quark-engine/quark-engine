@@ -422,13 +422,13 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 CWE-798 Detection Process Using Quark Script API
 =================================================
 
-.. image:: https://imgur.com/IRFU9K8.png
+.. image:: https://imgur.com/R8CfDqD.png
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the constructor ``SecretKeySpec``. Second, we get all the input parameter values from this constructor. Then, we parse the AES key from the parameter values. Finally, we check if the AES key is hardcoded in the APK file. If the answer is **YES**, BINGO!!! We find hard-coded credentials in the APK file.
+First, we design a detection rule ``findSecretKeySpec.json`` to spot on behavior using the constructor ``SecretKeySpec``. Second, we get all the parameter values from this constructor. Then, we parse the AES key from the parameter values. Finally, we check if the AES key is hardcoded in the APK file. If the answer is **YES**, BINGO!!! We find hard-coded credentials in the APK file.
 
-Quark Scipt: CWE-798.py
+Quark Script: CWE-798.py
 ========================
 
 .. image:: https://imgur.com/IOyrqDc.png
@@ -1054,7 +1054,7 @@ We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_ 
 
 .. image:: https://imgur.com/THWm2gN.jpg
 
-Quark Scipt: CWE-532.py
+Quark Script: CWE-532.py
 ========================
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
