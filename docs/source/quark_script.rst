@@ -595,7 +595,7 @@ We analyze the definition of CWE-921 and identify its characteristics.
 
 See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
 
-.. image:: https://imgur.com/fBs7sS8.jpg
+.. image:: https://imgur.com/2zlPLHe.jpg
 
 
 Code of CWE-921 in ovaa.apk
