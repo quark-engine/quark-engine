@@ -588,7 +588,7 @@ Detect CWE-921 in Android Application
 
 This scenario seeks to find the **unsecured storage mechanism of sensitive data** in the APK file.
 
-CWE-921 Storage of Sensitive Data in a Mechanism without Access Control
+CWE-921: Storage of Sensitive Data in a Mechanism without Access Control
 ========================================================================
 
 We analyze the definition of CWE-921 and identify its characteristics.
@@ -614,7 +614,7 @@ Let’s use the above APIs to show how the Quark script finds this vulnerability
 
 First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API ``methodInstance.getArguments()`` to get the file path. Finally, CWE-921 is found if the file path contains the keyword ``sdcard``.
 
-Quark Scipt: CWE-921.py
+Quark Script: CWE-921.py
 ========================
 
 .. image:: https://imgur.com/HULgyIy.jpg
