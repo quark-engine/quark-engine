@@ -584,31 +584,40 @@ Quark Script Result
 
 
 Detect CWE-921 in Android Application
-----------------------------------------------------
+--------------------------------------
 
 This scenario seeks to find the **unsecured storage mechanism of sensitive data** in the APK file.
 
-CWE-921 Storage of Sensitive Data in a Mechanism without Access Control
+CWE-921: Storage of Sensitive Data in a Mechanism without Access Control
 ========================================================================
 
 We analyze the definition of CWE-921 and identify its characteristics.
 
 See `CWE-921 <https://cwe.mitre.org/data/definitions/921.html>`_ for more details.
 
-.. image:: https://imgur.com/ihtjGAu.jpg
+.. image:: https://imgur.com/2zlPLHe.jpg
+
 
 Code of CWE-921 in ovaa.apk
-=========================================
+============================
+
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-921.
 
-.. image:: https://imgur.com/ACzJct8.jpg
+.. image:: https://imgur.com/2u5iL1K.jpg
 
-Quark Script: CWE-921.py
-=========================
+CWE-921 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://imgur.com/qHOMqKy.jpg
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
 First, we design a detection rule ``checkFileExistence.json`` to spot on behavior that checks if a file exists on a given storage mechanism. Then, we use API ``methodInstance.getArguments()`` to get the file path. Finally, CWE-921 is found if the file path contains the keyword ``sdcard``.
+
+Quark Script: CWE-921.py
+========================
+
+.. image:: https://imgur.com/HULgyIy.jpg
 
 .. code-block:: python
 
@@ -626,9 +635,11 @@ First, we design a detection rule ``checkFileExistence.json`` to spot on behavio
             print(f"This file is stored inside the SDcard\n")
             print(f"CWE-921 is detected in {SAMPLE_PATH}.")
 
-
 Quark Rule: checkFileExistence.json
-======================================
+====================================
+
+.. image:: https://imgur.com/zRiYLtS.jpg
+
 .. code-block:: json
 
     {
@@ -651,13 +662,15 @@ Quark Rule: checkFileExistence.json
     }
 
 Quark Script Result
-=====================
+====================
+
 .. code-block:: TEXT
 
     $ python3 CWE-921.py
     This file is stored inside the SDcard
 
     CWE-921 is detected in ovaa.apk.
+
 
 
 
