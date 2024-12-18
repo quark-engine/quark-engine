@@ -14,8 +14,7 @@ from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import r2pipe
 
-from quark.core.axmlreader import AxmlReader
-from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
+from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.utils.tools import (
@@ -205,59 +204,6 @@ class R2Imp(BaseApkinfo):
             method_dict[class_name] = remove_dup_list(method_list)
 
         return method_dict
-
-    @functools.cached_property
-    def permissions(self) -> List[str]:
-        """
-        Inherited from baseapkinfo.py.
-        Return the permissions used by the sample.
-
-        :return: a list of permissions.
-        """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        elm_key_name = "{http://schemas.android.com/apk/res/android}name"
-        permission_list = set()
-        for elm in axml.get_xml_tree().iter("uses-permission"):
-            permission = elm.attrib.get(elm_key_name)
-            permission_list.add(permission)
-
-        return permission_list
-
-    @functools.cached_property
-    def application(self) -> XMLElement:
-        """Get the application element from the manifest file.
-
-        :return: an application element
-        """
-
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
-
-        return root.find("application")
-
-    @functools.cached_property
-    def activities(self) -> List[XMLElement]:
-        """
-        Return all activity from given APK.
-
-        :return: a list of all activities
-        """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
-
-        return root.findall("application/activity")
-
-    @functools.cached_property
-    def receivers(self) -> List[XMLElement]:
-        """
-        Return all receivers from the given APK.
-
-        :return: a list of all receivers
-        """
-        axml = AxmlReader(self._manifest, core_library="radare2")
-        root = axml.get_xml_tree()
-
-        return root.findall("application/receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
