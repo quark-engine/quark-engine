@@ -503,14 +503,14 @@ We analyze the definition of CWE-94 and identify its characteristics.
 
 See `CWE-94 <https://cwe.mitre.org/data/definitions/94.html>`_ for more details.
 
-.. image:: https://imgur.com/WsfPK5P.png
+.. image:: https://imgur.com/M9Jlgrn.png
 
 Code of CWE-94 in ovaa.apk
 ===========================
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-94.
 
-.. image:: https://imgur.com/m7Tu1vN.png
+.. image:: https://imgur.com/MdlAnvu.png
 
 CWE-94 Detection Process Using Quark Script API
 ================================================
