@@ -586,7 +586,6 @@ Quark Script Result
 .. code-block:: TEXT
 
     $ python3 CWE-94.py
-
     Method: checkSignatures not found!
     CWE-94 is detected in ovaa.apk
 
