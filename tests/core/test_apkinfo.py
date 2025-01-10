@@ -492,6 +492,31 @@ class TestApkinfo:
         for expected in expected_bytecode_list2:
             assert expected in bytecodes2
 
+    def test_get_method_bytecode_with_const_wide_instructions(self, apkinfo):
+        if apkinfo.core_library in ["rizin", "radare2"]:
+            pytest.skip(
+                reason="The upstream does not parse the instruction correctly."
+            )
+
+        method = apkinfo.find_method(
+            "Landroid/support/v4/view/ViewPager;",
+            "distanceInfluenceForSnapDuration",
+            "(F)F",
+        )[0]
+
+        expected_bytecode = BytecodeObject(
+            "const-wide",
+            ["v2",],
+            4602160705557665991
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+        assert any((b for b in bytecodes
+                    if b.mnemonic == "const-wide" and
+                    b.registers == ["v2"] and
+                    (b.parameter == 4602160705557665991 or
+                     b.parameter == 0.471239)))
+
     def test_lowerfunc(self, apkinfo):
         if apkinfo.core_library == "radare2":
             pytest.skip(

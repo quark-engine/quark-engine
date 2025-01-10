@@ -231,20 +231,29 @@ class ShurikenImp(BaseApkinfo):
             yield self.__parseSmali(rawSmali)
 
     def __parseParameters(self, parameter: str) -> Union[int, float, str]:
-        if parameter[:2] == "0x":
+        if parameter.startswith("0x"):
+            # The parameter is an address.
             try:
-                parameter = int(parameter, 16)
-                return parameter
+                return int(parameter, 16)
             except (TypeError, ValueError):
-                pass
+                return parameter
 
+        if parameter.startswith("#"):
+            # The parameter is a 64-bit float.
+            try:
+                return float(parameter[1:])
+            except (TypeError, ValueError):
+                return parameter
+
+        # Test if the parameter is a 32-bit integer.
         try:
-            parameter = int(parameter, 10)
-            return parameter
+            return int(parameter, 10)
         except (TypeError, ValueError):
             pass
+
+        # Test if the parameter is a 32-bit float.
         try:
-            parameter = float(parameter)
+            parameter = float(parameter, 10)
             return parameter
         except (TypeError, ValueError):
             pass
