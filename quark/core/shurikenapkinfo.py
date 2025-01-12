@@ -210,9 +210,9 @@ class ShurikenImp(BaseApkinfo):
         bytecodes
         :yield: a generator of BytecodeObjects
         """
-        disassembledMethod = self.__getDisassembledMethod(method_object)
         if method_object.cache.external:
             return
+        disassembledMethod = self.__getDisassembledMethod(method_object)
         for i in range(disassembledMethod.n_of_instructions):
             rawSmali = disassembledMethod.instructions[i].disassembly.decode(
                 errors="backslashreplace"
