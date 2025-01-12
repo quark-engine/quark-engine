@@ -275,7 +275,7 @@ class ShurikenImp(BaseApkinfo):
         mnemonic, args = smali.split(maxsplit=1)
         parameter = None
 
-        if args[-1] == '"' or args[-1] == "'":
+        if args[-1] == '\"' or args[-1] == "\'":
             # Extract string
             quoteChar = args[-1]
             firstQuotePosition = args.find(quoteChar)
