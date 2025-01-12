@@ -4,10 +4,7 @@
 
 import functools
 import logging
-import os.path
 import re
-import tempfile
-import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
 from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
@@ -45,22 +42,16 @@ class RizinImp(BaseApkinfo):
         apk_filepath: Union[str, PathLike],
         tmp_dir: Union[str, PathLike] = None,
     ):
-        super().__init__(apk_filepath, "rizin")
+        super().__init__(apk_filepath, "rizin", tmp_dir)
 
-        if self.ret_type == "DEX":
-            self._tmp_dir = None
-            self._dex_list = [apk_filepath]
-
-        elif self.ret_type == "APK":
-            self._tmp_dir = tempfile.mkdtemp() if tmp_dir is None else tmp_dir
-
-            with zipfile.ZipFile(self.apk_filepath) as apk:
-                apk.extract("AndroidManifest.xml", path=self._tmp_dir)
-
-                self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
-
-        else:
-            raise ValueError("Unsupported File type.")
+        match self.ret_type:
+            case "DEX":
+                self._tmp_dir = None
+                self._dex_list = [apk_filepath]
+            case "APK":
+                pass
+            case _:
+                raise ValueError("Unsupported File type.")
 
     @functools.cached_property
     def _rz(self):
@@ -454,20 +445,20 @@ class RizinImp(BaseApkinfo):
                     # Skip the bytecode that invoke-kind without registers.
                     # e.g. 'invoke-super', 'Lorg/apache/commons/net/ntp/TimeInfo;->addComment(Ljava/lang/String;)V'
                     if (disasm_split[0][:6] == "invoke" and
-                        disasm_split[0][-6:] != "static"):
+                            disasm_split[0][-6:] != "static"):
                         if (len(disasm_split) < 3 or
-                            not re.search(r"v\d+", disasm_split[1])):
+                                not re.search(r"v\d+", disasm_split[1])):
                             continue
 
                     # Skip the bytecode that is not analyzed.
                     # e.g. invoke-virtual method+xxxx .
                     if "method+" in disasm_split[-1]:
-                       continue
+                        continue
 
                     # Skip the bytecode that invoke-custom with improper descriptor
                     # e.g. invoke-custom {v14, v0},   Resetting:
                     if (disasm_split[0] == "invoke-custom" and
-                        "(" not in disasm_split[-1]):
+                            "(" not in disasm_split[-1]):
                         continue
 
                     yield self._parse_smali(ins["disasm"])

@@ -3,10 +3,7 @@
 # See the file 'LICENSE' for copying permission.
 
 import functools
-import os
 import re
-import tempfile
-import zipfile
 from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Union
@@ -15,7 +12,7 @@ from androguard.core.analysis.analysis import MethodAnalysis
 from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
+from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.evaluator.pyeval import PyEval
@@ -24,7 +21,7 @@ from quark.evaluator.pyeval import PyEval
 class AndroguardImp(BaseApkinfo):
     """Information about apk based on androguard analysis"""
 
-    __slots__ = ("apk", "dalvikvmformat", "analysis", "_tmp_dir", "_manifest")
+    __slots__ = ("apk", "dalvikvmformat", "analysis", "_manifest")
 
     def __init__(self, apk_filepath: Union[str, PathLike]):
         super().__init__(apk_filepath, "androguard")
@@ -32,12 +29,6 @@ class AndroguardImp(BaseApkinfo):
         if self.ret_type == "APK":
             # return the APK, list of DalvikVMFormat, and Analysis objects
             self.apk, self.dalvikvmformat, self.analysis = AnalyzeAPK(apk_filepath)
-            self._tmp_dir = tempfile.mkdtemp()
-            with zipfile.ZipFile(self.apk_filepath) as apk:
-                apk.extract("AndroidManifest.xml", path=self._tmp_dir)
-                self._manifest = os.path.join(
-                    self._tmp_dir, "AndroidManifest.xml"
-                )
         elif self.ret_type == "DEX":
             # return the sha256hash, DalvikVMFormat, and Analysis objects
             _, _, self.analysis = AnalyzeDex(apk_filepath)

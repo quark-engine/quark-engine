@@ -6,8 +6,10 @@ import hashlib
 import os.path
 from abc import abstractmethod
 from os import PathLike
+import tempfile
 from typing import Dict, List, Optional, Set, Union, Tuple
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
+import zipfile
 
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
@@ -16,9 +18,10 @@ from quark.core.axmlreader import AxmlReader
 
 class BaseApkinfo:
 
-    __slots__ = ["ret_type", "apk_filename", "apk_filepath", "core_library"]
+    __slots__ = ["ret_type", "apk_filename",
+                 "apk_filepath", "core_library", "manifest"]
 
-    def __init__(self, apk_filepath: Union[str, PathLike], core_library: str = "None"):
+    def __init__(self, apk_filepath: str | PathLike, core_library: str = "None", tmp_dir: str | PathLike = None):
         with open(apk_filepath, "rb") as file:
             raw = file.read()
             self.ret_type = self._check_file_signature(raw)
@@ -27,8 +30,23 @@ class BaseApkinfo:
         self.apk_filepath = apk_filepath
         self.core_library = core_library
 
+        self._manifest = self.__extractAndroidManifest(
+            apk_filepath, tmp_dir) if self.ret_type == "APK" else None
+
     def __repr__(self) -> str:
         return f"<Apkinfo-APK:{self.apk_filename}, Imp:{self.core_library}>"
+
+    @staticmethod
+    def __extractAndroidManifest(
+        apk_filepath: str | PathLike,
+        tmp_dir: str | PathLike = None
+    ) -> str:
+        tmp_dir = tempfile.mkdtemp() if tmp_dir is None else tmp_dir
+        with zipfile.ZipFile(apk_filepath) as apk:
+            apk.extract("AndroidManifest.xml", path=tmp_dir)
+            return os.path.join(
+                tmp_dir, "AndroidManifest.xml"
+            )
 
     @property
     def filename(self) -> str:

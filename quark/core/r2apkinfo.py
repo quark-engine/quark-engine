@@ -4,10 +4,7 @@
 
 import functools
 import logging
-import os.path
 import re
-import tempfile
-import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
 from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
@@ -45,21 +42,8 @@ class R2Imp(BaseApkinfo):
         apk_filepath: Union[str, PathLike],
         tmp_dir: Union[str, PathLike] = None,
     ):
-        super().__init__(apk_filepath, "radare2")
-
-        if self.ret_type == "DEX":
-            self._tmp_dir = None
-
-        elif self.ret_type == "APK":
-            self._tmp_dir = tempfile.mkdtemp() if tmp_dir is None else tmp_dir
-
-            # Extract AndroidManifest.xml
-            with zipfile.ZipFile(self.apk_filepath) as apk:
-                apk.extract("AndroidManifest.xml", path=self._tmp_dir)
-
-                self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
-
-        else:
+        super().__init__(apk_filepath, "radare2", tmp_dir)
+        if self.ret_type not in ["DEX", "APK"]:
             raise ValueError("Unsupported File type.")
 
     @functools.cached_property
@@ -150,7 +134,8 @@ class R2Imp(BaseApkinfo):
         if not real_name:
             return None
 
-        class_name, method_name, descriptor = parse_pattern.match(real_name).groups()
+        class_name, method_name, descriptor = parse_pattern.match(
+            real_name).groups()
 
         # -- Descriptor --
         descriptor = descriptor_to_androguard_format(descriptor)

@@ -3,9 +3,6 @@
 # See the file 'LICENSE' for copying permission.
 
 import re
-import os
-import zipfile
-import tempfile
 import functools
 from collections import defaultdict
 from os import PathLike
@@ -28,25 +25,17 @@ from quark.utils.tools import descriptor_to_androguard_format
 class ShurikenImp(BaseApkinfo):
     """Information about apk based on Shuriken-Analyzer analysis"""
 
-    __slots__ = ("apk", "dalvikvmformat", "analysis", "_tmp_dir", "_manifest")
+    __slots__ = ("apk", "dalvikvmformat", "analysis", "_manifest")
 
     def __init__(
         self,
         apk_filepath: Union[str, PathLike],
         tmp_dir: Union[str, PathLike] = None,
     ):
-        super().__init__(apk_filepath, "shuriken")
+        super().__init__(apk_filepath, "shuriken", tmp_dir)
         match self.ret_type:
             case "APK":
                 self.analysis = Apk(apk_filepath, create_xrefs=True)
-                self._tmp_dir = (
-                    tempfile.mkdtemp() if tmp_dir is None else tmp_dir
-                )
-                with zipfile.ZipFile(self.apk_filepath) as apk:
-                    apk.extract("AndroidManifest.xml", path=self._tmp_dir)
-                    self._manifest = os.path.join(
-                        self._tmp_dir, "AndroidManifest.xml"
-                    )
             case "DEX":
                 self.analysis = Dex(apk_filepath)
                 self.analysis.disassemble_dex()
