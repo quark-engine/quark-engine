@@ -6,7 +6,7 @@ import re
 import functools
 from collections import defaultdict
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union, Iterator, Generator, Tuple
+from typing import Dict, List, Optional, Set, Iterator, Generator, Tuple
 
 from shuriken import Dex, Apk
 from shuriken.dex import (
@@ -23,14 +23,14 @@ from quark.utils.tools import descriptor_to_androguard_format
 
 
 class ShurikenImp(BaseApkinfo):
-    """Information about apk based on Shuriken-Analyzer analysis"""
+    """A class that retrieves APK or DEX information using Shuriken-Analyzer."""
 
     __slots__ = ("apk", "dalvikvmformat", "analysis", "_manifest")
 
     def __init__(
         self,
-        apk_filepath: Union[str, PathLike],
-        tmp_dir: Union[str, PathLike] = None,
+        apk_filepath: str | PathLike,
+        tmp_dir: str | PathLike = None,
     ):
         super().__init__(apk_filepath, "shuriken", tmp_dir)
         match self.ret_type:
@@ -48,7 +48,8 @@ class ShurikenImp(BaseApkinfo):
     @property
     def android_apis(self) -> Set[MethodObject]:
         """
-        Return all Android native APIs from given APK.
+        Inherited from baseapkinfo.py.
+        Returns all Android APIs used by the APK/DEX.
 
         :return: a set of MethodObjects
         """
@@ -219,7 +220,7 @@ class ShurikenImp(BaseApkinfo):
             )
             yield self.__parseSmali(rawSmali)
 
-    def __parseParameters(self, parameter: str) -> Union[int, float, str]:
+    def __parseParameters(self, parameter: str) -> int | float | str:
         if parameter.startswith("0x"):
             # The parameter is an address.
             try:
@@ -259,12 +260,12 @@ class ShurikenImp(BaseApkinfo):
 
     def __parseSmali(self, smali: str) -> BytecodeObject:
         """
-        Parses the given smali code string into a BytecodeObject.
+        Parse the given smali code string into a BytecodeObject.
 
         :param smali: a smali code string disassembled from an instruction
         :return: a BytecodeObject
         """
-        smali = smali.split("//")[0].strip()
+        smali = smali.rsplit("//", maxsplit=1)[0].strip()
         if smali == "":
             raise ValueError("Argument cannot be empty.")
 
@@ -330,10 +331,8 @@ class ShurikenImp(BaseApkinfo):
         start: int = 0,
     ) -> int | None:
         targetMethodCall = (
-            (
-                f"{method.class_name}->{method.name}"
-                f"{method.descriptor.replace(' ', '')}"
-            )
+            f"{method.class_name}->{method.name}"
+            f"{method.descriptor.replace(' ', '')}"
         )
 
         for idx in range(start, len(instructions)):
@@ -417,9 +416,7 @@ class ShurikenImp(BaseApkinfo):
         numOfIns = disassembledMethod.n_of_instructions
         instructions = disassembledMethod.instructions[:numOfIns]
 
-        method = (
-            disassembledMethod.method_id.contents
-        )
+        method = disassembledMethod.method_id.contents
         rawBytes = bytes(method.code[: method.code_size])
 
         firstResult = self.__extractMethodCallDetails(
@@ -558,53 +555,22 @@ class ShurikenImp(BaseApkinfo):
             "float": "F",
             "double": "D",
         }
-        for typeName, abbreviation in typeTable.items():
-            memberField = memberField.strip()
-            pattern = r" ({})(\[\])*$".format(typeName)
-            if re.search(pattern, memberField):
-                memberField = re.sub(
-                    pattern, r" {}\2".format(abbreviation), memberField
-                )
-                break
-
-        className, field = memberField.split("->")
-        className = self.__convertClassNameFormat(className)
-        fieldName, fieldType = field.split(" ")
-
-        primitiveTypeChar = list(typeTable.values())
-        isFieldPrimitiveType = fieldType in primitiveTypeChar
-
-        fieldTypeArrayDimension = 0
-        while fieldType.endswith("[]"):
-            fieldTypeArrayDimension += 1
-            fieldType = fieldType[:-2]
-
-        isFieldPrimitiveArray = (
-            fieldTypeArrayDimension and fieldType in primitiveTypeChar
+        frontPart, fieldType = memberField.rsplit(maxsplit=1)
+        baseType = fieldType.split("[")[0]
+        newBaseType = typeTable.get(
+            baseType, self.__convertClassNameFormat(baseType)
         )
+        fieldTypeArrayDimension = fieldType.count("[")
+        newFieldType = "[" * fieldTypeArrayDimension + newBaseType
 
-        if not isFieldPrimitiveType or not isFieldPrimitiveArray:
-            fieldType = self.__convertClassNameFormat(fieldType)
+        className, fieldName = frontPart.split("->")
+        className = self.__convertClassNameFormat(className)
 
-        fieldType = "[" * fieldTypeArrayDimension + fieldType
-
-        return f"{className}->{fieldName} {fieldType}"
+        return f"{className}->{fieldName} {newFieldType}"
 
     def __convertMethodCallFormat(self, methodCall: str) -> str:
-        if methodCall.count(";") < 3:
-            return methodCall
+        frontPart, rearPart = methodCall.split("(")
+        newDescriptor = descriptor_to_androguard_format("(" + rearPart)
+        parsedMethodCall = frontPart + newDescriptor
 
-        endWithSemiColon = methodCall.endswith(";")
-        if endWithSemiColon:
-            methodCall = methodCall[:-1]
-
-        fragment = methodCall.split(";")
-        className = fragment[0]
-        returnType = fragment[-1]
-        fragment = fragment[1:-1]
-        parsedMethodCall = (
-            className + ";" + "; ".join(fragment) + ";" + returnType
-        )
-        if endWithSemiColon:
-            parsedMethodCall += ";"
         return parsedMethodCall

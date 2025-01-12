@@ -19,7 +19,7 @@ from quark.core.axmlreader import AxmlReader
 class BaseApkinfo:
 
     __slots__ = ["ret_type", "apk_filename",
-                 "apk_filepath", "core_library", "manifest"]
+                 "apk_filepath", "core_library", "_manifest"]
 
     def __init__(self, apk_filepath: str | PathLike, core_library: str = "None", tmp_dir: str | PathLike = None):
         with open(apk_filepath, "rb") as file:
@@ -104,7 +104,7 @@ class BaseApkinfo:
             return list(permissionList)
 
     @property
-    def application(self) -> XMLElement:
+    def application(self) -> XMLElement | None:
         """Get the application element from the manifest file.
 
         :return: an application element
@@ -118,7 +118,7 @@ class BaseApkinfo:
             return root.find("application")
 
     @property
-    def activities(self) -> List[XMLElement]:
+    def activities(self) -> List[XMLElement] | None:
         """
         Return all activity from given APK.
 
@@ -133,7 +133,7 @@ class BaseApkinfo:
             return root.findall("application/activity")
 
     @property
-    def receivers(self) -> List[XMLElement]:
+    def receivers(self) -> List[XMLElement] | None:
         """
         Return all receivers from the given APK.
 
@@ -151,9 +151,9 @@ class BaseApkinfo:
     @abstractmethod
     def android_apis(self) -> Set[MethodObject]:
         """
-        Return all Android native APIs from given APK.
+        Returns all Android APIs used by the APK/DEX.
 
-        :return: a set of all Android native APIs MethodObject
+        :return: a set of MethodObjects
         """
         pass
 
@@ -209,10 +209,12 @@ class BaseApkinfo:
         self, method_object: MethodObject
     ) -> list[Tuple[MethodObject, int]]:
         """
-        Return the xref from method from given MethodObject instance.
+        Find the xrefs to the specified method.
 
-        :param method_object: the MethodObject instance
-        :return: a list of all xref from functions and their
+        :param method_object: a target method used to find what methods it
+        calls
+        :return: a set of tuples consisting of the called method and the
+        offset of the invocation
         """
         pass
 
@@ -239,15 +241,15 @@ class BaseApkinfo:
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
         """
-        Return the dict of two method smali code from given MethodObject instance, only for self-defined
-        method.
-        :param method_analysis:
-        :return:
+        Find the invocations that call two specified methods, first_method
+        and second_method, respectively. Then, return a dictionary storing
+        the corresponding bytecodes and hex values.
 
-        {
-        "first": "invoke-virtual v5, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;",
-        "second": "invoke-virtual v3, v0, v4, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String; Ljava/lang/String;)I"
-        }
+        :param parent_method: a parent method to scan
+        :param first_method: the first method called by the parent method
+        :param second_method: the second method called by the parent method
+        :return: a dictionary storing the corresponding bytecodes and hex
+        values.
         """
         pass
 
