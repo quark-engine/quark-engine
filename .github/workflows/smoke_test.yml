@@ -44,26 +44,12 @@ jobs:
    
     - name: Install Shuriken-Analyzer for Linux
       run: |
-        sudo apt-get install -y cmake git
-        sudo git clone https://github.com/Shuriken-Group/Shuriken-Analyzer.git /opt/Shuriken-Analyzer
-        cd /opt/Shuriken-Analyzer
-        sudo cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -DGITHUB_ACTION=ON
-        sudo cmake --build build/ -j
-        sudo cmake --install build/
-        pip install /opt/Shuriken-Analyzer/shuriken/bindings/Python/
-        cd -
+        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Shuriken-Analyzer for MacOS
       run: |
-        brew install cmake git
-        sudo git clone https://github.com/Shuriken-Group/Shuriken-Analyzer.git /opt/Shuriken-Analyzer
-        cd /opt/Shuriken-Analyzer
-        sudo cmake -S . -B build/ -DCMAKE_BUILD_TYPE=Release -DGITHUB_ACTION=ON
-        sudo cmake --build build/ -j
-        sudo cmake --install build/
-        sudo pip install /opt/Shuriken-Analyzer/shuriken/bindings/Python/
-        cd -
+        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
       if: matrix.os == 'macos-13'
 
     - name: Install MacPorts
