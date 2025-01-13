@@ -258,6 +258,37 @@ class ShurikenImp(BaseApkinfo):
 
         return parameter
 
+    @staticmethod
+    def __splitSmali(smali: str) -> Tuple[str, List[str], List[str]]:
+        """Split a smali into a mnemonic, a list of registers, and a list of
+         parameters.
+
+        :param smali: a smali
+        :return: a tuple consisting the mnemonic, the registers, and the
+        parameters in the smali
+        """
+        if smali == "":
+            raise ValueError("Argument cannot be empty.")
+
+        if " " not in smali:
+            return smali, None, None
+
+        parameters = []
+        if smali and smali[-1] in ('\"', "\'"):
+            # Extract String
+            quoteChar = smali[-1]
+            firstQuotePosition = smali.find(quoteChar)
+            parameters.append(smali[firstQuotePosition:][1:-1])
+            smali = smali[:firstQuotePosition].strip()
+
+        mnemonic, argsStr = smali.split(maxsplit=1)
+        args = [arg.strip() for arg in re.split("[{},]+", argsStr) if arg]
+
+        while args and not args[-1].startswith("v"):
+            parameters.append(args.pop())
+
+        return mnemonic, args, parameters
+
     def __parseSmali(self, smali: str) -> BytecodeObject:
         """
         Parse the given smali code string into a BytecodeObject.
@@ -266,26 +297,10 @@ class ShurikenImp(BaseApkinfo):
         :return: a BytecodeObject
         """
         smali = smali.rsplit("//", maxsplit=1)[0].strip()
-        if smali == "":
-            raise ValueError("Argument cannot be empty.")
 
-        if " " not in smali:
-            return BytecodeObject(smali, None, None)
-
-        mnemonic, args = smali.split(maxsplit=1)
-        parameter = None
-
-        if args[-1] == "\"" or args[-1] == "\'":
-            # Extract string
-            quoteChar = args[-1]
-            firstQuotePosition = args.find(quoteChar)
-            parameter = args[firstQuotePosition:][1:-1]
-            args = args[:firstQuotePosition].strip()
-
-        argsList = [arg.strip() for arg in re.split("[{},]+", args) if arg]
-
-        if parameter is None and argsList and not argsList[-1].startswith("v"):
-            parameter = self.__parseParameters(argsList.pop())
+        mnemonic, argsList, parameterList = self.__splitSmali(smali)
+        parameter = self.__parseParameters(
+            parameterList[-1]) if parameterList else None
 
         return BytecodeObject(mnemonic, argsList, parameter)
 
