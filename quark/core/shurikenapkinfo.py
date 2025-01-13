@@ -50,7 +50,7 @@ class ShurikenImp(BaseApkinfo):
     def android_apis(self) -> Set[MethodObject]:
         """
         Inherited from baseapkinfo.py.
-        Return all Android APIs used by the APK/DEX.
+        Return all Android APIs used by the sample.
 
         :return: a set of MethodObjects
         """
@@ -82,8 +82,8 @@ class ShurikenImp(BaseApkinfo):
     def all_methods(self) -> Set[MethodObject]:
         """
         Inherited from baseapkinfo.py.
-        Return all methods including Android native APIs and custom methods
-        declared in the sample.
+        Return all methods in the sample, including Android APIs and custom 
+        methods.
 
         :return: a set of MethodObjects
         """
@@ -271,10 +271,10 @@ class ShurikenImp(BaseApkinfo):
 
     @staticmethod
     def __splitSmali(smali: str) -> Tuple[str, List[str], List[str]]:
-        """Split a smali into a mnemonic, a list of registers, and a list of
-         parameters.
+        """
+        Split a smali code string into a mnemonic, registers, and parameters.
 
-        :param smali: a smali
+        :param smali: a smali code string
         :return: a tuple consisting the mnemonic, the registers, and the
         parameters in the smali
         """
@@ -356,6 +356,14 @@ class ShurikenImp(BaseApkinfo):
         instructions: list[hdvminstruction_t],
         start: int = 0,
     ) -> int | None:
+        """
+        Find the instruction that calls the method.
+
+        :param method: the target method to find
+        :param instructions: a list of instructions
+        :param start: the starting index to search from, defaults to 0
+        :return: the index of the instruction if found, None otherwise
+        """
         targetMethodCall = (
             f"{method.class_name}->{method.name}"
             f"{method.descriptor.replace(' ', '')}"
@@ -374,6 +382,12 @@ class ShurikenImp(BaseApkinfo):
     def __getDisassembledMethod(
         self, method: MethodObject
     ) -> dvmdisassembled_method_t:
+        """
+        Get the disassembled method corresponding to the MethodObject.
+
+        :param method: the method to get disassembled
+        :return: the disassembled method
+        """
         methodAnalysis = method.cache
 
         match self.ret_type:
@@ -395,6 +409,18 @@ class ShurikenImp(BaseApkinfo):
         rawBytes: bytes,
         start: int = 0,
     ):
+        """
+        Extract details about a method call from a list of instructions.
+
+        :param targetMethod: the target method to find
+        :param instructions: a list of instructions to search through
+        :param rawBytes: the raw bytecode of the method
+        :param start: the starting index to search from, defaults to 0
+        :return: a dictionary containing:
+                - index: the index of the method call instruction
+                - smali: the method call instruction
+                - hex: the hex string of the instruction bytes
+        """
         idx = self.__findMethodCallInstruction(
             targetMethod, instructions, start
         )
@@ -463,6 +489,11 @@ class ShurikenImp(BaseApkinfo):
         }
 
     def __getClasses(self) -> Iterator[hdvmclass_t]:
+        """
+        Get all classes defined in the sample.
+
+        :return: An iterator of the classes
+        """
         match self.ret_type:
             case "APK":
                 dexList = (
@@ -547,6 +578,12 @@ class ShurikenImp(BaseApkinfo):
         self,
         methodAnalysis: hdvmmethodanalysis_t,
     ) -> MethodObject:
+        """
+        Convert a hdvmmethodanalysis_t object to a MethodObject.
+
+        :param methodAnalysis: a hdvmmethodanalysis_t object
+        :return: a MethodObject
+        """
         className = self.__convertClassNameFormat(
             methodAnalysis.class_name.decode()
         )
@@ -562,6 +599,13 @@ class ShurikenImp(BaseApkinfo):
         )
 
     def __convertClassNameFormat(self, className: str) -> str:
+        """
+        Convert a class from the Java language format to the Java VM type
+        signature format.
+
+        :param className: a class to be converted
+        :return: the class in the Java VM type signature format
+        """
 
         if not className.endswith(";"):
             className = "L" + className.replace(".", "/") + ";"
@@ -569,6 +613,16 @@ class ShurikenImp(BaseApkinfo):
         return className
 
     def __convertMemberFieldFormat(self, memberField: str) -> str:
+        """
+        Convert a member field from the Java language format to the Java VM
+        type signature format.
+
+        For example, given the member field "a.b.c->fieldA boolean", this
+        function converts it to "La/b/c->fieldA Z".
+
+        :param memberField: a member field to be converted
+        :return: the member field in the Java VM type signature format
+        """
 
         typeTable = {
             "void": "V",
@@ -595,6 +649,13 @@ class ShurikenImp(BaseApkinfo):
         return f"{className}->{fieldName} {newFieldType}"
 
     def __convertMethodCallFormat(self, methodCall: str) -> str:
+        """
+        Convert a method call from the original format to the Androguard
+        format, which inserts spaces between the arguments in the descriptor.
+
+        :param methodCall: a method call to be converted
+        :return: the method call in the Androguard format
+        """
         frontPart, rearPart = methodCall.split("(")
         newDescriptor = descriptor_to_androguard_format("(" + rearPart)
         parsedMethodCall = frontPart + newDescriptor
