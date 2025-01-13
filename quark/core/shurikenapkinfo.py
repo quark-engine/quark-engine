@@ -99,7 +99,7 @@ class ShurikenImp(BaseApkinfo):
                         i
                     )
                     methods.add(
-                        self.__convert_to_method_object(methodAnalysis)
+                        self.__convertToMethodObject(methodAnalysis)
                     )
 
             case "DEX":
@@ -110,7 +110,7 @@ class ShurikenImp(BaseApkinfo):
                     classAnalysis = self.analysis.get_analyzed_class(className)
                     for j in range(classAnalysis.n_of_methods):
                         methodAnalysis = classAnalysis.methods[j].contents
-                        method = self.__convert_to_method_object(
+                        method = self.__convertToMethodObject(
                             methodAnalysis
                         )
                         lowerMethodInfo = self.lowerfunc(method)
@@ -167,7 +167,7 @@ class ShurikenImp(BaseApkinfo):
         upperFuncs = set()
         for i in range(methodAnalysis.n_of_xreffrom):
             upperFuncs.add(
-                self.__convert_to_method_object(
+                self.__convertToMethodObject(
                     methodAnalysis.xreffrom[i].method.contents
                 )
             )
@@ -194,7 +194,7 @@ class ShurikenImp(BaseApkinfo):
             xref = methodAnalysis.xrefto[i]
             lowerFuncs.append(
                 (
-                    self.__convert_to_method_object(xref.method.contents),
+                    self.__convertToMethodObject(xref.method.contents),
                     xref.idx,
                 )
             )
@@ -221,7 +221,7 @@ class ShurikenImp(BaseApkinfo):
             )
             yield self.__parseSmali(rawSmali)
 
-    def __parseParameters(self, parameter: str) -> int | float | str:
+    def __parseParameter(self, parameter: str) -> int | float | str:
         """
         Parse the parameter into the data it represents.
 
@@ -310,7 +310,7 @@ class ShurikenImp(BaseApkinfo):
         smali = smali.rsplit("//", maxsplit=1)[0].strip()
 
         mnemonic, argsList, parameterList = self.__splitSmali(smali)
-        parameter = self.__parseParameters(
+        parameter = self.__parseParameter(
             parameterList[-1]) if parameterList else None
 
         return BytecodeObject(mnemonic, argsList, parameter)
@@ -543,7 +543,7 @@ class ShurikenImp(BaseApkinfo):
 
         return hierarchyDict
 
-    def __convert_to_method_object(
+    def __convertToMethodObject(
         self,
         methodAnalysis: hdvmmethodanalysis_t,
     ) -> MethodObject:
