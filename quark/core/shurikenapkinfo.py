@@ -49,7 +49,7 @@ class ShurikenImp(BaseApkinfo):
     def android_apis(self) -> Set[MethodObject]:
         """
         Inherited from baseapkinfo.py.
-        Returns all Android APIs used by the APK/DEX.
+        Return all Android APIs used by the APK/DEX.
 
         :return: a set of MethodObjects
         """
