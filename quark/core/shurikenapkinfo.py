@@ -25,8 +25,6 @@ from quark.utils.tools import descriptor_to_androguard_format
 class ShurikenImp(BaseApkinfo):
     """A class that retrieves APK or DEX information using Shuriken-Analyzer."""
 
-    __slots__ = ("apk", "dalvikvmformat", "analysis", "_manifest")
-
     def __init__(
         self,
         apk_filepath: str | PathLike,
@@ -44,6 +42,9 @@ class ShurikenImp(BaseApkinfo):
                 self._manifest = None
             case _:
                 raise ValueError("Unsupported File type.")
+
+        self.__patternToIdentifyMethodCall = re.compile(r"->\w+\(")
+        self.__patternToIdentifyMemberField = re.compile(r"->\w+(?!\() ")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
@@ -221,6 +222,18 @@ class ShurikenImp(BaseApkinfo):
             yield self.__parseSmali(rawSmali)
 
     def __parseParameters(self, parameter: str) -> int | float | str:
+        """
+        Parse the parameter into the data it represents.
+
+        :param parameter: a parameter string to be parsed
+        :return: the data parsed from the parameter, which could be:
+                - Address
+                - 64/32-bit float or integer
+                - Method call
+                - Member field
+                - Type
+                - Original string if unable to be parsed.
+        """
         if parameter.startswith("0x"):
             # The parameter is an address.
             try:
@@ -248,12 +261,10 @@ class ShurikenImp(BaseApkinfo):
         except (TypeError, ValueError):
             pass
 
-        patternToIdentifyMethodCall = r"->\w+\("
-        if re.search(patternToIdentifyMethodCall, parameter):
+        if self.__patternToIdentifyMethodCall.search(parameter):
             parameter = self.__convertMethodCallFormat(parameter)
 
-        patternToIdentifyMemberField = r"->\w+(?!\() "
-        if re.search(patternToIdentifyMemberField, parameter):
+        if self.__patternToIdentifyMemberField.search(parameter):
             parameter = self.__convertMemberFieldFormat(parameter)
 
         return parameter
