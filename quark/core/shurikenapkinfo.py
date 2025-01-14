@@ -27,7 +27,8 @@ from quark.utils.tools import descriptor_to_androguard_format
 
 
 class ShurikenImp(BaseApkinfo):
-    """A class that retrieves APK or DEX information using Shuriken-Analyzer."""
+    """A class that retrieves APK or DEX information using Shuriken-Analyzer.
+    """
 
     def __init__(
         self,
@@ -95,7 +96,7 @@ class ShurikenImp(BaseApkinfo):
     def all_methods(self) -> Set[MethodObject]:
         """
         Inherited from baseapkinfo.py.
-        Return all methods in the sample, including Android APIs and custom 
+        Return all methods in the sample, including Android APIs and custom
         methods.
 
         :return: a set of MethodObjects

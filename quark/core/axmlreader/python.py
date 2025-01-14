@@ -7,7 +7,6 @@ import os.path
 from typing import Any
 from collections.abc import Iterator
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
-from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 import struct
 
 from quark.core.axmlreader import (
