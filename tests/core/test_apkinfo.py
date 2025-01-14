@@ -504,12 +504,6 @@ class TestApkinfo:
             "(F)F",
         )[0]
 
-        expected_bytecode = BytecodeObject(
-            "const-wide",
-            ["v2",],
-            4602160705557665991
-        )
-
         bytecodes = list(apkinfo.get_method_bytecode(method))
         assert any((b for b in bytecodes
                     if b.mnemonic == "const-wide" and
