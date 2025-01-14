@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 from quark.core.axmlreader import AxmlReader, ResValue
+from quark.core.axmlreader.python import PythonImp
 
 
 def extractManifest(samplePath: PathLike) -> str:
@@ -18,6 +19,18 @@ def extractManifest(samplePath: PathLike) -> str:
         apk.extract("AndroidManifest.xml", path=folder)
 
     return str(folder / "AndroidManifest.xml")
+
+
+@pytest.fixture(scope="session",
+                params=(
+                    AxmlReader,
+                    PythonImp
+                ),
+                ids=("Rz/R2-based Implementation",
+                     "Python-based Implementation"))
+def AxmlReaderImp(request):
+    axmlReaderImp = request.param
+    yield axmlReaderImp
 
 
 @pytest.fixture(scope="session")
@@ -32,8 +45,8 @@ def MANIFEST_PATH_pivaa(SAMPLE_PATH_pivaa):
 
 class TestAxmlReader:
     @staticmethod
-    def testIter(MANIFEST_PATH_14d9f) -> None:
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
+    def testIter(AxmlReaderImp, MANIFEST_PATH_14d9f) -> None:
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
             expectedTag = {
                 "Address": 3728,
                 "Type": 256,
@@ -48,33 +61,33 @@ class TestAxmlReader:
 
     @staticmethod
     def testClose(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
+        with PythonImp(MANIFEST_PATH_14d9f) as axmlReader:
             assert axmlReader._file.closed is False
         assert axmlReader._file.closed is True
 
     @staticmethod
-    def testFileSize(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
-            assert axmlReader.fileSize == 7676
+    def testFileSize(AxmlReaderImp, MANIFEST_PATH_14d9f):
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
+            assert axmlReader.file_size == 7676
 
     @staticmethod
-    def testAxmlSize(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
-            assert axmlReader.axmlSize == 7676
+    def testAxmlSize(AxmlReaderImp, MANIFEST_PATH_14d9f):
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
+            assert axmlReader.axml_size == 7676
 
     @staticmethod
-    def testGetStringFromUtf16Apk(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
-            assert axmlReader.getString(13) == "manifest"
+    def testGetStringFromUtf16Apk(AxmlReaderImp, MANIFEST_PATH_14d9f):
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
+            assert axmlReader.get_string(13) == "manifest"
 
     @staticmethod
-    def testGetStringFromUtf8Apk(MANIFEST_PATH_pivaa):
-        with AxmlReader(MANIFEST_PATH_pivaa) as axmlReader:
-            assert axmlReader.getString(58) == "manifest"
+    def testGetStringFromUtf8Apk(AxmlReaderImp, MANIFEST_PATH_pivaa):
+        with AxmlReaderImp(MANIFEST_PATH_pivaa) as axmlReader:
+            assert axmlReader.get_string(58) == "manifest"
 
     @staticmethod
-    def testGetAttributes(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
+    def testGetAttributes(AxmlReaderImp, MANIFEST_PATH_14d9f):
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
             manifestTag = list(axmlReader)[1]
 
             expectedAttributes = [
@@ -83,15 +96,15 @@ class TestAxmlReader:
                 ResValue(namespace=-1, name=12, value=14, type=3, data=14),
             ]
 
-            attributes = axmlReader.getAttributes(manifestTag)
+            attributes = axmlReader.get_attributes(manifestTag)
 
             for expectedAttrib, attrib in zip(expectedAttributes, attributes):
                 assert expectedAttrib == attrib
 
     @staticmethod
-    def testGetXmlTree(MANIFEST_PATH_14d9f):
-        with AxmlReader(MANIFEST_PATH_14d9f) as axmlReader:
-            xml = axmlReader.getXmlTree()
+    def testGetXmlTree(AxmlReaderImp, MANIFEST_PATH_14d9f):
+        with AxmlReaderImp(MANIFEST_PATH_14d9f) as axmlReader:
+            xml = axmlReader.get_xml_tree()
             manifestLabel = xml.getroot()
             assert len(manifestLabel.findall("uses-sdk")) == 1
             assert len(manifestLabel.findall("application")) == 1

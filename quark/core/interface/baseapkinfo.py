@@ -13,7 +13,7 @@ import zipfile
 
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
-from quark.core.axmlreader import AxmlReader
+from quark.core.axmlreader.python import PythonImp as AxmlReader
 
 
 class BaseApkinfo:
@@ -21,7 +21,12 @@ class BaseApkinfo:
     __slots__ = ["ret_type", "apk_filename",
                  "apk_filepath", "core_library", "_manifest"]
 
-    def __init__(self, apk_filepath: str | PathLike, core_library: str = "None", tmp_dir: str | PathLike = None):
+    def __init__(
+            self,
+            apk_filepath: str | PathLike,
+            core_library: str = "None",
+            tmp_dir: str | PathLike = None
+    ):
         with open(apk_filepath, "rb") as file:
             raw = file.read()
             self.ret_type = self._check_file_signature(raw)
@@ -94,11 +99,11 @@ class BaseApkinfo:
 
             for tag in axml:
                 label = tag.get("Name")
-                if label and axml.getString(label) == "uses-permission":
-                    attrs = axml.getAttributes(tag)
+                if label and axml.get_string(label) == "uses-permission":
+                    attrs = axml.get_attributes(tag)
 
                     if attrs:
-                        permission = axml.getString(attrs[0].value)
+                        permission = axml.get_string(attrs[0].value)
                         permissionList.add(permission)
 
             return list(permissionList)
@@ -113,7 +118,7 @@ class BaseApkinfo:
             return None
 
         with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
+            root = axml.get_xml_tree()
 
             return root.find("application")
 
@@ -128,7 +133,7 @@ class BaseApkinfo:
             return None
 
         with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
+            root = axml.get_xml_tree()
 
             return root.findall("application/activity")
 
@@ -143,7 +148,7 @@ class BaseApkinfo:
             return None
 
         with AxmlReader(self._manifest) as axml:
-            root = axml.getXmlTree()
+            root = axml.get_xml_tree()
 
             return root.findall("application/receiver")
 
@@ -170,7 +175,8 @@ class BaseApkinfo:
     @property
     def all_methods(self) -> Set[MethodObject]:
         """
-        Return all methods including Android native API and custom methods from given APK.
+        Return all methods including Android native API and custom methods
+        from given APK.
 
         :return: a set of all method MethodObject
         """
@@ -219,7 +225,8 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
+    def get_method_bytecode(self, method_object: MethodObject) \
+            -> Set[MethodObject]:
         """
         Return the corresponding bytecode according to the
         given class name and method name.

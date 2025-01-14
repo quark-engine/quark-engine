@@ -4,14 +4,18 @@
 
 import functools
 import logging
+import os.path
 import re
+import tempfile
+import zipfile
 from collections import defaultdict, namedtuple
 from os import PathLike
 from typing import Any, Dict, Generator, List, Optional, Set, Tuple, Union
 
 import rzpipe
 
-from quark.core.interface.baseapkinfo import BaseApkinfo
+from quark.core.axmlreader import AxmlReader
+from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.utils.tools import (
@@ -42,16 +46,22 @@ class RizinImp(BaseApkinfo):
         apk_filepath: Union[str, PathLike],
         tmp_dir: Union[str, PathLike] = None,
     ):
-        super().__init__(apk_filepath, "rizin", tmp_dir)
+        super().__init__(apk_filepath, "rizin")
 
-        match self.ret_type:
-            case "DEX":
-                self._tmp_dir = None
-                self._dex_list = [apk_filepath]
-            case "APK":
-                pass
-            case _:
-                raise ValueError("Unsupported File type.")
+        if self.ret_type == "DEX":
+            self._tmp_dir = None
+            self._dex_list = [apk_filepath]
+
+        elif self.ret_type == "APK":
+            self._tmp_dir = tempfile.mkdtemp() if tmp_dir is None else tmp_dir
+
+            with zipfile.ZipFile(self.apk_filepath) as apk:
+                apk.extract("AndroidManifest.xml", path=self._tmp_dir)
+
+                self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
+
+        else:
+            raise ValueError("Unsupported File type.")
 
     @functools.cached_property
     def _rz(self):
@@ -247,6 +257,71 @@ class RizinImp(BaseApkinfo):
             method_dict[class_name] = remove_dup_list(method_list)
 
         return method_dict
+
+    @functools.cached_property
+    def permissions(self) -> List[str]:
+        """
+        Inherited from baseapkinfo.py.
+        Return the permissions used by the sample.
+
+        :return: a list of permissions.
+        """
+        if not self._manifest: return []
+
+        axml = AxmlReader(self._manifest)
+        permission_list = set()
+
+        for tag in axml:
+            label = tag.get("Name")
+            if label and axml.get_string(label) == "uses-permission":
+                attrs = axml.get_attributes(tag)
+
+                if attrs:
+                    permission = axml.get_string(attrs[0].value)
+                    permission_list.add(permission)
+
+        return permission_list
+
+    @functools.cached_property
+    def application(self) -> XMLElement:
+        """Get the application element from the manifest file.
+
+        :return: an application element
+        """
+        if not self._manifest: return None
+
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.find("application")
+
+    @functools.cached_property
+    def activities(self) -> List[XMLElement]:
+        """
+        Return all activity from given APK.
+
+        :return: a list of all activities
+        """
+        if not self._manifest: return None
+
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.findall("application/activity")
+
+    @functools.cached_property
+    def receivers(self) -> List[XMLElement]:
+        """
+        Return all receivers from the given APK.
+
+        :return: a list of all receivers
+        """
+        if not self._manifest: return None
+        
+        axml = AxmlReader(self._manifest)
+        root = axml.get_xml_tree()
+
+        return root.findall("application/receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
@@ -445,20 +520,20 @@ class RizinImp(BaseApkinfo):
                     # Skip the bytecode that invoke-kind without registers.
                     # e.g. 'invoke-super', 'Lorg/apache/commons/net/ntp/TimeInfo;->addComment(Ljava/lang/String;)V'
                     if (disasm_split[0][:6] == "invoke" and
-                            disasm_split[0][-6:] != "static"):
+                        disasm_split[0][-6:] != "static"):
                         if (len(disasm_split) < 3 or
-                                not re.search(r"v\d+", disasm_split[1])):
+                            not re.search(r"v\d+", disasm_split[1])):
                             continue
 
                     # Skip the bytecode that is not analyzed.
                     # e.g. invoke-virtual method+xxxx .
                     if "method+" in disasm_split[-1]:
-                        continue
+                       continue
 
                     # Skip the bytecode that invoke-custom with improper descriptor
                     # e.g. invoke-custom {v14, v0},   Resetting:
                     if (disasm_split[0] == "invoke-custom" and
-                            "(" not in disasm_split[-1]):
+                        "(" not in disasm_split[-1]):
                         continue
 
                     yield self._parse_smali(ins["disasm"])

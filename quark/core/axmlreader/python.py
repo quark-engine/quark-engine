@@ -1,93 +1,42 @@
-import enum
+# -*- coding: utf-8 -*-
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# See the file 'LICENSE' for copying permission.
+
 import functools
 import os.path
-from collections import namedtuple
-from typing import Any, Dict, Iterator, List
+from typing import Any
+from collections.abc import Iterator
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
 from xml.etree.ElementTree import ElementTree as XMLElementTree  # nosec B405
 import struct
 
-# Resource Types Definition
-# Please reference to
-# https://android.googlesource.com/platform/frameworks/base/+/master/libs/androidfw/include/androidfw/ResourceTypes.h
-
-# ResChunk_header types
-RES_NULL_TYPE = 0x0000
-RES_STRING_POOL_TYPE = 0x0001
-RES_TABLE_TYPE = 0x0002
-RES_XML_TYPE = 0x0003
-
-# Chunk types in RES_XML_TYPE
-RES_XML_FIRST_CHUNK_TYPE = 0x0100
-RES_XML_START_NAMESPACE_TYPE = 0x0100
-RES_XML_END_NAMESPACE_TYPE = 0x0101
-RES_XML_START_ELEMENT_TYPE = 0x0102
-RES_XML_END_ELEMENT_TYPE = 0x0103
-RES_XML_CDATA_TYPE = 0x0104
-RES_XML_LAST_CHUNK_TYPE = 0x017F
-RES_XML_RESOURCE_MAP_TYPE = 0x0180
-
-# Chunk types in RES_TABLE_TYPE
-RES_TABLE_PACKAGE_TYPE = 0x0200
-RES_TABLE_TYPE_TYPE = 0x0201
-RES_TABLE_TYPE_SPEC_TYPE = 0x0202
-RES_TABLE_LIBRARY_TYPE = 0x0203
-RES_TABLE_OVERLAYABLE_TYPE = 0x0204
-RES_TABLE_OVERLAYABLE_POLICY_TYPE = 0x0205
-
-ResChunkHeader = Dict[str, Any]
-ResValue = namedtuple(
-    "ResValue", ["namespace", "name", "type", "value", "data"]
+from quark.core.axmlreader import (
+    RES_STRING_POOL_TYPE,
+    RES_XML_CDATA_TYPE,
+    RES_XML_END_ELEMENT_TYPE,
+    RES_XML_END_NAMESPACE_TYPE,
+    RES_XML_RESOURCE_MAP_TYPE,
+    RES_XML_START_ELEMENT_TYPE,
+    RES_XML_START_NAMESPACE_TYPE,
+    RES_XML_TYPE,
+    AxmlException,
+    AxmlReader,
+    Res_value_type,
+    ResChunkHeader,
+    ResValue
 )
 
 
-class ResValueType(enum.Enum):
+class PythonImp(AxmlReader):
     """
-    List all possible types of a value in the Android XML binary.
-    """
-
-    TYPE_NULL = 0x00
-    TYPE_REFERENCE = 0x01
-    TYPE_ATTRIBUTE = 0x02
-    TYPE_STRING = 0x03
-    TYPE_FLOAT = 0x04
-    TYPE_DIMENSION = 0x05
-    TYPE_FRACTION = 0x06
-    TYPE_DYNAMIC_REFERENCE = 0x07
-    TYPE_DYNAMIC_ATTRIBUTE = 0x08
-    TYPE_FIRST_INT = 0x10
-    TYPE_INT_DEC = 0x10
-    TYPE_INT_HEX = 0x11
-    TYPE_INT_BOOLEAN = 0x12
-    TYPE_FIRST_COLOR_INT = 0x1C
-    TYPE_INT_COLOR_ARGB8 = 0x1C
-    TYPE_INT_COLOR_RGB8 = 0x1D
-    TYPE_INT_COLOR_ARGB4 = 0x1E
-    TYPE_INT_COLOR_RGB4 = 0x1F
-    TYPE_LAST_COLOR_INT = 0x1F
-    TYPE_LAST_INT = 0x1F
-
-
-class AxmlException(Exception):
-    """
-    A Exception for AxmlReader
-    """
-
-    def __init__(self, message):
-        super(AxmlException, self).__init__(message)
-
-
-class AxmlReader(object):
-    """
-    A Class that parses the Android XML file
+    A Class that parses the Android XML file using the builtin library `struct`
     """
 
     def __init__(self, filePath):
-
-        self._fileSize = os.path.getsize(filePath)
-        if self._fileSize > 0xFFFF_FFFF:
+        self._file_size = os.path.getsize(filePath)
+        if self._file_size > 0xFFFF_FFFF:
             raise AxmlException("Filesize exceeds theoretical upper bound.")
-        elif self._fileSize < 8:
+        elif self._file_size < 8:
             raise AxmlException("Filesize exceeds theoretical lower bound.")
 
         self._file = open(filePath, "rb")
@@ -101,24 +50,24 @@ class AxmlReader(object):
             ResChunkHeaderFormat, self._ptr
         )
 
-        self._dataType = fileHeader[0]
-        self._axmlSize = fileHeader[2]
+        self._data_type = fileHeader[0]
+        self._axml_size = fileHeader[2]
         headerSize = fileHeader[1]
 
-        if self._dataType != RES_XML_TYPE or headerSize != 0x8:
+        if self._data_type != RES_XML_TYPE or headerSize != 0x8:
             raise AxmlException(
-                f"Error parsing first header(type: {self._dataType},"
+                f"Error parsing first header(type: {self._data_type},"
                 f" size: {headerSize})."
             )
 
-        if self._axmlSize > self._fileSize:
+        if self._axml_size > self._file_size:
             raise AxmlException(
-                f"Declared size ({self._axmlSize} bytes) is"
-                f" larger than total size({self._fileSize})."
+                f"Declared size ({self._axml_size} bytes) is"
+                f" larger than total size({self._file_size})."
             )
 
         self._ptr += 8
-        if self._ptr >= self._axmlSize:
+        if self._ptr >= self._axml_size:
             return
 
         # String Pool
@@ -133,11 +82,11 @@ class AxmlReader(object):
         headerSize = stringPoolHeader[1]
         stringPoolSize = stringPoolHeader[2]
 
-        if stringPoolSize > self._axmlSize - self._ptr:
+        if stringPoolSize > self._axml_size - self._ptr:
             raise AxmlException(
                 f"Error parsing string pool, there should"
                 f" be {stringPoolSize}"
-                f" bytes but only {self._axmlSize - self._ptr} bytes."
+                f" bytes but only {self._axml_size - self._ptr} bytes."
             )
 
         if headerType != RES_STRING_POOL_TYPE:
@@ -153,7 +102,7 @@ class AxmlReader(object):
             )
 
         self._ptr += stringPoolSize
-        if self._ptr >= self._axmlSize:
+        if self._ptr >= self._axml_size:
             return
 
         self._stringCount = stringPoolHeader[3]
@@ -174,14 +123,14 @@ class AxmlReader(object):
 
             # Skip all the resource map
 
-            if mapSize > self._axmlSize - self._ptr:
+            if mapSize > self._axml_size - self._ptr:
                 raise AxmlException(
                     f"Map size should be {mapSize} bytes rather"
-                    f" than {self._axmlSize - self._ptr} bytes."
+                    f" than {self._axml_size - self._ptr} bytes."
                 )
 
             self._ptr += mapSize
-            if self._ptr >= self._axmlSize:
+            if self._ptr >= self._axml_size:
                 return
 
     def __enter__(self):
@@ -191,14 +140,16 @@ class AxmlReader(object):
         self.close()
 
     def __iter__(self) -> Iterator[ResChunkHeader]:
-        """Get an iterator that walks through the content of the Android XML
-         binary.
+        """
+        Inherited from AxmlReader.
+        Get an iterator that walks through the content of the Android XML
+          binary.
 
         :raises AxmlException: if the given file is not a valid Android XML
          binary
         :yield: header of a resource chunk defined in the binary
         """
-        while self._axmlSize - self._ptr >= 16:
+        while self._axml_size - self._ptr >= 16:
             ResXMLTreeNodeFormat = "h h i i i"
             header = self.__readStructWithFormat(
                 ResXMLTreeNodeFormat, self._ptr
@@ -214,10 +165,10 @@ class AxmlReader(object):
                     f" than { headerSize } bytes."
                 )
 
-            if nodeSize > self._axmlSize - self._ptr:
+            if nodeSize > self._axml_size - self._ptr:
                 raise AxmlException(
                     f"Not enough data left, need {nodeSize} bytes"
-                    f" but {self._axmlSize - self._ptr} bytes left."
+                    f" but {self._axml_size - self._ptr} bytes left."
                 )
 
             extPtr = self._ptr + 16
@@ -281,14 +232,6 @@ class AxmlReader(object):
             return list(struct.unpack(structFormat, data))
         return None
 
-    @property
-    def fileSize(self):
-        return self._fileSize
-
-    @property
-    def axmlSize(self):
-        return self._axmlSize
-
     def close(self):
         if self._file and not self._file.closed:
             self._file.close()
@@ -321,8 +264,15 @@ class AxmlReader(object):
 
         return "".join(result)
 
-    @functools.lru_cache()
-    def getString(self, index):
+    @functools.lru_cache
+    def get_string(self, index) -> str | None:
+        """
+        Inherited from AxmlReader.
+        Get the specified string from the string pool.
+
+        :param index: the index of the string in the string pool.
+        :return: the string at the specified index, None otherwise.
+        """
         if index < 0 or index >= self._stringCount:
             return None
         if self._isUtf8Used:
@@ -338,8 +288,10 @@ class AxmlReader(object):
             self._stringPoolDataPosition + stringPoolIndex + 2, encodingMethod
         )
 
-    def getAttributes(self, chunk: ResChunkHeader) -> List[ResValue] | None:
-        """Get the attributes of a resource chunk
+    def get_attributes(self, chunk: ResChunkHeader) -> list[ResValue] | None:
+        """
+        Inherited from AxmlReader.
+        Get the attributes of a resource chunk
 
         :param chunk: header of a resource chunk
         :return: python list that holds attributes
@@ -383,18 +335,18 @@ class AxmlReader(object):
         :param chunk: header of a resource chunk in the Android XML binary
         :return: XMLElement instance
         """
-        name = self.getString(chunk["Name"])
+        name = self.get_string(chunk["Name"])
 
         attributes = {}
-        for rawAttribute in self.getAttributes(chunk):
-            attrNamespace = self.getString(rawAttribute.namespace)
-            attrName = self.getString(rawAttribute.name)
+        for rawAttribute in self.get_attributes(chunk):
+            attrNamespace = self.get_string(rawAttribute.namespace)
+            attrName = self.get_string(rawAttribute.name)
 
             dataType = rawAttribute.type
             rawData = rawAttribute.data
-            if dataType == ResValueType.TYPE_STRING.value:
-                value = self.getString(rawData)
-            elif dataType == ResValueType.TYPE_INT_BOOLEAN.value:
+            if dataType == Res_value_type.TYPE_STRING.value:
+                value = self.get_string(rawData)
+            elif dataType == Res_value_type.TYPE_INT_BOOLEAN.value:
                 value = bool(abs(rawData))
             else:
                 value = rawAttribute.data
@@ -406,10 +358,12 @@ class AxmlReader(object):
 
         return XMLElement(name, attributes)
 
-    def __findManifest(
+    def _find_manifest(
         self, chunkIterator: Iterator[ResChunkHeader]
     ) -> XMLElement:
-        """Find the resource chunk of the first XML label named manifest and
+        """
+        Inherited from AxmlReader.
+        Find the resource chunk of the first XML label named manifest and
          convert it into an XMLElement instance.
 
         :param chunkIterator: iterator of the resource chunk headers
@@ -420,39 +374,13 @@ class AxmlReader(object):
                 chunk
                 for chunk in chunkIterator
                 if chunk["Type"] == RES_XML_START_ELEMENT_TYPE
-                and self.getString(chunk["Name"]) == "manifest"
+                and self.get_string(chunk["Name"]) == "manifest"
             ),
             None,
         )
 
         if manifestChunk:
             return self.__convertTagToXmlElement(manifestChunk)
-
-    def getXmlTree(self) -> XMLElementTree:
-        """
-        Return the parsed XML corresponding to the AndroidManifest.xml file.
-
-        :return: the content of the file
-        """
-        fileIterator = iter(self)
-        root = self.__findManifest(fileIterator)
-
-        stack = [root]
-        for tag in fileIterator:
-            tagType = tag["Type"]
-
-            if tagType == RES_XML_END_ELEMENT_TYPE:
-                stack.pop()
-
-            elif tagType == RES_XML_START_ELEMENT_TYPE:
-                element = self.__convertTagToXmlElement(tag)
-
-                parent = stack[-1]
-                parent.append(element)
-
-                stack.append(element)
-
-        return XMLElementTree(root)
 
     def __del__(self):
         try:
