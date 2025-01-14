@@ -8,13 +8,17 @@ from collections import defaultdict
 from os import PathLike
 from typing import Dict, List, Optional, Set, Iterator, Generator, Tuple
 
-from shuriken import Dex, Apk
-from shuriken.dex import (
-    hdvmmethodanalysis_t,
-    hdvminstruction_t,
-    dvmdisassembled_method_t,
-    hdvmclass_t,
-)
+try:
+    from shuriken import Dex, Apk
+    from shuriken.dex import (
+        hdvmmethodanalysis_t,
+        hdvminstruction_t,
+        dvmdisassembled_method_t,
+        hdvmclass_t,
+    )
+    _has_shuriken = True
+except ModuleNotFoundError:
+    _has_shuriken = False
 
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
@@ -30,6 +34,15 @@ class ShurikenImp(BaseApkinfo):
         apk_filepath: str | PathLike,
         tmp_dir: str | PathLike = None,
     ):
+        if not _has_shuriken:
+            raise Exception(
+                "The Shuriken-based core library is not available because"
+                " Shuriken-Analyzer was not installed. To use this core"
+                " library, follow the instructions on the GitHub page"
+                " 'https://github.com/Shuriken-Group/Shuriken-Analyzer' to"
+                " install Shuriken-Analyzer and its Python bindings."
+            )
+
         super().__init__(apk_filepath, "shuriken", tmp_dir)
         match self.ret_type:
             case "APK":
@@ -353,7 +366,7 @@ class ShurikenImp(BaseApkinfo):
     def __findMethodCallInstruction(
         self,
         method: MethodObject,
-        instructions: list[hdvminstruction_t],
+        instructions: list["hdvminstruction_t"],
         start: int = 0,
     ) -> int | None:
         """
@@ -381,7 +394,7 @@ class ShurikenImp(BaseApkinfo):
 
     def __getDisassembledMethod(
         self, method: MethodObject
-    ) -> dvmdisassembled_method_t:
+    ) -> "dvmdisassembled_method_t":
         """
         Get the disassembled method corresponding to the MethodObject.
 
@@ -405,7 +418,7 @@ class ShurikenImp(BaseApkinfo):
     def __extractMethodCallDetails(
         self,
         targetMethod: MethodObject,
-        instructions: list[hdvminstruction_t],
+        instructions: list["hdvminstruction_t"],
         rawBytes: bytes,
         start: int = 0,
     ):
@@ -488,7 +501,7 @@ class ShurikenImp(BaseApkinfo):
             "second_hex": secondResult["hex"],
         }
 
-    def __getClasses(self) -> Iterator[hdvmclass_t]:
+    def __getClasses(self) -> Iterator["hdvmclass_t"]:
         """
         Get all classes defined in the sample.
 
@@ -576,7 +589,7 @@ class ShurikenImp(BaseApkinfo):
 
     def __convertToMethodObject(
         self,
-        methodAnalysis: hdvmmethodanalysis_t,
+        methodAnalysis: "hdvmmethodanalysis_t",
     ) -> MethodObject:
         """
         Convert a hdvmmethodanalysis_t object to a MethodObject.
