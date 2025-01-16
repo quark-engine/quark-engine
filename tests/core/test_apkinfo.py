@@ -492,6 +492,79 @@ class TestApkinfo:
         for expected in expected_bytecode_list2:
             assert expected in bytecodes2
 
+    def test_get_method_bytecode_with_instructions_including_method_field(
+            self, apkinfo):
+
+        method = apkinfo.find_method(
+            "Landroid/support/v4/widget/ContentLoadingProgressBar$1;",
+            "run",
+            "()V"
+        )[0]
+
+        expected_bytecode = BytecodeObject(
+            "iget-object",
+            ["v0", "v3"],
+            (
+                "Landroid/support/v4/widget/ContentLoadingProgressBar$1;->"
+                "this$0 Landroid/support/v4/widget/ContentLoadingProgressBar;"
+            ),
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        assert expected_bytecode in bytecodes
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "method_info, expected_bytecode_info",
+        [
+            (
+                ("Landroid/support/v4/widget/ContentLoadingProgressBar$1;",
+                    "run",
+                    "()V"),
+                (
+                    "invoke-static",
+                    ["v0", "v1"],
+                    (
+                        "Landroid/support/v4/widget/ContentLoadingProgressBar;"
+                        "->access$002(Landroid/support/v4/widget"
+                        "/ContentLoadingProgressBar; Z)Z"
+                    )),
+            ),
+            (
+                ("Landroid/support/v4/app/Fragment$InstantiationException;",
+                    "<init>",
+                    "(Ljava/lang/String; Ljava/lang/Exception;)V"),
+                (
+                    "invoke-direct",
+                    ["v0", "v1", "v2"],
+                    (
+                        "Ljava/lang/RuntimeException;-><init>"
+                        "(Ljava/lang/String; Ljava/lang/Throwable;)V"
+                    )),
+            )
+        ],
+    )
+    def test_get_method_bytecode_with_instructions_including_method_call(
+            method_info, expected_bytecode_info, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason=(
+                    "The core library skipped"
+                    " didn't parse the bytecode correctly."
+                )
+            )
+
+        method = apkinfo.find_method(*method_info)[0]
+
+        expected_bytecode = BytecodeObject(
+            *expected_bytecode_info
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        assert expected_bytecode in bytecodes
+
     def test_get_method_bytecode_with_const_wide_instructions(self, apkinfo):
         if apkinfo.core_library in ["rizin", "radare2"]:
             pytest.skip(

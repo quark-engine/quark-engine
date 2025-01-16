@@ -57,8 +57,8 @@ class ShurikenImp(BaseApkinfo):
             case _:
                 raise ValueError("Unsupported File type.")
 
-        self.__patternToIdentifyMethodCall = re.compile(r"->\w+\(")
-        self.__patternToIdentifyMemberField = re.compile(r"->\w+(?!\() ")
+        self.__patternToIdentifyMethodCall = re.compile(r"->[\w\$_<>-]+\(")
+        self.__patternToIdentifyMemberField = re.compile(r"->[\w\$_<>-]+(?!\() ")
 
     @property
     def android_apis(self) -> Set[MethodObject]:
