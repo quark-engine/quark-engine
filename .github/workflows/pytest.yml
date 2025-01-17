@@ -60,6 +60,10 @@ jobs:
         sh install.sh -y
         cargo install project_ares
 
+    - name: Install Shuriken-Analyzer
+      run: |
+        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
+
     - name: Install Quark-Engine
       run: pip install .
 

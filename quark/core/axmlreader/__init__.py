@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# This file is part of Quark-Engine - https://github.com/quark-engine/quark-engine
+# See the file 'LICENSE' for copying permission.
+
 import enum
 import functools
 import os.path
@@ -80,9 +84,9 @@ class AxmlException(Exception):
         super(AxmlException, self).__init__(message)
 
 
-class AxmlReader(object):
+class AxmlReader:
     """
-    A Class that parses the Android XML file
+    A Class that parses the Android XML file using Rizin/Radare2
     """
 
     def __init__(self, file_path, core_library="rizin", structure_path=None):
@@ -204,6 +208,12 @@ class AxmlReader(object):
             self._ptr += map_size
             if self._ptr >= self._axml_size:
                 return
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
 
     def __iter__(self) -> Iterator[ResChunkHeader]:
         """Get an iterator that walks through the content of the Android XML
@@ -373,7 +383,7 @@ class AxmlReader(object):
 
         return XMLElement(name, attributes)
 
-    def __find_manifest(
+    def _find_manifest(
         self, chunk_iterator: Iterator[ResChunkHeader]
     ) -> XMLElement:
         """Find the resource chunk of the first XML label named manifest and
@@ -402,7 +412,7 @@ class AxmlReader(object):
         :return: the content of the file
         """
         file_iterator = iter(self)
-        root = self.__find_manifest(file_iterator)
+        root = self._find_manifest(file_iterator)
 
         stack = [root]
         for tag in file_iterator:

@@ -6,18 +6,27 @@ import hashlib
 import os.path
 from abc import abstractmethod
 from os import PathLike
-from typing import Dict, List, Optional, Set, Union
+import tempfile
+from typing import Dict, List, Optional, Set, Union, Tuple
 from xml.etree.ElementTree import Element as XMLElement  # nosec B405
+import zipfile
 
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
+from quark.core.axmlreader.python import PythonImp as AxmlReader
 
 
 class BaseApkinfo:
 
-    __slots__ = ["ret_type", "apk_filename", "apk_filepath", "core_library"]
+    __slots__ = ["ret_type", "apk_filename",
+                 "apk_filepath", "core_library", "_manifest"]
 
-    def __init__(self, apk_filepath: Union[str, PathLike], core_library: str = "None"):
+    def __init__(
+            self,
+            apk_filepath: str | PathLike,
+            core_library: str = "None",
+            tmp_dir: str | PathLike = None
+    ):
         with open(apk_filepath, "rb") as file:
             raw = file.read()
             self.ret_type = self._check_file_signature(raw)
@@ -26,8 +35,23 @@ class BaseApkinfo:
         self.apk_filepath = apk_filepath
         self.core_library = core_library
 
+        self._manifest = self.__extractAndroidManifest(
+            apk_filepath, tmp_dir) if self.ret_type == "APK" else None
+
     def __repr__(self) -> str:
         return f"<Apkinfo-APK:{self.apk_filename}, Imp:{self.core_library}>"
+
+    @staticmethod
+    def __extractAndroidManifest(
+        apk_filepath: str | PathLike,
+        tmp_dir: str | PathLike = None
+    ) -> str:
+        tmp_dir = tempfile.mkdtemp() if tmp_dir is None else tmp_dir
+        with zipfile.ZipFile(apk_filepath) as apk:
+            apk.extract("AndroidManifest.xml", path=tmp_dir)
+            return os.path.join(
+                tmp_dir, "AndroidManifest.xml"
+            )
 
     @property
     def filename(self) -> str:
@@ -61,51 +85,80 @@ class BaseApkinfo:
         return md5.hexdigest()
 
     @property
-    @abstractmethod
     def permissions(self) -> List[str]:
         """
         Return all permissions from given APK.
 
         :return: a list of all permissions
         """
-        pass
+        if self.ret_type != "APK":
+            return []
+
+        with AxmlReader(self._manifest) as axml:
+            permissionList = set()
+
+            for tag in axml:
+                label = tag.get("Name")
+                if label and axml.get_string(label) == "uses-permission":
+                    attrs = axml.get_attributes(tag)
+
+                    if attrs:
+                        permission = axml.get_string(attrs[0].value)
+                        permissionList.add(permission)
+
+            return list(permissionList)
 
     @property
-    @abstractmethod
-    def application(self) -> XMLElement:
+    def application(self) -> XMLElement | None:
         """Get the application element from the manifest file.
 
         :return: an application element
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.get_xml_tree()
+
+            return root.find("application")
 
     @property
-    @abstractmethod
-    def activities(self) -> List[XMLElement]:
+    def activities(self) -> List[XMLElement] | None:
         """
         Return all activity from given APK.
 
         :return: a list of all activities
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.get_xml_tree()
+
+            return root.findall("application/activity")
 
     @property
-    @abstractmethod
-    def receivers(self) -> List[XMLElement]:
+    def receivers(self) -> List[XMLElement] | None:
         """
         Return all receivers from the given APK.
 
         :return: a list of all receivers
         """
-        pass
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.get_xml_tree()
+
+            return root.findall("application/receiver")
 
     @property
     @abstractmethod
     def android_apis(self) -> Set[MethodObject]:
         """
-        Return all Android native APIs from given APK.
+        Returns all Android APIs used by the APK/DEX.
 
-        :return: a set of all Android native APIs MethodObject
+        :return: a set of MethodObjects
         """
         pass
 
@@ -122,7 +175,8 @@ class BaseApkinfo:
     @property
     def all_methods(self) -> Set[MethodObject]:
         """
-        Return all methods including Android native API and custom methods from given APK.
+        Return all methods including Android native API and custom methods
+        from given APK.
 
         :return: a set of all method MethodObject
         """
@@ -157,17 +211,22 @@ class BaseApkinfo:
         pass
 
     @abstractmethod
-    def lowerfunc(self, method_object: MethodObject) -> Set[MethodObject]:
+    def lowerfunc(
+        self, method_object: MethodObject
+    ) -> list[Tuple[MethodObject, int]]:
         """
-        Return the xref from method from given MethodObject instance.
+        Find the xrefs to the specified method.
 
-        :param method_object: the MethodObject instance
-        :return: a set of all xref from functions
+        :param method_object: a target method used to find what methods it
+        calls
+        :return: a set of tuples consisting of the called method and the
+        offset of the invocation
         """
         pass
 
     @abstractmethod
-    def get_method_bytecode(self, method_object: MethodObject) -> Set[MethodObject]:
+    def get_method_bytecode(self, method_object: MethodObject) \
+            -> Set[MethodObject]:
         """
         Return the corresponding bytecode according to the
         given class name and method name.
@@ -189,15 +248,15 @@ class BaseApkinfo:
         second_method: MethodObject,
     ) -> Dict[str, Union[BytecodeObject, str]]:
         """
-        Return the dict of two method smali code from given MethodObject instance, only for self-defined
-        method.
-        :param method_analysis:
-        :return:
+        Find the invocations that call two specified methods, first_method
+        and second_method, respectively. Then, return a dictionary storing
+        the corresponding bytecodes and hex values.
 
-        {
-        "first": "invoke-virtual v5, Lcom/google/progress/Locate;->getLocation()Ljava/lang/String;",
-        "second": "invoke-virtual v3, v0, v4, Lcom/google/progress/SMSHelper;->sendSms(Ljava/lang/String; Ljava/lang/String;)I"
-        }
+        :param parent_method: a parent method to scan
+        :param first_method: the first method called by the parent method
+        :param second_method: the second method called by the parent method
+        :return: a dictionary storing the corresponding bytecodes and hex
+        values.
         """
         pass
 

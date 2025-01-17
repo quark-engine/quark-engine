@@ -12,7 +12,7 @@ from androguard.core.analysis.analysis import MethodAnalysis
 from androguard.core.bytecodes.dvm_types import Operand
 from androguard.misc import AnalyzeAPK, AnalyzeDex
 
-from quark.core.interface.baseapkinfo import BaseApkinfo, XMLElement
+from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 from quark.evaluator.pyeval import PyEval
@@ -21,7 +21,7 @@ from quark.evaluator.pyeval import PyEval
 class AndroguardImp(BaseApkinfo):
     """Information about apk based on androguard analysis"""
 
-    __slots__ = ("apk", "dalvikvmformat", "analysis")
+    __slots__ = ("apk", "dalvikvmformat", "analysis", "_manifest")
 
     def __init__(self, apk_filepath: Union[str, PathLike]):
         super().__init__(apk_filepath, "androguard")
@@ -32,54 +32,9 @@ class AndroguardImp(BaseApkinfo):
         elif self.ret_type == "DEX":
             # return the sha256hash, DalvikVMFormat, and Analysis objects
             _, _, self.analysis = AnalyzeDex(apk_filepath)
+            self._manifest = None
         else:
             raise ValueError("Unsupported File type.")
-
-    @property
-    def permissions(self) -> List[str]:
-        if self.ret_type == "APK":
-            return self.apk.get_permissions()
-
-        if self.ret_type == "DEX":
-            return []
-
-    @property
-    def application(self) -> XMLElement:
-        """Get the application element from the manifest file.
-
-        :return: an application element
-        """
-        if self.ret_type == "DEX":
-            return []
-
-        manifest_root = self.apk.get_android_manifest_xml()
-
-        return manifest_root.find("application")
-
-    @property
-    def activities(self) -> List[XMLElement]:
-        if self.ret_type == "DEX":
-            return []
-
-        manifest_root = self.apk.get_android_manifest_xml()
-        application = manifest_root.find("application")
-
-        return application.findall("activity")
-
-    @property
-    def receivers(self) -> List[XMLElement]:
-        """
-        Return all receivers from the given APK.
-
-        :return: a list of all receivers
-        """
-        if self.ret_type == "DEX":
-            return []
-
-        manifest_root = self.apk.get_android_manifest_xml()
-        application = manifest_root.find("application")
-
-        return application.findall("receiver")
 
     @property
     def android_apis(self) -> Set[MethodObject]:

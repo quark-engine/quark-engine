@@ -20,3 +20,4 @@ pf.axml_ResXMLTree_attribute ???? (axml_ResStringPool_ref)ns (axml_ResStringPool
 # Resource Table
 pf.axml_ResTable_header ?n4 (axml_ResChunk_header)header packageCount
 pf.axml_ResTable_package ?n4[128]n2n4n4n4n4n4 (axml_ResChunk_header)header id name typeStrings lastPublicType keyStrings lastPublicKey typeIdOffset
+

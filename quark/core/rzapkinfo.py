@@ -58,7 +58,8 @@ class RizinImp(BaseApkinfo):
             with zipfile.ZipFile(self.apk_filepath) as apk:
                 apk.extract("AndroidManifest.xml", path=self._tmp_dir)
 
-                self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
+                self._manifest = os.path.join(
+                    self._tmp_dir, "AndroidManifest.xml")
 
         else:
             raise ValueError("Unsupported File type.")
@@ -266,6 +267,9 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of permissions.
         """
+        if not self._manifest:
+            return []
+
         axml = AxmlReader(self._manifest)
         permission_list = set()
 
@@ -286,6 +290,8 @@ class RizinImp(BaseApkinfo):
 
         :return: an application element
         """
+        if not self._manifest:
+            return None
 
         axml = AxmlReader(self._manifest)
         root = axml.get_xml_tree()
@@ -299,6 +305,9 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of all activities
         """
+        if not self._manifest:
+            return None
+
         axml = AxmlReader(self._manifest)
         root = axml.get_xml_tree()
 
@@ -311,6 +320,9 @@ class RizinImp(BaseApkinfo):
 
         :return: a list of all receivers
         """
+        if not self._manifest:
+            return None
+
         axml = AxmlReader(self._manifest)
         root = axml.get_xml_tree()
 
@@ -511,22 +523,24 @@ class RizinImp(BaseApkinfo):
                     disasm_split = ins["disasm"].split()
 
                     # Skip the bytecode that invoke-kind without registers.
-                    # e.g. 'invoke-super', 'Lorg/apache/commons/net/ntp/TimeInfo;->addComment(Ljava/lang/String;)V'
+                    # e.g. 'invoke-super', 'Lorg/apache/commons/net/ntp/
+                    # TimeInfo;->addComment(Ljava/lang/String;)V'
                     if (disasm_split[0][:6] == "invoke" and
-                        disasm_split[0][-6:] != "static"):
+                            disasm_split[0][-6:] != "static"):
                         if (len(disasm_split) < 3 or
-                            not re.search(r"v\d+", disasm_split[1])):
+                                not re.search(r"v\d+", disasm_split[1])):
                             continue
 
                     # Skip the bytecode that is not analyzed.
                     # e.g. invoke-virtual method+xxxx .
                     if "method+" in disasm_split[-1]:
-                       continue
+                        continue
 
-                    # Skip the bytecode that invoke-custom with improper descriptor
+                    # Skip the bytecode that invoke-custom with improper
+                    # descriptor
                     # e.g. invoke-custom {v14, v0},   Resetting:
                     if (disasm_split[0] == "invoke-custom" and
-                        "(" not in disasm_split[-1]):
+                            "(" not in disasm_split[-1]):
                         continue
 
                     yield self._parse_smali(ins["disasm"])
@@ -566,7 +580,8 @@ class RizinImp(BaseApkinfo):
         """
 
         def convert_bytecode_to_list(bytecode):
-            return [bytecode.mnemonic] + bytecode.registers + [bytecode.parameter]
+            return [bytecode.mnemonic] + bytecode.registers +\
+                [bytecode.parameter]
 
         cache = parent_method.cache
 

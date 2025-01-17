@@ -58,7 +58,8 @@ class R2Imp(BaseApkinfo):
             with zipfile.ZipFile(self.apk_filepath) as apk:
                 apk.extract("AndroidManifest.xml", path=self._tmp_dir)
 
-                self._manifest = os.path.join(self._tmp_dir, "AndroidManifest.xml")
+                self._manifest = os.path.join(
+                    self._tmp_dir, "AndroidManifest.xml")
 
         else:
             raise ValueError("Unsupported File type.")
@@ -151,7 +152,8 @@ class R2Imp(BaseApkinfo):
         if not real_name:
             return None
 
-        class_name, method_name, descriptor = parse_pattern.match(real_name).groups()
+        class_name, method_name, descriptor = parse_pattern.match(
+            real_name).groups()
 
         # -- Descriptor --
         descriptor = descriptor_to_androguard_format(descriptor)
@@ -214,6 +216,9 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of permissions.
         """
+        if not self._manifest:
+            return []
+
         axml = AxmlReader(self._manifest, core_library="radare2")
         elm_key_name = "{http://schemas.android.com/apk/res/android}name"
         permission_list = set()
@@ -229,6 +234,8 @@ class R2Imp(BaseApkinfo):
 
         :return: an application element
         """
+        if not self._manifest:
+            return None
 
         axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
@@ -242,6 +249,9 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all activities
         """
+        if not self._manifest:
+            return None
+
         axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
 
@@ -254,6 +264,9 @@ class R2Imp(BaseApkinfo):
 
         :return: a list of all receivers
         """
+        if not self._manifest:
+            return None
+
         axml = AxmlReader(self._manifest, core_library="radare2")
         root = axml.get_xml_tree()
 
@@ -488,7 +501,8 @@ class R2Imp(BaseApkinfo):
         """
 
         def convert_bytecode_to_list(bytecode):
-            return [bytecode.mnemonic] + bytecode.registers + [bytecode.parameter]
+            return [bytecode.mnemonic] + bytecode.registers \
+                + [bytecode.parameter]
 
         cache = parent_method.cache
 

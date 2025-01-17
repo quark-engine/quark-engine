@@ -1,89 +1,83 @@
 import os
+from typing import Literal, Tuple
 import zipfile
 
 import pytest
-import requests
 
 from quark.core.apkinfo import AndroguardImp
 from quark.core.interface.baseapkinfo import BaseApkinfo
 from quark.core.rzapkinfo import RizinImp
 from quark.core.r2apkinfo import R2Imp
+from quark.core.shurikenapkinfo import ShurikenImp
 from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.methodobject import MethodObject
 
-APK_SOURCE = (
-    "https://github.com/quark-engine/apk-samples"
-    "/raw/master/malware-samples/13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
-)
-APK_FILENAME = "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
 
-
-@pytest.fixture(scope="function")
-def apk_path():
-    r = requests.get(APK_SOURCE, allow_redirects=True)
-    file = open(APK_FILENAME, "wb")
-    file.write(r.content)
-
-    return APK_FILENAME
-
-
-@pytest.fixture(
-    scope="function",
-    params=((AndroguardImp), (RizinImp), (R2Imp)),
-)
-def apkinfo(request, apk_path):
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
-
-    yield apkinfo
-
-
-@pytest.fixture(
-    scope="function",
-    params=((AndroguardImp), (RizinImp)),
-)
-def apkinfo_without_R2Imp(request, apk_path):
-    """Since R2 has some issue,
-    create this function to skip R2 relevant test for some test functions.
-    """
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
-
-    yield apkinfo
-
-
-@pytest.fixture(
-    scope="function",
-    params=((R2Imp),),
-)
-def apkinfo_with_R2Imp_only(request, apk_path):
-    """For testcases involved with R2 core lib.
-    """
-    Apkinfo, apk_path = request.param, apk_path
-    apkinfo = Apkinfo(apk_path)
-
-    yield apkinfo
-
-
-@pytest.fixture(scope="function")
-def dex_file():
-    APK_SOURCE = (
-        "https://github.com/quark-engine/apk-samples" "/raw/master/malware-samples/Ahmyth.apk"
-    )
-    APK_NAME = "Ahmyth.apk"
+@pytest.fixture(scope="session")
+def dex_file(SAMPLE_PATH_13667):
+    APK_NAME = SAMPLE_PATH_13667
     DEX_NAME = "classes.dex"
-
-    r = requests.get(APK_SOURCE, allow_redirects=True)
-    with open(APK_NAME, "wb") as file:
-        file.write(r.content)
 
     with zipfile.ZipFile(APK_NAME, "r") as zip:
         zip.extract(DEX_NAME)
 
     yield DEX_NAME
 
-    os.remove(DEX_NAME)
-    os.remove(APK_NAME)
+    if os.path.exists(DEX_NAME):
+        os.remove(DEX_NAME)
+
+    if os.path.exists(APK_NAME):
+        os.remove(APK_NAME)
+
+
+def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
+    return f"{testInput[0].__name__} with {testInput[1]}"
+
+
+@pytest.fixture(
+    scope="function",
+    params=(
+        (AndroguardImp, "DEX"),
+        (AndroguardImp, "APK"),
+        (RizinImp, "DEX"),
+        (RizinImp, "APK"),
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
+        (ShurikenImp, "DEX"),
+        (ShurikenImp, "APK"),
+    ),
+    ids=__generateTestIDs,
+)
+def apkinfo(request, SAMPLE_PATH_13667, dex_file):
+    apkinfoClass, fileType = request.param
+
+    fileToBeAnalyzed = SAMPLE_PATH_13667
+    if fileType == "DEX":
+        fileToBeAnalyzed = dex_file
+
+    apkinfo = apkinfoClass(fileToBeAnalyzed)
+
+    yield apkinfo
+
+
+@pytest.fixture(
+    scope="function",
+    params=(
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
+    ),
+)
+def apkinfo_with_R2Imp_only(request, SAMPLE_PATH_13667, dex_file):
+    """For testcases involved with R2 core lib."""
+    apkinfoClass, fileType = request.param
+
+    fileToBeAnalyzed = SAMPLE_PATH_13667
+    if fileType == "DEX":
+        fileToBeAnalyzed = dex_file
+
+    apkinfo = apkinfoClass(fileToBeAnalyzed)
+
+    yield apkinfo
 
 
 class TestApkinfo:
@@ -99,8 +93,8 @@ class TestApkinfo:
         with pytest.raises(FileNotFoundError):
             _ = BaseApkinfo(filepath)
 
-    def test_init_with_apk(self, apk_path):
-        apkinfo = BaseApkinfo(apk_path)
+    def test_init_with_apk(self, SAMPLE_PATH_13667):
+        apkinfo = BaseApkinfo(SAMPLE_PATH_13667)
 
         assert apkinfo.ret_type == "APK"
 
@@ -110,76 +104,109 @@ class TestApkinfo:
         assert apkinfo.ret_type == "DEX"
 
     def test_filename(self, apkinfo):
-        assert apkinfo.filename == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.filename == "classes.dex"
+            case "APK":
+                assert (
+                    apkinfo.filename
+                    == "13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk"
+                )
 
     def test_filesize(self, apkinfo):
-        assert apkinfo.filesize == 266155
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.filesize == 717940
+            case "APK":
+                assert apkinfo.filesize == 266155
 
     def test_md5(self, apkinfo):
-        assert apkinfo.md5 == "1e80ac341a665e8984f07bec7f351e18"
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.md5 == "65c616c49c7eeb065ac5c06e15192398"
+            case "APK":
+                assert apkinfo.md5 == "1e80ac341a665e8984f07bec7f351e18"
 
     def test_permissions(self, apkinfo):
-        ans = [
-            "android.permission.SEND_SMS",
-            "android.permission.RECEIVE_BOOT_COMPLETED",
-            "android.permission.WRITE_SMS",
-            "android.permission.READ_SMS",
-            "android.permission.INTERNET",
-            "android.permission.READ_PHONE_STATE",
-            "android.permission.RECEIVE_SMS",
-            "android.permission.READ_CONTACTS",
-        ]
-        assert set(apkinfo.permissions) == set(ans)
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.permissions == []
+            case "APK":
+                ans = [
+                    "android.permission.SEND_SMS",
+                    "android.permission.RECEIVE_BOOT_COMPLETED",
+                    "android.permission.WRITE_SMS",
+                    "android.permission.READ_SMS",
+                    "android.permission.INTERNET",
+                    "android.permission.READ_PHONE_STATE",
+                    "android.permission.RECEIVE_SMS",
+                    "android.permission.READ_CONTACTS",
+                ]
+                assert set(apkinfo.permissions) == set(ans)
 
     @staticmethod
     def test_application(apkinfo):
-        application = apkinfo.application
-        label = str(application.get(
-            "{http://schemas.android.com/apk/res/android}label"
-        ))
-        assert label == "@7F050001" or label == "2131034113"
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.application is None
+            case "APK":
+                application = apkinfo.application
+                label = str(
+                    application.get(
+                        "{http://schemas.android.com/apk/res/android}label"
+                    )
+                )
+                assert label == "@7F050001" or label == "2131034113"
 
     @staticmethod
     def test_activities(apkinfo):
-        activities = apkinfo.activities
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.activities is None
+            case "APK":
+                activities = apkinfo.activities
 
-        assert len(activities) == 1
-        assert (
-            activities[0].get(
-                "{http://schemas.android.com/apk/res/android}name"
-            )
-            == "com.example.google.service.MainActivity"
-        )
+                assert len(activities) == 1
+                assert (
+                    activities[0].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.example.google.service.MainActivity"
+                )
 
     @staticmethod
     def test_receivers(apkinfo):
-        receivers = apkinfo.receivers
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfo.receivers is None
+            case "APK":
+                receivers = apkinfo.receivers
 
-        assert len(receivers) == 4
-        assert (
-            receivers[0].get(
-                "{http://schemas.android.com/apk/res/android}name"
-            )
-            == "com.example.google.service.SMSServiceBootReceiver"
-        )
-        assert (
-            receivers[1].get(
-                "{http://schemas.android.com/apk/res/android}name"
-            )
-            == "com.example.google.service.SMSReceiver"
-        )
-        assert (
-            receivers[2].get(
-                "{http://schemas.android.com/apk/res/android}name"
-            )
-            == "TaskRequest"
-        )
-        assert (
-            receivers[3].get(
-                "{http://schemas.android.com/apk/res/android}name"
-            )
-            == "com.example.google.service.MyDeviceAdminReceiver"
-        )
+                assert len(receivers) == 4
+                assert (
+                    receivers[0].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.example.google.service.SMSServiceBootReceiver"
+                )
+                assert (
+                    receivers[1].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.example.google.service.SMSReceiver"
+                )
+                assert (
+                    receivers[2].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "TaskRequest"
+                )
+                assert (
+                    receivers[3].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.example.google.service.MyDeviceAdminReceiver"
+                )
 
     def test_android_apis(self, apkinfo):
         api = {
@@ -199,6 +226,10 @@ class TestApkinfo:
             assert len(apkinfo.android_apis) == 1270
         elif apkinfo.core_library == "rizin":
             assert len(apkinfo.android_apis) > 0
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.android_apis) == 1438
+            return
+
         assert api.issubset(apkinfo.android_apis)
 
     def test_custom_methods(self, apkinfo):
@@ -218,6 +249,9 @@ class TestApkinfo:
             assert len(apkinfo.custom_methods) == 3999
         elif apkinfo.core_library == "rizin":
             assert len(apkinfo.custom_methods) > 0
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.custom_methods) == 3999
+
         assert test_custom_method.issubset(apkinfo.custom_methods)
 
     def test_all_methods(self, apkinfo):
@@ -238,6 +272,8 @@ class TestApkinfo:
             assert len(apkinfo.all_methods) == 5452
         elif apkinfo.core_library == "rizin":
             assert len(apkinfo.all_methods) > 0
+        elif apkinfo.core_library == "shuriken":
+            assert len(apkinfo.all_methods) == 5451
 
         assert test_custom_method.issubset(apkinfo.all_methods)
 
@@ -308,7 +344,9 @@ class TestApkinfo:
         ],
     )
     def test_find_method(apkinfo, test_input, expected):
-        result = apkinfo.find_method(test_input[0], test_input[1], test_input[2])
+        result = apkinfo.find_method(
+            test_input[0], test_input[1], test_input[2]
+        )
         expect_method = MethodObject(
             expected[0],
             expected[1],
@@ -318,8 +356,12 @@ class TestApkinfo:
         assert isinstance(result, list)
         assert expect_method in result
 
-    def test_upperfunc(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_upperfunc(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="The upstream missed the xrefs of the function."
+            )
+
         api = apkinfo.find_method(
             "Lcom/example/google/service/ContactsHelper;",
             "<init>",
@@ -336,8 +378,14 @@ class TestApkinfo:
 
         assert expect_function in upper_methods
 
-    def test_get_method_bytecode(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_get_method_bytecode(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function.")
+            )
+
         expected_bytecode_list = [
             BytecodeObject(
                 "iput-object",
@@ -377,8 +425,14 @@ class TestApkinfo:
         for expected in expected_bytecode_list:
             assert expected in bytecodes
 
-    def test_another_get_method_bytecode(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_another_get_method_bytecode(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function."
+                )
+            )
 
         # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00193.json rule
         expected_bytecode_list1 = [
@@ -392,17 +446,14 @@ class TestApkinfo:
                     "Landroid/app/PendingIntent; Landroid/app/PendingIntent;)V"
                 ),
             ),
-            BytecodeObject(
-                "const-string",
-                ["v4"],
-                "SMS"
-            ),
+            BytecodeObject("const-string", ["v4"], "SMS"),
             BytecodeObject(
                 "invoke-virtual",
                 ["v8"],
                 "Ljava/lang/String;->length()I",
             ),
         ]
+        expected_bytecode_list1 = [expected_bytecode_list1[1]]
         # 13667fe3b0ad496a0cd157f34b7e0c991d72a4db.apk with 00189.json rule
         expected_bytecode_list2 = [
             BytecodeObject(
@@ -441,8 +492,104 @@ class TestApkinfo:
         for expected in expected_bytecode_list2:
             assert expected in bytecodes2
 
-    def test_lowerfunc(self, apkinfo_without_R2Imp):
-        apkinfo = apkinfo_without_R2Imp
+    def test_get_method_bytecode_with_instructions_including_method_field(
+            self, apkinfo):
+
+        method = apkinfo.find_method(
+            "Landroid/support/v4/widget/ContentLoadingProgressBar$1;",
+            "run",
+            "()V"
+        )[0]
+
+        expected_bytecode = BytecodeObject(
+            "iget-object",
+            ["v0", "v3"],
+            (
+                "Landroid/support/v4/widget/ContentLoadingProgressBar$1;->"
+                "this$0 Landroid/support/v4/widget/ContentLoadingProgressBar;"
+            ),
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        assert expected_bytecode in bytecodes
+
+    @staticmethod
+    @pytest.mark.parametrize(
+        "method_info, expected_bytecode_info",
+        [
+            (
+                ("Landroid/support/v4/widget/ContentLoadingProgressBar$1;",
+                    "run",
+                    "()V"),
+                (
+                    "invoke-static",
+                    ["v0", "v1"],
+                    (
+                        "Landroid/support/v4/widget/ContentLoadingProgressBar;"
+                        "->access$002(Landroid/support/v4/widget"
+                        "/ContentLoadingProgressBar; Z)Z"
+                    )),
+            ),
+            (
+                ("Landroid/support/v4/app/Fragment$InstantiationException;",
+                    "<init>",
+                    "(Ljava/lang/String; Ljava/lang/Exception;)V"),
+                (
+                    "invoke-direct",
+                    ["v0", "v1", "v2"],
+                    (
+                        "Ljava/lang/RuntimeException;-><init>"
+                        "(Ljava/lang/String; Ljava/lang/Throwable;)V"
+                    )),
+            )
+        ],
+    )
+    def test_get_method_bytecode_with_instructions_including_method_call(
+            method_info, expected_bytecode_info, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason=(
+                    "The core library skipped"
+                    " didn't parse the bytecode correctly."
+                )
+            )
+
+        method = apkinfo.find_method(*method_info)[0]
+
+        expected_bytecode = BytecodeObject(
+            *expected_bytecode_info
+        )
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+
+        assert expected_bytecode in bytecodes
+
+    def test_get_method_bytecode_with_const_wide_instructions(self, apkinfo):
+        if apkinfo.core_library in ["rizin", "radare2"]:
+            pytest.skip(
+                reason="The upstream does not parse the instruction correctly."
+            )
+
+        method = apkinfo.find_method(
+            "Landroid/support/v4/view/ViewPager;",
+            "distanceInfluenceForSnapDuration",
+            "(F)F",
+        )[0]
+
+        bytecodes = list(apkinfo.get_method_bytecode(method))
+        assert any((b for b in bytecodes
+                    if b.mnemonic == "const-wide" and
+                    b.registers == ["v2"] and
+                    (b.parameter == 4602160705557665991 or
+                     b.parameter == 0.471239)))
+
+    def test_lowerfunc(self, apkinfo):
+        if apkinfo.core_library == "radare2":
+            pytest.skip(
+                reason="The upstream missed the xrefs of the function."
+            )
+
         method = apkinfo.find_method(
             "Lcom/example/google/service/SMSReceiver;",
             "isContact",
@@ -468,7 +615,6 @@ class TestApkinfo:
 
         assert expected_upper_class == upper_set
 
-
     @staticmethod
     @pytest.mark.parametrize(
         "test_input, expected",
@@ -478,12 +624,14 @@ class TestApkinfo:
                 str,
             ),
             (
-                0x3e8,
+                0x3E8,
                 float,
             ),
             (
-                ("Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
-                 "Ljava/lang/StringBuilder;"),
+                (
+                    "Ljava/lang/StringBuilder;->append(Ljava/lang/String;)"
+                    "Ljava/lang/StringBuilder;"
+                ),
                 str,
             ),
             (
@@ -496,3 +644,82 @@ class TestApkinfo:
         apkinfo = apkinfo_with_R2Imp_only
         parsed_param = apkinfo._parse_parameter(test_input)
         assert isinstance(parsed_param, expected)
+
+    def test_get_strings(self, apkinfo):
+        if apkinfo.core_library in ["radare2", "rizin"]:
+            pytest.skip(
+                reason="Upstream missed some strings in the binary."
+            )
+
+        expectStrings = {"cache", "display_name", "ACTION_CUT"}
+
+        result = apkinfo.get_strings()
+
+        assert expectStrings.issubset(result)
+
+    def test_get_wrapper_smali(self, apkinfo):
+        if apkinfo.core_library in ["radare2", "rizin"]:
+            pytest.skip(
+                reason=(
+                    "Upstream missed the bytecodes "
+                    "in the latter part of the function."
+                )
+            )
+
+        parent_method = apkinfo.find_method(
+            "Lcom/example/google/service/ContactsHelper;",
+            "getSIMContacts",
+            "()V",
+        )[0]
+
+        first_method = apkinfo.find_method(
+            "Landroid/content/ContentResolver;",
+            "query",
+            (
+                "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String; "
+                "[Ljava/lang/String; Ljava/lang/String;)"
+                "Landroid/database/Cursor;"
+            ),
+        )[0]
+
+        second_method = apkinfo.find_method(
+            "Landroid/database/Cursor;",
+            "getColumnIndex",
+            "(Ljava/lang/String;)I",
+        )[0]
+
+        expected_result = {
+            "first": [
+                "invoke-virtual/range",
+                "v0",
+                "v1",
+                "v2",
+                "v3",
+                "v4",
+                "v5",
+                (
+                    "Landroid/content/ContentResolver;->query"
+                    "(Landroid/net/Uri; [Ljava/lang/String; Ljava/lang/String;"
+                    " [Ljava/lang/String; Ljava/lang/String;)"
+                    "Landroid/database/Cursor;"
+                ),
+            ],
+            "first_hex": "74 06 83 00 00 00",
+            "second": [
+                "invoke-interface",
+                "v7",
+                "v2",
+                (
+                    "Landroid/database/Cursor;->getColumnIndex"
+                    "(Ljava/lang/String;)I"
+                ),
+            ],
+            "second_hex": "72 20 f5 00 27 00",
+        }
+
+        result = apkinfo.get_wrapper_smali(
+            parent_method, first_method, second_method
+        )
+
+        for key, expected in expected_result.items():
+            assert result[key] == expected
