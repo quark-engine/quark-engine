@@ -19,7 +19,7 @@ class Forensic:
 
     def __init__(self, apkpath, core_library="shuriken"):
         if core_library == "shuriken":
-            self.apkinfo = ShurikenImp(apkpath)
+            self.apk = ShurikenImp(apkpath)
         elif core_library == "rizin":
             self.apk = RizinImp(apkpath)
         elif core_library == "androguard":
