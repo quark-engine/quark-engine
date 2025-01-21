@@ -98,12 +98,12 @@ class TestRuleObject:
         ]
         assert rule.api == [
             {
-                "class": "Landroid/telephony/TelephonyManager",
+                "class": "Landroid/telephony/TelephonyManager;",
                 "method": "getCellLocation",
                 "descriptor": "()Landroid/telephony/CellLocation;",
             },
             {
-                "class": "Landroid/telephony/SmsManager",
+                "class": "Landroid/telephony/SmsManager;",
                 "method": "sendTextMessage",
                 "descriptor": (
                     "(Ljava/lang/String; Ljava/lang/String;"

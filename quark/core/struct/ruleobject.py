@@ -43,6 +43,9 @@ class RuleObject:
 
         self._api = self._json_obj["api"]
         for index in range(len(self._api)):
+            if not self._api[index]["class"].endswith(";"):
+                self._api[index]["class"] += ";"
+
             descriptor = self._api[index]["descriptor"]
             if " " not in descriptor:
                 self._api[index][
