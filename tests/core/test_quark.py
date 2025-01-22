@@ -125,7 +125,7 @@ class TestQuark:
             "()Ljava/lang/String;",
         )[0]
         base_method = quark_obj.apkinfo.find_method(
-            "Landroid/telephony/TelephonyManager",
+            "Landroid/telephony/TelephonyManager;",
             "getCellLocation",
             "()Landroid/telephony/CellLocation;",
         )[0]
@@ -143,7 +143,7 @@ class TestQuark:
         wrapper = []
 
         base_method = quark_obj.apkinfo.find_method(
-            "Landroid/telephony/TelephonyManager",
+            "Landroid/telephony/TelephonyManager;",
             "getCellLocation",
             "()Landroid/telephony/CellLocation;",
         )[0]
