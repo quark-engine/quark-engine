@@ -1852,6 +1852,7 @@ Quark Scipt: CWE-22.py
 
         if not strMatchingAPIs:
             print(f"CWE-22 is detected in method, {caller.fullName}")
+
 Quark Rule: accessFileInExternalDir.json
 =========================================
 
