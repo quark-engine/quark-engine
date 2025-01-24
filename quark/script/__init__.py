@@ -75,7 +75,7 @@ class Application:
         :return: True/False
         """
         debuggable = self._getAttribute("debuggable")
-        print(debuggable)
+        
         if debuggable is None:
             return False
 
