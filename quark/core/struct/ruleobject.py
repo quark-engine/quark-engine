@@ -46,6 +46,12 @@ class RuleObject:
             if not self._api[index]["class"].endswith(";"):
                 self._api[index]["class"] += ";"
 
+            # Check if the return type misses a semicolon at the end.
+            descriptor = self._api[index]["descriptor"]
+            if '/' in descriptor[descriptor.index(')'):] and \
+                    not descriptor.endswith(';'):
+                self._api[index]["descriptor"] += ";"
+
             descriptor = self._api[index]["descriptor"]
             if " " not in descriptor:
                 self._api[index][
