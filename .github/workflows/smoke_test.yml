@@ -44,7 +44,7 @@ jobs:
    
     - name: Install Shuriken-Analyzer for Linux
       run: |
-        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
+        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@7f2e45f8714ca2d920fc2c2957c1de275edcbe23#subdirectory=shuriken/bindings/Python/
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Shuriken-Analyzer for MacOS
