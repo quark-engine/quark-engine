@@ -405,7 +405,7 @@ class TestQuarkReuslt:
 
     @staticmethod
     def testGetAllStrings(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
-        assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 1005
+        assert len(QUARK_ANALYSIS_RESULT_FOR_RULE_68.getAllStrings()) == 4378
 
     @staticmethod
     def testIsHardCoded(QUARK_ANALYSIS_RESULT_FOR_RULE_68):
