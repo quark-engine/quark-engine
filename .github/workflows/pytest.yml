@@ -62,7 +62,7 @@ jobs:
 
     - name: Install Shuriken-Analyzer
       run: |
-        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@7f2e45f8714ca2d920fc2c2957c1de275edcbe23#subdirectory=shuriken/bindings/Python/
+        pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@80443a369b6f0db6f3fd523fd0c0c4efcd64e2d5#subdirectory=shuriken/bindings/Python/
 
     - name: Install Quark-Engine
       run: pip install .
