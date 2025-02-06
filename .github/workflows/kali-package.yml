@@ -27,7 +27,7 @@ jobs:
         docker cp factory:/root/ .
 
     - name: Upload package as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
           name: kali-package
           path: '${{ github.workspace }}/root/*.deb'
