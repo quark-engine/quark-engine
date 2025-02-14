@@ -4,6 +4,7 @@
 
 from quark.core.apkinfo import AndroguardImp
 from quark.core.rzapkinfo import RizinImp
+from quark.core.shurikenapkinfo import ShurikenImp
 from quark.utils.regex import (
     extract_url,
     extract_ip,
@@ -16,8 +17,10 @@ from quark.utils.regex import (
 class Forensic:
     __slots__ = ["apk", "all_strings"]
 
-    def __init__(self, apkpath, core_library="androguard"):
-        if core_library == "rizin":
+    def __init__(self, apkpath, core_library="shuriken"):
+        if core_library == "shuriken":
+            self.apk = ShurikenImp(apkpath)
+        elif core_library == "rizin":
             self.apk = RizinImp(apkpath)
         elif core_library == "androguard":
             self.apk = AndroguardImp(apkpath)
