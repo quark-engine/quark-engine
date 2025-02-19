@@ -2349,7 +2349,7 @@ Quark Script Result
    
 
 Detect CWE-78 in Android Application
---------------------------------------
+-------------------------------------
 
 This scenario seeks to find **Improper Neutralization of Special Elements used in an OS Command** in the APK file.
 
@@ -2360,17 +2360,19 @@ We analyze the definition of CWE-78 and identify its characteristics.
 
 See `CWE-78 <https://cwe.mitre.org/data/definitions/78.html>`_ for more details.
 
-.. image:: https://imgur.com/aUB195P.png
+.. image:: https://imgur.com/HpMGGsO.png
 
 Code of CWE-78 in Vuldroid.apk
 ===============================
 
 We use the `Vuldroid.apk <https://github.com/jaiswalakshansh/Vuldroid>`_ sample to explain the vulnerability code of CWE-78.
 
-.. image:: https://imgur.com/hO6m3Bz.png
+.. image:: https://imgur.com/7Tu0Y3H.png
 
-Quark Script: CWE-78.py
-========================
+CWE-78 Detection Process Using Quark Script API
+================================================
+
+.. image:: https://imgur.com/Hi7qGjw.png
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
@@ -2378,9 +2380,14 @@ First, we design a detection rule ``ExternalStringsCommands.json`` to spot on be
 
 Next, we use Quark API ``behaviorInstance.getMethodsInArgs()`` to get the methods that passed the external command.
 
-Then we check if the method neutralizes any special elements found in the argument.
+Then we check if the method neutralizes any special elements in the argument.
 
 If the neutralization is not complete, then it may cause CWE-78 vulnerability.
+
+Quark Script: CWE-78.py
+========================
+
+.. image:: https://imgur.com/UpRWgGe.png
 
 .. code-block:: python
 
@@ -2395,7 +2402,11 @@ If the neutralization is not complete, then it may cause CWE-78 vulnerability.
         ("Ljava/lang/String;", "indexOf", "(I)I"),
         ("Ljava/lang/String;", "indexOf", "(Ljava/lang/String;)I"),
         ("Ljava/lang/String;", "matches", "(Ljava/lang/String;)Z"),
-        ("Ljava/lang/String;", "replaceAll", "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;")
+        (
+            "Ljava/lang/String;",
+            "replaceAll",
+            "(Ljava/lang/String; Ljava/lang/String;)Ljava/lang/String;",
+        ),
     ])
 
     specialElementsPattern = r"[ ;|,>`]+"
@@ -2407,18 +2418,19 @@ If the neutralization is not complete, then it may cause CWE-78 vulnerability.
 
         methodCalled = set()
         caller = ExternalStringCommand.methodCaller
-    
+
         for method in ExternalStringCommand.getMethodsInArgs():
             methodCalled.add(method.fullName)
-    
+
         if methodCalled.intersection(STRING_MATCHING_API) and not ExternalStringCommand.hasString(specialElementsPattern):
             continue
         else:
             print(f"CWE-78 is detected in method, {caller.fullName}")
-
-                
+        
 Quark Rule: ExternalStringCommand.json
-=========================================
+=======================================
+
+.. image:: https://imgur.com/eoV8hnZ.png
 
 .. code-block:: json
 
@@ -2441,15 +2453,14 @@ Quark Rule: ExternalStringCommand.json
         "label": []
     }
 
-
 Quark Script Result
-======================
-- **Vuldroid.apk**
+====================
 
 .. code-block:: TEXT
 
     $ python3 CWE-78.py
     CWE-78 is detected in method, Lcom/vuldroid/application/RootDetection; onCreate (Landroid/os/Bundle;)V
+
 
 
 
