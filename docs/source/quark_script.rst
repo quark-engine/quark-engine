@@ -2279,7 +2279,7 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 CWE-73 Detection Process Using Quark Script API
 ================================================
 
-.. image:: https://imgur.com/AMRNf9l.png
+.. image:: https://imgur.com/zGjZHA1.png
 
 Let’s use the above APIs to show how Quark script finds this vulnerability.
 
