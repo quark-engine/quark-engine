@@ -2254,8 +2254,9 @@ Quark Script Result
     CWE-925 is detected in method, Lcom/android/insecurebankv2/MyBroadCastReceiver;
 
 
+
 Detect CWE-73 in Android Application 
--------------------------------------
+--------------------------------------
 
 This scenario seeks to find **External Control of File Name or Path** in the APK file.
 
@@ -2266,36 +2267,43 @@ We analyze the definition of CWE-73 and identify its characteristics.
 
 See `CWE-73 <https://cwe.mitre.org/data/definitions/73.html>`_ for more details.
 
-.. image:: https://imgur.com/ES7xg5X.png
+.. image:: https://imgur.com/I1C5yku.png
 
 Code of CWE-73 in ovaa.apk
 ===========================
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-73.
 
-.. image:: https://imgur.com/9oa1HIC.png
+.. image:: https://imgur.com/gLJ6zWr.png
+
+CWE-73 Detection Process Using Quark Script API
+================================================
+
+.. image:: https://imgur.com/AMRNf9l.png
+
+Let’s use the above APIs to show how Quark script finds this vulnerability.
+
+First, we design a detection rule ``useLastPathSegmentAsFileName.json`` to spot behavior that uses the last path segment as the file name.
+
+Second, we use the API ``methodInstance.getArguments()`` to get the argument for the file path and use ``quarkResultInstance.isHardcoded(argument)`` to check if the argument is hardcoded into the APK. If **No**, the argument is from external input.
+
+Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to check if there are any APIs in the caller method for opening files. If **YES**, the APK performs file operations using external input as a path, which may cause CWE-73 vulnerability.
 
 Quark Script: CWE-73.py
-=======================
+========================
 
-Let’s use the above APIs to show how Quark script find this vulnerability.
+.. image:: https://imgur.com/EHrcCPg.png
 
-First, we design a detection rule ``accessFileInExternalDir.json`` to spot behavior accessing a file in an external directory.
-
-Second, we use API ``methodInstance.getArguments()`` to get the argument for the file path and use ``quarkResultInstance.isHardcoded(argument)`` to check if the argument is hardcoded into the APK. If **No**, the argument is from external input.
-
-Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)``  to check if any APIs in the caller method for opening files. If **YES**, the APK performs file operations using external input as a path, which may cause CWE-73 vulnerability.
-
-.. code:: python
+.. code-block:: python
 
     from quark.script import runQuarkAnalysis, Rule
 
     SAMPLE_PATH = "ovaa.apk"
-    RULE_PATH = "accessFileInExternalDir.json"
+    RULE_PATH = "useLastPathSegmentAsFileName.json"
 
     OPEN_FILE_API = [
         "Landroid/os/ParcelFileDescriptor;",                   # Class name
-        "open",                                                # Method name   
+        "open",                                                # Method name
         "(Ljava/io/File; I)Landroid/os/ParcelFileDescriptor;"  # Descriptor
     ]
 
@@ -2304,7 +2312,7 @@ Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod,
 
     for accessExternalDir in quarkResult.behaviorOccurList:
         filePath = accessExternalDir.secondAPI.getArguments()[2]
-    
+
         if quarkResult.isHardcoded(filePath):
             continue
 
@@ -2313,20 +2321,22 @@ Finally, we use Quark API ``quarkResultInstance.findMethodInCaller(callerMethod,
 
         if result:
             print("CWE-73 is detected in method, ", caller.fullName)
-         
-Quark Rule: accessFileInExternalDir.json
-=========================================
+
+Quark Rule: useLastPathSegmentAsFileName.json
+==============================================
+
+.. image:: https://imgur.com/JxBdde0.png
 
 .. code-block:: json
 
     {
-        "crime": "Access a file in an external directory",
+        "crime": "Use the last path segment as the file name",
         "permission": [],
         "api": [
             {
-                "class": "Landroid/os/Environment;",
-                "method": "getExternalStorageDirectory",
-                "descriptor": "()Ljava/io/File;"
+                "class": "Landroid/net/Uri;",
+                "method": "getLastPathSegment",
+                "descriptor": "()Ljava/lang/String;"
             },
             {
                 "class": "Ljava/io/File;",
@@ -2339,13 +2349,13 @@ Quark Rule: accessFileInExternalDir.json
     }
 
 Quark Script Result
-=====================
+====================
 
 .. code-block:: TEXT
 
-   $ python CWE-73.py
-   CWE-73 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
-   
+    $ python CWE-73.py
+    CWE-73 is detected in method, Loversecured/ovaa/providers/TheftOverwriteProvider; openFile (Landroid/net/Uri; Ljava/lang/String;)Landroid/os/ParcelFileDescriptor;
+
    
 
 Detect CWE-78 in Android Application
