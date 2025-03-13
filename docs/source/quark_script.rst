@@ -1555,6 +1555,7 @@ Quark Script CWE-79.py
 
             if not XSSFiltersInCaller:
                 print(f"CWE-79 is detected in method, {caller.fullName}")
+
 Quark Rule: loadUrlFromIntent.json
 ===================================
 
