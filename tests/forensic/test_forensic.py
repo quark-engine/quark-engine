@@ -22,7 +22,7 @@ def forensic(scope="function"):
 
 class TestForensic:
     def test_all_strings(self, forensic):
-        assert len(forensic.get_all_strings()) == 4378
+        assert len(forensic.get_all_strings()) == 4408
 
     def test_get_url(self, forensic):
         assert len(forensic.get_url()) == 4
