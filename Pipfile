@@ -24,7 +24,7 @@ frida-tools = "<=12.3.0"
 objection = "<=1.11.0"
 frida = "<=15.2.2"
 r2pipe = "==1.8.0"
-shurikenanalyzer = {ref = "c6087e5cd6308c6df82c8c44239d231bcdfde59e", git = "https://github.com/Fare9/Shuriken-Analyzer.git", subdirectory = "shuriken/bindings/Python/"}
+shurikenanalyzer = {ref = "b26778813b487aa55e7e183d153ec83300f4e075", git = "https://github.com/Fare9/Shuriken-Analyzer.git", subdirectory = "shuriken/bindings/Python/"}
 quark-engine = {file = ".", editable = true}
 
 [requires]
