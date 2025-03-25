@@ -826,37 +826,40 @@ Quark Script Result
     The CWE-312 vulnerability is found. The cleartext is "password"
 
 
-Detect CWE-89 in Android Application 
-----------------------------------------
+Detect CWE-89 in Android Application
+-------------------------------------
 
 This scenario seeks to find **SQL injection** in the APK file.
 
 CWE-89 Improper Neutralization of Special Elements used in an SQL Command
-============================================================================
-
+==========================================================================
 
 We analyze the definition of CWE-89 and identify its characteristics.
 
 See `CWE-89 <https://cwe.mitre.org/data/definitions/89.html>`_ for more details.
 
-.. image:: https://i.imgur.com/iJ1yIBb.jpg
+.. image:: https://imgur.com/Yx9vIS2.jpg
 
+Code of CWE-89 in AndroGoat.apk
+================================
 
-Code of CWE-89 in androgoat.apk
-=========================================
+We use the `AndroGoat.apk <https://github.com/satishpatnayak/AndroGoat>`_ sample to explain the vulnerability code of CWE-89.
 
-We use the `androgoat.apk <https://github.com/satishpatnayak/AndroGoat>`_ sample to explain the vulnerability code of CWE-89.
+.. image:: https://imgur.com/QWvu8te.jpg
 
-.. image:: https://i.imgur.com/bdQqWFb.jpg
+CWE-89 Detection Process Using Quark Script API
+================================================
 
+.. image:: https://imgur.com/gvPBB3v.jpg
 
+Let’s use the above APIs to show how the Quark script finds this vulnerability.
+
+First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod(targetMethod)`` to check if ``append`` uses the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability.
 
 Quark Script: CWE-89.py
 ========================
 
-Let's use the above APIs to show how the Quark script finds this vulnerability.
-
-First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior using SQL command Execution. Then, we use API ``behaviorInstance.isArgFromMethod(targetMethod)`` to check if ``append`` uses the value of ``getText`` as the argument. If yes, we confirmed that the SQL command string is built from user input, which will cause CWE-89 vulnerability. 
+.. image:: https://imgur.com/B6Mfp2L.jpg
 
 .. code-block:: python
 
@@ -866,7 +869,7 @@ First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior
     RULE_PATH = "executeSQLCommand.json"
 
     targetMethod = [
-        "Landroid/widget/EditText;", # class name 
+        "Landroid/widget/EditText;", # class name
         "getText",                   # method name
         "()Landroid/text/Editable;", # descriptor
     ]
@@ -880,9 +883,10 @@ First, we design a detection rule ``executeSQLCommand.json`` to spot on behavior
         ):
             print(f"CWE-89 is detected in {SAMPLE_PATH}")
 
-
 Quark Rule: executeSQLCommand.json
-====================================
+===================================
+
+.. image:: https://imgur.com/aYnt5oq.jpg
 
 .. code-block:: json
 
@@ -905,11 +909,10 @@ Quark Rule: executeSQLCommand.json
         "label": []
     }
 
-
 Quark Script Result
-=====================
+====================
 
-.. code-block:: text
+.. code-block:: TEXT
 
     $ python3 CWE-89.py
 
