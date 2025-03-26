@@ -138,7 +138,7 @@ logo()
         case_sensitive=False
     ),
     required=False,
-    default="androguard",
+    default="shuriken",
 )
 @click.option(
     "--multi-process",
