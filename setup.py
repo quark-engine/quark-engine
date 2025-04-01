@@ -15,8 +15,7 @@ required_requirements = [
     "plotly",
     "rzpipe",
     "click",
-    "r2pipe==1.8.0",
-    "ShurikenAnalyzer @ git+https://github.com/Fare9/Shuriken-Analyzer.git@b26778813b487aa55e7e183d153ec83300f4e075#subdirectory=shuriken/bindings/Python/"
+    "r2pipe==1.8.0"
 ]
 
 quarkAgentRequirements = [
