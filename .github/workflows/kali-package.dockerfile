@@ -15,6 +15,10 @@ WORKDIR /root/
 COPY quark-engine /root/quark-engine
 
 WORKDIR /root/quark-engine
+RUN shurikenCommit='b26778813b487aa55e7e183d153ec83300f4e075' && \
+    shurikenSource="\"ShurikenAnalyzer @ git+https://github.com/Fare9/Shuriken-Analyzer.git@$shurikenCommit#subdirectory=shuriken/bindings/Python/\"," && \
+    sed -i "s|required_requirements = \[|required_requirements = [\n    $shurikenSource|" setup.py
+
 RUN touch Makefile
 
 CMD ["dpkg-buildpackage", "-us", "-uc", "-b"]
