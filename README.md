@@ -66,9 +66,18 @@ With Quark Agent, you can perform analyses using only natural language. It creat
 
 Here’s a demonstration of using Quark Agent to detect the CWE-798 vulnerability in the ovaa.apk file.
 
-### Step 1: Environments Requirements
+### Step 1: Environment Requirements
 
-*   Make sure your Python version is 3.10 or above.
+* Make sure your Python version is 3.10 or above.
+* Make sure you have the following packages installed:
+  + C++ Compiler ([GCC13](https://gcc.gnu.org/)/[Microsoft Visual Studio](https://visualstudio.microsoft.com/))
+  + [Cmake](https://cmake.org/)
+  + [Git](https://git-scm.com/)
+  + [iputils-ping](https://github.com/iputils/iputils/tree/master) (Only required for Linux users)
+* Install [Shuriken-Analyzer](https://github.com/Shuriken-Group/Shuriken-Analyzer) by running:
+    ```
+    pip install git+https://github.com/Fare9/Shuriken-Analyzer.git@main#subdirectory=shuriken/bindings/Python/
+    ```
 
 ### Step 2: Install Quark Agent
 
