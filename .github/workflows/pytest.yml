@@ -58,7 +58,7 @@ jobs:
         # Install Rust and Ares
         wget https://sh.rustup.rs -O install.sh
         sh install.sh -y
-        cargo install project_ares
+        cargo install project_ares@0.10.0
 
     - name: Install Shuriken-Analyzer
       run: |

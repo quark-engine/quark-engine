@@ -1,3 +1,24 @@
+quark-engine (25.3.1-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+  
+    - Optimize the Quark Script documents for CWE-23, CWE-73, and CWE-78. (#733, #735, and #734)
+
+ --  ChihHuan Tsai <jerry99.tasi@gmail.com>  Tue, 04 Mar 2025 20:00:00 +0800
+
+quark-engine (25.2.1-0kali1) kali-dev; urgency=medium
+  * New Feature
+
+    - Introduce a new optional core library based on Shuriken-Analyzer. The Shuriken-Analyzer project page is https://github.com/Shuriken-Group/Shuriken-Analyzer. (#697) 
+
+    To enable this core library, install Shuriken-Analyzer and run Quark with option --core-library shuriken.
+
+  * Document Enhancement
+
+    - Optimize the CWE-20 and CWE-22 documents. (#727, #730)
+
+ -- AnWei Kung <sasakikung@gmail.com>  Thu, 06 Feb 2025 17:00:00 +0800
+
 quark-engine (25.1.1-0kali1) kali-dev; urgency=medium
 
   * Document Enhancement

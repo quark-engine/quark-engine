@@ -95,7 +95,7 @@ class ShurikenImp(BaseApkinfo):
             method for method in self.all_methods if not method.cache.external
         }
 
-    @property
+    @functools.cached_property
     def all_methods(self) -> Set[MethodObject]:
         """
         Inherited from baseapkinfo.py.
