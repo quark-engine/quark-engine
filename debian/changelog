@@ -6,7 +6,7 @@ quark-engine (25.4.1-0kali1) kali-dev; urgency=medium
 
   * Performance Improvement
 
-    - Change decorator of all_methods in Shuriken core to optimize performance (#741)
+    - Cache all_methods API results to optimize the performance of the Shuriken-based library. (#741)
 
  --  ChihHuan Tsai <jerry99.tasi@gmail.com>  Tue, 01 Apr 2025 20:00:00 +0800
 
