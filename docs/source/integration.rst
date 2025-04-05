@@ -7,9 +7,7 @@ Quark Engine Integration In Just 2 Steps
 First Step: Installation
 ------------------------
 
-::
-
-    $ pip3 install -U quark-engine
+You can install Quark-Engine by following :doc:`the instructions <install>`.
 
 Second Step: Code Snippet As You Go
 -----------------------------------

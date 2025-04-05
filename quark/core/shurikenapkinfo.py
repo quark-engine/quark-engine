@@ -42,6 +42,9 @@ class ShurikenImp(BaseApkinfo):
                 " library, follow the instructions on the GitHub page"
                 " 'https://github.com/Shuriken-Group/Shuriken-Analyzer' to"
                 " install Shuriken-Analyzer and its Python bindings."
+                " Alternatively, you may specify `--core-library androguard`"
+                " to use the deprecated Androguard-based core library,"
+                " though we do not recommend this approach."
             )
 
         super().__init__(apk_filepath, "shuriken", tmp_dir)
