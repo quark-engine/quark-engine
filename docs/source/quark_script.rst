@@ -2506,23 +2506,30 @@ We analyze the definition of CWE-117 and identify its characteristics.
 
 See `CWE-117 <https://cwe.mitre.org/data/definitions/117.html>`_ for more details.
 
-.. image:: https://imgur.com/poFP2Py.jpg
+.. image:: https://imgur.com/JEAyEsU.jpg
 
 Code of CWE-117 in allsafe.apk
 ===============================
 
 We use the `allsafe.apk <https://github.com/t0thkr1s/allsafe>`_ sample to explain the vulnerability code of CWE-117.
 
-.. image:: https://imgur.com/AgCpFzr.jpg
+.. image:: https://imgur.com/ueePFNu.jpg
 
-Quark Script CWE-117.py
-========================
+CWE-117 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://imgur.com/Y5hd4Uc.jpg
 
 First, we design a detection rule ``writeContentToLog.json`` to spot on behavior using the method that writes contents to the log file.
 
 Then, we use ``methodInstance.getArguments()`` to get all parameter values of this method. And we check if these parameters contain keywords of APIs for neutralization, such as ``escape``, ``replace``, ``format``, and ``setFilter``.
 
 If the answer is **YES**, that may result in secret context leakage into the log file, or the attacker may perform log forging attacks.
+
+Quark Script CWE-117.py
+========================
+
+.. image:: https://imgur.com/F1X3qg3.jpg
 
 .. code-block:: python
 
@@ -2549,14 +2556,15 @@ If the answer is **YES**, that may result in secret context leakage into the log
             caller = logOutputBehavior.methodCaller.fullName
             print(f"CWE-117 is detected in method, {caller}")
 
-
 Quark Rule: writeContentToLog.json
-==============================================
+===================================
+
+.. image:: https://imgur.com/hC4zGgT.jpg
 
 .. code-block:: json
 
     {
-        "crime": "Write contents to the log.",
+        "crime": "Write contents to the log",
         "permission": [],
         "api": [
             {
@@ -2575,12 +2583,13 @@ Quark Rule: writeContentToLog.json
     }
 
 Quark Script Result
-======================
+====================
 
 .. code-block:: TEXT
 
     $ python CWE-117.py
     CWE-117 is detected in method, Linfosecadventures/allsafe/challenges/InsecureLogging; lambda$onCreateView$0 (Lcom/google/android/material/textfield/TextInputEditText; Landroid/widget/TextView; I Landroid/view/KeyEvent;)Z
+
 
 
 Detect CWE-940 in Android Application
