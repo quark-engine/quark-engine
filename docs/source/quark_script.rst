@@ -1693,41 +1693,49 @@ We analyze the definition of CWE-295 and identify its characteristics.
 
 See `CWE-295 <https://cwe.mitre.org/data/definitions/295.html>`_ for more details.
 
-.. image:: https://imgur.com/cuZ5qPp.jpg
+.. image:: https://imgur.com/w6yx17J.jpg
 
 Code of CWE-295 in InsecureShop.apk
 ====================================
 
 We use the `InsecureShop.apk <https://github.com/hax0rgb/InsecureShop>`_ sample to explain the vulnerability code of CWE-295.
 
-.. image:: https://imgur.com/t7Y5clb.jpg
+.. image:: https://imgur.com/iBt3mzh.jpg
+
+CWE-295 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://imgur.com/HBBurwx.jpg
+
+To begin with, we use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all callers of method ``SslErrorHandler.proceed``.
+
+Next, we must verify whether the caller overrides the method ``WebViewClient.onReceivedSslError``.
+
+Therefore, we check if the caller has the same method name and descriptor as ``WebViewClient.onReceivedSslError``, then use ``findSuperclassHierarchy()`` to see if its class extends ``Landroid/webkit/WebViewClient``.
+
+If both are **YES**, the APK will proceed with HTTPS connections without certificate validation when an SSL error occurs, which may cause CWE-295 vulnerability.
 
 Quark Script CWE-295.py
 ========================
 
-To begin with, we use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate all callers of method ``SslErrorHandler.proceed``.
-
-Next, we must verify whether the caller overrides the method ``WebViewClient.onReceivedSslErroris``.
-
-Therefore, we check if the method name and descriptor of the caller match those of ``WebViewClient.onReceivedSslErroris``. After that, we use the API ``methodInstance.findSuperclassHierarchy()`` to check if the superclasses of the caller include ``Landroid/webkit/WebViewClient``.
-
-If both are **YES**, the APK will call ``SslErrorHandler.procees`` without certificate validation when an SSL error occurs, which may cause CWE-295 vulnerability.
+.. image:: https://imgur.com/h9ydW0Y.jpg
 
 .. code-block:: python
-     
+
     from quark.script import findMethodInAPK
 
     SAMPLE_PATH = "insecureShop.apk"
     TARGET_METHOD = [
         "Landroid/webkit/SslErrorHandler;",  # class name
         "proceed",                           # method name
-        "()V"                                # descriptor
+        "()V",                               # descriptor
     ]
     OVERRIDDEN_METHOD = [
         "Landroid/webkit/WebViewClient;",    # class name
         "onReceivedSslError",                # method name
-        "(Landroid/webkit/WebView;" + " Landroid/webkit/SslErrorHandler;" + \
-        " Landroid/net/http/SslError;)V"     # descriptor
+        "(Landroid/webkit/WebView;"
+        + " Landroid/webkit/SslErrorHandler;"
+        + " Landroid/net/http/SslError;)V",  # descriptor
     ]
 
     for sslProceedCaller in findMethodInAPK(SAMPLE_PATH, TARGET_METHOD):
@@ -1739,12 +1747,13 @@ If both are **YES**, the APK will call ``SslErrorHandler.procees`` without certi
             print(f"CWE-295 is detected in method, {sslProceedCaller.fullName}")
 
 Quark Script Result
-===================
+====================
 
 .. code-block:: TEXT
 
-   $　python3 CWE-295.py
-   CWE-295 is detected in method, Lcom/insecureshop/util/CustomWebViewClient; onReceivedSslError (Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V
+    $　python3 CWE-295.py
+    CWE-295 is detected in method, Lcom/insecureshop/util/CustomWebViewClient; onReceivedSslError (Landroid/webkit/WebView; Landroid/webkit/SslErrorHandler; Landroid/net/http/SslError;)V
+
 
 
 Detect CWE-489 in Android Application
