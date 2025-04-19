@@ -15,7 +15,7 @@ Package: quark-engine
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
-         rizin
+         libzip5
 Description: Android Malware (Analysis | Scoring System)
  Quark-Engine is a full-featured Android analysis framework written in
  Python for hunting threat intelligence inside the APK, DEX files.

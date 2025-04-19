@@ -22,7 +22,7 @@ def forensic(scope="function"):
 
 class TestForensic:
     def test_all_strings(self, forensic):
-        assert len(forensic.get_all_strings()) == 1005
+        assert len(forensic.get_all_strings()) == 4408
 
     def test_get_url(self, forensic):
         assert len(forensic.get_url()) == 4
@@ -48,10 +48,10 @@ class TestForensic:
         assert len(forensic.get_file()) == 0
 
     def test_get_base64(self, forensic):
-        assert len(forensic.get_base64()) == 102
+        assert len(forensic.get_base64()) == 603
 
     def test_get_android_api(self, forensic):
-        assert len(forensic.get_android_api()) == 640
+        assert len(forensic.get_android_api()) == 828
 
         result = [str(x) for x in forensic.get_android_api()]
         assert any("getCellLocation" in meth for meth in result)

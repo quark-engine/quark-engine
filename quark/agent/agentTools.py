@@ -58,7 +58,7 @@ def initQuarkObject(apk_path: str):
     """
     global quark
 
-    quark_lib = "androguard"
+    quark_lib = "shuriken"
     quark = Quark(apk_path, core_library=quark_lib)
 
     return "Quark initialized successfully"
