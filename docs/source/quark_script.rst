@@ -1240,7 +1240,7 @@ If the answer is **YES**, CWE-319 vulnerability is caused.
 Quark Script: CWE-319.py
 =========================
 
-.. image:: https://imgur.com/H1FgUtE.jpg
+.. image:: https://imgur.com/CktArDJ.jpg
 
 .. code-block:: python
 
