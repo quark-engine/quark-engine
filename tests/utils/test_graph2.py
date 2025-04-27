@@ -11,12 +11,12 @@ from quark.utils.graph import call_graph, wrapper_lookup
 @pytest.fixture(scope="module")
 def analysis_object(tmp_path_factory):
     APK_SOURCE = (
-        "https://github.com/quark-engine/" "apk-samples/raw/master/malware-samples/Ahmyth.apk"
+        "https://github.com/quark-engine/" "apk-samples/raw/master/test-samples/F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk"
     )
-    APK_NAME = "Ahmyth.apk"
+    APK_NAME = "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk"
 
     # Download apk
-    request = requests.get(APK_SOURCE)
+    request = requests.get(APK_SOURCE, timeout=10)
     apk_file = tmp_path_factory.getbasetemp() / APK_NAME
     apk_file.write_bytes(request.content)
     analysis = Apkinfo(apk_file)
@@ -27,45 +27,45 @@ def analysis_object(tmp_path_factory):
 @pytest.fixture(scope="function")
 def parent_method(analysis_object):
     return analysis_object.find_method(
-        "Lahmyth/mine/king/ahmyth/ConnectionManager;",
-        "sendReq",
-        "()V",
+        "Lcom/microsoft/appcenter/crashes/utils/ErrorLogHelper;",
+        "getNewMinidumpSubfolder",
+        "()Ljava/io/File;",
     )[0]
 
 
 @pytest.fixture(scope="function")
 def connect_method_1(analysis_object):
     return analysis_object.find_method(
-        "Lio/socket/client/Socket;",
-        "connect",
-        "()Lio/socket/client/Socket;",
+        "Lcom/microsoft/appcenter/crashes/utils/ErrorLogHelper;",
+        "getNewMinidumpDirectory",
+        "()Ljava/io/File;",
     )[0]
 
 
 @pytest.fixture(scope="function")
 def connect_method_2(analysis_object):
     return analysis_object.find_method(
-        "Lahmyth/mine/king/ahmyth/ConnectionManager$1;",
-        "<init>",
-        "()V",
+        "Lcom/microsoft/appcenter/utils/storage/FileManager;",
+        "mkdir",
+        "(Ljava/lang/String;)V",
     )[0]
 
 
 @pytest.fixture(scope="function")
 def leaf_method_1(analysis_object):
     return analysis_object.find_method(
-        "Lio/socket/client/Socket;",
-        "open",
-        "()Lio/socket/client/Socket;",
+        "Ljava/io/File;",
+        "getAbsolutePath",
+        "()Ljava/lang/String;",
     )[0]
 
 
 @pytest.fixture(scope="function")
 def leaf_method_2(analysis_object):
     return analysis_object.find_method(
-        "Ljava/lang/Object;",
+        "Ljava/io/File;",
         "<init>",
-        "()V",
+        "(Ljava/io/File; Ljava/lang/String;)V",
     )[0]
 
 
@@ -111,3 +111,4 @@ def test_call_graph(
     call_graph(call_graph_analysis)
 
     assert os.path.exists(expected_file_name)
+
