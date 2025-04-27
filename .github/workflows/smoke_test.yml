@@ -41,6 +41,7 @@ jobs:
 
         # Install click <= 8.1.7 for CLI supports
         python -m pip install "click<=8.1.7"
+        python -m pip install "pathvalidate==3.2.3"
    
     - name: Install Shuriken-Analyzer for Linux
       run: |
