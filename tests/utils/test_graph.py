@@ -2,6 +2,7 @@ import os.path
 
 import pytest
 import requests
+from pathvalidate import sanitize_filename
 
 from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
@@ -100,9 +101,12 @@ def test_call_graph(
         "crime": "For test only.",
     }
     expected_file_name = (
-        f"call_graph_image/{parent_method.name}_{connect_method_1.name}"
+        f"{parent_method.name}_{connect_method_1.name}"
         f"_{connect_method_2.name}"
     )
+    expected_file_name = sanitize_filename(expected_file_name,
+                                           replacement_text="_")
+    expected_file_name = os.path.join("call_graph_image", expected_file_name)
 
     call_graph(call_graph_analysis)
 
