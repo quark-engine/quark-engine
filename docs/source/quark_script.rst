@@ -2078,7 +2078,7 @@ Code of CWE-338 in pivaa.apk
 
 We use the `pivaa.apk <https://github.com/HTBridge/pivaa>`_ sample to explain the vulnerability code of CWE-338.
 
-.. image:: https://i.postimg.cc/k49rx0JL/image.png
+.. image:: https://i.postimg.cc/mr5rpTDz/image.png
 
 CWE-338 Detection Process Using Quark Script API
 =================================================
