@@ -2071,22 +2071,29 @@ We analyze the definition of CWE-338 and identify its characteristics.
 
 See `CWE-338 <https://cwe.mitre.org/data/definitions/338.html>`_ for more details.
 
-.. image:: https://imgur.com/SSTvgYO.jpg
+.. image:: https://imgur.com/aLybax5.jpg
 
 Code of CWE-338 in pivaa.apk
 =============================
 
 We use the `pivaa.apk <https://github.com/HTBridge/pivaa>`_ sample to explain the vulnerability code of CWE-338.
 
-.. image:: https://imgur.com/OPmo8Df.jpg
+.. image:: https://i.postimg.cc/mr5rpTDz/image.png
+
+CWE-338 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://imgur.com/yWLNwZV.jpg
+
+First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``methodInstance.getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as "token", "password", and "encrypt" to check if the PRNG is for credential usage.
 
 Quark Script CWE-338.py
 ========================
 
-First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior that uses Pseudo Random Number Generator (PRNG). Then, we use API ``methodInstance.getXrefFrom()`` to get the caller method of PRNG. Finally, we use some keywords such as “token”, “password”, and “encrypt” to check if the PRNG is for credential usage.
+.. image:: https://i.postimg.cc/xdt54Lft/image.png
 
 .. code-block:: python
-     
+
     from quark.script import runQuarkAnalysis, Rule
 
     SAMPLE_PATH = "pivaa.apk"
@@ -2102,14 +2109,18 @@ First, we design a detection rule ``useMethodOfPRNG.json`` to spot on behavior t
 
     for usePRNGMethod in quarkResult.behaviorOccurList:
         for prngCaller in usePRNGMethod.methodCaller.getXrefFrom():
-            if any(keyword in prngCaller.fullName
-                for keyword in CREDENTIAL_KEYWORDS):
+            if any(
+                keyword in prngCaller.fullName for keyword in CREDENTIAL_KEYWORDS
+            ):
                 print("CWE-338 is detected in %s" % prngCaller.fullName)
-
+    
 Quark Rule: useMethodOfPRNG.json
 =================================
+
+.. image:: https://i.postimg.cc/jS6x74Kg/image.png
+
 .. code-block:: json
-    
+
     {
         "crime": "Use method of PRNG",
         "permission": [],
@@ -2130,12 +2141,13 @@ Quark Rule: useMethodOfPRNG.json
     }
 
 Quark Script Result
-===================
+====================
 
 .. code-block:: TEXT
 
-    $ python CWE-338.py  
+    $ python CWE-338.py
     CWE-338 is detected in Lcom/htbridge/pivaa/EncryptionActivity$2; onClick (Landroid/view/View;)V
+
     
 
 
