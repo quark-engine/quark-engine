@@ -8,6 +8,7 @@ import os
 import plotly.graph_objects as go
 from graphviz import Digraph
 from prompt_toolkit.shortcuts import checkboxlist_dialog
+from pathvalidate import sanitize_filename
 
 
 def wrapper_lookup(apkinfo, method, native_api):
@@ -190,7 +191,7 @@ def call_graph(call_graph_analysis, output_format="png"):
             fontname="Courier New",
         )
 
-    if second_call != second_api:
+    if second_call != second_api and second_wrapper:
         dot.edge(
             f"{parent_function.full_name}",
             f"{second_wrapper[-1].full_name}",
@@ -212,9 +213,10 @@ def call_graph(call_graph_analysis, output_format="png"):
             fontname="Courier New",
         )
 
-    dot.render(
-        f"call_graph_image/{parent_function.name}_{first_call.name}_{second_call.name}"
-    )
+    fname = f"{parent_function.name}_{first_call.name}_{second_call.name}"
+    fname = sanitize_filename(fname, replacement_text="_")
+    output_path = os.path.join("call_graph_image", fname)
+    dot.render(output_path)
 
 
 def show_comparison_graph(title, labels, malware_confidences, font_size=22):
