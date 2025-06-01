@@ -18,6 +18,7 @@ jobs:
       run: |
         cd ..
         cp quark-engine/.github/workflows/kali-package.dockerfile .
+        cp quark-engine/.github/workflows/ping .
         docker build . --file kali-package.dockerfile -t packaging_for_kali
         cd -
 

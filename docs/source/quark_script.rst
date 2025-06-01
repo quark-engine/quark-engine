@@ -40,11 +40,7 @@ Step 1: Environments Requirements
 Step 2: Install Quark Engine
 =============================
 
-You can install Quark Engine by running:
-
-::
-
-    $ pip3 install quark-engine
+- You can install Quark-Engine by following :doc:`the instructions <install>`.
 
 
 Step 3: Prepare Quark Script, Detection Rule and the Sample File

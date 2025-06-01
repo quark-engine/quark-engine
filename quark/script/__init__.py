@@ -75,7 +75,6 @@ class Application:
         :return: True/False
         """
         debuggable = self._getAttribute("debuggable")
-        print(debuggable)
         if debuggable is None:
             return False
 
@@ -262,16 +261,20 @@ class Method:
         :return: Python list contains all superclass names of this method.
         """
 
-        parentsHierarchy = list()
-        targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
-            self.class_name)
+        parentsHierarchy = set()
+        hierarchyMap = self.quark.apkinfo.superclass_relationships
 
-        while targetClassAnalysis and "Ljava/lang/Object;" != targetClassAnalysis.extends:
-            parentsHierarchy.append(targetClassAnalysis.extends)
-            targetClassAnalysis = self.quark.apkinfo.analysis.get_class_analysis(
-                targetClassAnalysis.extends)
+        queue = [self.innerObj.class_name]
+        while queue:
+            targetClass = queue.pop()
+            if targetClass == "Ljava/lang/Object;":
+                continue
 
-        return parentsHierarchy
+            queue.extend(hierarchyMap[targetClass])
+            parentsHierarchy.update(hierarchyMap[targetClass])
+
+        parentsHierarchy.discard("Ljava/lang/Object;")
+        return list(parentsHierarchy)
 
     @property
     def fullName(self) -> str:
@@ -713,6 +716,7 @@ def checkMethodCalls(
     for candidate in checkMethods:
         checkMethodSet.update(quark.apkinfo.find_method(*candidate))
 
-    targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
+    targetLowerFuncSet = {
+        i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
 
     return any(checkMethodSet.intersection(targetLowerFuncSet))

@@ -13,7 +13,6 @@ sphinx-rtd-theme = "*"
 prettytable = "<=2.4.0"
 tqdm = "<=4.66.5"
 colorama = "<=0.4.4"
-quark-engine = {editable = true,path = "."}
 click = "<=8.1.7"
 androguard = "==3.4.0a1"
 graphviz = "<=0.18.2"
@@ -25,6 +24,8 @@ frida-tools = "<=12.3.0"
 objection = "<=1.11.0"
 frida = "<=15.2.2"
 r2pipe = "==1.8.0"
+shurikenanalyzer = {ref = "b26778813b487aa55e7e183d153ec83300f4e075", git = "https://github.com/Fare9/Shuriken-Analyzer.git", subdirectory = "shuriken/bindings/Python/"}
+quark-engine = {file = ".", editable = true}
 
 [requires]
 python_version = "3.10"

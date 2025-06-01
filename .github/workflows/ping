@@ -1,0 +1,10 @@
+#!/usr/bin/bash
+
+cat <<< "PING www.google.com (142.250.196.196) 56(84) bytes of data.
+64 bytes from nctsaa-ac-in-f4.1e100.net (142.250.196.196): icmp_seq=1 ttl=115 time=44.5 ms
+64 bytes from nctsaa-ac-in-f4.1e100.net (142.250.196.196): icmp_seq=2 ttl=115 time=227 ms
+
+--- www.google.com ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 44.475/135.747/227.019/91.272 ms"
+
