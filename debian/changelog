@@ -1,3 +1,11 @@
+quark-engine (25.6.1-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+
+    - Optimize the Quark Script documents for CWE-328, CWE-338, and CWE-489. (#754, #756, and #757)
+
+ --  ChihHuan Tsai <jerry99.tasi@gmail.com>  Tue, 03 Jun 2025 20:00:00 +0800
+
 quark-engine (25.5.1-0kali1) kali-dev; urgency=medium
 
   * Document Enhancement
