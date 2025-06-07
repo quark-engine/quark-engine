@@ -29,11 +29,11 @@ class Weight:
         # Level 4 threshold
         level_four_threshold = self.score_sum / 2 ** 1
         # Level 5 threshold
-        level_five_threshold = self.score_sum / 2 ** 0
+        # level_five_threshold = self.score_sum / 2 ** 0
 
         total_weight = self.weight_sum
 
-        if 0 <= total_weight <= level_one_threshold:
+        if total_weight <= level_one_threshold:
             return green(LEVEL_INFO.LOW.value)
 
         elif level_one_threshold < total_weight <= level_two_threshold:
@@ -45,11 +45,8 @@ class Weight:
         elif level_three_threshold < total_weight <= level_four_threshold:
             return yellow(LEVEL_INFO.Moderate.value)
 
-        elif level_four_threshold < total_weight <= level_five_threshold:
+        elif level_four_threshold < total_weight:
             return red(LEVEL_INFO.High.value)
-
-        else:
-            raise ValueError("Weight calculate failed")
 
 
 if __name__ == "__main__":
