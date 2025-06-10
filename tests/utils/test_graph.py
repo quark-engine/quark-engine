@@ -2,17 +2,24 @@ import os.path
 
 import pytest
 import requests
+from pathvalidate import sanitize_filename
 
 from quark.core.apkinfo import AndroguardImp as Apkinfo
 from quark.utils.graph import call_graph, wrapper_lookup
 
 
-@pytest.fixture(scope="module")
-def analysis_object(tmp_path_factory):
-    APK_SOURCE = (
-        "https://github.com/quark-engine/" "apk-samples/raw/master/malware-samples/Ahmyth.apk"
+@pytest.fixture(
+    scope="module",
+    params=(
+        ("malware-samples", "Ahmyth.apk"),
+        ("test-samples", "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk"),
     )
-    APK_NAME = "Ahmyth.apk"
+)
+def analysis_object(request, tmp_path_factory):
+    DIR_NAME, APK_NAME = request.param
+    APK_SOURCE = (
+        "https://github.com/quark-engine/" f"apk-samples/raw/master/{DIR_NAME}/{APK_NAME}"
+    )
 
     # Download apk
     request = requests.get(APK_SOURCE)
@@ -25,47 +32,85 @@ def analysis_object(tmp_path_factory):
 
 @pytest.fixture(scope="function")
 def parent_method(analysis_object):
-    return analysis_object.find_method(
-        "Lahmyth/mine/king/ahmyth/ConnectionManager;",
-        "sendReq",
-        "()V",
-    )[0]
+    if analysis_object.filename == "Ahmyth.apk":
+        return analysis_object.find_method(
+            "Lahmyth/mine/king/ahmyth/ConnectionManager;",
+            "sendReq",
+            "()V",
+        )[0]
 
+    elif analysis_object.filename == "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk":
+        return analysis_object.find_method(
+            "Lcom/microsoft/appcenter/crashes/utils/ErrorLogHelper;",
+            "getNewMinidumpSubfolder",
+            "()Ljava/io/File;",
+        )[0]
 
 @pytest.fixture(scope="function")
 def connect_method_1(analysis_object):
-    return analysis_object.find_method(
-        "Lio/socket/client/Socket;",
-        "connect",
-        "()Lio/socket/client/Socket;",
-    )[0]
+    if analysis_object.filename == "Ahmyth.apk":
+        return analysis_object.find_method(
+            "Lio/socket/client/Socket;",
+            "connect",
+            "()Lio/socket/client/Socket;",
+        )[0]
 
+    elif analysis_object.filename == "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk":
+        return analysis_object.find_method(
+            "Lcom/microsoft/appcenter/crashes/utils/ErrorLogHelper;",
+            "getNewMinidumpDirectory",
+            "()Ljava/io/File;",
+        )[0]
 
 @pytest.fixture(scope="function")
 def connect_method_2(analysis_object):
-    return analysis_object.find_method(
-        "Lahmyth/mine/king/ahmyth/ConnectionManager$1;",
-        "<init>",
-        "()V",
-    )[0]
+    if analysis_object.filename == "Ahmyth.apk":
+        return analysis_object.find_method(
+            "Lahmyth/mine/king/ahmyth/ConnectionManager$1;",
+            "<init>",
+            "()V",
+        )[0]
+
+    elif analysis_object.filename == "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk":
+        return analysis_object.find_method(
+            "Lcom/microsoft/appcenter/utils/storage/FileManager;",
+            "mkdir",
+            "(Ljava/lang/String;)V",
+        )[0]
 
 
 @pytest.fixture(scope="function")
 def leaf_method_1(analysis_object):
-    return analysis_object.find_method(
-        "Lio/socket/client/Socket;",
-        "open",
-        "()Lio/socket/client/Socket;",
-    )[0]
+    if analysis_object.filename == "Ahmyth.apk":
+        return analysis_object.find_method(
+            "Lio/socket/client/Socket;",
+            "open",
+            "()Lio/socket/client/Socket;",
+        )[0]
+
+    elif analysis_object.filename == "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk":
+        return analysis_object.find_method(
+            "Ljava/io/File;",
+            "getAbsolutePath",
+            "()Ljava/lang/String;",
+        )[0]
 
 
 @pytest.fixture(scope="function")
 def leaf_method_2(analysis_object):
-    return analysis_object.find_method(
-        "Ljava/lang/Object;",
-        "<init>",
-        "()V",
-    )[0]
+    if analysis_object.filename == "Ahmyth.apk":
+        return analysis_object.find_method(
+            "Ljava/lang/Object;",
+            "<init>",
+            "()V",
+        )[0]
+
+    elif analysis_object.filename == "F84E990228E08B52CDB839FB10BA36DFC187945CE94D73EB64916D453D95DA57.apk":
+        return analysis_object.find_method(
+            "Ljava/io/File;",
+            "<init>",
+            "(Ljava/io/File; Ljava/lang/String;)V",
+        )[0]
 
 
 def test_wrapper_lookup_with_result(
@@ -100,9 +145,12 @@ def test_call_graph(
         "crime": "For test only.",
     }
     expected_file_name = (
-        f"call_graph_image/{parent_method.name}_{connect_method_1.name}"
+        f"{parent_method.name}_{connect_method_1.name}"
         f"_{connect_method_2.name}"
     )
+    expected_file_name = sanitize_filename(expected_file_name,
+                                           replacement_text="_")
+    expected_file_name = os.path.join("call_graph_image", expected_file_name)
 
     call_graph(call_graph_analysis)
 
