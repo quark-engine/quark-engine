@@ -5,30 +5,56 @@ Quark Rules
 New Quark Rules For DroidKungFu
 ===============================
 
-New Quark rules (#00212 - #00233) are now available. These rules target `DroidKungFu <https://en.wikipedia.org/wiki/DroidKungFu>`__, a malware family that gains unlimited access to a device, installs and uninstalls Apps, and forwards credential data. Check `here <https://github.com/quark-engine/quark-rules>`__ for the rule details.
+New Quark rules (#00212 - #00233) are now available. These rules target `DroidKungFu <https://en.wikipedia.org/wiki/DroidKungFu>`__, a malware family that gains unlimited access to a device, installs and uninstalls Apps, and forwards confidential data. Check `here <https://github.com/quark-engine/quark-rules>`__ for the rule details.
 
-With these rules, Quark is now able to identify the DroidKungFu malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please scroll to the bottom to see the APKs we tested.
+With these rules, Quark is now able to identify the DroidKungFu malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check :ref:`here <list-of-tested-apks-droidkungfu>` for the APKs we tested.
 
-Below is a summary report of a DroidKungFu sample (``D277C97B1A8A78F859672B4A20E74B3313E9F964E68A6E857C1E9D33763434A5``). The report shows that Quark identified the sample as high-risk and provided a list of the sample's behaviors.
+Below is a summary report of a DroidKungFu sample (``D277C97B1A8A78F859672B4A20E74B3313E9F964E68A6E857C1E9D33763434A5``). The report shows that Quark identified the sample as **high-risk** and provided a list of the sample's behaviors.
 
-.. image:: https://cdn.imgpile.com/f/yt6pGDQ_xl.png
+.. image:: https://cdn.imgpile.com/f/dna1NWm_xl.png
 
+Identified Well-Known Threats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Analysts can use the list to recognize the well-known threats of DroidKungFu.
+With Quark's :ref:`rule classification <rule-classification>` feature, analysts can understand how behaviors are related and identify the well-known threats of DroidKungFu listed below.
 
-+------------------------------------------+-----------------------------------------------------------+
-| Well-Known Threats                       | Behaviors Detected by Quark                               |
-|                                          |                                                           |
-+==========================================+===========================================================+
-| 1. Gain unlimited access to a device     |  - Start a background service (#00227)                    |
-|                                          |  - Execute Linux commands (#00068, #00155)                |
-+------------------------------------------+-----------------------------------------------------------+
-| 2. Install/Uninstall additional apps     |  - Query installed app info (#00035, #00231)              |
-|                                          |  - Install/Uninstall apps (#00054, #00232)                |
-+------------------------------------------+-----------------------------------------------------------+
-| 3. Forward credential data               |  - Query credential data (#00066, #00067, etc.)           |
-|                                          |  - Send/Receive data with a URL (#00094, #00096, #00109)  |
-+------------------------------------------+-----------------------------------------------------------+
+**1. Gain unlimited access to a device**
+
+.. image:: https://cdn.imgpile.com/f/4nCi9mL_xl.png
+
+The diagram shows that the ``Lcom/google/update/UpdateService;getPermission2`` function runs shell scripts and Linux commands directly, and also calls the ``Lcom/google/update/Utils;oldrun`` function to execute additional commands.
+
+Behaviors detected by Quark:
+
+* Run shell script (#00069)
+* Execute Linux commands (#00068, #00155)
+
+**2. Install/Uninstall additional apps**
+
+.. image:: https://cdn.imgpile.com/f/jpAr3Tm_xl.png
+
+The diagram shows that the ``Lcom/waps/k;a`` function installs APKs from a file, and calls the ``Lcom/waps/l;a`` function to install more APKs and the ``Lcom/waps/k;b`` function to connect to a URL.
+
+Behaviors detected by Quark:
+
+* Install other APKs from file (#00054)
+* Connect to a URL and set request method (#00096)
+
+**3. Forward confidential data**
+
+.. image:: https://cdn.imgpile.com/f/TsURgyN_xl.png
+
+The diagram shows that the ``Lcom/madhouse/android/ads/_;_`` function queries confidential data such as SMS and call logs and also calls the ``Lcom/madhouse/android/ads/_;__`` function to check for network connectivity.
+
+Behaviors detected by Quark:
+
+* Query confidential data (#00077, #00219, #00221)
+* Check for network connectivity (#00224, #00226)
+
+.. _list-of-tested-apks-droidkungfu:
+
+List of Tested APKs
+~~~~~~~~~~~~~~~~~~~
 
 The table below lists the APKs we tested.
 
