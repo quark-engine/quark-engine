@@ -7,7 +7,7 @@ New Quark Rules For DroidKungFu
 
 New Quark rules (#00212 - #00233) are now available. These rules target `DroidKungFu <https://en.wikipedia.org/wiki/DroidKungFu>`__, a malware family that gains unlimited access to a device, installs and uninstalls Apps, and forwards confidential data. Check `here <https://github.com/quark-engine/quark-rules>`__ for the rule details.
 
-With these rules, Quark is now able to identify the DroidKungFu malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check :ref:`here <list-of-tested-apks-droidkungfu>` for the APKs we tested.
+With these rules, Quark is now able to identify the DroidKungFu malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Check :ref:`here <list-of-tested-apks-droidkungfu>` for the APKs we tested.
 
 Below is a summary report of a DroidKungFu sample (``D277C97B1A8A78F859672B4A20E74B3313E9F964E68A6E857C1E9D33763434A5``). The report shows that Quark identified the sample as **high-risk** and provided a list of the sample's behaviors.
 
@@ -16,7 +16,7 @@ Below is a summary report of a DroidKungFu sample (``D277C97B1A8A78F859672B4A20E
 Identified Well-Known Threats
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-With Quark's :ref:`rule classification <rule-classification>` feature, analysts can understand how behaviors are related and identify the well-known threats of DroidKungFu listed below.
+With Quark's :ref:`rule classification <rule-classification>` feature, analysts can generate behavior maps and see how behaviors are related. This feature helps identify 3 well-known threats from DroidKungFu, as shown below.
 
 **1. Gain unlimited access to a device**
 
