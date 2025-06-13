@@ -24,6 +24,7 @@ This guide will explain how to set up Quark, use it, and customize it.
    quark_mit_program
    quark_agent
    quark_reports
+   quark_rules
    addRules
    rule_generation
    integration

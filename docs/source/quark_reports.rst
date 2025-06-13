@@ -118,6 +118,8 @@ You can add the ``-g`` option to the quark command, and you can get the call gra
 
 .. image:: https://i.imgur.com/5xcrcdN.png
 
+.. _rule-classification:
+
 Rule Classification
 --------------------
 
