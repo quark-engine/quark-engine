@@ -1063,30 +1063,37 @@ Detect CWE-532 in Android Application
 
 This scenario seeks to find **insertion of sensitive information into Log file** in the APK file.
 
-CWE-532: Insertion of Sensitive Information into Log File
+CWE-532 Insertion of Sensitive Information into Log File
 =========================================================
 
 We analyze the definition of CWE-532 and identify its characteristics.
 
 See `CWE-532 <https://cwe.mitre.org/data/definitions/532.html>`_ for more details.
 
-.. image:: https://imgur.com/I8sCUtM.jpg
+.. image:: https://imgur.com/6WzpyId.jpg
 
 Code of CWE-532 in dvba.apk
 ============================
 
 We use the `dvba.apk <https://github.com/rewanthtammana/Damn-Vulnerable-Bank>`_  sample to explain the vulnerability code of CWE-532.
 
-.. image:: https://imgur.com/THWm2gN.jpg
+.. image:: https://imgur.com/cLzBvh2.jpg
 
-Quark Script: CWE-532.py
-========================
+CWE-532 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://imgur.com/KLbnflF.jpg
 
 Let's use the above APIs to show how the Quark script finds this vulnerability.
 
 First, we use the API ``findMethodInAPK(samplePath, targetMethod)`` to locate ``log.d`` method. Then we use API ``methodInstance.getArguments()`` to get the argument that input to ``log.d``. Finally, we use some keywords such as "token", "password", and "decrypt" to check if arguments include sensitive data. If the answer is **YES**, that may cause sensitive data leakage into log file.
 
 You can use your own keywords in the keywords list to detect sensitive data.
+
+Quark Script: CWE-532.py
+=========================
+
+.. image:: https://imgur.com/L9Ciqlp.jpg
 
 .. code-block:: python
 
@@ -1111,16 +1118,16 @@ You can use your own keywords in the keywords list to detect sensitive data.
 
         for keyword in CREDENTIAL_KEYWORDS:
             if keyword in arguments[1]:
-                print(f"CWE-532 is detected in method, {debugLogger.fullName}") 
-
+                print(f"CWE-532 is detected in method, {debugLogger.fullName}")
 
 Quark Script Result
 ====================
 
 .. code-block:: TEXT
 
-    $ python CWE-532.py 
+    $ python CWE-532.py
     CWE-532 is detected in method, Lcom/google/firebase/auth/FirebaseAuth; d (Lc/c/b/h/o;)V
+
 
 
 Detect CWE-780 in Android Application
