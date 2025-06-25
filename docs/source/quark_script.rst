@@ -2784,7 +2784,7 @@ Let’s use the above APIs to show how the Quark script finds this vulnerability
 
 To begin with, we created a detection rule named ``deserializeData.json`` to identify behaviors that deserialize data.
 
-Next, we retrieve the methods that interact with the deserialization API. Following this, we check if there are any of the APIs in ``verificationApis`` are found.
+Next, we retrieve the methods that interact with the deserialization API. Following this, we check if the methods match any APIs for verifying data.
 
 If **NO**, it could imply that the APK deserializes the untrusted data, potentially leading to a CWE-502 vulnerability.
 
