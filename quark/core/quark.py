@@ -600,7 +600,7 @@ class Quark:
             "apk_filename": self.apkinfo.filename,
             "size_bytes": self.apkinfo.filesize,
             "threat_level": warning,
-            "total_score": self.quark_analysis.score_sum,
+            "total_score": int(self.quark_analysis.score_sum + 0.5),
             "crimes": self.quark_analysis.json_report,
         }
 
