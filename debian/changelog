@@ -1,3 +1,15 @@
+quark-engine (25.7.1-0kali1) kali-dev; urgency=medium
+
+  * Rule Enhancement
+
+    - Add 22 new rules for the DroidKungFu malware family (#762)
+
+  * Document Enhancement
+
+    - Optimize the Quark Script documents for CWE-502 and CWE-532. (#769 and #764)
+
+ --  ChihHuan Tsai <jerry99.tasi@gmail.com>  Tue, 03 Jun 2025 20:00:00 +0800
+
 quark-engine (25.6.1-0kali1) kali-dev; urgency=medium
 
   * Document Enhancement
