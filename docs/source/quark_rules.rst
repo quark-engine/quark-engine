@@ -651,7 +651,7 @@ With these rules, Quark is now able to identify the BaseBridge malware family as
 
 Below is a summary report of a BaseBridge sample (``AEEC49360124E7756DAD93452853ABE2CE99F56262599A7B86327A2AF971EFC3``). The report shows that Quark identified the sample as **high-risk**, with a list of behaviors as evidence.
 
-.. image:: https://cdn.imgpile.com/f/HPgDh6Y_xl.jpg
+.. image:: https://cdn.imgpile.com/f/r5ZfHSg_xl.png
 
 Identified Well-Known Threats
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
