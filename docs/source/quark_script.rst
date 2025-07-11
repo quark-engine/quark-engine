@@ -2935,6 +2935,7 @@ Quark Script Result
     CWE-601 is detected in Loversecured/ovaa/activities/LoginActivity; onLoginFinished ()V
 
 
+
 Detect CWE-329 in Android Application
 -------------------------------------
 
@@ -2953,8 +2954,8 @@ See `CWE-329 <https://cwe.mitre.org/data/definitions/329.html>`_ for more detail
    :alt:
 
 
-Code of CWE-329 in pivaa.apk
-============================
+Code of CWE-329 in InsecureBankv2.apk
+========================================
 
 We use the `InsecureBankv2.apk <https://github.com/dineshshetty/Android-InsecureBankv2>`_ sample to explain the vulnerability code of CWE-329.
 
@@ -2975,16 +2976,16 @@ CWE-329 Detection Process Using Quark Script API
 
 Let’s use the above APIs to show how the Quark script finds this vulnerability.
 
-To begin with, we created a detection rule named ``initializeCipherWithIV.json`` to identify behaviors that initialize a cipher process with IV. Then, we use API ``behaviorInstance.getParamValues()`` to check if the cipher process uses CBC mode.
+To begin with, we created a detection rule named ``initializeCipherWithIV.json`` to identify behaviors that initialize a cipher object with IV. Then, we use API ``behaviorInstance.getParamValues()`` to check if the cipher object uses CBC mode.
 
-Finally, we use API ``behaviorInstance.isArgFromMethod(targetMethod)``  to check if any randomization API is applied on the IV used in the cipher process. If **NO**\ , it could imply that the APK uses a predictable IV in CBC mode cipher, potentially leading to a CWE-329 vulnerability.
+Finally, we use API ``behaviorInstance.isArgFromMethod(targetMethod)``  to check if any random API is applied on the IV used in the cipher object. If **NO**\ , it could imply that the APK uses a predictable IV in CBC mode cipher, potentially leading to a CWE-329 vulnerability.
 
 Quark Script CWE-329.py
 =======================
 
 
-.. image:: https://i.postimg.cc/cCXHG3zD/Screenshot-2025-07-11-17-22-28.png
-   :target: https://i.postimg.cc/cCXHG3zD/Screenshot-2025-07-11-17-22-28.png
+.. image:: https://i.postimg.cc/XqbJxDWY/Screenshot-2025-07-11-22-49-45.png
+   :target: https://i.postimg.cc/XqbJxDWY/Screenshot-2025-07-11-22-49-45.png
    :alt:
 
 
@@ -2995,7 +2996,7 @@ Quark Script CWE-329.py
    SAMPLE_PATH = "InsecureBankv2.apk"
    RULE_PATH = "initializeCipherWithIV.json"
 
-   randomizingAPIs = [
+   randomAPIs = [
        ["Ljava/security/SecureRandom", "next", "(I)I"],
        ["Ljava/security/SecureRandom", "nextBytes", "([B)V"],
    ]
@@ -3011,7 +3012,7 @@ Quark Script CWE-329.py
            break
 
        if not any(
-           initCipherWithIV.isArgFromMethod(api) for api in randomizingAPIs
+           initCipherWithIV.isArgFromMethod(api) for api in randomAPIs
        ):
            print(f"CWE-329 is detected in method, {methodcaller.fullName}")
 
@@ -3027,7 +3028,7 @@ Quark Rule: initializeCipherWithIV.json
 .. code-block:: json
 
    {
-       "crime": "Initialize a cipher process with IV",
+       "crime": "Initialize a cipher object with IV",
        "permission": [],
        "api": [
            {
