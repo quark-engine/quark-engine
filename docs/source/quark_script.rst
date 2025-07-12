@@ -2969,8 +2969,8 @@ CWE-329 Detection Process Using Quark Script API
 ================================================
 
 
-.. image:: https://i.postimg.cc/6pQZqWL2/Screenshot-2025-07-11-17-14-23.png
-   :target: https://i.postimg.cc/6pQZqWL2/Screenshot-2025-07-11-17-14-23.png
+.. image:: https://i.postimg.cc/50cscyh2/Screenshot-2025-07-12-10-02-34.png
+   :target: https://i.postimg.cc/50cscyh2/Screenshot-2025-07-12-10-02-34.png
    :alt:
 
 
@@ -2984,8 +2984,8 @@ Quark Script CWE-329.py
 =======================
 
 
-.. image:: https://i.postimg.cc/XqbJxDWY/Screenshot-2025-07-11-22-49-45.png
-   :target: https://i.postimg.cc/XqbJxDWY/Screenshot-2025-07-11-22-49-45.png
+.. image:: https://i.postimg.cc/prCCnZpm/Screenshot-2025-07-12-10-02-58.png
+   :target: https://i.postimg.cc/prCCnZpm/Screenshot-2025-07-12-10-02-58.png
    :alt:
 
 
