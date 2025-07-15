@@ -724,13 +724,13 @@ def findMethodImplementations(
     samplePath: PathLike,
     abstractMethod: List[str]
 ) -> List[Method]:
-    """Finds all implementations of a specified abstract method in the APK.
+    """Find all implementations of a specified abstract method in the APK.
 
-    :param samplePath: target APK file
-    :param abstractMethod: python list contains the abstract class name,
-                           method name, and descriptor
+    :param samplePath: target file
+    :param abstractMethod: python list contains the class name,
+                           method name, and descriptor of the abstract method
 
-    :return: python list contains the methods implementations
+    :return: python list contains the method implementations
     """
     quark = _getQuark(samplePath)
 
@@ -756,11 +756,11 @@ def isReturnAlwaysTrue(
     samplePath: PathLike,
     targetMethod: List[str]
 ) -> bool:
-    """Check if a method always return True.
+    """Check if a method always returns True.
 
-    :param samplePath: target APK file
-    :param targetMethod: python list contains the abstract class name,
-                           method name, and descriptor
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                           method name, and descriptor of the target method
 
     :return: True/False
     """
