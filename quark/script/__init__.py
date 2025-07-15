@@ -7,12 +7,14 @@ import functools
 from os import PathLike
 from os.path import abspath, isfile, join
 from typing import Any, Iterable, List, Tuple, Union
+from collections import deque
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
 from quark.core.analysis import QuarkAnalysis
 from quark.core.interface.baseapkinfo import XMLElement
 from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
+from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.ruleobject import RuleObject as Rule
 from quark.evaluator.pyeval import PyEval
 from quark.utils.regex import URL_REGEX
@@ -738,7 +740,7 @@ def findMethodImplementations(
     matchedMethods = []
     for _class in subclasses:
         matchedMethodObjects = quark.apkinfo.find_method(
-            class_name= _class,
+            class_name=_class,
             method_name=abstractMethod[1],
             descriptor=abstractMethod[2],
         )
@@ -748,3 +750,36 @@ def findMethodImplementations(
             )
 
     return matchedMethods
+
+
+def isReturnAlwaysTrue(
+    samplePath: PathLike,
+    targetMethod: List[str]
+) -> bool:
+    """Check if a method always return True.
+
+    :param samplePath: target APK file
+    :param targetMethod: python list contains the abstract class name,
+                           method name, and descriptor
+
+    :return: True/False
+    """
+    quark = _getQuark(samplePath)
+
+    targetMethodObject = quark.apkinfo.find_method(
+        targetMethod[0],
+        targetMethod[1],
+        targetMethod[2]
+    )[0]
+    instructions = deque(
+        quark.apkinfo.get_method_bytecode(targetMethodObject), maxlen=2)
+
+    isLastRegisterAssignedToTrue = (
+        instructions[-2] == BytecodeObject("const/4", ["v0"], 1)
+    )
+    isLastRegisterReturned = (
+        instructions[-1] == BytecodeObject("return", ["v0"], None)
+    )
+
+    return isLastRegisterAssignedToTrue & isLastRegisterReturned
+
