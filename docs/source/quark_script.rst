@@ -100,19 +100,19 @@ checkMethodCalls(samplePath, targetMethod, checkMethods)
     3. checkMethods: python list contains the class name, method name, and descriptor of the target method
 - **return**: bool that indicates if the specific methods are called or defined within a target method or not
 
-findMethodImplementations(samplePath, abstractMethod)
+findMethodImpls(samplePath, abstractMethod)
 =========================================================
 
 - **Description**: Find all implementations of a specified abstract method in the APK.
 - **params**:
     1. samplePath: target file
     2. targetMethod: python list contains the class name, method name, and descriptor of the abstract method
-- **return**: python list contains the methods implementations
+- **return**: python list contains the method implementations
 
-isReturnAlwaysTrue(samplePath, targetMethod)
+isMethodReturnAlwaysTrue(samplePath, targetMethod)
 =========================================================
 
-- **Description**: Check if a method always return True.
+- **Description**: Check if a method always returns True.
 - **params**:
     1. samplePath: target file
     2. targetMethod: python list contains the class name, method name, and descriptor of the target method

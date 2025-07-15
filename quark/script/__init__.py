@@ -720,7 +720,7 @@ def checkMethodCalls(
     return any(checkMethodSet.intersection(targetLowerFuncSet))
 
 
-def findMethodImplementations(
+def findMethodImpls(
     samplePath: PathLike,
     abstractMethod: List[str]
 ) -> List[Method]:
@@ -752,7 +752,7 @@ def findMethodImplementations(
     return matchedMethods
 
 
-def isReturnAlwaysTrue(
+def isMethodReturnAlwaysTrue(
     samplePath: PathLike,
     targetMethod: List[str]
 ) -> bool:
