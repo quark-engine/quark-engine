@@ -716,3 +716,35 @@ def checkMethodCalls(
     targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
 
     return any(checkMethodSet.intersection(targetLowerFuncSet))
+
+
+def findMethodImplementations(
+    samplePath: PathLike,
+    abstractMethod: List[str]
+) -> List[Method]:
+    """Finds all implementations of a specified abstract method in the APK.
+
+    :param samplePath: target APK file
+    :param abstractMethod: python list contains the abstract class name,
+                           method name, and descriptor
+
+    :return: python list contains the methods implementations
+    """
+    quark = _getQuark(samplePath)
+
+    subclasses = (quark.apkinfo.subclass_relationships
+                  .get(abstractMethod[0], None))
+
+    matchedMethods = []
+    for _class in subclasses:
+        matchedMethodObjects = quark.apkinfo.find_method(
+            class_name= _class,
+            method_name=abstractMethod[1],
+            descriptor=abstractMethod[2],
+        )
+        for methodObject in matchedMethodObjects:
+            matchedMethods.append(
+                Method(methodObj=methodObject)
+            )
+
+    return matchedMethods
