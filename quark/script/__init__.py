@@ -782,4 +782,3 @@ def isReturnAlwaysTrue(
     )
 
     return isLastRegisterAssignedToTrue & isLastRegisterReturned
-
