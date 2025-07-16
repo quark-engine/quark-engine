@@ -521,6 +521,9 @@ def testFindMethodImpls(SAMPLE_PATH_pivaa) -> None:
     ]
     methodImpls = findMethodImpls(SAMPLE_PATH_pivaa, abstractMethod)
     assert len(methodImpls) == 1
+    assert methodImpls[0].className == "Lcom/htbridge/pivaa/handlers/API$1;"
+    assert methodImpls[0].methodName == abstractMethod[1]
+    assert methodImpls[0].descriptor == abstractMethod[2]
 
 
 def testIsMethodReturnAlwaysTrue(SAMPLE_PATH_pivaa) -> None:
