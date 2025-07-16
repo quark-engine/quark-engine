@@ -721,20 +721,20 @@ def checkMethodCalls(
 
 def findMethodImpls(
     samplePath: PathLike,
-    abstractMethod: List[str]
+    targetMethod: List[str]
 ) -> List[Method]:
-    """Find all implementations of a specified abstract method in the APK.
+    """Find all implementations of a specified method in the APK.
 
     :param samplePath: target file
-    :param abstractMethod: python list contains the class name,
-                           method name, and descriptor of the abstract method
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
 
     :return: python list contains the method implementations of the
-             abstract/interface method
+             target method
     """
     quark = _getQuark(samplePath)
 
-    toVisitClassName = [abstractMethod[0]]
+    toVisitClassName = [targetMethod[0]]
     descendantClassNames = set()
     while toVisitClassName:
         currentClassName = toVisitClassName.pop()
@@ -749,8 +749,8 @@ def findMethodImpls(
     for className in descendantClassNames:
         methods = quark.apkinfo.find_method(
             class_name=className,
-            method_name=abstractMethod[1],
-            descriptor=abstractMethod[2],
+            method_name=targetMethod[1],
+            descriptor=targetMethod[2],
         )
         for method in methods:
             matchedMethods.append(Method(methodObj=method))
@@ -766,7 +766,7 @@ def isMethodReturnAlwaysTrue(
 
     :param samplePath: target file
     :param targetMethod: python list contains the class name,
-                           method name, and descriptor of the target method
+                         method name, and descriptor of the target method
 
     :return: True/False
     """
