@@ -735,7 +735,7 @@ def findMethodImpls(
     quark = _getQuark(samplePath)
 
     toVisitClassName = [targetMethod[0]]
-    descendantClassNames = set()
+    descendantClassNames = {targetMethod[0]}
     while toVisitClassName:
         currentClassName = toVisitClassName.pop()
         subclassNames = (quark.apkinfo.subclass_relationships
