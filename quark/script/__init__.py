@@ -4,7 +4,6 @@
 
 import re
 import functools
-from logging import currentframe
 from os import PathLike
 from os.path import abspath, isfile, join
 from typing import Any, Iterable, List, Tuple, Union
