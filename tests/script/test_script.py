@@ -17,6 +17,8 @@ from quark.script import (
     getApplication,
     runQuarkAnalysis,
     findMethodInAPK,
+    findMethodImpls,
+    isMethodReturnAlwaysTrue,
 )
 
 RULE_FOLDER_PATH = "tests/script/rules"
@@ -511,3 +513,23 @@ def testCheckMethodCalls(SAMPLE_PATH_14d9f) -> None:
     assert checkMethodCalls("14d9f1a92dd984d6040cc41ed06e273e.apk", targetMethod, checkMethods) is True
 
 
+def testFindMethodImpls(SAMPLE_PATH_pivaa) -> None:
+    abstractMethod = [
+        "Ljavax/net/ssl/HostnameVerifier;",
+        "verify",
+        "(Ljava/lang/String; Ljavax/net/ssl/SSLSession;)Z"
+    ]
+    methodImpls = findMethodImpls(SAMPLE_PATH_pivaa, abstractMethod)
+    assert len(methodImpls) == 1
+    assert methodImpls[0].className == "Lcom/htbridge/pivaa/handlers/API$1;"
+    assert methodImpls[0].methodName == abstractMethod[1]
+    assert methodImpls[0].descriptor == abstractMethod[2]
+
+
+def testIsMethodReturnAlwaysTrue(SAMPLE_PATH_pivaa) -> None:
+    targetMethod = [
+        "Lcom/htbridge/pivaa/handlers/API$1;",
+        "verify",
+        "(Ljava/lang/String; Ljavax/net/ssl/SSLSession;)Z"
+    ]
+    assert isMethodReturnAlwaysTrue(SAMPLE_PATH_pivaa, targetMethod) is True

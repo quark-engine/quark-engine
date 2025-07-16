@@ -7,6 +7,7 @@ import functools
 from os import PathLike
 from os.path import abspath, isfile, join
 from typing import Any, Iterable, List, Tuple, Union
+from collections import deque
 
 from quark.config import DIR_PATH as QUARK_RULE_PATH
 from quark.core.analysis import QuarkAnalysis
@@ -716,3 +717,90 @@ def checkMethodCalls(
     targetLowerFuncSet = {i for i, _ in quark.apkinfo.lowerfunc(targetMethodSet.pop())}
 
     return any(checkMethodSet.intersection(targetLowerFuncSet))
+
+
+def findMethodImpls(
+    samplePath: PathLike,
+    targetMethod: List[str]
+) -> List[Method]:
+    """Find all implementations of a specified method in the APK.
+
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
+
+    :return: python list contains the method implementations of the
+             target method
+    """
+    quark = _getQuark(samplePath)
+
+    toVisitClassName = [targetMethod[0]]
+    descendantClassNames = {targetMethod[0]}
+    while toVisitClassName:
+        currentClassName = toVisitClassName.pop()
+        subclassNames = (quark.apkinfo.subclass_relationships
+                         .get(currentClassName, []))
+        for subclassName in subclassNames:
+            if subclassName not in descendantClassNames:
+                descendantClassNames.add(subclassName)
+                toVisitClassName.append(subclassName)
+
+    matchedMethods = []
+    for className in descendantClassNames:
+        methods = quark.apkinfo.find_method(
+            class_name=className,
+            method_name=targetMethod[1],
+            descriptor=targetMethod[2],
+        )
+        for method in methods:
+            matchedMethods.append(Method(methodObj=method))
+
+    return matchedMethods
+
+
+def isMethodReturnAlwaysTrue(
+    samplePath: PathLike,
+    targetMethod: List[str]
+) -> bool:
+    """Check if a method always returns True.
+
+    :param samplePath: target file
+    :param targetMethod: python list contains the class name,
+                         method name, and descriptor of the target method
+
+    :return: True/False
+    """
+    if targetMethod[2].split(")")[-1] != "Z":
+        return False
+
+    quark = _getQuark(samplePath)
+
+    targetMethodObject = quark.apkinfo.find_method(
+        targetMethod[0],
+        targetMethod[1],
+        targetMethod[2]
+    )[0]
+
+    instructions = deque(
+        quark.apkinfo.get_method_bytecode(targetMethodObject), maxlen=2)
+
+    returnTimes = 0
+    for instruction in instructions:
+        if instruction.mnemonic == "return":
+            returnTimes += 1
+
+    if returnTimes != 1:
+        return False
+
+    isSecondToLastInsAssignedRegisterToTrue = (
+        (instructions[-2].mnemonic == "const/4") &
+        (instructions[-2].parameter == 1)
+    )
+    isMethodReturnTrue = (
+        isSecondToLastInsAssignedRegisterToTrue &
+        (instructions[-1].registers == instructions[-2].registers) &
+        (instructions[-1].mnemonic == "return") &
+        (instructions[-1].parameter is None)
+    )
+
+    return isMethodReturnTrue
