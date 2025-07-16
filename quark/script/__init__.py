@@ -15,7 +15,6 @@ from quark.core.analysis import QuarkAnalysis
 from quark.core.interface.baseapkinfo import XMLElement
 from quark.core.quark import Quark
 from quark.core.struct.methodobject import MethodObject
-from quark.core.struct.bytecodeobject import BytecodeObject
 from quark.core.struct.ruleobject import RuleObject as Rule
 from quark.evaluator.pyeval import PyEval
 from quark.utils.regex import URL_REGEX
@@ -772,6 +771,9 @@ def isMethodReturnAlwaysTrue(
 
     :return: True/False
     """
+    if targetMethod[2].split(")")[-1] != "Z":
+        return False
+
     quark = _getQuark(samplePath)
 
     targetMethodObject = quark.apkinfo.find_method(
@@ -779,6 +781,7 @@ def isMethodReturnAlwaysTrue(
         targetMethod[1],
         targetMethod[2]
     )[0]
+
     instructions = deque(
         quark.apkinfo.get_method_bytecode(targetMethodObject), maxlen=2)
 
@@ -790,11 +793,15 @@ def isMethodReturnAlwaysTrue(
     if returnTimes != 1:
         return False
 
-    isLastRegisterAssignedToTrue = (
-        instructions[-2] == BytecodeObject("const/4", ["v0"], 1)
+    isSecondToLastInsAssignedRegsiterToTrue = (
+        (instructions[-2].mnemonic == "const/4") &
+        (instructions[-2].parameter == 1)
     )
-    isLastRegisterReturned = (
-        instructions[-1] == BytecodeObject("return", ["v0"], None)
+    isMethodReturnTrue = (
+        isSecondToLastInsAssignedRegsiterToTrue &
+        (instructions[-1].registers == instructions[-2].registers) &
+        (instructions[-1].mnemonic == "return") &
+        (instructions[-1].parameter is None)
     )
 
-    return isLastRegisterAssignedToTrue & isLastRegisterReturned
+    return isMethodReturnTrue
