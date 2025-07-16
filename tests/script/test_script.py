@@ -523,7 +523,7 @@ def testFindMethodImpls(SAMPLE_PATH_pivaa) -> None:
     assert len(methodImpls) == 1
 
 
-def testFindMethodImpls(SAMPLE_PATH_pivaa) -> None:
+def testIsMethodReturnAlwaysTrue(SAMPLE_PATH_pivaa) -> None:
     targetMethod = [
         "Lcom/htbridge/pivaa/handlers/API$1;",
         "verify",
