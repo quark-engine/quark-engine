@@ -107,7 +107,7 @@ findMethodImpls(samplePath, abstractMethod)
 - **params**:
     1. samplePath: target file
     2. targetMethod: python list contains the class name, method name, and descriptor of the abstract method
-- **return**: python list contains the method implementations
+- **return**: python list contains the method implementations of the abstract/interface method
 
 isMethodReturnAlwaysTrue(samplePath, targetMethod)
 =========================================================
