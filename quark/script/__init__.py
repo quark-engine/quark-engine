@@ -774,6 +774,14 @@ def isMethodReturnAlwaysTrue(
     instructions = deque(
         quark.apkinfo.get_method_bytecode(targetMethodObject), maxlen=2)
 
+    returnTimes = 0
+    for instruction in instructions:
+        if instruction.mnemonic == "return":
+            returnTimes += 1
+
+    if returnTimes != 1:
+        return False
+
     isLastRegisterAssignedToTrue = (
         instructions[-2] == BytecodeObject("const/4", ["v0"], 1)
     )
