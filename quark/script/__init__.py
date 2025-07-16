@@ -792,12 +792,12 @@ def isMethodReturnAlwaysTrue(
     if returnTimes != 1:
         return False
 
-    isSecondToLastInsAssignedRegsiterToTrue = (
+    isSecondToLastInsAssignedRegisterToTrue = (
         (instructions[-2].mnemonic == "const/4") &
         (instructions[-2].parameter == 1)
     )
     isMethodReturnTrue = (
-        isSecondToLastInsAssignedRegsiterToTrue &
+        isSecondToLastInsAssignedRegisterToTrue &
         (instructions[-1].registers == instructions[-2].registers) &
         (instructions[-1].mnemonic == "return") &
         (instructions[-1].parameter is None)
