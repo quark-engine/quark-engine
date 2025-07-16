@@ -4,6 +4,7 @@
 
 import re
 import functools
+from logging import currentframe
 from os import PathLike
 from os.path import abspath, isfile, join
 from typing import Any, Iterable, List, Tuple, Union
@@ -730,24 +731,31 @@ def findMethodImpls(
     :param abstractMethod: python list contains the class name,
                            method name, and descriptor of the abstract method
 
-    :return: python list contains the method implementations
+    :return: python list contains the method implementations of the
+             abstract/interface method
     """
     quark = _getQuark(samplePath)
 
-    subclasses = (quark.apkinfo.subclass_relationships
-                  .get(abstractMethod[0], None))
+    toVisitClassName = [abstractMethod[0]]
+    descendantClassNames = set()
+    while toVisitClassName:
+        currentClassName = toVisitClassName.pop()
+        subclassNames = (quark.apkinfo.subclass_relationships
+                         .get(currentClassName, []))
+        for subclassName in subclassNames:
+            if subclassName not in descendantClassNames:
+                descendantClassNames.add(subclassName)
+                toVisitClassName.append(subclassName)
 
     matchedMethods = []
-    for _class in subclasses:
-        matchedMethodObjects = quark.apkinfo.find_method(
-            class_name=_class,
+    for className in descendantClassNames:
+        methods = quark.apkinfo.find_method(
+            class_name=className,
             method_name=abstractMethod[1],
             descriptor=abstractMethod[2],
         )
-        for methodObject in matchedMethodObjects:
-            matchedMethods.append(
-                Method(methodObj=methodObject)
-            )
+        for method in methods:
+            matchedMethods.append(Method(methodObj=method))
 
     return matchedMethods
 
