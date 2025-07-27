@@ -20,18 +20,24 @@ _GRAPH_SETTINGS = {
         "labelloc": "top",
         "rankdir": "LR",
         "fontsize": "24",
-        "fontname": "Courier New Bold",
+        "fontname": "Arial",
         "fillcolor": "white",
         "shape": "box",
-        "style": "rounded",
+        "penwidth": "1.5",
+        "color": "#aaa",
     },
     "node_attr": {
         "fontsize": "16",
-        "fontname": "Courier New",
-        "fontcolor": "red",
+        "fontname": "Arial Bold",
+        "fontcolor": "#ffa500",
         "shape": "none",
     },
-    "edge_attr": {"label": "calls"},
+    "edge_attr": {
+        "label": "calls",
+        "color": "#666",
+        "penwidth": "4.0",
+        "fontname": "Arial",
+    },
 }
 
 
