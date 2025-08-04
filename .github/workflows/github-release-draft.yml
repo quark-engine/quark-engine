@@ -1,0 +1,51 @@
+name: Generate GitHub Release Draft
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  on-merge:
+    if: |
+      (github.event.pull_request.merged == true 
+      && startsWith(github.event.pull_request.title, 'Update version information to'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' 
+          
+      - name: Install Codex CLI
+        run: |
+          sudo npm install -g @openai/codex@0.1.2505172129
+
+      - name: Generate PR summary issue
+        id: gen_issue
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          CODEX_QUIET_MODE: 1
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sed '/--/q' debian/changelog | sed '1, 2d' | head -n -2 > changelog.txt
+          codex -a auto-edit -q \
+            """
+              Remove the '*' and indent in changelog.txt.
+            """
+
+      - name: Create Release Draft
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          dateInfo=$(date +%y.%-m)
+          versionNum="v$dateInfo.1"
+          gh release create "$versionNum" \
+            --draft \
+            --title "$versionNum" \
+            --notes "$(cat changelog.txt)"

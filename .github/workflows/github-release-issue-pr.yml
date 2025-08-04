@@ -1,0 +1,156 @@
+name: Generate GitHub Release Issue/PR
+
+on:
+  push:
+    branches: [ master ]
+  schedule:
+    # Runs at 00:00 UTC on the Monday within the first 7 days of each month
+    - cron: '0 0 1-7 * 1'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if this Wednesday is the first of a month
+        run: |
+          upcoming_wed=$(date -d "next Wednesday" +%-d)
+          if (( upcoming_wed > 7 )); then
+            exit 0
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22' 
+          
+      - name: Install Codex CLI
+        run: |
+          sudo npm install -g @openai/codex@0.1.2505172129
+
+      - name: Install dependencies
+        run: |
+          sudo apt install git
+
+      - name: Generate PR summary issue
+        id: gen_issue
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          CODEX_QUIET_MODE: 1
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          
+          echo "Update the version number for releasing the latest version of Quark." > ISSUE_BODY.md
+          echo "In this version, the following changes will be included." >> ISSUE_BODY.md
+          echo " " >> ISSUE_BODY.md
+          sudo chmod o+x ISSUE_BODY.md
+          
+          firstDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%Y-%m-%d')"
+          lastDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 day" +'%Y-%m-%d')"
+          lastVersionNum="v$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%y.%-m.1')"
+          
+          codex -a auto-edit -q \
+            """ 
+              Follow the following instructions:
+                1. Read the git commit messages from $firstDayOfLastMonth to $lastDayOfLastMonth
+                2. Show all the commit messages after the “Update version information to $lastVersionNum” commit.
+                3. Show the #Numbers in those commit messages in Step 2.
+                4. Append the #Numbers in Step 3. after the content of ISSUE_BODY.md [with the format - #Number (e.g. - #761), one number a line]
+            """
+          
+          dateInfo=$(date -d "next Wednesday" +%y.%-m)
+          versionNum="v$dateInfo.1"
+          
+          issueNum=$(gh issue create \
+            --title "Prepare to release version $versionNum" \
+            --body-file ISSUE_BODY.md | awk -F"/" '{print $NF}')
+          
+          echo "version=$versionNum" >> $GITHUB_OUTPUT
+          echo "issue=$issueNum" >> $GITHUB_OUTPUT
+
+      - name: Update changelog for Kali package
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          CODEX_QUIET_MODE: 1
+        run: |          
+          codex -a auto-edit -q \
+            """ 
+              Follow the instructions below to update debian/changelog for $versionNum. 
+              In debian/changelog, you are going to append a new section, and describe what the new
+              merged PRs last month do. Here are the instructions:
+  
+                1. First, identify the Pull Requests of last month by reading ISSUE_BODY.md.
+
+                2. Next, for each Pull Request, choose a proper tag for it. 
+                   A tag could be from [Rule Enhancement/Document Enhancement/New Feature/Bug Fix/Dependency Update/etc.]
+                   You can reference the previous changelog to see if the tag matches the Pull Requests.
+                   Or, if the Pull Requests are something we have never done before, try to give them a proper name.
+
+                3. Then, combine those descriptions that are similar. For example, 
+                   Optimize the Quark Script documents for CWE-328, CWE-338, and CWE-489. (#754, #756, and #757)
+
+                4. Use the following template and make sure it follows the Debian changelog format. 
+                   (Also, use Zin Wong <chriswangxxxxx@gmail.com> as maintainer's info):
+            
+                  quark-engine (YY.M.1-0kali1) kali-dev; urgency=medium
+      
+                    * TAG
+      
+                    - DESCRIPTION
+      
+                  --  Zin Wong <chriswangxxxxx@gmail.com> RELEASE_TIME
+          
+                  for example, 
+          
+                  quark-engine (25.1.1-0kali1) kali-dev; urgency=medium
+
+                    * Document Enhancement
+
+                    - Optimize the Quark Script documents for CWE-94, CWE-798, and CWE-921. (#724, #722, and #723) 
+
+                  --  Zin Wong <chriswangxxxxx@gmail.com>  Tue, 01 Jan 2025 20:00:00 +0800
+          
+            """
+          rm ISSUE_BODY.md
+
+      - name: Update version information
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
+          CODEX_QUIET_MODE: 1
+        run: |
+            codex -a auto-edit -q \
+              """
+                Update version information in the following files for next release $versionNum:
+                  1. debian/control: Standards-Version
+                  2. docs/source/conf.py: release
+                  3. quark/__init__.py: __version__
+                  Where YY.MM.X stands for:
+                   - YY: last two digits of the year
+                   - MM: month number
+                   - X: release count within that month (normally 1)
+                  For example, 25.2.1 means the 1st release in February 2025.
+              """
+
+      - name: Commit the changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add debian/control
+          git add debian/changelog
+          git add docs/source/conf.py
+          git add quark/__init__.py
+          git commit -m "Update version information for ${{ steps.gen_issue.outputs.version }}" || echo "No changes to commit"          
+
+      - name: Create pull request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "update_version_info_${{ steps.gen_issue.outputs.version }}"
+          title: "Update version information to ${{ steps.gen_issue.outputs.version }}"
+          body: |
+            Resolves #${{ steps.gen_issue.outputs.issue }}.
