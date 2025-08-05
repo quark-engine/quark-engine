@@ -4,21 +4,14 @@ on:
   push:
     branches: [ master ]
   schedule:
-    # Runs at 00:00 UTC on the Monday within the first 7 days of each month
-    - cron: '0 0 1-7 * 1'
+    # Runs at 00:00 UTC on the Wednesday within the first 7 days of each month
+    - cron: '0 14 1-7 * 3'
 
 jobs:
   release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if this Wednesday is the first of a month
-        run: |
-          upcoming_wed=$(date -d "next Wednesday" +%-d)
-          if (( upcoming_wed > 7 )); then
-            exit 0
-          fi
-
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -50,9 +43,9 @@ jobs:
           echo " " >> ISSUE_BODY.md
           sudo chmod o+x ISSUE_BODY.md
           
-          firstDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%Y-%m-%d')"
-          lastDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 day" +'%Y-%m-%d')"
-          lastVersionNum="v$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%y.%-m.1')"
+          firstDayOfLastMonth="$(date -d "$(date +%Y-%m-01) -1 month" +'%Y-%m-%d')"
+          lastDayOfLastMonth="$(date -d "$(date +%Y-%m-01) -1 day" +'%Y-%m-%d')"
+          lastVersionNum="v$(date -d "$(date +%Y-%m-01) -1 month" +'%y.%-m.1')"
           
           codex -a auto-edit -q \
             """ 
@@ -63,7 +56,7 @@ jobs:
                 4. Append the #Numbers in Step 3. after the content of ISSUE_BODY.md [with the format - #Number (e.g. - #761), one number a line]
             """
           
-          dateInfo=$(date -d "next Wednesday" +%y.%-m)
+          dateInfo=$(date +%y.%-m)
           versionNum="v$dateInfo.1"
           
           issueNum=$(gh issue create \
