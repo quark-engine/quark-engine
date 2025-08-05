@@ -145,5 +145,4 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: "update_version_info_${{ steps.gen_issue.outputs.version }}"
           title: "Update version information to ${{ steps.gen_issue.outputs.version }}"
-          body: |
-            Resolves #${{ steps.gen_issue.outputs.issue }}.
+          body: "Resolves #${{ steps.gen_issue.outputs.issue }}."
