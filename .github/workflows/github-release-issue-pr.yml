@@ -1,10 +1,8 @@
 name: Generate GitHub Release Issue/PR
 
 on:
-  push:
-    branches: [ master ]
   schedule:
-    # Runs at 00:00 UTC on the Wednesday within the first 7 days of each month
+    # Runs at 14:00 UTC on the Wednesday within the first 7 days of each month
     - cron: '0 14 1-7 * 3'
 
 jobs:
