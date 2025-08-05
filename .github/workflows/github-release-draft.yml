@@ -26,7 +26,7 @@ jobs:
         run: |
           sudo npm install -g @openai/codex@0.1.2505172129
 
-      - name: Generate PR summary issue
+      - name: Collect changelog from PR
         id: gen_issue
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
