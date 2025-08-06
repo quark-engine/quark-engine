@@ -1,3 +1,12 @@
+quark-engine (25.8.1-0kali1) kali-dev; urgency=medium
+
+  * New Feature
+
+    - Add Quark Script APIs to detect CWE-297. (#777)
+    - Add Quark Script showcases for detecting CWE-329, CWE-297, CWE-1204 and CWE-24. (#775, #778, #779 and #781)
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Wed, 06 Aug 2025 20:00:00 +0800
+
 quark-engine (25.7.1-0kali1) kali-dev; urgency=medium
 
   * Rule Enhancement
