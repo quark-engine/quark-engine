@@ -50,9 +50,9 @@ jobs:
           echo " " >> ISSUE_BODY.md
           sudo chmod o+x ISSUE_BODY.md
           
-          firstDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%Y-%m-%d')"
-          lastDayOfLastMonth="$(date -d "$(date +%Y-%m-01) next Wednesday -1 day" +'%Y-%m-%d')"
-          lastVersionNum="v$(date -d "$(date +%Y-%m-01) next Wednesday -1 month" +'%y.%-m.1')"
+          firstDayOfLastMonth="$(date -d "next Wednesday -1 month" +'%Y-%m-01')"
+          lastDayOfLastMonth="$(date -d "$(date -d "next Wednesday" +%Y-%m-01) -1 day" +'%Y-%m-%d')"
+          lastVersionNum="v$(date -d "next Wednesday -1 month" +'%y.%-m.1')"
           
           codex -a auto-edit -q \
             """ 
@@ -63,8 +63,7 @@ jobs:
                 4. Append the #Numbers in Step 3. after the content of ISSUE_BODY.md [with the format - #Number (e.g. - #761), one number a line]
             """
           
-          dateInfo=$(date -d "next Wednesday" +%y.%-m)
-          versionNum="v$dateInfo.1"
+          versionNum=$(date -d "next Wednesday" +'%y.%-m.1')
           
           issueNum=$(gh issue create \
             --title "Prepare to release version $versionNum" \

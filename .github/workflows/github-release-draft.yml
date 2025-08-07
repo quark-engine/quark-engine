@@ -43,8 +43,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          dateInfo=$(date +%y.%-m)
-          versionNum="v$dateInfo.1"
+          versionNum=$(date -d "next Wednesday" +'%y.%-m.1')
           gh release create "$versionNum" \
             --draft \
             --title "$versionNum" \
