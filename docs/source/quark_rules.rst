@@ -641,3 +641,98 @@ The table below lists the APKs we tested.
 | 193 | 31                                                             |
 |     | 4BA33232F07D0EAE2648A6DF5B3009484CFDBDA6E57D8A0B221D215EC5300F |
 +-----+----------------------------------------------------------------+
+
+New Quark Rules For GoldDream
+===============================
+
+New Quark rules (#00234 - #00237) are now available. These rules target `GoldDream <https://www.f-secure.com/v-descs/trojan-android-golddream.shtml>`__, a malware family that monitors SMS messages and phone calls and uploads them to remote servers. Check `here <https://github.com/quark-engine/quark-rules>`__ for the rule details.
+
+With these rules, Quark is now able to identify the GoldDream malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check :ref:`here <list-of-tested-apks-golddream>` for the APKs we tested.
+
+Below is a summary report of a GoldDream sample (``ECA3A3666B0FD72028431431E7FAE6774A8CA692E35AE3CB44FD8F2AA418F746``). The report shows that Quark identified the sample as **high-risk**, with a list of behaviors as evidence.
+
+.. image:: https://cdn.imgpile.com/f/qg9XDXG_xl.png
+
+Identified Well-Known Threats
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With Quark's :ref:`rule classification <rule-classification>` feature, analysts can generate behavior maps and see how behaviors are related. This feature helps identify 2 well-known threats from GoldDream, as shown below.
+
+**1. Monitor SMS messages and phone calls**
+
+.. image:: https://cdn.imgpile.com/f/egCf5BD_xl.png
+
+The behavior map shows that the ``Lcom/sjhi/client/zjReceiver;onReceive`` function monitors SMS messages and phone call activity. It also calls the ``Lcom/sjhi/client/zjReceiver;a`` function to collect the data into files.
+
+Behaviors detected by Quark:
+
+* Monitor incoming call status (#00064)
+* Monitor incoming SMS message (#00234)
+* Monitor outgoing phone call (#00235)
+* Write data to file (#00236)
+
+**2. Upload SMS messages and phone calls to remote servers**
+
+.. image:: https://cdn.imgpile.com/f/SOrA9Qz_xl.png
+
+The behavior map shows that the ``Lcom/sjhi/client/e;a`` function connects to a URL and writes a file to an output stream. If the output stream is from the URL, this indicates the function uploads a file to a remote server.
+
+Behaviors detected by Quark:
+
+* Connect to a URL and set request method (#00096)
+* Write file content to an output stream (#00237)
+
+.. _list-of-tested-apks-golddream:
+
+List of Tested APKs
+~~~~~~~~~~~~~~~~~~~
+
+The table below lists the APKs we tested.
+
++-------+------------------------------------------------------------------+
+| index | sha256                                                           |
++=======+==================================================================+
+| 1     | DAAFD978B9C3D6CE45DF705F9C5DE432609546673441A7F1ECAE7C4F42069FE1 |
++-------+------------------------------------------------------------------+
+| 2     | D710998CC0C38046D8C3713463B992B925A647780D61030462DBEE41094D2E21 |
++-------+------------------------------------------------------------------+
+| 3     | C2236E4159E14623214C9F22EB8B373AE47C20CEF126398B7EC2D11DDF7133CB |
++-------+------------------------------------------------------------------+
+| 4     | 30838B9223D7C9A029D25903030C0EE5784E2556F3FB4994A9A66D0E52452915 |
++-------+------------------------------------------------------------------+
+| 5     | F44FF1D306731B7EA378569545963A71254145252C2D26CA6F679CAA8FD39468 |
++-------+------------------------------------------------------------------+
+| 6     | 26C12F1A899DBA752B29B20B599CEAC2A814BE1AB3CD50BEB96A26B6033F2F1E |
++-------+------------------------------------------------------------------+
+| 7     | 38A90E9AB4FAA62EA71F1FC726BA4B747FA363D9F4D15E7478239E771FC36BC9 |
++-------+------------------------------------------------------------------+
+| 8     | 72A3B68C5EBD84E1F9FF9AF529A2102A1DE08E7F1CA5B874CF1FFB4B380AF7C9 |
++-------+------------------------------------------------------------------+
+| 9     | 594EBCC14A163B86222BD09ADFE95498DA81CEAEB772B706339D0A24858B1267 |
++-------+------------------------------------------------------------------+
+| 10    | 4DB9936E2BD190CC35710264179D5FEB28735C0661991593F28D5FEA6B2A3998 |
++-------+------------------------------------------------------------------+
+| 11    | 021B664D927EE81E90B936E6B880844B040753BC048DEBFF0358B39FA15C39E7 |
++-------+------------------------------------------------------------------+
+| 12    | 6F3FF062C0A4CA13A12C68FB3FC17A12F75BD18BA6CB76CC82660F026A966990 |
++-------+------------------------------------------------------------------+
+| 13    | ECA3A3666B0FD72028431431E7FAE6774A8CA692E35AE3CB44FD8F2AA418F746 |
++-------+------------------------------------------------------------------+
+| 14    | 05A64C76B56919F4C6063CE376B59AC84C707425D6A442936B5AD659F7293C1E |
++-------+------------------------------------------------------------------+
+| 15    | 36D7471FA1E7C3AF4BE233F4F4971B41CF0A1EF1067D4C3B1D3BD4C3CD3D2E38 |
++-------+------------------------------------------------------------------+
+| 16    | 70F447054FD798F6EC3D6E67104F0910C73BAD80A94FD83AAC4F119786A0F253 |
++-------+------------------------------------------------------------------+
+| 17    | 545E1A911DA1071D79D9C40E945480FD9D5BA051472991819F8EB2644C5A6F3D |
++-------+------------------------------------------------------------------+
+| 18    | 3E72CC3C0DB3513A29FF53E27726FB9277C7D2F13661CF0DFCA8EB34DC690074 |
++-------+------------------------------------------------------------------+
+| 19    | FF2BEF8912CCD5CEE93DC8C6FB4BE2B142E790A30689AFEDB32ECB665AD1F040 |
++-------+------------------------------------------------------------------+
+| 20    | BA84EB2885F01C15DFDA3FE394486BE9E7E0FAECE28EABA70B007BE5864C233D |
++-------+------------------------------------------------------------------+
+| 21    | 42979D0E32550419DFA7F7BB1C5CCA245056E0EC50B489CA73C259E45C76C66D |
++-------+------------------------------------------------------------------+
+| 22    | 969BCDB8DC4043483AB645AFFF4616A1845F2276EF4165475F6357D71508047C |
++-------+------------------------------------------------------------------+
