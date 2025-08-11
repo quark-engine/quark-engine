@@ -3,9 +3,9 @@ name: Generate GitHub Release Issue/PR
 on:
   workflow_dispatch: {}
   schedule:
-    # Runs at 08:00 Taipei time (UTC+8) on the Monday within the first 7 days of each month
+    # Runs at 08:00 Taipei time (UTC+8) on Monday.
     # (Since GitHub only accept UTC timezone, convert the trigger time to 00:00 UTC)
-    - cron: '0 0 1-7 * 1'
+    - cron: '0 0 * * 1'
 
 jobs:
   release:
