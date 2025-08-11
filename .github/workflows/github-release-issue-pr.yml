@@ -66,11 +66,11 @@ jobs:
                 4. Append the #Numbers in Step 3. after the content of ISSUE_BODY.md [with the format - #Number (e.g. - #761), one number a line]
             """
           
-          versionNum=$(date -d "next Wednesday" +'%y.%-m.1')
-          releaseMonth=$(echo $versionNum | awk -F. '{printf "%s.%s", $1, $2}')
-          lastReleaseMonth=$(echo $lastVersionNum | awk -F. '{printf "%s.%s", $1, $2}')
+          versionNum="v$(date -d "next Wednesday" +'%y.%-m.1')"
+          releaseMonthInfo=$(echo $versionNum | awk -F. '{printf "%s.%s", $1, $2}')
+          lastReleaseMonthInfo=$(echo $lastVersionNum | awk -F. '{printf "%s.%s", $1, $2}')
           
-          if [ $releaseMonth = $lastReleaseMonth ]; then
+          if [ $releaseMonthInfo = $lastReleaseMonthInfo ]; then
             versionNum="$(echo $lastVersionNum | awk -F. -v OFS=. '{$NF+=1; print}')"
           fi
           
@@ -87,6 +87,7 @@ jobs:
           CODEX_QUIET_MODE: 1
         run: |          
           dateToday="$(TZ=Asia/Taipei date +'%a, %d %b %Y %H:%M:%S %z')"
+          versionNum=${{ steps.gen_issue.outputs.version }}
           codex -a auto-edit -q \
             """ 
               Follow the instructions below to update debian/changelog for $versionNum. 
@@ -106,7 +107,7 @@ jobs:
                 4. Use the following template and make sure it follows the Debian changelog format. 
                    (Also, use Zin Wong <chriswangxxxxx@gmail.com> as maintainer's info):
             
-                  quark-engine (YY.M.1-0kali1) kali-dev; urgency=medium
+                  quark-engine (YY.M.X-0kali1) kali-dev; urgency=medium
       
                     * TAG
       
@@ -114,7 +115,7 @@ jobs:
       
                   --  Zin Wong <chriswangxxxxx@gmail.com> RELEASE_TIME_TODAY
           
-                  , where RELEASE_TIME_TODAY is $dateToday. For example, 
+                  , where YY.M.X should align with $versionNum and RELEASE_TIME_TODAY is $dateToday. For example, 
           
                   quark-engine (25.1.1-0kali1) kali-dev; urgency=medium
 
@@ -132,17 +133,13 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
           CODEX_QUIET_MODE: 1
         run: |
+            versionNum=${{ steps.gen_issue.outputs.version }}
             codex -a auto-edit -q \
               """
                 Update version information in the following files for next release $versionNum:
                   1. debian/control: Standards-Version
                   2. docs/source/conf.py: release
                   3. quark/__init__.py: __version__
-                  Where YY.MM.X stands for:
-                   - YY: last two digits of the year
-                   - MM: month number
-                   - X: release count within that month (normally 1)
-                  For example, 25.2.1 means the 1st release in February 2025.
               """
 
       - name: Commit the changes
@@ -153,7 +150,8 @@ jobs:
           git add debian/changelog
           git add docs/source/conf.py
           git add quark/__init__.py
-          git commit -m "Update version information for ${{ steps.gen_issue.outputs.version }}" || echo "No changes to commit"          
+          versionNum=${{ steps.gen_issue.outputs.version }}
+          git commit -m "Update version information for $versionNum" || echo "No changes to commit"          
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
