@@ -13,9 +13,11 @@ jobs:
 
     steps:
       - name: Check if this Wednesday is the first one of the Month
-        run: |    
+        run: | 
           upcoming_wed=$(date -d "next Wednesday" +%-d)
-          if (( upcoming_wed > 7 )); then
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            echo "Triggered manually, don't check."
+          elif (( upcoming_wed > 7 )); then
             exit 0
           fi
 
@@ -52,7 +54,8 @@ jobs:
           
           firstDayOfLastMonth="$(date -d "next Wednesday -1 month" +'%Y-%m-01')"
           lastDayOfLastMonth="$(date -d "$(date -d "next Wednesday" +%Y-%m-01) -1 day" +'%Y-%m-%d')"
-          lastVersionNum="v$(date -d "next Wednesday -1 month" +'%y.%-m.1')"
+          git fetch --tags
+          lastVersionNum="$(git tag --sort=-creatordate | head -n 1)"
           
           codex -a auto-edit -q \
             """ 
@@ -64,6 +67,12 @@ jobs:
             """
           
           versionNum=$(date -d "next Wednesday" +'%y.%-m.1')
+          releaseMonth=$(echo $versionNum | awk -F. '{printf "%s.%s", $1, $2}')
+          lastReleaseMonth=$(echo $lastVersionNum | awk -F. '{printf "%s.%s", $1, $2}')
+          
+          if [ $releaseMonth = $lastReleaseMonth ]; then
+            versionNum="$(echo $lastVersionNum | awk -F. -v OFS=. '{$NF+=1; print}')"
+          fi
           
           issueNum=$(gh issue create \
             --title "Prepare to release version $versionNum" \
