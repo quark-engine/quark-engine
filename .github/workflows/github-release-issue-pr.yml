@@ -12,13 +12,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check if this Wednesday is the first one of the Month
+      - name: Check if this Wednesday is the first one of the month
         run: | 
-          upcoming_wed=$(date -d "next Wednesday" +%-d)
+          upcomingWed=$(date -d "next Wednesday" +%-d)
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            echo "Triggered manually, don't check."
-          elif (( upcoming_wed > 7 )); then
+            echo "Triggered manually, don't check if the week contains the first Wednesday of a month. Continue the process."
+          elif (( upcomingWed > 7 )); then
+            echo "Triggered automatically, the week does not contain the first Wednesday of a month. End the process."
             exit 0
+          else
+            echo "Triggered automatically, the week contains the first Wednesday of a month. Continue the process."
           fi
 
       - name: Checkout repository
@@ -52,25 +55,23 @@ jobs:
           echo " " >> ISSUE_BODY.md
           sudo chmod o+x ISSUE_BODY.md
           
-          firstDayOfLastMonth="$(date -d "next Wednesday -1 month" +'%Y-%m-01')"
-          lastDayOfLastMonth="$(date -d "$(date -d "next Wednesday" +%Y-%m-01) -1 day" +'%Y-%m-%d')"
           git fetch --tags
           lastVersionNum="$(git tag --sort=-creatordate | head -n 1)"
+          monthOfLastRelease=$(echo $lastVersionNum | awk -F. '{print $2}')
           
           codex -a auto-edit -q \
             """ 
               Follow the following instructions:
-                1. Read the git commit messages from $firstDayOfLastMonth to $lastDayOfLastMonth
+                1. Read the git commit messages from the month $monthOfLastRelease of this year.
                 2. Show all the commit messages after the “Update version information to $lastVersionNum” commit.
                 3. Show the #Numbers in those commit messages in Step 2.
                 4. Append the #Numbers in Step 3. after the content of ISSUE_BODY.md [with the format - #Number (e.g. - #761), one number a line]
             """
           
           versionNum="v$(date -d "next Wednesday" +'%y.%-m.1')"
-          releaseMonthInfo=$(echo $versionNum | awk -F. '{printf "%s.%s", $1, $2}')
-          lastReleaseMonthInfo=$(echo $lastVersionNum | awk -F. '{printf "%s.%s", $1, $2}')
+          monthOfThisRelease=$(echo $versionNum | awk -F. '{print $2}')
           
-          if [ $releaseMonthInfo = $lastReleaseMonthInfo ]; then
+          if [ $monthOfThisRelease = $monthOfLastRelease ]; then
             versionNum="$(echo $lastVersionNum | awk -F. -v OFS=. '{$NF+=1; print}')"
           fi
           
@@ -92,9 +93,9 @@ jobs:
             """ 
               Follow the instructions below to update debian/changelog for $versionNum. 
               In debian/changelog, you are going to append a new section, and describe what the new
-              merged PRs last month do. Here are the instructions:
+              merged PRs since the last release do. Here are the instructions:
   
-                1. First, identify the Pull Requests of last month by reading ISSUE_BODY.md.
+                1. First, identify the Pull Requests since the last release by reading ISSUE_BODY.md.
 
                 2. Next, for each Pull Request, choose a proper tag for it. 
                    A tag could be from [Rule Enhancement/Document Enhancement/New Feature/Bug Fix/Dependency Update/etc.]
@@ -105,7 +106,7 @@ jobs:
                    Optimize the Quark Script documents for CWE-328, CWE-338, and CWE-489. (#754, #756, and #757)
 
                 4. Use the following template and make sure it follows the Debian changelog format. 
-                   (Also, use Zin Wong <chriswangxxxxx@gmail.com> as maintainer's info):
+                   (Also, use Zin Wong <chriswangxxxxx@gmail.com> as the maintainer's info):
             
                   quark-engine (YY.M.X-0kali1) kali-dev; urgency=medium
       
