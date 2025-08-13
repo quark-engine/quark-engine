@@ -27,7 +27,6 @@ jobs:
           sudo npm install -g @openai/codex@0.1.2505172129
 
       - name: Collect changelog from PR
-        id: gen_issue
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_KEY }}
           CODEX_QUIET_MODE: 1
@@ -43,7 +42,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          versionNum="v$(date -d 'next Wednesday' +'%y.%-m.1')"
+          versionNum=$(echo ${{ github.event.pull_request.title }} | awk '{print $NF}')
           gh release create "$versionNum" \
             --draft \
             --title "$versionNum" \
