@@ -132,16 +132,16 @@ Release process
 
 ``Version: v2.0``
 
-The Quark release process is as below:
+The Quark release process is as follows:
 
 
-.. image:: https://i.postimg.cc/NsK6mCmt/github-release-drawio.png
-   :target: https://i.postimg.cc/NsK6mCmt/github-release-drawio.png
+.. image:: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
+   :target: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
    :alt:
 
 
 .. note::
-    The process starts on the Monday before the first Wednesday of a month (e.g. **Monday, September 29th, 2025**\ ).
+    The process begins on the Monday before the first Wednesday of each month (e.g., **Monday, September 29, 2025**\ ).
 
 
 There are 6 steps in the process:
@@ -150,7 +150,6 @@ There are 6 steps in the process:
 
 .. note::
     Normally, this step is unnecessary because the CI triggers automatically. If it fails to trigger, you can start it manually using the method below.
-
 
 Click the ``Actions`` tab on the GitHub page of Quark.
 
@@ -197,9 +196,9 @@ To edit the auto-generated issue, click the ``...`` menu on the right and select
    :alt:
 
 
-**3. Test Quark in downstream**
+**3. Test Quark in the downstream**
 
-Verify that Quark runs correctly in downstream projects such as Jadx or APKLab, and attach the screenshots of the results to the issue.
+Verify that Quark runs correctly in downstream projects such as Jadx or APKLab, and attach the screenshots of results to the issue.
 
 .. image:: https://i.postimg.cc/G2LdFqxG/jadx.jpg
    :target: https://i.postimg.cc/G2LdFqxG/jadx.jpg
@@ -219,7 +218,7 @@ To edit the auto-generated PR, click the ``...`` menu on the right and select ``
    :alt:
 
 
-To merge the PR, first click the downward button 🔽 and select ``Squash and merge``.
+To merge the PR, first click the dropdown button 🔽 and select ``Squash and merge``.
 
 .. image:: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
    :target: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
@@ -242,7 +241,7 @@ If the commit message is correct, click ``Confirm squash and merge`` to complete
 
 **6. Adjust the draft of the release and publish it**
 
-Click ``Releases`` on Quark’s main GitHub page and you can see the auto-generated release draft.
+Click ``Releases`` on Quark’s main GitHub page, and you can see the auto-generated release draft.
 
 .. image:: https://i.postimg.cc/SN6XftWt/release-01.jpg
    :target: https://i.postimg.cc/SN6XftWt/release-01.jpg
@@ -256,7 +255,7 @@ Click the pencil button.
    :alt:
 
 
-To edit the auto-generated release note, modify it in the ``Write`` window.
+To edit the auto-generated release notes, modify them in the ``Write`` window.
 
 .. image:: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
    :target: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
