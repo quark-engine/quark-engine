@@ -129,8 +129,143 @@ When Quark received a PR, the triage process is as below:
 
 Release process
 ----------------
-``Version: v1.1``
 
-The Quark release process is as below:
+``Version: v2.0``
 
-.. image:: https://i.imgur.com/WtN2eLi.png
+The Quark release process is as follows:
+
+
+.. image:: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
+   :target: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
+   :alt:
+
+
+.. note::
+    The process begins on the Monday before the first Wednesday of each month (e.g., **Monday, September 29, 2025**\ ).
+
+
+There are 6 steps in the process:
+
+**1. Initiate the CI for GitHub release manually**
+
+.. note::
+    Normally, this step is unnecessary because the CI triggers automatically. If it fails to trigger, you can start it manually using the method below.
+
+Click the ``Actions`` tab on the GitHub page of Quark.
+
+.. image:: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
+   :target: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
+   :alt:
+
+
+Click ``Generate GitHub Release Issue/PR`` workflow in the left sidebar.
+
+
+.. image:: https://i.postimg.cc/Jn2WCmj4/ci-issue-pr.jpg
+   :target: https://i.postimg.cc/Jn2WCmj4/ci-issue-pr.jpg
+   :alt:
+
+
+Click ``Run workflow`` and then ``Run workflow``. The workflow will create an issue and a PR approximately 10 minutes later.
+
+.. image:: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
+   :target: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
+   :alt:
+
+
+The issue lists all PRs merged since the last release.
+
+.. image:: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :target: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :alt:
+
+
+And the PR updates the changelog and version information.
+
+.. image:: https://i.postimg.cc/MKc3FVsB/pr.jpg
+   :target: https://i.postimg.cc/MKc3FVsB/pr.jpg
+   :alt:
+
+
+**2. Adjust the content of the issue**
+
+To edit the auto-generated issue, click the ``...`` menu on the right and select ``Edit``.
+
+.. image:: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
+   :target: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
+   :alt:
+
+
+**3. Test Quark in the downstream**
+
+Verify that Quark runs correctly in downstream projects such as Jadx or APKLab, and attach the screenshots of results to the issue.
+
+.. image:: https://i.postimg.cc/G2LdFqxG/jadx.jpg
+   :target: https://i.postimg.cc/G2LdFqxG/jadx.jpg
+   :alt:
+
+
+**4. Fix broken functions**
+
+If Quark fails to run analysis in downstream projects, resolve the problem.
+
+**5. Adjust the content of the PR and merge it**
+
+To edit the auto-generated PR, click the ``...`` menu on the right and select ``Edit``.
+
+.. image:: https://i.postimg.cc/7YWhx8Mc/pr-edit.jpg
+   :target: https://i.postimg.cc/7YWhx8Mc/pr-edit.jpg
+   :alt:
+
+
+To merge the PR, first click the dropdown button 🔽 and select ``Squash and merge``.
+
+.. image:: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
+   :target: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
+   :alt:
+
+
+Next, click the green ``Squash and merge`` button.
+
+.. image:: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
+   :target: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
+   :alt:
+
+
+If the commit message is correct, click ``Confirm squash and merge`` to complete the merge.
+
+.. image:: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
+   :target: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
+   :alt:
+
+
+**6. Adjust the draft of the release and publish it**
+
+Click ``Releases`` on Quark’s main GitHub page, and you can see the auto-generated release draft.
+
+.. image:: https://i.postimg.cc/SN6XftWt/release-01.jpg
+   :target: https://i.postimg.cc/SN6XftWt/release-01.jpg
+   :alt:
+
+
+Click the pencil button.
+
+.. image:: https://i.postimg.cc/X7GmnSx4/Screenshot-2025-08-12-07-47-19-1.png
+   :target: https://i.postimg.cc/X7GmnSx4/Screenshot-2025-08-12-07-47-19-1.png
+   :alt:
+
+
+To edit the auto-generated release notes, modify them in the ``Write`` window.
+
+.. image:: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
+   :target: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
+   :alt:
+
+
+To complete the publication, click ``Publish release``.
+
+.. image:: https://i.postimg.cc/c1gGLn4p/Screenshot-2025-08-12-07-48-56.png
+   :target: https://postimg.cc/c6SbD63h
+   :alt: Screenshot-2025-08-12-07-48-56.png
+
+
