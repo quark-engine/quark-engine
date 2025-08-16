@@ -166,7 +166,7 @@ jobs:
 
       - name: Install Codex CLI
         run: |
-          sudo npm install -g @openai/codex@0.1.2505172129
+          sudo npm install -g @openai/codex@0.20.0
 
       - name: Analyze the failures
         env:
@@ -177,7 +177,7 @@ jobs:
           ciAdviseExampleFile=".github/workflows/ci-failure-analysis-report-example.md"
           reportFile="analysis.md"
           triggerTime=$(TZ=Asia/Taipei date -d ${{ steps.fetch_info.outputs.triggerTime }})
-          codex -a auto-edit -q \
+          codex exec -m gpt-5 --full-auto  \
             "
               You are an experienced DevOps engineer, well-versed in GitHub Actions workflow and Python development. 
               I’ve encountered some GitHub Actions failures in a Python project and need your advice on how to resolve them.
@@ -198,24 +198,26 @@ jobs:
                 2. Identify the most likely solution to the problem.
                     + Include credible references, such as StackOverflow discussions or official documentation, to support your solution.
           
-              Then, use the template $ciAdviseReportTemplate to structure your 
-              response to $reportFile with the information:
+              Then, use the template $ciAdviseReportTemplate with the information below
+              to write your response to the file $reportFile:
                 1. TIME_STAMP: The time stamp of the workflow runs
                 2. N: The total number of failed workflows
                 3. NAME_OF_#N__FAILURE_WORKFLOW: The name of the Nth workflow
                 4. ROOT_CAUSE_OF_#N__FAILURE_WORKFLOW: The root cause that Nth workflow failed
                 5. SUGGESTED_SOLUTIONS_OF_#N__FAILURE_WORKFLOW: The suggested solution to the Nth workflow
                   (When you are suggesting code to resolve the problems: 
-                    a. Use the unified format of GNU diffutils to brew the content.
-                    b. Use a diff code block of GitHub Markdown to present the content.
+                    a. Use the unified format of GNU diffutils (see: https://www.gnu.org/software/diffutils/manual/html_node/Detailed-Unified.html),
+                       but exclude the timestamp.
+                    b. Use a diff code block of GitHub Markdown.
                   )
           
               Take $ciAdviseExampleFile for example.
           
               Lastly, follow the rules below:
-                1. Do not output something like'【F:.github/workflows/smoke_test.yml†L114-L122】'. It's ugly.
-                2. Please ensure your response in $reportFile follows GitHub Markdown format.
-                3. Please check the grammar of your response in $reportFile is correct.
+                1. Please keep your response precise, easy to understand, and straight to the point.
+                2. Please check the grammar of your response in $reportFile is correct.
+                3. Do not output something like'【F:.github/workflows/smoke_test.yml†L114-L122】'. It's ugly.
+                4. Please ensure your response in $reportFile follows GitHub Markdown format.
             "
 
       - name: Post the report as a comment for pull request
