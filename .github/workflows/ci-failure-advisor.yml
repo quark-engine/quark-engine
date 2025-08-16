@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Fetch the IDs of peer runs
         env:
@@ -185,13 +187,16 @@ jobs:
                 2. The error_logs.md file contains the details of failed workflow runs.
                 3. The time stamp of the workflow runs is $triggerTime.
               
-              Please first analyze:
-                1. The root cause of the failure
-                    + Please first determine if the problem is just a temporary network error 
-                      and could be resolved by re-running the workflow.
-                    + If not, investigate the workflow settings and the source code to find the root cause. 
-                2. The most possible solution to the problems     
-                    + Please attach credible references such as StackOverflow solutions or documentation
+              Please perform the following tasks:
+                1. Analyze the root cause of the failure by checking:
+                    + Is it a temporary network error that could be resolved by re-running the workflow?
+                    + Is it caused by incorrect workflow settings?
+                    + Is it related to recent commit changes in the source code?
+                    + Is it due to bugs in the source code?
+                    + Is it caused by dependency issues?
+                    + Does the error log suggest any other possible causes?
+                2. Identify the most likely solution to the problem.
+                    + Include credible references, such as StackOverflow discussions or official documentation, to support your solution.
           
               Then, use the template $ciAdviseReportTemplate to structure your 
               response to $reportFile with the information:
@@ -208,7 +213,7 @@ jobs:
               Take $ciAdviseExampleFile for example.
           
               Lastly, follow the rules below:
-                1. Do not output something like'【F:.github/workflows/smoke_test.yml†L114-L122'. It's ugly.
+                1. Do not output something like'【F:.github/workflows/smoke_test.yml†L114-L122】'. It's ugly.
                 2. Please ensure your response in $reportFile follows GitHub Markdown format.
                 3. Please check the grammar of your response in $reportFile is correct.
             "
