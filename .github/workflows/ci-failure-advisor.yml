@@ -3,7 +3,6 @@ name: CI Failure Advisor
 on:
   workflow_run:
     workflows:
-      - test
       - Smoke Test
       - Upload Python Package
       - build
