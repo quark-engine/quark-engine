@@ -9,6 +9,7 @@ There are 2 failed workflows:
 #### Root Cause
 
 <details>
+
 The GitHub CLI (`gh`) call in the workflow step `Generate PR summary issue` fails because it requires an authentication token in the `GH_TOKEN` environment variable when run in GitHub Actions. The error log shows:
 
  ```text
@@ -17,6 +18,7 @@ The GitHub CLI (`gh`) call in the workflow step `Generate PR summary issue` fail
    GH_TOKEN: ${{ github.token }}
  ##[error]Process completed with exit code 4.
  ```
+
 </details>
 
 #### Suggested Solutions
