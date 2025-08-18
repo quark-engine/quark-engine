@@ -12,22 +12,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Check if this Wednesday is the first one of the month
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: | 
           upcomingWed=$(date -d "next Wednesday" +%-d)
           if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
             echo "Triggered manually, don't check if the week contains the first Wednesday of a month. Continue the process."
           elif (( upcomingWed > 7 )); then
             echo "Triggered automatically, the week does not contain the first Wednesday of a month. End the process."
-            exit 0
+            gh run cancel ${{ github.run_id }}
+            sleep infinity
           else
             echo "Triggered automatically, the week contains the first Wednesday of a month. Continue the process."
           fi
-
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
