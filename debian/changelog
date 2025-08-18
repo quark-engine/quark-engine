@@ -1,3 +1,16 @@
+quark-engine (25.8.2-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+
+    - Add documentation for GoldDream. (#780)
+
+  * CI Improvement
+
+    - Adjust CI trigger for GitHub release and PyPI release. (#789)
+    - Update the expected result for Quark analysis in the smoke test. (#794)
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Mon, 18 Aug 2025 10:21:06 +0800
+
 quark-engine (25.8.1-0kali1) kali-dev; urgency=medium
 
   * New Feature
