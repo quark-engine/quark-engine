@@ -249,7 +249,7 @@ jobs:
         run: |
           bodyFile="analysis.md"
           callerRunCommitSha="${{ github.event.workflow_run.head_sha }}"
-          callerRunCommit="${callerRunCommitSha:0:6}"
+          callerRunCommit="${callerRunCommitSha:0:7}"
           title="CI failed in commit \`\`$callerRunCommit\`\`"
           
           issueNum=$(gh issue list --repo "${{ github.repository }}" --state open \
