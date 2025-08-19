@@ -1,6 +1,6 @@
 # CI Failure Analysis ❌
 
-> Time Stamp : TIME_STAMP
+> Timestamp : TIMESTAMP
 
 There are N failed workflows:
 

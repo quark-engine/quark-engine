@@ -185,7 +185,7 @@ jobs:
               Here is the information:
                 1. The source code of the Python project is in the ./ directory.
                 2. The error_logs.md file contains the details of failed workflow runs.
-                3. The time stamp of the workflow runs is $triggerTime.
+                3. The timestamp of the workflow runs is $triggerTime.
               
               Please perform the following tasks:
                 1. Analyze the root cause of the failure by checking:
@@ -200,7 +200,7 @@ jobs:
           
               Then, use the template $ciAdviseReportTemplate with the information below
               to write your response to the file $reportFile:
-                1. TIME_STAMP: The time stamp of the workflow runs
+                1. TIMESTAMP: The timestamp of the workflow runs
                 2. N: The total number of failed workflows
                 3. NAME_OF_#N__FAILURE_WORKFLOW: The name of the Nth workflow
                 4. ROOT_CAUSE_OF_#N__FAILURE_WORKFLOW: The root cause that Nth workflow failed
