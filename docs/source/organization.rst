@@ -205,7 +205,11 @@ If the auto-generated issue omits any changes since the last release, edit the i
 
 **Step 3. Test whether the new changes work correctly and do not break any features or downstream projects.**
 
-First, verify that every change works as intended.
+First, verify that all change listed in the issue works as intended.
+
+.. image:: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :target: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :alt:
 
 Next, verify that all CI checks for the PR have passed.
 
@@ -239,7 +243,7 @@ The PR should update the changelog in:
 
 * ``debian/changelog``
 
-If the auto-generated PR does not correctly update the version number and changelog, edit them manually by pushing your changes to the branch ``update_version_info_{VERSION_NUMBER}``. For example, if you want to edit the PR of the **v25.8.1** release, push your changes to the branch ``update_version_info_v25.8.1``.
+If the auto-generated PR does not correctly update the version number and changelog, edit them manually by pushing your changes to the branch ``update_version_info_{VERSION_NUMBER}``. For example, if you want to edit the PR for the **v25.8.1** release, push your changes to the branch ``update_version_info_v25.8.1``.
 
 
 .. image:: https://i.postimg.cc/zJtDRMGd/pr-e.jpg
