@@ -132,41 +132,48 @@ Release process
 
 ``Version: v2.0``
 
-The Quark release process is as follows:
+Quark releases a new version every month. To streamline this process, we use a GitHub workflow that summarizes changes and automatically updates the version number and changelog. The workflow is scheduled to perform the following 3 tasks on the Monday preceding the first Wednesday of each month:
 
 
-.. image:: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
-   :target: https://i.postimg.cc/w9R4Xxh7/github-release-drawio-2.png
+#. Open an issue listing all changes merged since the last release.
+#. Create a PR to update the version number and changelog.
+#. Generate a release draft.
+
+Once the scheduled time arrives, we follow the process below to complete the release:
+
+
+.. image:: https://i.postimg.cc/cZXHqvWq/github-release-drawio-12.png
+   :target: https://i.postimg.cc/cZXHqvWq/github-release-drawio-12.png
    :alt:
 
 
 .. note::
-    The process begins on the Monday before the first Wednesday of each month (e.g., **Monday, September 29, 2025**\ ).
-
+    The release process starts on the Monday preceding the first Wednesday of each month. For example, the process for the **v25.10.1** release starts on **Monday, September 29, 2025**\ , since the following **Wednesday, October 1, 2025**\ , is the first Wednesday of October.
 
 There are 6 steps in the process:
 
-**1. Initiate the CI for GitHub release manually**
+**Step 1. (Optional) Manually initiate the workflow for the GitHub release.**
 
 .. note::
-    Normally, this step is unnecessary because the CI triggers automatically. If it fails to trigger, you can start it manually using the method below.
+    Normally, this step is unnecessary because the workflow will start automatically. If it fails to start, you can initiate it manually using the method below.
 
-Click the ``Actions`` tab on the GitHub page of Quark.
+
+Click the ``Actions`` tab on Quark's GitHub page.
 
 .. image:: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
    :target: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
    :alt:
 
 
-Click ``Generate GitHub Release Issue/PR`` workflow in the left sidebar.
+Click the ``Generate GitHub Release Issue/PR`` workflow in the left sidebar.
 
 
-.. image:: https://i.postimg.cc/Jn2WCmj4/ci-issue-pr.jpg
-   :target: https://i.postimg.cc/Jn2WCmj4/ci-issue-pr.jpg
+.. image:: https://i.postimg.cc/7YDJ7Hpn/Screenshot-2025-08-17-11-55-37.png
+   :target: https://i.postimg.cc/7YDJ7Hpn/Screenshot-2025-08-17-11-55-37.png
    :alt:
 
 
-Click ``Run workflow`` and then ``Run workflow``. The workflow will create an issue and a PR approximately 10 minutes later.
+Click the gray ``Run workflow`` button and then the green ``Run workflow`` button. The workflow will create an issue and a PR approximately 5 minutes later.
 
 .. image:: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
    :target: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
@@ -180,41 +187,63 @@ The issue lists all PRs merged since the last release.
    :alt:
 
 
-And the PR updates the changelog and version information.
+And the PR updates the version number and changelog.
 
 .. image:: https://i.postimg.cc/MKc3FVsB/pr.jpg
    :target: https://i.postimg.cc/MKc3FVsB/pr.jpg
    :alt:
 
 
-**2. Adjust the content of the issue**
+**Step 2. Ensure the issue lists all changes since the last release.**
 
-To edit the auto-generated issue, click the ``...`` menu on the right and select ``Edit``.
+If the auto-generated issue omits any changes since the last release, edit the issue manually to include them. To edit the issue, click the ``...`` menu on the right and select ``Edit``.
 
 .. image:: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
    :target: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
    :alt:
 
 
-**3. Test Quark in the downstream**
+**Step 3. Test whether the new changes work correctly and do not break any features or downstream projects.**
 
-Verify that Quark runs correctly in downstream projects such as Jadx or APKLab, and attach the screenshots of results to the issue.
+First, verify that every change works as intended.
+
+Next, verify that all CI checks for the PR have passed.
+
+.. image:: https://i.postimg.cc/2CqZ5xDv/cicheck.jpg
+   :target: https://i.postimg.cc/2CqZ5xDv/cicheck.jpg
+   :alt:
+
+
+Then, verify that Quark runs correctly in downstream projects such as Jadx and APKLab, and attach the result screenshots to the issue.
 
 .. image:: https://i.postimg.cc/G2LdFqxG/jadx.jpg
    :target: https://i.postimg.cc/G2LdFqxG/jadx.jpg
    :alt:
 
 
-**4. Fix broken functions**
+**Step 4. Fix the problems caused by the changes.**
 
-If Quark fails to run analysis in downstream projects, resolve the problem.
+If the changes do not work correctly or break any features or downstream projects, fix the problem.
 
-**5. Adjust the content of the PR and merge it**
+**Step 5. Ensure the PR correctly updates the version number and changelog, then merge it.**
 
-To edit the auto-generated PR, click the ``...`` menu on the right and select ``Edit``.
+The PR should update the version number in:
 
-.. image:: https://i.postimg.cc/7YWhx8Mc/pr-edit.jpg
-   :target: https://i.postimg.cc/7YWhx8Mc/pr-edit.jpg
+
+* ``debian/control``
+* ``docs/source/conf.py``
+* ``quark/__init__.py``
+
+The PR should update the changelog in:
+
+
+* ``debian/changelog``
+
+If the auto-generated PR does not correctly update the version number and changelog, edit them manually by pushing your changes to the branch ``update_version_info_{VERSION_NUMBER}``. For example, if you want to edit the PR of the **v25.8.1** release, push your changes to the branch ``update_version_info_v25.8.1``.
+
+
+.. image:: https://i.postimg.cc/zJtDRMGd/pr-e.jpg
+   :target: https://i.postimg.cc/zJtDRMGd/pr-e.jpg
    :alt:
 
 
@@ -225,23 +254,23 @@ To merge the PR, first click the dropdown button 🔽 and select ``Squash and me
    :alt:
 
 
-Next, click the green ``Squash and merge`` button.
+Next, click the ``Squash and merge`` button.
 
 .. image:: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
    :target: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
    :alt:
 
 
-If the commit message is correct, click ``Confirm squash and merge`` to complete the merge.
+Verify the commit message. Then, click the ``Confirm squash and merge`` button to complete the merge.
 
 .. image:: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
    :target: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
    :alt:
 
 
-**6. Adjust the draft of the release and publish it**
+**Step 6. Ensure the release draft accurately describes the changes, then publish it.**
 
-Click ``Releases`` on Quark’s main GitHub page, and you can see the auto-generated release draft.
+Click the ``Releases`` link on Quark’s GitHub page, and you can see the auto-generated release draft.
 
 .. image:: https://i.postimg.cc/SN6XftWt/release-01.jpg
    :target: https://i.postimg.cc/SN6XftWt/release-01.jpg
@@ -255,17 +284,16 @@ Click the pencil button.
    :alt:
 
 
-To edit the auto-generated release notes, modify them in the ``Write`` window.
+If the auto-generated release draft cannot accurately describe the changes, edit it manually to provide a precise description. You can edit the release draft in the ``Write`` tab.
 
 .. image:: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
    :target: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
    :alt:
 
 
-To complete the publication, click ``Publish release``.
+To publish the release, click the ``Publish release`` button.
 
 .. image:: https://i.postimg.cc/c1gGLn4p/Screenshot-2025-08-12-07-48-56.png
    :target: https://postimg.cc/c6SbD63h
    :alt: Screenshot-2025-08-12-07-48-56.png
-
 
