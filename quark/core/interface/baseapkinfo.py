@@ -153,6 +153,20 @@ class BaseApkinfo:
             return root.findall("application/receiver")
 
     @property
+    def providers(self) -> List[XMLElement] | None:
+        """Get provider elements from the manifest file.
+
+        :return: python list containing provider elements
+        """
+        if self.ret_type != "APK":
+            return None
+
+        with AxmlReader(self._manifest) as axml:
+            root = axml.get_xml_tree()
+
+            return root.findall("application/provider")
+
+    @property
     @abstractmethod
     def android_apis(self) -> Set[MethodObject]:
         """
