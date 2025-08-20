@@ -724,6 +724,21 @@ class TestApkinfo:
         for key, expected in expected_result.items():
             assert result[key] == expected
 
+@pytest.fixture(scope="session")
+def dex_file_pivaa(SAMPLE_PATH_pivaa):
+    APK_NAME = SAMPLE_PATH_pivaa
+    DEX_NAME = "classes.dex"
+
+    with zipfile.ZipFile(APK_NAME, "r") as zip:
+        zip.extract(DEX_NAME)
+
+    yield DEX_NAME
+
+    if os.path.exists(DEX_NAME):
+        os.remove(DEX_NAME)
+
+    if os.path.exists(APK_NAME):
+        os.remove(APK_NAME)
 
 @pytest.fixture(
     scope="function",
@@ -739,12 +754,12 @@ class TestApkinfo:
     ),
     ids=__generateTestIDs,
 )
-def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file):
+def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file_pivaa):
     apkinfoClass, fileType = request.param
 
     fileToBeAnalyzed = SAMPLE_PATH_pivaa
     if fileType == "DEX":
-        fileToBeAnalyzed = dex_file
+        fileToBeAnalyzed = dex_file_pivaa
 
     apkinfo = apkinfoClass(fileToBeAnalyzed)
 
@@ -753,7 +768,7 @@ def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file):
 class TestAnotherApkinfo:
     @staticmethod
     def test_providers(apkinfoPivaa):
-        match apkinfo.ret_type:
+        match apkinfoPivaa.ret_type:
             case "DEX":
                 assert apkinfoPivaa.providers is None
             case "APK":
