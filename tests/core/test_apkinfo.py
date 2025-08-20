@@ -723,3 +723,46 @@ class TestApkinfo:
 
         for key, expected in expected_result.items():
             assert result[key] == expected
+
+
+@pytest.fixture(
+    scope="function",
+    params=(
+        (AndroguardImp, "DEX"),
+        (AndroguardImp, "APK"),
+        (RizinImp, "DEX"),
+        (RizinImp, "APK"),
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
+        (ShurikenImp, "DEX"),
+        (ShurikenImp, "APK"),
+    ),
+    ids=__generateTestIDs,
+)
+def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file):
+    apkinfoClass, fileType = request.param
+
+    fileToBeAnalyzed = SAMPLE_PATH_pivaa
+    if fileType == "DEX":
+        fileToBeAnalyzed = dex_file
+
+    apkinfo = apkinfoClass(fileToBeAnalyzed)
+
+    yield apkinfo
+
+class AnotherTestApkinfo:
+    @staticmethod
+    def test_providers(apkinfoPivaa):
+        match apkinfo.ret_type:
+            case "DEX":
+                assert apkinfoPivaa.providers is None
+            case "APK":
+                providers= apkinfoPivaa.providers
+
+                assert len(providers) == 1
+                assert (
+                    providers[0].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.htbridge.pivaa.handlers.VulnerableContentProvider"
+                )

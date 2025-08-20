@@ -15,6 +15,7 @@ from quark.script import (
     getActivities,
     getReceivers,
     getApplication,
+    getProviders,
     runQuarkAnalysis,
     findMethodInAPK,
     findMethodImpls,
@@ -132,6 +133,16 @@ class TestReceiver:
         receiver = getReceivers(SAMPLE_PATH_13667)[0]
         assert receiver.isExported() is True
 
+class TestProvider:
+    @staticmethod
+    def testIsNotExported(SAMPLE_PATH_Vuldroid):
+        provider = getProviders(SAMPLE_PATH_Vuldroid)[0]
+        assert provider.isExported() is False
+
+    @staticmethod
+    def testIsExported(SAMPLE_PATH_pivaa):
+        provider = getProviders(SAMPLE_PATH_pivaa)[0]
+        assert provider.isExported() is True
 
 class TestMethod:
     @staticmethod
