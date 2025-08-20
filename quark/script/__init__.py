@@ -154,7 +154,7 @@ class Receiver:
         return str(exported).lower() == 'true'
 
 
-class Providers:
+class Provider:
     def __init__(self, xml: XMLElement) -> None:
         self.xml: XMLElement = xml
 
@@ -165,7 +165,7 @@ class Providers:
         realAttributeName = (
             f"{{http://schemas.android.com/apk/res/android}}{attributeName}"
         )
-        return self.xml.get(realAttributeName, "")
+        return self.xml.get(realAttributeName, None)
 
     def isExported(self) -> bool:
         """Check if the provider element set ``android:exported=true``.
@@ -656,7 +656,7 @@ def getApplication(samplePath: PathLike) -> Application:
     return Application(apkinfo.application)
 
 
-def getProviders(samplePath: PathLike) -> List[Receiver]:
+def getProviders(samplePath: PathLike) -> List[Provider]:
     """Get provider elements from the manifest file of the target sample.
 
     :param samplePath: the file path of target sample
@@ -665,7 +665,7 @@ def getProviders(samplePath: PathLike) -> List[Receiver]:
     quark = _getQuark(samplePath)
     apkinfo = quark.apkinfo
 
-    return [Providers(xml) for xml in apkinfo.providers]
+    return [Provider(xml) for xml in apkinfo.providers]
 
 
 def findMethodInAPK(
