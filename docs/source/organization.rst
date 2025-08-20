@@ -129,8 +129,174 @@ When Quark received a PR, the triage process is as below:
 
 Release process
 ----------------
-``Version: v1.1``
 
-The Quark release process is as below:
+``Version: v2.0``
 
-.. image:: https://i.imgur.com/WtN2eLi.png
+Quark releases a new version every month. To streamline this process, we run a GitHub Actions workflow augmented by LLM, which handles the following tasks automatically:
+
+
+#. Open an issue listing all changes merged since the last release.
+#. Create a PR to update the version number and compose the changelog.
+#. Generate a release draft.
+
+The workflow is scheduled to start on the Monday preceding the first Wednesday of each month. On that day, we follow the process below to complete the release.
+
+
+.. image:: https://i.postimg.cc/gYVXBDMp/github-release-drawio-14.png
+   :target: https://i.postimg.cc/gYVXBDMp/github-release-drawio-14.png
+   :alt:
+
+
+.. note::
+    The release process starts on the Monday preceding the first Wednesday of each month. For example, the process for the **v25.10.1** release starts on **Monday, September 29, 2025**\ , since the following **Wednesday, October 1, 2025**\ , is the first Wednesday of October.
+
+There are 6 steps in the process:
+
+**Step 1. (Optional) Manually initiate the workflow for the GitHub release.**
+
+.. note::
+    Normally, this step is unnecessary because the workflow will start automatically. If it fails to start, you can initiate it manually using the method below.
+
+
+Click the ``Actions`` tab on Quark's GitHub page.
+
+.. image:: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
+   :target: https://i.postimg.cc/MHW9J1nc/tpBB18r.png
+   :alt:
+
+
+Click the ``Generate GitHub Release Issue/PR`` workflow in the left sidebar.
+
+
+.. image:: https://i.postimg.cc/7YDJ7Hpn/Screenshot-2025-08-17-11-55-37.png
+   :target: https://i.postimg.cc/7YDJ7Hpn/Screenshot-2025-08-17-11-55-37.png
+   :alt:
+
+
+Click the gray ``Run workflow`` button and then the green ``Run workflow`` button. The workflow will create an issue and a PR approximately 5 minutes later.
+
+.. image:: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
+   :target: https://i.postimg.cc/63hhcTMB/Screenshot-2025-08-11-16-07-17.png
+   :alt:
+
+
+The issue lists all PRs merged since the last release.
+
+.. image:: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :target: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :alt:
+
+
+And the PR updates the version number and changelog.
+
+.. image:: https://i.postimg.cc/MKc3FVsB/pr.jpg
+   :target: https://i.postimg.cc/MKc3FVsB/pr.jpg
+   :alt:
+
+
+**Step 2. Ensure the issue lists all changes since the last release.**
+
+If the auto-generated issue omits any changes since the last release, edit the issue manually to include them. To edit the issue, click the ``...`` menu on the right and select ``Edit``.
+
+.. image:: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
+   :target: https://i.postimg.cc/hPM6kKgF/Screenshot-2025-08-12-07-35-15.png
+   :alt:
+
+
+**Step 3. Test whether the new changes work correctly and do not break any features or downstream projects.**
+
+First, verify that all change listed in the issue works as intended.
+
+.. image:: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :target: https://i.postimg.cc/MGcGcstT/issue.jpg
+   :alt:
+
+Next, verify that all CI checks for the PR have passed.
+
+.. image:: https://i.postimg.cc/2CqZ5xDv/cicheck.jpg
+   :target: https://i.postimg.cc/2CqZ5xDv/cicheck.jpg
+   :alt:
+
+
+Then, verify that Quark runs correctly in downstream projects such as Jadx and APKLab, and attach the result screenshots to the issue.
+
+.. image:: https://i.postimg.cc/G2LdFqxG/jadx.jpg
+   :target: https://i.postimg.cc/G2LdFqxG/jadx.jpg
+   :alt:
+
+
+**Step 4. Fix the problems caused by the changes.**
+
+If the changes do not work correctly or break any features or downstream projects, fix the problem.
+
+**Step 5. Ensure the PR is correct and merge it.**
+
+The PR should update the version number in:
+
+
+* ``debian/control``
+* ``docs/source/conf.py``
+* ``quark/__init__.py``
+
+The PR should update the changelog in:
+
+
+* ``debian/changelog``
+
+If the auto-generated PR does not correctly update the version number and changelog, edit them manually by pushing your changes to the branch ``update_version_info_{VERSION_NUMBER}``. For example, if you want to edit the PR for the **v25.8.1** release, push your changes to the branch ``update_version_info_v25.8.1``.
+
+
+.. image:: https://i.postimg.cc/zJtDRMGd/pr-e.jpg
+   :target: https://i.postimg.cc/zJtDRMGd/pr-e.jpg
+   :alt:
+
+
+To merge the PR, first click the dropdown button 🔽 and select ``Squash and merge``.
+
+.. image:: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
+   :target: https://i.postimg.cc/4x2SLwGp/merge-pr-1.jpg
+   :alt:
+
+
+Next, click the ``Squash and merge`` button.
+
+.. image:: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
+   :target: https://i.postimg.cc/T3Bc5sGN/merge-pr-2.jpg
+   :alt:
+
+
+Verify the commit message. Then, click the ``Confirm squash and merge`` button to complete the merge.
+
+.. image:: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
+   :target: https://i.postimg.cc/hPyscjYB/merge-pr-3.jpg
+   :alt:
+
+
+**Step 6. Ensure the release draft is accurate and publish it.**
+
+Click the ``Releases`` link on Quark’s GitHub page, and you can see the auto-generated release draft.
+
+.. image:: https://i.postimg.cc/SN6XftWt/release-01.jpg
+   :target: https://i.postimg.cc/SN6XftWt/release-01.jpg
+   :alt:
+
+
+Click the pencil button.
+
+.. image:: https://i.postimg.cc/X7GmnSx4/Screenshot-2025-08-12-07-47-19-1.png
+   :target: https://i.postimg.cc/X7GmnSx4/Screenshot-2025-08-12-07-47-19-1.png
+   :alt:
+
+
+If the auto-generated release draft cannot accurately describe the changes, edit it manually to provide a precise description. You can edit the release draft in the ``Write`` tab.
+
+.. image:: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
+   :target: https://i.postimg.cc/pTrkkz6R/Screenshot-2025-08-12-07-48-19.png
+   :alt:
+
+
+To publish the release, click the ``Publish release`` button.
+
+.. image:: https://i.postimg.cc/c1gGLn4p/Screenshot-2025-08-12-07-48-56.png
+   :target: https://postimg.cc/c6SbD63h
+   :alt: Screenshot-2025-08-12-07-48-56.png
