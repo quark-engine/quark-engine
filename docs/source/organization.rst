@@ -132,18 +132,18 @@ Release process
 
 ``Version: v2.0``
 
-Quark releases a new version every month. To streamline this process, we use a GitHub workflow that summarizes changes and automatically updates the version number and changelog. The workflow is scheduled to perform the following 3 tasks on the Monday preceding the first Wednesday of each month:
+Quark releases a new version every month. To streamline this process, we run a GitHub Actions workflow augmented by LLM, which handles the following tasks automatically:
 
 
 #. Open an issue listing all changes merged since the last release.
-#. Create a PR to update the version number and changelog.
+#. Create a PR to update the version number and compose the changelog.
 #. Generate a release draft.
 
-Once the scheduled time arrives, we follow the process below to complete the release:
+The workflow is scheduled to start on the Monday preceding the first Wednesday of each month. On that day, we follow the process below to complete the release.
 
 
-.. image:: https://i.postimg.cc/cZXHqvWq/github-release-drawio-12.png
-   :target: https://i.postimg.cc/cZXHqvWq/github-release-drawio-12.png
+.. image:: https://i.postimg.cc/gYVXBDMp/github-release-drawio-14.png
+   :target: https://i.postimg.cc/gYVXBDMp/github-release-drawio-14.png
    :alt:
 
 
@@ -229,7 +229,7 @@ Then, verify that Quark runs correctly in downstream projects such as Jadx and A
 
 If the changes do not work correctly or break any features or downstream projects, fix the problem.
 
-**Step 5. Ensure the PR correctly updates the version number and changelog, then merge it.**
+**Step 5. Ensure the PR is correct and merge it.**
 
 The PR should update the version number in:
 
@@ -272,7 +272,7 @@ Verify the commit message. Then, click the ``Confirm squash and merge`` button t
    :alt:
 
 
-**Step 6. Ensure the release draft accurately describes the changes, then publish it.**
+**Step 6. Ensure the release draft is accurate and publish it.**
 
 Click the ``Releases`` link on Quark’s GitHub page, and you can see the auto-generated release draft.
 
@@ -300,4 +300,3 @@ To publish the release, click the ``Publish release`` button.
 .. image:: https://i.postimg.cc/c1gGLn4p/Screenshot-2025-08-12-07-48-56.png
    :target: https://postimg.cc/c6SbD63h
    :alt: Screenshot-2025-08-12-07-48-56.png
-
