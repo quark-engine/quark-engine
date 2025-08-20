@@ -750,7 +750,7 @@ def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file):
 
     yield apkinfo
 
-class AnotherTestApkinfo:
+class TestAnotherApkinfo:
     @staticmethod
     def test_providers(apkinfoPivaa):
         match apkinfo.ret_type:
