@@ -339,6 +339,19 @@ applicationInstance.isDebuggable(none)
 - **params**: none
 - **return**:  True/False
 
+getProviders(samplePath)
+==========================
+- **Description**: Get provider elements from the manifest file of the target sample.
+- **params**:
+    1. samplePath: the file path of target sample
+- **return**: python list containing provider elements
+
+providerInstance.isExported(none)
+==================================
+- **Description**: Check if the provider element set ``android:exported=true``.
+- **params**: none
+- **return**:  True/False
+
 Analyzing real case (InstaStealer) using Quark Script
 ------------------------------------------------------
 
