@@ -30,6 +30,23 @@ def dex_file(SAMPLE_PATH_13667):
         os.remove(APK_NAME)
 
 
+@pytest.fixture(scope="session")
+def dex_file_pivaa(SAMPLE_PATH_pivaa):
+    APK_NAME = SAMPLE_PATH_pivaa
+    DEX_NAME = "classes.dex"
+
+    with zipfile.ZipFile(APK_NAME, "r") as zip:
+        zip.extract(DEX_NAME)
+
+    yield DEX_NAME
+
+    if os.path.exists(DEX_NAME):
+        os.remove(DEX_NAME)
+
+    if os.path.exists(APK_NAME):
+        os.remove(APK_NAME)
+
+
 def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
     return f"{testInput[0].__name__} with {testInput[1]}"
 
@@ -765,19 +782,3 @@ class TestApkinfo:
 
         for key, expected in expected_result.items():
             assert result[key] == expected
-
-@pytest.fixture(scope="session")
-def dex_file_pivaa(SAMPLE_PATH_pivaa):
-    APK_NAME = SAMPLE_PATH_pivaa
-    DEX_NAME = "classes.dex"
-
-    with zipfile.ZipFile(APK_NAME, "r") as zip:
-        zip.extract(DEX_NAME)
-
-    yield DEX_NAME
-
-    if os.path.exists(DEX_NAME):
-        os.remove(DEX_NAME)
-
-    if os.path.exists(APK_NAME):
-        os.remove(APK_NAME)
