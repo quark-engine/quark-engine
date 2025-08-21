@@ -80,6 +80,32 @@ def apkinfo_with_R2Imp_only(request, SAMPLE_PATH_13667, dex_file):
     yield apkinfo
 
 
+@pytest.fixture(
+    scope="function",
+    params=(
+        (AndroguardImp, "DEX"),
+        (AndroguardImp, "APK"),
+        (RizinImp, "DEX"),
+        (RizinImp, "APK"),
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
+        (ShurikenImp, "DEX"),
+        (ShurikenImp, "APK"),
+    ),
+    ids=__generateTestIDs,
+)
+def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file_pivaa):
+    apkinfoClass, fileType = request.param
+
+    fileToBeAnalyzed = SAMPLE_PATH_pivaa
+    if fileType == "DEX":
+        fileToBeAnalyzed = dex_file_pivaa
+
+    apkinfo = apkinfoClass(fileToBeAnalyzed)
+
+    yield apkinfo
+
+
 class TestApkinfo:
     def test_init_with_invalid_type(self):
         filepath = None
@@ -206,6 +232,22 @@ class TestApkinfo:
                         "{http://schemas.android.com/apk/res/android}name"
                     )
                     == "com.example.google.service.MyDeviceAdminReceiver"
+                )
+
+    @staticmethod
+    def test_providers(apkinfoPivaa):
+        match apkinfoPivaa.ret_type:
+            case "DEX":
+                assert apkinfoPivaa.providers is None
+            case "APK":
+                providers= apkinfoPivaa.providers
+
+                assert len(providers) == 1
+                assert (
+                    providers[0].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.htbridge.pivaa.handlers.VulnerableContentProvider"
                 )
 
     def test_android_apis(self, apkinfo):
@@ -739,45 +781,3 @@ def dex_file_pivaa(SAMPLE_PATH_pivaa):
 
     if os.path.exists(APK_NAME):
         os.remove(APK_NAME)
-
-@pytest.fixture(
-    scope="function",
-    params=(
-        (AndroguardImp, "DEX"),
-        (AndroguardImp, "APK"),
-        (RizinImp, "DEX"),
-        (RizinImp, "APK"),
-        (R2Imp, "DEX"),
-        (R2Imp, "APK"),
-        (ShurikenImp, "DEX"),
-        (ShurikenImp, "APK"),
-    ),
-    ids=__generateTestIDs,
-)
-def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file_pivaa):
-    apkinfoClass, fileType = request.param
-
-    fileToBeAnalyzed = SAMPLE_PATH_pivaa
-    if fileType == "DEX":
-        fileToBeAnalyzed = dex_file_pivaa
-
-    apkinfo = apkinfoClass(fileToBeAnalyzed)
-
-    yield apkinfo
-
-class TestAnotherApkinfo:
-    @staticmethod
-    def test_providers(apkinfoPivaa):
-        match apkinfoPivaa.ret_type:
-            case "DEX":
-                assert apkinfoPivaa.providers is None
-            case "APK":
-                providers= apkinfoPivaa.providers
-
-                assert len(providers) == 1
-                assert (
-                    providers[0].get(
-                        "{http://schemas.android.com/apk/res/android}name"
-                    )
-                    == "com.htbridge.pivaa.handlers.VulnerableContentProvider"
-                )
