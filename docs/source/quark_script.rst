@@ -3399,7 +3399,7 @@ Next, we use API ``methodInstance.methodCaller`` to retrieve the name of the cal
 
 Then, we use API ``quarkResultInstance.isHardcoded(argument)`` to check if the file path is hardcoded into the APK. If not, the file path is likely from external input.
 
-After that, we use API ``getProviders``  and ``providerInstance.isExported()`` to check if there is any exported provider that matches the caller class name. If yes, any external application can access the behavior.
+After that, we use API ``getProviders(samplePath)``  and ``providerInstance.isExported()`` to check if there is any exported provider that matches the caller class name. If yes, any external application can access the behavior.
 
 Finally, we use API ``quarkResultInstance.findMethodInCaller(callerMethod, targetMethod)`` to search for any APIs in the caller method that are used to match strings.
 
