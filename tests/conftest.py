@@ -36,6 +36,13 @@ SAMPLES = [
             "/raw/master/vulnerable-samples/pivaa.apk"
         ),
         "fileName": "pivaa.apk"
+    },
+    {
+        "sourceUrl": (
+            "https://github.com/quark-engine/apk-samples"
+            "/raw/master/vulnerable-samples/Vuldroid.apk"
+        ),
+        "fileName": "Vuldroid.apk"
     }
 ]
 
@@ -74,3 +81,7 @@ def SAMPLE_PATH_Ahmyth(tmp_path_factory: pytest.TempPathFactory) -> str:
 @pytest.fixture(scope="session")
 def SAMPLE_PATH_pivaa(tmp_path_factory: pytest.TempPathFactory) -> str:
     return downloadSample(tmp_path_factory, SAMPLES[3])
+
+@pytest.fixture(scope="session")
+def SAMPLE_PATH_Vuldroid(tmp_path_factory: pytest.TempPathFactory) -> str:
+    return downloadSample(tmp_path_factory, SAMPLES[4])

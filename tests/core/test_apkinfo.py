@@ -30,6 +30,25 @@ def dex_file(SAMPLE_PATH_13667):
         os.remove(APK_NAME)
 
 
+@pytest.fixture(scope="session")
+def dex_file_pivaa(tmp_path_factory, SAMPLE_PATH_pivaa):
+    APK_NAME = SAMPLE_PATH_pivaa
+    DEX_NAME = "classes.dex"
+    DEX_DIR = tmp_path_factory.mktemp("dex_pivaa")
+    DEX_PATH = str(os.path.join(DEX_DIR, "classes.dex"))
+
+    with zipfile.ZipFile(APK_NAME, "r") as zip:
+        zip.extract(DEX_NAME, path=DEX_DIR)
+
+    yield DEX_PATH
+
+    if os.path.exists(DEX_PATH):
+        os.remove(DEX_PATH)
+
+    if os.path.exists(DEX_PATH):
+        os.remove(DEX_PATH)
+
+
 def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
     return f"{testInput[0].__name__} with {testInput[1]}"
 
@@ -74,6 +93,32 @@ def apkinfo_with_R2Imp_only(request, SAMPLE_PATH_13667, dex_file):
     fileToBeAnalyzed = SAMPLE_PATH_13667
     if fileType == "DEX":
         fileToBeAnalyzed = dex_file
+
+    apkinfo = apkinfoClass(fileToBeAnalyzed)
+
+    yield apkinfo
+
+
+@pytest.fixture(
+    scope="function",
+    params=(
+        (AndroguardImp, "DEX"),
+        (AndroguardImp, "APK"),
+        (RizinImp, "DEX"),
+        (RizinImp, "APK"),
+        (R2Imp, "DEX"),
+        (R2Imp, "APK"),
+        (ShurikenImp, "DEX"),
+        (ShurikenImp, "APK"),
+    ),
+    ids=__generateTestIDs,
+)
+def apkinfoPivaa(request, SAMPLE_PATH_pivaa, dex_file_pivaa):
+    apkinfoClass, fileType = request.param
+
+    fileToBeAnalyzed = SAMPLE_PATH_pivaa
+    if fileType == "DEX":
+        fileToBeAnalyzed = dex_file_pivaa
 
     apkinfo = apkinfoClass(fileToBeAnalyzed)
 
@@ -206,6 +251,22 @@ class TestApkinfo:
                         "{http://schemas.android.com/apk/res/android}name"
                     )
                     == "com.example.google.service.MyDeviceAdminReceiver"
+                )
+
+    @staticmethod
+    def test_providers(apkinfoPivaa):
+        match apkinfoPivaa.ret_type:
+            case "DEX":
+                assert apkinfoPivaa.providers is None
+            case "APK":
+                providers= apkinfoPivaa.providers
+
+                assert len(providers) == 1
+                assert (
+                    providers[0].get(
+                        "{http://schemas.android.com/apk/res/android}name"
+                    )
+                    == "com.htbridge.pivaa.handlers.VulnerableContentProvider"
                 )
 
     def test_android_apis(self, apkinfo):
