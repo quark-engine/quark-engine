@@ -31,20 +31,22 @@ def dex_file(SAMPLE_PATH_13667):
 
 
 @pytest.fixture(scope="session")
-def dex_file_pivaa(SAMPLE_PATH_pivaa):
+def dex_file_pivaa(tmp_path_factory, SAMPLE_PATH_pivaa):
     APK_NAME = SAMPLE_PATH_pivaa
     DEX_NAME = "classes.dex"
+    DEX_DIR = tmp_path_factory.mktemp("dex_pivaa")
+    DEX_PATH = str(os.path.join(DEX_DIR, "classes.dex"))
 
     with zipfile.ZipFile(APK_NAME, "r") as zip:
-        zip.extract(DEX_NAME)
+        zip.extract(DEX_NAME, path=DEX_DIR)
 
-    yield DEX_NAME
+    yield DEX_PATH
 
-    if os.path.exists(DEX_NAME):
-        os.remove(DEX_NAME)
+    if os.path.exists(DEX_PATH):
+        os.remove(DEX_PATH)
 
-    if os.path.exists(APK_NAME):
-        os.remove(APK_NAME)
+    if os.path.exists(DEX_PATH):
+        os.remove(DEX_PATH)
 
 
 def __generateTestIDs(testInput: Tuple[BaseApkinfo, Literal["DEX", "APK"]]):
