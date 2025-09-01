@@ -1,3 +1,25 @@
+quark-engine (25.9.1-0kali1) kali-dev; urgency=medium
+
+  * Document Enhancement
+
+    - Add documentation for GoldDream. (#780)
+    - Update the GitHub release process documentation. (#791)
+    - Optimize the Quark Script document for CWE-256. (#804)
+
+  * New Feature
+
+    - Add Quark Script APIs and showcase for detecting CWE-359. (#802, #803)
+
+  * CI Improvement
+
+    - Improve CI workflows for GitHub and PyPI releases. (#789, #801)
+
+  * Test Improvement
+
+    - Update the expected result for Quark analysis in the smoke test. (#794)
+
+ --  Zin Wong <chriswangxxxxx@gmail.com>  Mon, 01 Sep 2025 10:12:08 +0800
+
 quark-engine (25.8.1-0kali1) kali-dev; urgency=medium
 
   * New Feature
