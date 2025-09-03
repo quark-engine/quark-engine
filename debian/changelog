@@ -2,23 +2,19 @@ quark-engine (25.9.1-0kali1) kali-dev; urgency=medium
 
   * Document Enhancement
 
-    - Add documentation for GoldDream. (#780)
+    - Add an analysis report for the GoldDream malware family. (#780)
     - Update the GitHub release process documentation. (#791)
     - Optimize the Quark Script document for CWE-256. (#804)
+
+  * Rule Enhancement
+
+    - Add 4 new rules for the GoldDream malware family (#780)
 
   * New Feature
 
     - Add Quark Script APIs and showcase for detecting CWE-359. (#802, #803)
 
-  * CI Improvement
-
-    - Improve CI workflows for GitHub and PyPI releases. (#789, #801)
-
-  * Test Improvement
-
-    - Update the expected result for Quark analysis in the smoke test. (#794)
-
- --  Zin Wong <chriswangxxxxx@gmail.com>  Mon, 01 Sep 2025 10:12:08 +0800
+ --  Shaun Dang <pulorsok@gmail.com>  Wed, 03 Sep 2025 13:30:00 +0800
 
 quark-engine (25.8.1-0kali1) kali-dev; urgency=medium
 
