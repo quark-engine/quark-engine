@@ -3617,7 +3617,7 @@ Detect CWE-927 in Android Application
 This scenario seeks to find **Use of Implicit Intent for Sensitive Communication**.
 
 CWE-927: Use of Implicit Intent for Sensitive Communication
-=========================================
+===========================================================
 
 We analyze the definition of CWE-927 and identify its characteristics.
 
@@ -3638,7 +3638,9 @@ CWE-927 Detection Process Using Quark Script API
 .. image:: https://hackmd.io/_uploads/ByAqo4ksxg.png
 
 First, we design a detection rule ``startActivityWithIntent.json`` to identify when an intent is used to start an activity.
+
 Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that prepare an intent. 
+
 Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent, which may lead to a CWE-927 vulnerability.
 
 Quark Script CWE-927.py
@@ -3668,7 +3670,7 @@ Quark Script CWE-927.py
 
 
 Quark Rule: startActivityWithIntent.json
-=================================
+========================================
 
 .. code-block:: json
 
