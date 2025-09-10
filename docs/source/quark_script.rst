@@ -3630,49 +3630,51 @@ Code of CWE-927 in ovaa.apk
 
 We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-927.
 
-.. image:: https://hackmd.io/_uploads/Bk6hEaTcll.png
+.. image:: https://hackmd.io/_uploads/SJCe0Z1sll.png
 
 CWE-927 Detection Process Using Quark Script API
 =================================================
 
-.. image:: https://hackmd.io/_uploads/rJOHSTaceg.png
+.. image:: https://hackmd.io/_uploads/SkSMfz1slg.png
 
-First, we design a detection rule ``findImplicitIntent.json`` to identify the use of implicit intents. Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that set components. Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent without specifying a particular component, which leads to a CWE-927 vulnerability.
+First, we design a detection rule ``findImplicitIntent.json`` to identify the use of implicit intents.  
+Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that provides the intent.  
+Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent, which may lead to a CWE-927 vulnerability.
 
 Quark Script CWE-927.py
 ========================
 
-.. image:: https://hackmd.io/_uploads/BkDZwa65lg.png
+.. image:: https://hackmd.io/_uploads/ryMLzzJolg.png
 
 
 .. code-block:: python
 
-    from quark.script import runQuarkAnalysis, Rule
-
+	from quark.script import runQuarkAnalysis, Rule
+	
 	SAMPLE_PATH = "ovaa.apk"
-	RULE_PATH = "findImplicitIntent.json"
+	RULE_PATH = "detectIntentUsage.json"
 	
 	ruleInstance = Rule(RULE_PATH)
 	quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
 	
 	COMPONENT_SETTING_METHODS = ["setComponent", "setClass", "setClassName"]
 	
-	for implicitIntent in quarkResult.behaviorOccurList:
-	    calledMethods = implicitIntent.getMethodsInArgs()
+	for intentUsage in quarkResult.behaviorOccurList:
+	    calledMethods = intentUsage.getMethodsInArgs()
 	
 	    if not any(
 	        method.methodName in COMPONENT_SETTING_METHODS for method in calledMethods
 	    ):
-	        print(f"CWE-927 is detected in method, {implicitIntent.methodCaller.fullName}")
+	        print(f"CWE-927 is detected in method, {intentUsage.methodCaller.fullName}")
 
 
-Quark Rule: findImplicitIntent.json
+Quark Rule: detectIntentUsage.json
 =================================
 
 .. code-block:: json
 
 	{
-	    "crime": "Detect APK using implicit intent.",
+	    "crime": "Detect APKs that use intents.",
 	    "permission": [],
 	    "api": [
 	        {
