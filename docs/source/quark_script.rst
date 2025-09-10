@@ -3637,7 +3637,7 @@ CWE-927 Detection Process Using Quark Script API
 
 .. image:: https://hackmd.io/_uploads/ByAqo4ksxg.png
 
-First, we design a detection rule ``startActivityWithIntent.json`` to identify when an intent is used to start an activity.
+First, we design a detection rule ``startActivityWithIntent.json`` to identify the behavior of using an intent to start an activity.
 
 Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that prepare an intent. 
 
