@@ -3635,24 +3635,23 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 CWE-927 Detection Process Using Quark Script API
 =================================================
 
-.. image:: https://hackmd.io/_uploads/SkSMfz1slg.png
+.. image:: https://hackmd.io/_uploads/B1ne6m1jgl.png
 
-First, we design a detection rule ``findImplicitIntent.json`` to identify the use of implicit intents.  
-Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that provides the intent.  
+First, we design a detection rule ``startActivityWithIntent.json`` to identify the use of implicit intents.  
+Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that prepare an intent. 
 Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent, which may lead to a CWE-927 vulnerability.
 
 Quark Script CWE-927.py
 ========================
 
-.. image:: https://hackmd.io/_uploads/ryMLzzJolg.png
-
+.. image:: https://hackmd.io/_uploads/S1AJa7yixe.pn
 
 .. code-block:: python
 
 	from quark.script import runQuarkAnalysis, Rule
 	
 	SAMPLE_PATH = "ovaa.apk"
-	RULE_PATH = "detectIntentUsage.json"
+	RULE_PATH = "startActivityWithIntent.json"
 	
 	ruleInstance = Rule(RULE_PATH)
 	quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
@@ -3668,13 +3667,13 @@ Quark Script CWE-927.py
 	        print(f"CWE-927 is detected in method, {intentUsage.methodCaller.fullName}")
 
 
-Quark Rule: detectIntentUsage.json
+Quark Rule: startActivityWithIntent.json
 =================================
 
 .. code-block:: json
 
 	{
-	    "crime": "Detect APKs that use intents.",
+	    "crime": "Start Activity With Intent.",
 	    "permission": [],
 	    "api": [
 	        {
