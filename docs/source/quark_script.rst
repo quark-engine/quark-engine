@@ -3635,16 +3635,16 @@ We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain t
 CWE-927 Detection Process Using Quark Script API
 =================================================
 
-.. image:: https://hackmd.io/_uploads/B1ne6m1jgl.png
+.. image:: https://hackmd.io/_uploads/ByAqo4ksxg.png
 
-First, we design a detection rule ``startActivityWithIntent.json`` to identify the use of implicit intents.  
+First, we design a detection rule ``startActivityWithIntent.json`` to identify when an intent is used to start an activity.
 Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that prepare an intent. 
 Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent, which may lead to a CWE-927 vulnerability.
 
 Quark Script CWE-927.py
 ========================
 
-.. image:: https://hackmd.io/_uploads/S1AJa7yixe.pn
+.. image:: https://hackmd.io/_uploads/rkl2ii4ysex.png
 
 .. code-block:: python
 
