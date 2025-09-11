@@ -3610,3 +3610,94 @@ Quark Script Result
 
 
 
+
+Detect CWE-927 in Android Application
+--------------------------------------
+
+This scenario seeks to find **Use of Implicit Intent for Sensitive Communication**.
+
+CWE-927: Use of Implicit Intent for Sensitive Communication
+===========================================================
+
+We analyze the definition of CWE-927 and identify its characteristics.
+
+See `CWE-927 <https://cwe.mitre.org/data/definitions/927.html>`_ for more details.
+
+.. image:: https://hackmd.io/_uploads/H1UYN6pqxe.png
+
+Code of CWE-927 in ovaa.apk
+============================
+
+We use the `ovaa.apk <https://github.com/oversecured/ovaa>`_ sample to explain the vulnerability code of CWE-927.
+
+.. image:: https://hackmd.io/_uploads/SJCe0Z1sll.png
+
+CWE-927 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://hackmd.io/_uploads/ByAqo4ksxg.png
+
+First, we design a detection rule ``startActivityWithIntent.json`` to identify the behavior of using an intent to start an activity.
+
+Then, we use the API ``behaviorInstance.getMethodsInArgs()`` to retrieve a list of methods that prepare an intent. 
+
+Finally, we check whether any component setting method is present in the list. If **none** is found, it indicates that the APK is using an implicit intent, which may lead to a CWE-927 vulnerability.
+
+Quark Script CWE-927.py
+========================
+
+.. image:: https://hackmd.io/_uploads/rkl2ii4ysex.png
+
+.. code-block:: python
+
+	from quark.script import runQuarkAnalysis, Rule
+	
+	SAMPLE_PATH = "ovaa.apk"
+	RULE_PATH = "startActivityWithIntent.json"
+	
+	ruleInstance = Rule(RULE_PATH)
+	quarkResult = runQuarkAnalysis(SAMPLE_PATH, ruleInstance)
+	
+	COMPONENT_SETTING_METHODS = ["setComponent", "setClass", "setClassName"]
+	
+	for intentUsage in quarkResult.behaviorOccurList:
+	    calledMethods = intentUsage.getMethodsInArgs()
+	
+	    if not any(
+	        method.methodName in COMPONENT_SETTING_METHODS for method in calledMethods
+	    ):
+	        print(f"CWE-927 is detected in method, {intentUsage.methodCaller.fullName}")
+
+
+Quark Rule: startActivityWithIntent.json
+========================================
+
+.. code-block:: json
+
+	{
+	    "crime": "Start Activity With Intent.",
+	    "permission": [],
+	    "api": [
+	        {
+	            "descriptor": "(Landroid/content/Context;Ljava/lang/Class;)V",
+	            "class": "Landroid/content/Intent;",
+	            "method": "<init>"
+	        },
+	        {
+	            "descriptor": "(Landroid/content/Intent;)V",
+	            "class": "",
+	            "method": "startActivity"
+	        }
+	    ],
+	    "score": 1,
+	    "label": []
+	}
+
+
+Quark Script Result
+====================
+
+.. code-block:: TEXT
+
+    $ python3 CWE-927.py
+    CWE-927 is detected in method, Loversecured/ovaa/activities/DeeplinkActivity; processDeeplink (Landroid/net/Uri;)V
