@@ -2330,14 +2330,23 @@ We use the `InsecureBankv2.apk <https://github.com/dineshshetty/Android-Insecure
 
 .. image:: https://imgur.com/V7VtL3x.jpg
 
-Quark Script CWE-925.py
-========================
+
+CWE-925 Detection Process Using Quark Script API
+=================================================
+
+.. image:: https://hackmd.io/_uploads/HknNJaIsxe.png
 
 First, we use API ``getReceivers(samplePath)`` and ``receiverInstance.isExported()`` to find all the exported receivers defined in the APK.
 
 Second, we use API ``checkMethodCalls(samplePath, targetMethod, checkMethods)`` to check if the ``onReceive`` method of every exported receiver obtains intent action.
 
 If **No**, it could imply that the APK does not verify intent properly, potentially leading to a CWE-925 vulnerability.
+
+
+Quark Script CWE-925.py
+========================
+
+.. image:: https://hackmd.io/_uploads/Skor1pIile.png
 
 .. code-block:: python
 
