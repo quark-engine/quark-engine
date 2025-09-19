@@ -86,5 +86,7 @@ jobs:
         slug: ev-flow/quark-engine
         flags: unittests
         verbose: true
+      env:
+        CODECOV_SLUG: ev-flow/quark-engine
         fail_ci_if_error: true
 
