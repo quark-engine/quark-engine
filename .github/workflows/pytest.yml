@@ -9,6 +9,10 @@ on:
   pull_request:
     branches: [ master ]
 
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build:
 
@@ -73,11 +77,13 @@ jobs:
         python -m pip install coveralls pytest-cov
         pytest --cov=./ --cov-report=xml
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4.4.0
+    - name: Upload coverage to Codecov (OIDC)
+      if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      uses: codecov/codecov-action@v5
       with:
-        fail_ci_if_error: true
+        use_oidc: true
+        files: ./coverage.xml
         flags: unittests
-        token: ${{ secrets.CODECOV_TOKEN }}
-        version: v0.6.0 
+        verbose: true
+        fail_ci_if_error: true
 
