@@ -743,7 +743,7 @@ New Quark Rules For SpyNote
 
 New Quark rules (#238 - #242) are now available. These rules target `SpyNote <https://www.f-secure.com/en/articles/take-a-note-of-spynote-malware>`_\ , a malware family that takes screenshots, simulates user gestures, logs user input, and communicates with C2 servers. Check `here <https://github.com/ev-flow/quark-rules>`_ for the rule details.
 
-With these rules, Quark is now able to identify the SpyNote malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check here for the APKs we tested.
+With these rules, Quark is now able to identify the SpyNote malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check :ref:`here <list-of-tested-apks-spynote>` for the APKs we tested.
 
 Below is a summary report of a SpyNote sample (\ ``0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b``\ ). The report shows that Quark identified the sample as high-risk, with a list of behaviors as evidence.
 
@@ -818,6 +818,8 @@ Behaviors detected by Quark:
 
 
 * Establish a connection to an IP address (#00239)
+
+.. _list-of-tested-apks-spynote:
 
 List of Tested APKs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
