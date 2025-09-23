@@ -739,88 +739,88 @@ The table below lists the APKs we tested.
 
 
 New Quark Rules For SpyNote
-===============================
+===========================
 
 New Quark rules (#238 - #242) are now available. These rules target `SpyNote <https://www.f-secure.com/en/articles/take-a-note-of-spynote-malware>`_\ , a malware family that takes screenshots, simulates user gestures, logs user input, and communicates with C2 servers. Check `here <https://github.com/ev-flow/quark-rules>`_ for the rule details.
 
-With these rules, Quark is now able to identify the SpyNote malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check :ref:`here <list-of-tested-apks-spynote>`_ for the APKs we tested.
+With these rules, Quark is now able to identify the SpyNote malware family as high-risk. In our experiment, Quark achieved 100% accuracy and 100% precision. Please check here for the APKs we tested.
 
 Below is a summary report of a SpyNote sample (\ ``0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b``\ ). The report shows that Quark identified the sample as high-risk, with a list of behaviors as evidence.
 
 
-.. image:: https://cdn.imgpile.com/f/qg9XDXG_xl.png
-   :target: https://cdn.imgpile.com/f/qg9XDXG_xl.png
+.. image:: https://i.postimg.cc/bNTSJtXn/Screenshot-2025-09-24-02-17-28-Screenshot-2025-09-24-02-17-51-Screenshot-2025-09-24-02-18-20.jpg
+   :target: https://i.postimg.cc/bNTSJtXn/Screenshot-2025-09-24-02-17-28-Screenshot-2025-09-24-02-17-51-Screenshot-2025-09-24-02-18-20.jpg
    :alt:
 
 
 Identified Well-Known Threats
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 With Quark's `rule classification <https://quark-engine.readthedocs.io/en/latest/quark_reports.html#rule-classification>`_ feature, analysts can generate behavior maps and see how behaviors are related. This feature helps identify 4 well-known threats from SpyNote, as shown below.
 
 **1. Take screenshots**
 
 
-.. image:: https://i.postimg.cc/Pqqs73kx/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b5.png
-   :target: https://i.postimg.cc/Pqqs73kx/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b5.png
+.. image:: https://i.postimg.cc/wMcJFd87/screenshot.png
+   :target: https://i.postimg.cc/wMcJFd87/screenshot.png
    :alt:
 
 
-The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService`` function extracts screenshot data from the hardware and compresses it as bitmap format.
+The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService`` function obtains screenshot data and converts it into bitmap format.
 
 Behaviors detected by Quark:
 
 
-* Extract screenshot data and compresses it as bitmap format (#00238)
+* Extract screenshot data to bitmap format (#00238)
 
 **2. Simulate user gestures**
 
 
-.. image:: https://i.postimg.cc/YS8PG930/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b1.png
-   :target: https://i.postimg.cc/YS8PG930/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b1.png
+.. image:: https://i.postimg.cc/k4yXpMG3/gesture.png
+   :target: https://i.postimg.cc/k4yXpMG3/gesture.png
    :alt:
 
 
-The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/Perfct;clickByGesture`` function builds and dispatches a gesture description to simulate how the user operating the phone with fingers.
+The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/Perfct;clickByGesture`` function simulates user finger gestures on a mobile phone.
 
 Behaviors detected by Quark:
 
 
-* Build a gesture description and dispatch it through an accessibility service (#00240)
+* Simulate user gestures (#00240)
 
 **3. Log user input**
 
 
-.. image:: https://i.postimg.cc/qMRvzhxh/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b2.png
-   :target: https://i.postimg.cc/qMRvzhxh/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b2.png
+.. image:: https://i.postimg.cc/pVcgt0r5/logging.png
+   :target: https://i.postimg.cc/pVcgt0r5/logging.png
    :alt:
 
 
-The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService;checkPassword`` function obtains the text that describes a UI element. It also calls the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/FileUtils;writeText`` to log the data to a file. If the UI element is the keypad on the screen lock, the login password will be logged.
+The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService;checkPassword`` function obtains the description of a UI element. It also calls the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/FileUtils;writeText`` to log the data to a file. If the UI element is a button on the lock screen, the user's password can be logged.
 
 Behaviors detected by Quark:
 
 
-* Obtain the text that describes a UI element (#00241)
+* Get the description of a UI element (#00241)
 * Write data to a file (#00242)
 
 **4. Communicate with C2 servers**
 
 
-.. image:: https://i.postimg.cc/CLNbVqLR/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b3.png
-   :target: https://i.postimg.cc/CLNbVqLR/0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b3.png
+.. image:: https://i.postimg.cc/cCHZkQPw/connect.png
+   :target: https://i.postimg.cc/cCHZkQPw/connect.png
    :alt:
 
 
-The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/hlshzietuthuztzpsjgswpikkmwdxkiqxbzdseqdoywzyerfhi4/CameraHandler$1;run`` function establishes a socket connection using a specific network address. The specific network address could be a malicious C2 server.
+The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/hlshzietuthuztzpsjgswpikkmwdxkiqxbzdseqdoywzyerfhi4/CameraHandler$1;run`` function establishes a connection to an IP address, which could be a malicious C2 server.
 
 Behaviors detected by Quark:
 
 
-* Establish a socket connection using a specific network address (#00239)
+* Establish a connection to an IP address (#00239)
 
 List of Tested APKs
-~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The table below lists the APKs we tested.
 
