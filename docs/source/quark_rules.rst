@@ -771,7 +771,7 @@ The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvn
 Behaviors detected by Quark:
 
 
-* Extract screenshot data and compresses it as bitmap format (#238)
+* Extract screenshot data and compresses it as bitmap format (#00238)
 
 **2. Simulate user gestures**
 
@@ -786,7 +786,7 @@ The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvn
 Behaviors detected by Quark:
 
 
-* Build a gesture description and dispatch it through an accessibility service (#240)
+* Build a gesture description and dispatch it through an accessibility service (#00240)
 
 **3. Log user input**
 
@@ -801,8 +801,8 @@ The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvn
 Behaviors detected by Quark:
 
 
-* Obtain the text that describes a UI element (#241)
-* Write data to a file (#242)
+* Obtain the text that describes a UI element (#00241)
+* Write data to a file (#00242)
 
 **4. Communicate with C2 servers**
 
@@ -817,7 +817,7 @@ The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvn
 Behaviors detected by Quark:
 
 
-* Establish a socket connection using a specific network address (#239)
+* Establish a socket connection using a specific network address (#00239)
 
 List of Tested APKs
 ~~~~~~~~~~~~~~~~~~~
