@@ -748,8 +748,8 @@ With these rules, Quark is now able to identify the SpyNote malware family as hi
 Below is a summary report of a SpyNote sample (\ ``0713a683567125ea6fdff233cfa850b36a0d2c7d7c964510405cbdf669fe2a8b``\ ). The report shows that Quark identified the sample as high-risk, with a list of behaviors as evidence.
 
 
-.. image:: https://i.postimg.cc/bNTSJtXn/Screenshot-2025-09-24-02-17-28-Screenshot-2025-09-24-02-17-51-Screenshot-2025-09-24-02-18-20.jpg
-   :target: https://i.postimg.cc/bNTSJtXn/Screenshot-2025-09-24-02-17-28-Screenshot-2025-09-24-02-17-51-Screenshot-2025-09-24-02-18-20.jpg
+.. image:: https://i.postimg.cc/4NYt9kTb/Screenshot-2025-09-24-10-00-28-Screenshot-2025-09-24-10-03-382.jpg
+   :target: https://i.postimg.cc/4NYt9kTb/Screenshot-2025-09-24-10-00-28-Screenshot-2025-09-24-10-03-382.jpg
    :alt:
 
 
