@@ -5,9 +5,9 @@ name: build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master , test_codecov_in_ci]
   pull_request_target:
-    branches: [ master ]
+    branches: [ master , test_codecov_in_ci]
 
 jobs:
   build:
