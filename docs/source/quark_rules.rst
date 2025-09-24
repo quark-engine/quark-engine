@@ -796,7 +796,7 @@ Behaviors detected by Quark:
    :alt:
 
 
-The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService;checkPassword`` function obtains the description of a UI element. It also calls the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/FileUtils;writeText`` to log the data to a file. If the UI element is a button on the lock screen, the user's password can be logged.
+The behavior map shows that the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/keydkuycdcczonreivsieapzgrzkejxcowwsziydpvouihgqnu3/AccessService;checkPassword`` function obtains the description of a UI element. It also calls the ``Lcom/maintain/gybbpabtniopoetzeacrkmlxdhuvgpvnwtahmsaxmtnaltfrgf2/FileUtils;writeText`` to log the data to a file. If the UI element is a keypad button on the lock screen, the user's password can be logged.
 
 Behaviors detected by Quark:
 
