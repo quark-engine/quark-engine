@@ -6,7 +6,7 @@ name: build
 on:
   push:
     branches: [ master ]
-  pull_request:
+  pull_request_target:
     branches: [ master ]
 
 jobs:
@@ -30,24 +30,6 @@ jobs:
 
         # Install graphviz & ninja
         sudo apt-get -y install graphviz ninja-build
- 
-        # Install Rizin (0.7.3)
-        sudo git clone https://github.com/rizinorg/rizin /opt/rizin/
-        cd /opt/rizin/
-        sudo git checkout v0.7.3
-        meson build
-        ninja -C build
-        sudo ninja -C build install
-        sudo ldconfig -v
-        cd -
-
-        # Install Radare2 (5.9.0)
-        sudo apt install -y musl-tools
-        wget https://github.com/radareorg/radare2/archive/refs/tags/5.9.0.zip -O radare2-5.9.0.zip
-        unzip radare2-5.9.0.zip -d /opt
-        cd /opt/radare2-5.9.0
-        sudo sys/install.sh --without-pull
-        cd -
  
         # Install langchain and it's OpenAI integration
         python -m pip install langchain==0.2.11 langchain-core==0.2.23 langchain-openai==0.1.17 --upgrade
@@ -74,10 +56,9 @@ jobs:
         pytest --cov=./ --cov-report=xml
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4.4.0
+      uses: codecov/codecov-action@v5
       with:
         fail_ci_if_error: true
         flags: unittests
         token: ${{ secrets.CODECOV_TOKEN }}
-        version: v0.6.0 
 
